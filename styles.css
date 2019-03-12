@@ -1,10 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
 
-/* :root {
-  --background: rgba(86, 86, 86, .75);
-} */
-
-
 *, *::before, *::after {
 	/* makes padding easier to deal with  */
   box-sizing: border-box;
@@ -22,13 +17,9 @@ body {
 .quote {
 	margin: 1.5em .5em 2.5em 0em;
   font-style: italic;
-	/* background: #222; */
-  /* font-family: 'Source Sans Pro', sans-serif; */
-	/* text-align: center; */
 	font-weight: 400;
 }
 
-/* fron the new tut */
 .content {
   height: 200vh;
   /* background-image: url(//unsplash.it/1000/1000); */
@@ -54,10 +45,50 @@ img {
   width: 20rem;
 }
 
+.image-with-caption {
+  display: block;
+  margin-top: 3rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 30rem;
+}
+
+.image-blog-teaser {
+  display: block;
+  margin-top: 5rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25rem;
+}
+
+.video {
+  display: block;
+  margin-top: 3rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+  height: 1rem;
+}
+
 .profile-pic {
   width: 10rem;
 }
 
+.sig {
+  /* padding-right: 10px; */
+  text-align: right;
+  /* font-size: 13px; */
+  font-style: italic;
+  /* color: pink; */
+}
+
+
+.caption {
+  /* padding-right: 10px; */
+  text-align: right;
+  /* font-size: 13px; */
+  font-style: italic;
+}
 
 .container {
 	width: 95%;
@@ -122,24 +153,81 @@ footer::after {
 =================== */
 
 h1 {
-	font-weight: 200;
-	font-size: 1.1rem;
-	margin-top: 0;
+	/* font-weight: 200; */
+	/* margin-top: .35rem; */
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+
+}
+
+h1.blog-h1 {
+  font-size: 1.5rem;
+  font-weight: lighter;
+  color: black;
 }
 
 h2 {
-	font-weight: 400;
-	font-size: 1.6rem;
+  font-size: 1.2rem;
+  font-weight: 400;
   background-color: white;
   color: salmon;
-  line-height: 38px;
-	margin-top: 2.5em;
-  margin-bottom: .35em;
+}
+
+h3 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 400;
+  background-color: white;
+  color: salmon;
+}
+
+h4 {
+	font-weight: lighter;
+	/* font-size: 1.25rem; */
+  background-color: white;
+  text-align: center;
+  display: block;
+  border-left: 1px double #333;
+  border-right: 1px double #333;
+  padding: 2rem;
+
+
+  text-align: center;
+
+  /* outline: 5px dotted green; */
+  /* color: salmon; */
+}
+
+/* line under h1 */
+
+hr {
+    border: none;
+    border-top: 1px double #333;
+    text-align: center;
+    width: 3rem;
+    padding-bottom: 1rem;
 
 }
 
+
+/* hr:after {
+    background: #fff;
+    content: '§';
+    padding: 0 4px;
+    position: relative;
+    top: -13px;
+} */
+
+/* line around h4 */
+
+
+
 /* links */
 a {
+  color: purple;
   text-decoration: none;
 }
 
@@ -151,15 +239,13 @@ a:hover {
 p {
 	margin-top: 0;
 	line-height: 1.5;
-  margin-left: 1.5em;
-
+  margin-left: 0em;
 }
+
 
 p:last-of-type {
 	margin-bottom: 0;
 }
-
-
 
 .title-cta {
 	margin: 0 0 .5em;
@@ -177,6 +263,14 @@ p:last-of-type {
 		font-size: 1.1rem;
 		/* line-height: 1.6; */
 	}
+
+  ol {
+
+  }
+
+  ul {
+
+  }
 
 	.title {
 		font-size: 3.7rem;
@@ -205,29 +299,11 @@ p:last-of-type {
   color: salmon;
 }
 
-
 @media (min-width: 60rem) {
 	.button {
 		/* font-size: 1.2rem; */
 	}
 }
-
-/* .button-accentcolor {
-	color: black;
-	border-color: white;
-} */
-
-/* .button-accentcolor:hover,
-.button-accentcolor:focus {
-	background: white;
-	color: white;
-} */
-
-/* .button-dark {
-	color: #232323;
-	border-color: #232323;
-  margin: 2rem;
-} */
 
 .button:hover,
 .button:focus {
@@ -235,6 +311,13 @@ p:last-of-type {
   background: rgba(14, 8, 45, .80);
 }
 
+.date {
+  text-align: center;
+  font-size: .85em;
+  color: black;
+  font-weight: lighter;
+  display: block;
+}
 
 /* header
 =================== */
@@ -247,13 +330,6 @@ header {
   z-index: 999;
   width: 100%;
 }
-
-/* header {
-	position: absolute;
-	left: 0;
-	right: 0;
-	margin: 2em;
-} */
 
 .nav-toggle {
   position: absolute !important;
@@ -376,10 +452,7 @@ nav a:hover {
   }
 
   nav {
-   /* this causes issues with Edge, since it's unsupported */
-    /* // all: unset;  */
-
-    /* the following lines are not from my video, but add Edge support */
+    /* add Edge support */
     position: relative;
     text-align: left;
     transition: none;
@@ -387,7 +460,7 @@ nav a:hover {
     background: none;
     top: initial;
     left: initial;
-    /* end Edge support stuff */
+    /* end Edge support */
 
     grid-column: 3 / 4;
     display: flex;
@@ -448,24 +521,6 @@ nav a:hover {
 	}
 }
 
-/* head-home 2
-=================== */
-
-.home-head-2 {
-	/* background-image: url(img/head-bg.jpg); */
-	background-size: cover;
-	background-position: center;
-	padding: 1em 0;
-	color: white;
-}
-
-@media (min-width: 60rem) {
-	.home-head-2 {
-    padding: 2rem;
-		height: 8rem;
-	}
-}
-
 .home-about-textbox-outline {
   outline: 1px solid salmon;
   outline-offset: -2.5em;
@@ -479,14 +534,6 @@ nav a:hover {
 	position: relative;
 }
 
-/* some silliness to centre the contact button */
-/* .home-about-textbox-center {
-  text-align: center;
-	background-color: white;
-	padding: 4em;
-	position: relative;
-} */
-
 .home-about-textbox h1.outline {
 	color: purple;
 	position: absolute;
@@ -494,24 +541,8 @@ nav a:hover {
 	transform: translateX(-50%);
 	top: 3em;
 	background: #FFF;
-	padding: 0.25em;
+	/* padding: 0.25em; */
 }
-
-
-
-h1 {
-  font-size: 1.8rem;
-}
-
-h1.blog-h1 {
-  font-size: 3rem;
-  color: purple;
-
-  padding: 3rem 1rem 1rem .25rem;
-
-}
-
-
 
 
 .home-about-textbox h1.outline {
@@ -519,6 +550,7 @@ h1.blog-h1 {
   padding: 0 .425em;
 }
 
+/* general text padding */
 
 @media (min-width: 37rem) {
   .home-about-textbox {
@@ -527,10 +559,67 @@ h1.blog-h1 {
 }
 
 @media (min-width: 60rem) {
-  .home-about-textbox {
-    padding: 4.5em 25.5em 4.5em 25.5em;
+  .home-about-textbox p {
+    padding: .25em 14.5em .25em 14.5em;
   }
 }
+
+
+@media (min-width: 60rem) {
+  .home-about-textbox ol {
+    padding: .25em 17em .25em 17em;
+  }
+}
+
+
+@media (min-width: 60rem) {
+  .home-about-textbox ul {
+    padding: .25em 17em .25em 17em;
+  }
+}
+
+/* h1 h2 desktop */
+
+
+@media (min-width: 60rem) {
+  .home-about-textbox h1.blog-h1 {
+    display: block;
+    margin-top: 3rem;
+    margin-bottom: 1.4rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
+@media (min-width: 60rem) {
+  .home-about-textbox h2 {
+    font-size: 2rem;
+    padding-left: 15.85rem;
+    padding-top: 4rem;
+
+  }
+}
+
+@media (min-width: 60rem) {
+  .home-about-textbox h3 {
+    padding-left: 15.85rem;
+    padding-right: 15.85rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+}
+
+@media (min-width: 60rem) {
+  .home-about-textbox h4 {
+    padding-left: 15.85rem;
+    padding-right: 15.85rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+}
+
+
 
 
 /* blog
@@ -553,18 +642,15 @@ h1.blog-h1 {
   }
 }
 
-
-
-
 /* portfolio
 =================== */
 
 .portfolio {
-	margin: 0em 0 0;
+	margin: 0em;
 }
 
 .port-item {
-	margin: 0;
+	margin: 0em;
 	position: relative;
 }
 
@@ -610,61 +696,10 @@ h1.blog-h1 {
 	}
 }
 
-
-/* photo wall
-=================== */#photos {
-   /* Prevent vertical gaps */
-   line-height: 0;
-
-   -webkit-column-count: 5;
-   -webkit-column-gap:   0px;
-   -moz-column-count:    5;
-   -moz-column-gap:      0px;
-   column-count:         5;
-   column-gap:           0px;
-}
-
-#photos img {
-  /* Just in case there are inline attributes */
-  width: 100% !important;
-  height: auto !important;
-}
-
-@media (max-width: 1200px) {
-  #photos {
-  -moz-column-count:    4;
-  -webkit-column-count: 4;
-  column-count:         4;
-  }
-}
-@media (max-width: 1000px) {
-  #photos {
-  -moz-column-count:    3;
-  -webkit-column-count: 3;
-  column-count:         3;
-  }
-}
-@media (max-width: 800px) {
-  #photos {
-  -moz-column-count:    2;
-  -webkit-column-count: 2;
-  column-count:         2;
-  }
-}
-@media (max-width: 400px) {
-  #photos {
-  -moz-column-count:    1;
-  -webkit-column-count: 1;
-  column-count:         1;
-  }
-}
-
 body {
   margin: 0;
   padding: 0;
 }
-
-
 
 /* CTA
 =================== */
@@ -684,9 +719,6 @@ body {
   margin-top: .5rem; /* Add a top margin */
   margin-bottom: 1rem; /* Bottom margin */
 }
-
-
-
 
 /* Footer
 =================== */
