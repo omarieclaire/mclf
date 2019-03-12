@@ -156,13 +156,14 @@ h1 {
 	/* font-weight: 200; */
 	/* margin-top: .35rem; */
   font-size: 1.8rem;
-  letter-spacing: 0.1em;
   text-align: center;
 
 }
 
 h1.blog-h1 {
+  font-size: 1.8rem;
   font-size: 1.5rem;
+  letter-spacing: 0.1em;
   font-weight: lighter;
   color: black;
   text-transform: uppercase;
@@ -547,7 +548,7 @@ nav a:hover {
 
 
 .home-about-textbox h1.outline {
-  top: .7em;
+  top: -.2em;
   padding: 0 .425em;
 }
 
