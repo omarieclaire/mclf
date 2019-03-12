@@ -158,7 +158,6 @@ h1 {
   font-size: 1.8rem;
   letter-spacing: 0.1em;
   text-align: center;
-  text-transform: uppercase;
 
 }
 
@@ -166,6 +165,8 @@ h1.blog-h1 {
   font-size: 1.5rem;
   font-weight: lighter;
   color: black;
+  text-transform: uppercase;
+
 }
 
 h2 {
