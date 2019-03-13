@@ -36,7 +36,7 @@ img {
 	height: auto;
 }
 
-.image {
+  .image {
   display: block;
   margin-top: 3rem;
   margin-left: auto;
@@ -825,22 +825,22 @@ footer {
   top: 0;
 }
 .timeline .event:before {
-  left: -194.5px;
+  left: -12.4rem;
   color: rgba(128, 128, 128, 0.2);
   content: attr(data-date);
   text-align: right;
   font-weight: 100;
   font-size: 1.4rem;
-  min-width: 120px;
+  min-width: 7.7rem;
   top: -.05rem;
 }
 .timeline .event:after {
   box-shadow: 0 0 0 4px salmon;
-  left: -57.85px;
+  left: -3.6rem;
   background: white;
   border-radius: 50%;
-  height: 11px;
-  width: 11px;
+  height: .8rem;
+  width: .8rem;
   content: "";
   top: .5rem;
 }
