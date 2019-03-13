@@ -283,16 +283,16 @@ p:last-of-type {
 
 .button {
 	display: inline-block;
-	font-size: 1.11rem;
+	/* font-size: 1.11rem; */
 	text-decoration: none;
 	text-transform: uppercase;
 	border-style: solid;
-	padding: .7em 4.6em;
+	padding: .6em 4em;
   border-width: 1px;
 }
 
 .button-port {
-  background: rgba(14, 8, 45, .20);
+  background: rgba(14, 8, 45, .70);
   color: salmon;
 }
 
@@ -326,7 +326,7 @@ p:last-of-type {
 
 header {
 	margin: 0em;
-  background-color: rgba(102, 97, 127, .25);
+  background-color: rgba(245, 243, 251, .90);
   text-align: center;
   position: fixed;
   z-index: 999;
@@ -340,7 +340,7 @@ header {
 }
 
 .nav-toggle:focus ~ .nav-toggle-label {
-  outline: 3px solid rgba(0, 50, 0, .7);
+  outline: 3px solid rgba(0, 0, 50, .7);
 }
 
 .nav-toggle-label {
@@ -357,7 +357,7 @@ header {
 .nav-toggle-label span::before,
 .nav-toggle-label span::after {
   display: block;
-  background: white;
+  background: salmon;
   height: 2px;
   width: 2em;
   border-radius: 2px;
@@ -384,7 +384,7 @@ nav {
   top: 100%;
   left: 0;
   /* background: var(--background); */
-  background-color: rgba(102, 97, 127, .15);
+  background-color: rgba(245, 243, 251, .95);
 
   width: 100%;
   transform: scale(1, 0);
