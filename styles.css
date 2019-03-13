@@ -195,12 +195,18 @@ h4 {
   border-left: 1px double #333;
   border-right: 1px double #333;
   padding: 2rem;
-
-
   text-align: center;
 
   /* outline: 5px dotted green; */
   /* color: salmon; */
+}
+
+
+h5 {
+  font-size: 1.4rem;
+  font-weight: 400;
+  background-color: white;
+  color: salmon;
 }
 
 /* line under h1 */
@@ -536,6 +542,14 @@ nav a:hover {
 	position: relative;
 }
 
+.home-about-textbox-timeline {
+  /* text-align: left; */
+	/* background-color: white; */
+	padding-top: 4em;
+	color: #232323;
+	position: relative;
+}
+
 .home-about-textbox h1.outline {
 	color: purple;
 	position: absolute;
@@ -748,4 +762,63 @@ footer {
 
 .feather:hover {
   opacity: 0.7;
+}
+
+
+
+
+
+/* Timeline */
+.timeline {
+  border-left: .3rem solid salmon;
+
+  /* border-bottom-right-radius: 2px; */
+  /* border-top-right-radius: 2px; */
+  margin: 4rem auto;
+  position: relative;
+  padding-left: 3.1rem;
+  padding-right: 3.1rem;
+  padding-top: 0rem;
+
+
+  list-style: none;
+  text-align: left;
+  max-width: 70%;
+}
+.timeline .event {
+  /* border-bottom: 1px dashed rgba(0, 128, 128, 0.1); */
+  padding-bottom: 25px;
+  margin-bottom: 50px;
+  position: relative;
+}
+.timeline .event:last-of-type {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border: none;
+}
+.timeline .event:before,
+.timeline .event:after {
+  position: absolute;
+  display: block;
+  top: 0;
+}
+.timeline .event:before {
+  left: -194.5px;
+  color: rgba(128, 128, 128, 0.2);
+  content: attr(data-date);
+  text-align: right;
+  font-weight: 100;
+  font-size: 1.4rem;
+  min-width: 120px;
+  top: -.05rem;
+}
+.timeline .event:after {
+  box-shadow: 0 0 0 4px salmon;
+  left: -57.85px;
+  background: white;
+  border-radius: 50%;
+  height: 11px;
+  width: 11px;
+  content: "";
+  top: .5rem;
 }
