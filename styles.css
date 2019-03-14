@@ -406,7 +406,8 @@ p:last-of-type {
 }
 
 .highlightme {
-  background-color:#FFFF00;
+
+  background-color: rgba(250, 128, 114, .2); /* salmon */
 }
 
 /* header
