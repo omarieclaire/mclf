@@ -187,17 +187,19 @@ h2 {
   color: salmon;
   font-size: 1.2rem;
   font-weight: 400;
-  background-color: white;
 
 }
 
-.blog-teaser {
+h2.blog-teaser {
   font-size: 1.2rem;
-  text-transform: uppercase;
-  text-align: center;
   font-weight: 400;
-  background-color: white;
-  color: salmon;
+}
+
+h2.blog-tools {
+  font-size: 1.5rem;
+  /* padding: 0rem 6.3em .2em 6.3em; */
+  margin-bottom: 0;
+  margin-top: .2rem;
 }
 
 h3 {
@@ -205,14 +207,12 @@ h3 {
   text-transform: uppercase;
   text-align: center;
   font-weight: 400;
-  background-color: white;
-  color: salmon;
+  color: purple;
 }
 
-h4 {
+.blog-lessons {
 	font-weight: lighter;
 	/* font-size: 1.25rem; */
-  background-color: white;
   text-align: center;
   display: block;
   border-left: 1px double #333;
@@ -228,7 +228,6 @@ h4 {
 h5 {
   font-size: 1.4rem;
   font-weight: 400;
-  background-color: white;
   color: salmon;
 }
 
@@ -242,6 +241,32 @@ hr {
     padding-bottom: 1rem;
 
 }
+
+hr.blog-preview-divider {
+    border: none;
+    border-top: 1px dotted;
+    text-align: center;
+    width: 14rem;
+    padding-bottom: 1rem;
+    color: purple;
+
+}
+
+.blog-teaser-fill {
+  /* background-color: rgba(250, 128, 114, 0.1); */
+  /* border-left: .1rem dotted rgba(250, 128, 114, 0.3); */
+  /* border-right: .1rem solid rgba(250, 128, 114, 0.3); */
+  /* border-bottom: .1rem solid rgba(250, 128, 114, 0.3); */
+  /* border-top: .1rem solid rgba(250, 128, 114, 0.3); */
+}
+
+.image-outline {
+  border-left: .1rem solid rgba(250, 128, 114, 0.3);
+  border-right: .1rem solid rgba(250, 128, 114, 0.3);
+  border-bottom: .1rem solid rgba(250, 128, 114, 0.3);
+  border-top: .1rem solid rgba(250, 128, 114, 0.3);
+}
+
 
 
 /* hr:after {
@@ -264,7 +289,6 @@ a {
 
 a:hover {
   color: salmon;
-  /* background-color: white; */
 }
 
 p {
@@ -306,6 +330,11 @@ p:last-of-type {
 	.title {
 		font-size: 3.7rem;
 	}
+
+  hr.blog-preview-divider {
+      width: 21.5rem;
+
+  }
 }
 
 /* buttons */
@@ -559,7 +588,6 @@ nav a:hover {
 
 .home-about-textbox {
   text-align: left;
-	background-color: white;
 	padding: 4em;
 	color: #232323;
 	position: relative;
@@ -623,16 +651,24 @@ nav a:hover {
       margin-top: 4rem;
       margin-bottom: 4rem;
   }
-}
-
-@media (min-width: 60rem) {
   .home-about-textbox h2 {
     font-size: 2rem;
-    padding: 0rem 8.1em 0em 8.1em;
+    padding: 0rem 8.1em 0em 7.95em;
   }
-}
 
-@media (min-width: 60rem) {
+  h2.blog-teaser {
+    text-align: center;
+    font-size: 1.8rem;
+    padding: 1.3rem 6.1em 0em 6.1em;
+  }
+
+  h2.blog-tools {
+    font-size: 2.5rem;
+    padding: 0rem 6.3em .2em 6.3em;
+    margin-bottom: 0;
+    margin-top: 5rem;
+  }
+
   .home-about-textbox h3 {
     font-size: 1.6rem;
     padding-left: 15.85rem;
@@ -640,10 +676,8 @@ nav a:hover {
     padding-top: .5rem;
     padding-bottom: .5rem;
   }
-}
 
-@media (min-width: 60rem) {
-  .home-about-textbox h4 {
+  .home-about-textbox .blog-lessons {
     padding-left: 15.85rem;
     padding-right: 15.85rem;
     padding-top: .5rem;
