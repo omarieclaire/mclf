@@ -45,20 +45,22 @@ img {
   width: 20rem;
 }
 
+  .image-blog-teaser {
+  display: block;
+  margin-top: 0rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.5rem;
+  width: 20.9rem;
+
+}
+
 .image-with-caption {
   display: block;
   margin-top: 3rem;
   margin-left: auto;
   margin-right: auto;
   width: 30rem;
-}
-
-.image-blog-teaser {
-  display: block;
-  margin-top: 5rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 25rem;
 }
 
 /* video */
@@ -170,25 +172,29 @@ footer::after {
 =================== */
 
 h1 {
-	/* font-weight: 200; */
-	/* margin-top: .35rem; */
-  font-size: 1.8rem;
   text-align: center;
-
-}
-
-h1.blog-h1 {
-  font-size: 1.8rem;
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
-  font-weight: lighter;
-  color: black;
   text-transform: uppercase;
+  color: rgba(100, 0, 130, 0.81);
+  font-size: 1.7rem;
+  letter-spacing: 0.15em;
+  font-weight: 200;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 
 }
 
 h2 {
+  color: salmon;
   font-size: 1.2rem;
+  font-weight: 400;
+  background-color: white;
+
+}
+
+.blog-teaser {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  text-align: center;
   font-weight: 400;
   background-color: white;
   color: salmon;
@@ -567,21 +573,17 @@ nav a:hover {
 	position: relative;
 }
 
-.home-about-textbox h1.outline {
-	color: purple;
+.home-about-textbox .fancy-text {
+	font-size: .8rem;
+  color: salmon;
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	top: 3em;
 	background: #FFF;
-	/* padding: 0.25em; */
-}
-
-
-.home-about-textbox h1.outline {
-  top: -.2em;
+  top: 1.8rem;
   padding: 0 .425em;
 }
+
 
 /* general text padding */
 
@@ -613,24 +615,20 @@ nav a:hover {
 
 /* h1 h2 desktop */
 
-
 @media (min-width: 60rem) {
-  .home-about-textbox h1.blog-h1 {
-    display: block;
-    margin-top: 3rem;
-    margin-bottom: 1.4rem;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+  .home-about-textbox h1 {
+      font-size: 2.2rem;
+      letter-spacing: 0.15em;
+      font-weight: 200;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
   }
 }
 
 @media (min-width: 60rem) {
   .home-about-textbox h2 {
     font-size: 2rem;
-    padding-left: 15.85rem;
-    padding-top: 4rem;
-
+    padding: 0rem 8.1em 0em 8.1em;
   }
 }
 
@@ -658,10 +656,6 @@ nav a:hover {
 
 /* blog
 =================== */
-
-.blog-div {
-  color: blue;
-}
 
 .blog-post {
   text-align: left;
@@ -831,7 +825,7 @@ footer {
   text-align: right;
   font-weight: 100;
   font-size: 1.4rem;
-  min-width: 7.7rem;
+  min-width: 7.7rem ;
   top: -.05rem;
 }
 .timeline .event:after {
