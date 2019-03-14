@@ -355,11 +355,11 @@ p:last-of-type {
 }
 
 .button-invisible {
-  width: 2%;
-  height: 2%;
-  background-color: red;
-  position: absolute;
-  z-index: 100;
+  width: 10%;
+  height: 10%;
+  /* background-color: red; */
+  /* position: absolute; */
+  /* z-index: 100; */
 
 }
 
@@ -385,6 +385,8 @@ p:last-of-type {
   	text-transform: uppercase;
   	border-style: none;
     width: 100%;
+    font-weight: 100;
+    letter-spacing: 0.07em;
     /* height: 100%; */
     /* padding: 2rem 2rem 1rem 2rem; */
 
@@ -752,8 +754,8 @@ nav a:hover {
 
 .port-desc {
 	position: absolute;
-	z-index: 100;
-	bottom: .1em;
+	z-index: 90;
+	bottom: 0em;
 	left: 0em;
 	right: 0em;
 	/* color: #FFF; */
