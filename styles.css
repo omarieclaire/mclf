@@ -344,14 +344,15 @@ p:last-of-type {
 	/* font-size: 1.11rem; */
 	text-decoration: none;
 	text-transform: uppercase;
-	border-style: solid;
 	padding: .6em 4em;
-  border-width: 1px;
 }
 
 .button-port {
   background: rgba(14, 8, 45, .60);
   color: salmon;
+  border-style: solid;
+  border-width: 1px;
+
 }
 
 .button-invisible {
@@ -371,7 +372,7 @@ p:last-of-type {
 .button:hover,
 .button:focus {
 	/* background: #232323; */
-  background: rgba(14, 8, 45, .80);
+  background: rgba(14, 8, 45, .90);
 }
 
 @media (min-width: 60rem) {
