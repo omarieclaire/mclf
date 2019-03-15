@@ -348,8 +348,10 @@ p:last-of-type {
 }
 
 .button-port {
-  background: rgba(14, 8, 45, .60);
+  /* background: rgba(14, 8, 45, .60); */
+  background: rgba(14, 8, 45, 1);
   color: salmon;
+  width: 100%;
 
 }
 
@@ -372,7 +374,7 @@ p:last-of-type {
 .button:hover,
 .button:focus {
 	/* background: #232323; */
-  background: rgba(14, 8, 45, .90);
+  background: rgba(14, 8, 45, .7);
 }
 
 @media (min-width: 60rem) {
@@ -388,6 +390,7 @@ p:last-of-type {
     width: 100%;
     font-weight: 100;
     letter-spacing: 0.07em;
+    background: rgba(14, 8, 45, .9);
     /* height: 100%; */
     /* padding: 2rem 2rem 1rem 2rem; */
 
@@ -515,7 +518,7 @@ nav a:hover {
   transition: opacity 250ms ease-in-out 250ms;
 }
 
-.wiggle-logo {
+.shape-logo {
   /* width: 5rem; */
   margin-top: 2rem;
 }
@@ -530,15 +533,27 @@ nav a:hover {
     grid-template-columns: 1fr auto minmax(600px, 3fr) 1fr;
   }
 
-  .wiggle-logo {
+  .shape-logo {
     grid-column: 2 / 3;
     width: 30rem;
     /* margin: 10rem; */
   }
 
+  .shape-logo:hover,
+  .button:focus {
+    /* background: #232323; */
+    filter: hue-rotate(280deg);
+  }
+
   .circle-logo {
     grid-column: 2 / 3;
     width: 3rem;
+  }
+
+  .circle-logo:hover,
+  .button:focus {
+  	/* background: #232323; */
+    filter: hue-rotate(280deg);
   }
 
   nav {
