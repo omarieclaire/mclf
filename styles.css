@@ -541,14 +541,14 @@ nav a:hover {
 
   .shape-logo {
     grid-column: 2 / 3;
-    width: 30rem;
+    width: 26rem;
     /* margin: 10rem; */
   }
 
   .shape-logo:hover,
   .button:focus {
     /* background: #232323; */
-    filter: hue-rotate(280deg);
+    filter: hue-rotate(20deg);
   }
 
   .circle-logo {
