@@ -69,10 +69,10 @@ img {
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
-  max-width: 100%;
   margin-top: 2rem;
   margin-bottom: 2rem;
   border: 0;
+  object-position: 50% 50%;
  }
  .embed-container iframe, .embed-container object, .embed-container embed {
    position: absolute;
@@ -86,6 +86,12 @@ img {
    margin-right: auto;
    /* margin-bottom: 3rem; */
    border: 0;
+   object-position: 50% 50%;
+   /* The replaced content is scaled to maintain its aspect ratio while fitting within the element’s content
+   box. The entire object is made to fill the box, while preserving its aspect ratio, so the object will be
+   "letterboxed" if its aspect ratio does not match the aspect ratio of the box. */
+   object-fit: contain;
+
  }
 
 
