@@ -350,8 +350,6 @@ p:last-of-type {
 .button-port {
   background: rgba(14, 8, 45, .60);
   color: salmon;
-  border-style: solid;
-  border-width: 1px;
 
 }
 
@@ -367,6 +365,8 @@ p:last-of-type {
 .button-cta {
   background-color: white;
   color: salmon;
+  border-style: solid;
+  border-width: 1px;
 }
 
 .button:hover,
