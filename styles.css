@@ -575,7 +575,7 @@ nav a:hover {
     content: '';
     display: block;
     height: 5px;
-    background: salmon;
+    background: #2a2835bf;
     position: absolute;
     top: -.75em;
     left: 0;
