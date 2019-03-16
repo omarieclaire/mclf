@@ -1,9 +1,9 @@
 
 //start pretty var
-const canvas = 1080;
-let cZero;
-let cTick;
-let colours = [];
+// const canvas = 1080;
+// let cZero;
+// let cTick;
+// let colours = [];
 //end pretty var
 
 
