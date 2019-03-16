@@ -64,42 +64,42 @@ function setup() {
 
 //start pretty draw
 
-function draw() {
-  background(colours[0]);
-
-  const d = new Date();
-	drawCircle(width * 0.8, Math.ceil(((d.getMilliseconds() + 1) / 100) * 6), colours[1], true);
-	drawCircle(width * 0.6, d.getSeconds(), colours[2], false);
-	drawCircle(width * 0.4, d.getMinutes(), colours[3], false);
-  let hour = d.getHours();
-  if (hour > 12) {
-    hour -= 12;
-  }
-  hour += (d.getMinutes() / 60);
-  hour *= 5 - 4;
-  drawCircle(width * 0.2, hour, colours[4], false);
-}
-
-function drawCircle(size, value, colour, fade) {
-  // Fade?
-  if (fade === true) {
-    const alpha = map(value, 1, 60, 1, 0);
-    stroke(70, 83, 135, alpha);
-  } else {
-    stroke(colour);
-  }
-
-  noFill();
-  strokeWeight(100.0);
-  strokeCap(ROUND);
-
-  // Draw full ellipse if loop is complete
-  if (value === 0) {
-    ellipse(width / 2, height / 2, size, size);
-  } else {
-    arc(width / 2, height / 2, size, size, cZero, (cTick * value) - HALF_PI);
-  }
-}
+// function draw() {
+//   background(colours[0]);
+//
+//   const d = new Date();
+// 	drawCircle(width * 0.8, Math.ceil(((d.getMilliseconds() + 1) / 100) * 6), colours[1], true);
+// 	drawCircle(width * 0.6, d.getSeconds(), colours[2], false);
+// 	drawCircle(width * 0.4, d.getMinutes(), colours[3], false);
+//   let hour = d.getHours();
+//   if (hour > 12) {
+//     hour -= 12;
+//   }
+//   hour += (d.getMinutes() / 60);
+//   hour *= 5 - 4;
+//   drawCircle(width * 0.2, hour, colours[4], false);
+// }
+//
+// function drawCircle(size, value, colour, fade) {
+//   // Fade?
+//   if (fade === true) {
+//     const alpha = map(value, 1, 60, 1, 0);
+//     stroke(70, 83, 135, alpha);
+//   } else {
+//     stroke(colour);
+//   }
+//
+//   noFill();
+//   strokeWeight(100.0);
+//   strokeCap(ROUND);
+//
+//   // Draw full ellipse if loop is complete
+//   if (value === 0) {
+//     ellipse(width / 2, height / 2, size, size);
+//   } else {
+//     arc(width / 2, height / 2, size, size, cZero, (cTick * value) - HALF_PI);
+//   }
+// }
 
 //end pretty draw
 
