@@ -39,19 +39,19 @@ function stopTimer() {
 
 function setup() {
 	//start pretty setup
-	 createCanvas(canvas, canvas);
-	 colorMode(RGB, 255, 255, 255, 1);
-
-	 cZero = PI + HALF_PI;
-	 cTick = TWO_PI / 60;
-
-	 colours = [
-	   color('#083355'),
-	   color('#74B8EE'),
-	   color('#74B8EE'),
-	   color('#5689B1'),
-	   color('#3D617E'),
-	  ];
+	 // createCanvas(canvas, canvas);
+	 // colorMode(RGB, 255, 255, 255, 1);
+	 //
+	 // cZero = PI + HALF_PI;
+	 // cTick = TWO_PI / 60;
+	 //
+	 // colours = [
+	 //   color('#083355'),
+	 //   color('#74B8EE'),
+	 //   color('#74B8EE'),
+	 //   color('#5689B1'),
+	 //   color('#3D617E'),
+	 //  ];
 //end pretty setup
 
 
