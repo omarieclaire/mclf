@@ -922,3 +922,9 @@ footer {
   content: "";
   top: .5rem;
 }
+
+#timer {
+  color: #000;
+  font-family: Arial;
+  font-size: 30px;
+}
