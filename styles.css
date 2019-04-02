@@ -673,7 +673,7 @@ nav a:hover {
 
 @media (min-width: 60rem) {
   .home-about-textbox p {
-    padding: .25em 14.5em .25em 14.5em;
+    padding: .25em 12.5em .25em 12.5em;
   }
 }
 
@@ -703,7 +703,7 @@ nav a:hover {
   }
   .home-about-textbox h2 {
     font-size: 2rem;
-    padding: 0rem 8.1em 0em 7.95em;
+    padding: 0rem 6.8em 0em 6.8em;
   }
 
   h2.blog-teaser {
