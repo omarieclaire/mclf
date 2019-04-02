@@ -259,11 +259,10 @@ hr.blog-preview-divider {
 }
 
 .blog-teaser-fill {
-  /* background-color: rgba(250, 128, 114, 0.1); */
-  /* border-left: .1rem dotted rgba(250, 128, 114, 0.3); */
-  /* border-right: .1rem solid rgba(250, 128, 114, 0.3); */
-  /* border-bottom: .1rem solid rgba(250, 128, 114, 0.3); */
-  /* border-top: .1rem solid rgba(250, 128, 114, 0.3); */
+  border-bottom: .3rem solid rgba(250, 128, 114, 0.1);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .image-outline {
@@ -708,8 +707,7 @@ nav a:hover {
 
   h2.blog-teaser {
     text-align: center;
-    font-size: 1.8rem;
-    padding: 1.3rem 6.1em 0em 6.1em;
+    font-size: 1.7rem;
   }
 
   h2.blog-tools {
