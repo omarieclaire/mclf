@@ -321,7 +321,6 @@ p:last-of-type {
 
 	p {
 		font-size: 1.1rem;
-		/* line-height: 1.6; */
 	}
 
   ol {
@@ -419,6 +418,10 @@ p:last-of-type {
 .highlightme {
 
   background-color: rgba(250, 128, 114, .2); /* salmon */
+}
+
+strong {
+  font-weight: 550;
 }
 
 /* header
@@ -682,14 +685,22 @@ nav a:hover {
 
 @media (min-width: 60rem) {
   .home-about-textbox p {
-    padding: .25em 12.5em .25em 12.5em;
+    padding: .25em 12.5em .65em 12.5em;
   }
   .home-about-textbox ol {
-    padding: .25em 17em .25em 17em;
+    padding: .25em 16em .25em 16em;
   }
   .home-about-textbox ul {
-    padding: .25em 17em .25em 17em;
+    padding: .15em 13.7em .15em 13.7em;
+    font-size: 1.1em;
+    line-height: 1.5em;
+
   }
+  .home-about-textbox li {
+    margin: .5em;
+
+  }
+
   .talks ul {
     padding: .25em 0 .25em 11em;
   }
