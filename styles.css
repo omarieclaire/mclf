@@ -3,7 +3,7 @@
 *, *::before, *::after {
 	/* makes padding easier to deal with  */
   box-sizing: border-box;
-	transition: all ease-in-out 450ms;
+	/* transition: all ease-in-out 450ms; */
 }
 
 body {
