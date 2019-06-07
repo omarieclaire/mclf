@@ -21205,7 +21205,16 @@ p5.prototype.saveTable = function (table, filename, options) {
   // otherwise, make HTML
   else {
     pWriter.print('<html>');
-    pWriter.print('<head>');
+    pWriter.print('<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-77465632-1');
+  </script>
+');
     var str = '  <meta http-equiv=\"content-type\" content';
     str += '=\"text/html;charset=utf-8\" />';
     pWriter.print(str);
