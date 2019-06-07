@@ -20,6 +20,10 @@ body {
 	font-weight: 400;
 }
 
+.center {
+  text-align: center;
+}
+
 .content {
   height: 200vh;
   /* background-image: url(//unsplash.it/1000/1000); */
@@ -189,14 +193,19 @@ h1 {
 }
 
 span.subtitle {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: rgba(100, 0, 130, 0.71);
   margin-top: 1rem;
   margin-bottom: 1rem;
+  text-transform: initial;
+
+
 }
 
 h2 {
   color: salmon;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 400;
 
 }
@@ -426,7 +435,8 @@ p:last-of-type {
 }
 
 strong {
- font-weight: 550;
+ font-weight: 600;
+ color:rgb(57, 5, 84);
 }
 
 /* header
@@ -738,6 +748,12 @@ nav a:hover {
     padding: 0rem 6.8em 0em 6.8em;
   }
 
+  span.subtitle {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   h2.blog-teaser {
     text-align: center;
     font-size: 1.7rem;
@@ -968,4 +984,22 @@ footer {
   color: #000;
   font-family: Arial;
   font-size: 30px;
+}
+
+
+.socialsharebox {
+  padding-bottom: 3em;
+  /* text-align: center; */
+  /* z-index: 999; */
+  /* width: 100%; */
+}
+
+.blogshareicon {
+  /* width: 22px; */
+  height: 22px;
+  margin-top: .8em;
+  margin-bottom: .8em;
+  /* display: block;
+  margin-left: auto;
+  margin-right: auto; */
 }
