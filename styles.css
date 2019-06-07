@@ -186,7 +186,12 @@ h1 {
   font-weight: 200;
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
 
+span.subtitle {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 h2 {
@@ -725,6 +730,9 @@ nav a:hover {
       margin-top: 4rem;
       margin-bottom: 4rem;
   }
+
+
+
   .home-about-textbox h2 {
     font-size: 2rem;
     padding: 0rem 6.8em 0em 6.8em;
