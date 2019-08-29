@@ -49,6 +49,15 @@ img {
   width: 20rem;
 }
 
+.wide-image {
+display: block;
+margin-top: 3rem;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 3rem;
+width: 40rem;
+}
+
   .image-blog-teaser {
   display: block;
   margin-top: 0rem;
@@ -131,6 +140,19 @@ footer::after {
 	content: '';
 	display: block;
 	clear: both;
+}
+
+/* table  */
+th, td {
+  padding: 15px;
+}
+
+th {
+  text-align: left;
+}
+
+table {
+  border-spacing: 5px;
 }
 
 
