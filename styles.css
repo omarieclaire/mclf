@@ -76,15 +76,15 @@ width: 35rem;
   width: 30rem;
 }
 
-/* video */
+/* video
 .embed-container {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
   margin-top: 2rem;
-  margin-bottom: 2rem;
-  border: 0;
+  margin-bottom: 2rem; */
+  /* border: 0;
   object-position: 50% 50%;
  }
  .embed-container iframe, .embed-container object, .embed-container embed {
@@ -93,19 +93,26 @@ width: 35rem;
    left: 0;
    width: 100%;
    height: 100%;
-   display: block;
+   display: block; */
    /* margin-top: 3rem; */
-   margin-left: auto;
-   margin-right: auto;
+   /* margin-left: auto; */
+   /* margin-right: auto; */
    /* margin-bottom: 3rem; */
-   border: 0;
-   object-position: 50% 50%;
+   /* border: 0; */
+   /* object-position: 50% 50%; */
    /* The replaced content is scaled to maintain its aspect ratio while fitting within the element’s content
    box. The entire object is made to fill the box, while preserving its aspect ratio, so the object will be
    "letterboxed" if its aspect ratio does not match the aspect ratio of the box. */
-   object-fit: contain;
+   /* object-fit: contain;
+ } */
 
- }
+.vidContent {
+    width: 50vw;
+    margin:auto;
+}
+.vidContent iframe {
+    width: 50vw;
+}
 
 
 .profile-pic {
