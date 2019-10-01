@@ -2,25 +2,27 @@ class LeaderRing {
   constructor(scl) {
     this.scl = scl;
     // how much we move each time
-    this.move = .98;
+    this.move = .9;
     this.x = windowWidth / 2;
     this.y = windowHeight / 2;
     this.lastPlayerLeading = undefined;
   }
 
   drawRingOnLeadingPlayer(thePlayer) {
-    // console.log(this.scl);
+    var r = 90;
+    // var r = thePlayer.playerRings[3[3]];
+        // console.log(this.scl);
     stroke(pointColor);
     strokeWeight(2);
 
     if (thePlayer.direction == "right") {
-      ellipse(this.x, this.y, this.scl / 4 + 10 * this.scl / 4)
+      ellipse(this.x, this.y, r, r);
     } else if (thePlayer.direction == "left") {
-      ellipse(this.x, this.y, this.scl / 4 + 10 * this.scl / 4)
+      ellipse(this.x, this.y, r, r);
     } else if (thePlayer.direction == "up") {
-      ellipse(this.x, this.y, this.scl / 4 + 10 * this.scl / 4)
+      ellipse(this.x, this.y, r, r);
     } else if (thePlayer.direction == "down") {
-      ellipse(this.x, this.y, this.scl / 4 + 10 * this.scl / 4)
+      ellipse(this.x, this.y, r, r);
     } else {}
   }
 

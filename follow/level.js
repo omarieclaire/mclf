@@ -1,7 +1,7 @@
 // levels need to: draw themselves & know when over (both success and failure)
 class Level {
   constructor() {
-    // this.leaderRing = new LeaderRing(scl);
+    this.leaderRing = new LeaderRing(scl);
 
   };
   resetLevel() {}
@@ -46,7 +46,7 @@ class Level {
       player2.show();
     }
 
-    // this.leaderRing.drawLeaderRing(player1, player2);
+    this.leaderRing.drawLeaderRing(player1, player2);
 
 
   }

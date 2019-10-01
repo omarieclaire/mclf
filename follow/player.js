@@ -91,7 +91,7 @@ class Player {
     this.direction = "right";
   }
 
-  changeRingTotal(amount) {
+  changeRingTotal(amount, x, y) {
     var oldTotal = this.total;
     this.total = this.total + amount;
     //floor of old total minus floor of new total, then the absolute value of that (if pos we leave it, if neg we make it pos)
@@ -100,17 +100,22 @@ class Player {
       if (amount < 0) {
         this.playerRings.pop(); //get rid of a ring
       } else {
-        this.playerRings.push(new Rings(this, this.scl)); //add a ring
+        // create a ring that follows 'this' and has the start x and y coordinates passed to changeRingTotal
+        this.playerRings.push(new Rings(this, this.scl, x, y)); //add a ring
       }
     }
   }
-
+//update the total score on a given player which also changes the rings
   updateTotal(otherPlayer) {
     if (this.isFollowing) {
       //decrement
-      this.changeRingTotal(-0.005);
+      //note: we never use this.x and this.y in this case because of the above logic (amount < 0)
+      this.changeRingTotal(-0.005, this.x, this.y);
       //increment
-      otherPlayer.changeRingTotal(0.005);
+
+      //other player is simply an object. we pass the values below into changeringtotal.
+      //create a ring that follows other player
+      otherPlayer.changeRingTotal(0.005, this.x, this.y);
     }
   }
   //directional speed of player
@@ -168,6 +173,14 @@ class Player {
     noFill();
     stroke(255, 200);
     for (var i = 0; i < this.playerRings.length; i++) {
+      if (i == this.playerRings.length - 1 && this.isFollowed) {
+        stroke(255, 0 , 0);
+      }
+      if (i == this.playerRings.length - 1 && this.isFollowing) {
+        stroke(pointColor);
+      } else {
+        stroke(255);
+      }
       this.playerRings[i].draw(this.scl / 2 + i * this.scl / 2);
     }
 
