@@ -1,7 +1,11 @@
-
+//fix leaderring to outer rings
 //fullscreen players not being drawn to the correct place
 //manipulate circle colour! M
 //consider adding brick level
+
+//push for coordination
+
+//work with push and pop
 
 
 var player1;
@@ -46,15 +50,15 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   //Special function to construct an object
-  player1 = new Player("1", " ", 0, windowWidth / 2 + 200, windowHeight / 2, scl);
-  player2 = new Player("2", " ", -0, windowWidth / 2 - 200, windowHeight / 2, scl);
-	level0 = new Level0();
-	level1 = new Level1();
+  player1 = new Player("1", " ", 0, 200, scl);
+  player2 = new Player("2", " ", -0, -200, scl);
+  level0 = new Level0();
+  level1 = new Level1();
   level2 = new Level2();
   level3 = new Level3();
   finalLevel = new FinalLevel();
   pressKeyToContinue = new PressKeyToContinue();
-//array variable containing all the levels
+  //array variable containing all the levels
   var allTheLevels = [pressKeyToContinue, level0, level1, level2, level3];
   levelManager = new LevelManager(0, allTheLevels, finalLevel);
 
@@ -67,7 +71,7 @@ function setup() {
 
 function draw() {
   levelManager.switchLevel(player1, player2);
-	//following punishment/rewards
+  //following punishment/rewards
   player1.updateTotal(player2);
   player2.updateTotal(player1);
 
@@ -75,8 +79,8 @@ function draw() {
   player1.update();
   player2.update();
 
-	// player1.ringLocation();
-	// player2.ringLocation();
+  // player1.ringLocation();
+  // player2.ringLocation();
 
   foodEaten();
   playerCollision();
@@ -104,11 +108,13 @@ function handlePlayerFollowing(playerX, playerY, futureDirectionOfX) {
     if (futureDirectionOfX != playerX.direction) { //is someone unfollowing someone?
       playerX.isFollowing = false; //then turn off all follows
       playerY.isFollowing = false;
+      playerX.isFollowed = false;
+      playerY.isFollowed = false;
     }
   } else { // if there is no current follower
     if (futureDirectionOfX == playerY.direction) {
       playerX.isFollowing = true;
-			playerY.isFollowed = true;
+      playerY.isFollowed = true;
 
     }
   }
@@ -118,14 +124,14 @@ function playerCollision() {
   let d = dist(player1.x, player1.y, player2.x, player2.y);
   //added 10 to hopefully fix the bug
   if (d < player1.r + player2.r) {
-		player1.flipDirection();
-		player2.flipDirection();
+    player1.flipDirection();
+    player2.flipDirection();
     //add xspeed or yspeed after collision to fix collision bug
     player1.update(100);
     player2.update(100);
-		// players never follow each other after a collission
-		player1.isFollowing = false;
-		player2.isFollowing = false;
+    // players never follow each other after a collission
+    player1.isFollowing = false;
+    player2.isFollowing = false;
     // hit_sound.play();
   }
 }
@@ -149,34 +155,34 @@ function keyPressed() {
 
   if (keyCode === UP_ARROW) {
     handlePlayerFollowing(player1, player2, "up");
-		player1.changeDirectionUp();
+    player1.changeDirectionUp();
 
   } else if (keyCode === DOWN_ARROW) {
     handlePlayerFollowing(player1, player2, "down");
-		player1.changeDirectionDown();
+    player1.changeDirectionDown();
 
   } else if (keyCode === RIGHT_ARROW) {
-		handlePlayerFollowing(player1, player2, "right");
-		player1.changeDirectionRight();
+    handlePlayerFollowing(player1, player2, "right");
+    player1.changeDirectionRight();
 
   } else if (keyCode === LEFT_ARROW) {
     handlePlayerFollowing(player1, player2, "left");
-		player1.changeDirectionLeft();
+    player1.changeDirectionLeft();
 
   } else if (keyCode === 87) {
     handlePlayerFollowing(player2, player1, "up");
-		player2.changeDirectionUp();
+    player2.changeDirectionUp();
 
   } else if (keyCode === 83) {
     handlePlayerFollowing(player2, player1, "down");
-		player2.changeDirectionDown();
+    player2.changeDirectionDown();
 
   } else if (keyCode === 68) {
     handlePlayerFollowing(player2, player1, "right");
-		player2.changeDirectionRight();
+    player2.changeDirectionRight();
 
   } else if (keyCode === 65) {
     handlePlayerFollowing(player2, player1, "left");
-		player2.changeDirectionLeft();
+    player2.changeDirectionLeft();
   }
 }

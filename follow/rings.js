@@ -37,7 +37,6 @@ class Rings {
   }
 
   draw(radius) {
-    strokeWeight(.5);
     ellipse(this.x, this.y, radius);
   }
 }

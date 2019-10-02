@@ -15,16 +15,16 @@ class LeaderRing {
     stroke(pointColor);
     strokeWeight(2);
 
-    if (thePlayer.direction == "right") {
-      ellipse(this.x, this.y, r, r);
-    } else if (thePlayer.direction == "left") {
-      ellipse(this.x, this.y, r, r);
-    } else if (thePlayer.direction == "up") {
-      ellipse(this.x, this.y, r, r);
-    } else if (thePlayer.direction == "down") {
-      ellipse(this.x, this.y, r, r);
-    } else {}
-  }
+  //   if (thePlayer.direction == "right") {
+  //     ellipse(this.x, this.y, r, r);
+  //   } else if (thePlayer.direction == "left") {
+  //     ellipse(this.x, this.y, r, r);
+  //   } else if (thePlayer.direction == "up") {
+  //     ellipse(this.x, this.y, r, r);
+  //   } else if (thePlayer.direction == "down") {
+  //     ellipse(this.x, this.y, r, r);
+  //   } else {}
+   }
 
   playerLocDiff(player) {
     let v1 = createVector(this.x, this.y);

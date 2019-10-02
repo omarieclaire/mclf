@@ -1,6 +1,6 @@
 class Player {
   //constructor is a method which is run only once to set up the object
-  constructor(temp_name, temp_playerDir, temp_xspeed, temp_x, temp_y, scl) {
+  constructor(temp_name, temp_playerDir, temp_xspeed, xOffSet, scl) {
     this.scl = scl;
     this.name = temp_name;
     this.direction = temp_playerDir;
@@ -8,10 +8,9 @@ class Player {
     this.initialDirection = temp_playerDir;
     this.xspeed = temp_xspeed;
     this.initialxspeed = temp_xspeed;
-    this.x = temp_x;
-    this.initialX = temp_x;
-    this.y = temp_y;
-    this.initialY = temp_y
+    this.x = windowWidth / 2 + xOffSet;
+    this.initialXOffset = xOffSet;
+    this.y = windowHeight / 2;
     this.r = 20;
     this.yspeed = 0;
     this.total = 5;
@@ -26,8 +25,8 @@ class Player {
 
   resetPlayer() {
     this.xspeed = this.initialxspeed;
-    this.x = this.initialX;
-    this.y = this.initialY;
+    this.x = windowWidth/2 + this.initialXOffset;
+    this.y = windowHeight / 2;
     this.r = 20;
     this.yspeed = 0;
     this.total = 5;
@@ -172,17 +171,19 @@ class Player {
     ellipse(this.x, this.y, this.scl, this.scl);
     noFill();
     stroke(255, 200);
+    push(); //set original drawstate
     for (var i = 0; i < this.playerRings.length; i++) {
-      if (i == this.playerRings.length - 1 && this.isFollowed) {
-        stroke(255, 0 , 0);
-      }
-      if (i == this.playerRings.length - 1 && this.isFollowing) {
+      if (this.isFollowed && i == this.playerRings.length - 1) {
+        strokeWeight(5);
         stroke(pointColor);
+
       } else {
+        strokeWeight(.5);
         stroke(255);
       }
       this.playerRings[i].draw(this.scl / 2 + i * this.scl / 2);
     }
+    pop(); //pop back to original drawstate
 
     //player trail
     let numberOfTrails = 10;
