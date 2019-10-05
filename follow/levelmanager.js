@@ -55,18 +55,18 @@ class LevelManager {
   }
 
   //drawing the level
-  drawLevel(player1, player2, foods) {
+  drawLevel(player1, player2, foods, spikes) {
     //at the beinning of every draw we call isgameovermanager
     this.isGameOverManager(player1, player2);
 
     if (this.gameOverMode == true) {
       // draw the game over level
       console.log("final level!")
-      this.gameOverLevel.draw(player1, player2, foods);
+      this.gameOverLevel.draw(player1, player2, foods, spikes);
     } else {
       //from the list of levels, get me the current one.
       var theCurrentLevel = this.allTheLevels[this.currLevelIndex];
-      theCurrentLevel.draw(player1, player2, foods);
+      theCurrentLevel.draw(player1, player2, foods, spikes);
     }
   }
 

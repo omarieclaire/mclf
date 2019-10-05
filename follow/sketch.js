@@ -1,12 +1,22 @@
-//fix leaderring to outer rings
-//fullscreen players not being drawn to the correct place
-//manipulate circle colour! M
-//consider adding brick level
+// HIGH LEVEL
+// IMMEDIATELY communicate follow status to both players
+// communicate direction more
+// player should _want_ to be leading
 
-//push for coordination
+// VISUAL COMMS
+// - standardize ring offset
+// - make tail come off last ringLocation
+// - make death prettier / more compelling
+// - manipulate circle colour!
+// - improve ring loss animation
 
-//work with push and pop
-
+// MAYBE???
+// - give flavour text boxes to coins - i'm just looking for a leader? ("i'll do what ever you tell me to do")
+// - allow player to skip the training level? have no training level?
+// - should foods move around a bit?
+// - punishment should be immediately obvious
+// - if you follow you die
+// - draw line between players?
 
 var player1;
 var player2;
@@ -14,11 +24,12 @@ var foodColor = [255]; //white
 var pointColor = [255, 215, 0, 250]; //gold
 var player1Color = [255, 51, 153, 250]; //MAGENTA
 var player2Color = [51, 153, 255, 250]; //BABY BLUE
-var player1FadeColor = [255, 51, 153, 100];
-var player2FadeColor = [51, 153, 255, 100];
+var player1FadeColor = [184, 125, 155, 200];
+var player2FadeColor = [145, 200, 255, 200];
 var scl = 40;
 var vol = 0.4;
 var foods = [];
+var spikes = [];
 var level0;
 var level1;
 var level2;
@@ -50,8 +61,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   //Special function to construct an object
-  player1 = new Player("1", " ", 0, 200, scl);
-  player2 = new Player("2", " ", -0, -200, scl);
+  player1 = new Player("1", " ", 0, 200, scl, player1Color, player1FadeColor);
+  player2 = new Player("2", " ", -0, -200, scl, player2Color, player2FadeColor);
   level0 = new Level0();
   level1 = new Level1();
   level2 = new Level2();
@@ -62,11 +73,16 @@ function setup() {
   var allTheLevels = [pressKeyToContinue, level0, level1, level2, level3];
   levelManager = new LevelManager(0, allTheLevels, finalLevel);
 
+
   for (var i = 0; i < 1; i++) {
     foods[i] = new Food(scl);
     foods[i].location();
   }
 
+  for (var i = 0; i < 1; i++) {
+    spikes[i] = new Spike(scl);
+    spikes[i].location();
+  }
 }
 
 function draw() {
@@ -82,56 +98,30 @@ function draw() {
   // player1.ringLocation();
   // player2.ringLocation();
 
-  foodEaten();
   playerCollision();
 
   ////////////////////////// DRAW
-  levelManager.drawLevel(player1, player2, foods);
-}
-
-function foodEaten() {
-  for (let i = 0; i < foods.length; i++) {
-    if (player1.eat(foods[i])) {
-      foods[i].location();
-    }
-
-    if (player2.eat(foods[i])) {
-      foods[i].location();
-    }
-  }
-}
-
-//who is following who
-function handlePlayerFollowing(playerX, playerY, futureDirectionOfX) {
-  //this is happening right after playerX presses a directional key, BEFORE the direction of playerX changes
-  if (playerX.direction == playerY.direction) { //only deal with cases where there is ALREADY a "follower"
-    if (futureDirectionOfX != playerX.direction) { //is someone unfollowing someone?
-      playerX.isFollowing = false; //then turn off all follows
-      playerY.isFollowing = false;
-      playerX.isFollowed = false;
-      playerY.isFollowed = false;
-    }
-  } else { // if there is no current follower
-    if (futureDirectionOfX == playerY.direction) {
-      playerX.isFollowing = true;
-      playerY.isFollowed = true;
-
-    }
-  }
+  levelManager.drawLevel(player1, player2, foods, spikes);
 }
 
 function playerCollision() {
   let d = dist(player1.x, player1.y, player2.x, player2.y);
-  //added 10 to hopefully fix the bug
   if (d < player1.r + player2.r) {
-    player1.flipDirection();
-    player2.flipDirection();
+    console.log("playerCollision: collision true");
+    player1.total = player1.total - 1;
+    player2.total = player2.total - 1;
+    player1.poppedRing = player1.playerRings.pop();
+    player2.poppedRing = player2.playerRings.pop();
+    player1.flipDirection(player2);
+    player2.flipDirection(player1);
     //add xspeed or yspeed after collision to fix collision bug
     player1.update(100);
     player2.update(100);
     // players never follow each other after a collission
     player1.isFollowing = false;
     player2.isFollowing = false;
+    player1.isFollowed = false;
+    player2.isFollowed = false;
     // hit_sound.play();
   }
 }
@@ -154,35 +144,27 @@ function keyPressed() {
   }
 
   if (keyCode === UP_ARROW) {
-    handlePlayerFollowing(player1, player2, "up");
-    player1.changeDirectionUp();
+    player1.changeDirectionUp(player2);
 
   } else if (keyCode === DOWN_ARROW) {
-    handlePlayerFollowing(player1, player2, "down");
-    player1.changeDirectionDown();
+    player1.changeDirectionDown(player2);
 
   } else if (keyCode === RIGHT_ARROW) {
-    handlePlayerFollowing(player1, player2, "right");
-    player1.changeDirectionRight();
+    player1.changeDirectionRight(player2);
 
   } else if (keyCode === LEFT_ARROW) {
-    handlePlayerFollowing(player1, player2, "left");
-    player1.changeDirectionLeft();
+    player1.changeDirectionLeft(player2);
 
   } else if (keyCode === 87) {
-    handlePlayerFollowing(player2, player1, "up");
-    player2.changeDirectionUp();
+    player2.changeDirectionUp(player1);
 
   } else if (keyCode === 83) {
-    handlePlayerFollowing(player2, player1, "down");
-    player2.changeDirectionDown();
+    player2.changeDirectionDown(player1);
 
   } else if (keyCode === 68) {
-    handlePlayerFollowing(player2, player1, "right");
-    player2.changeDirectionRight();
+    player2.changeDirectionRight(player1);
 
   } else if (keyCode === 65) {
-    handlePlayerFollowing(player2, player1, "left");
-    player2.changeDirectionLeft();
+    player2.changeDirectionLeft(player1);
   }
 }

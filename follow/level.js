@@ -15,7 +15,7 @@ class Level {
     }
   }
   keyWasPressedLevel(keyCode) {}
-  basicLevelDraw(player1, player2, foods) { //basic level draw
+  basicLevelDraw(player1, player2, foods, spikes) { //basic level draw
     background(30);
     noStroke();
     textSize(standardTextSize);
@@ -23,37 +23,38 @@ class Level {
     // text(player1.total.toFixed(2), windowWidth / 2 + 200, windowHeight / 1.2);
     // fill(player2Color);
     // text(player2.total.toFixed(2), windowWidth / 2 - 200, windowHeight / 1.2);
-    // fill(255);
+    fill(255);
 
     //player colour
     textSize(standardTextSize);
     textAlign(CENTER, TOP);
-    if (player1.isFollowing) {
-      fill(player1FadeColor);
-      player1.show();
-      fill(player2Color);
-      player2.show();
-    } else if (player2.isFollowing) {
-      fill(player2FadeColor);
-      player2.show();
-      fill(player1Color);
-      player1.show();
-    } else {
-      //draw players when they do not lead or follow
-      fill(player1Color);
-      player1.show();
-      fill(player2Color);
-      player2.show();
-    }
+    player1.show();
+    player2.show();
 
     this.leaderRing.drawLeaderRing(player1, player2);
-
-
   }
-  draw(player1, player2, foods) {
-    this.basicLevelDraw(player1, player2, foods);
+  draw(player1, player2, foods, spikes) {
+    this.basicLevelDraw(player1, player2, foods, spikes);
   }
 
+  foodEaten(player1, player2, foods) {
+    for (let i = 0; i < foods.length; i++) {
+      if (player1.eat(foods[i])) {
+        foods[i].location();
+      }
+
+      if (player2.eat(foods[i])) {
+        foods[i].location();
+      }
+    }
+  }
+
+  spikeHit(player1, player2, spikes) {
+    for(let i = 0; i < spikes.length; i++) {
+      player1.collideWithSpike(spikes[i], player2);
+      player2.collideWithSpike(spikes[i], player1);
+    }
+  }
 }
 
 class PressKeyToContinue extends Level {
@@ -66,7 +67,7 @@ class PressKeyToContinue extends Level {
   resetLevel() {
     this.keyWasPressed = false;
   }
-  draw(player1, player2, foods) {
+  draw(player1, player2, foods, spikes) {
     // draw our title screen.
     background(30);
 
@@ -98,19 +99,19 @@ class Level0 extends Level {
     this.numTicks = 0;
   };
   //can create a draw inside any level to customize it
-  draw(player1, player2, foods) {
+  draw(player1, player2, foods, spikes) {
     this.numTicks++;
     // this.basicLevelDraw(player1, player2, foods);
     background(30);
     fill(10, 255, 50);
     textSize(standardTextSize);
     textAlign(CENTER, TOP);
-    text("welcome", windowWidth / 2, windowHeight / 2);
+    text("Are you a follower?", windowWidth / 2, windowHeight / 2);
 
   }
 
   advanceToNextLevel(player1, player2) {
-    return this.numTicks >= 200;
+    return this.numTicks >= 2000;
   }
 
   //ticks need to be reset when game restarts
@@ -126,9 +127,9 @@ class Level1 extends Level {
     this.numTicks = 0;
 
   };
-  draw(player1, player2, foods) {
+  draw(player1, player2, foods, spikes) {
     this.numTicks++;
-    this.basicLevelDraw(player1, player2, foods);
+    this.basicLevelDraw(player1, player2, foods, spikes);
 
     if (player1.isFollowing) {
       fill(player2Color);
@@ -148,7 +149,7 @@ class Level1 extends Level {
   }
 
   advanceToNextLevel(player1, player2) {
-    return this.numTicks >= 2000;
+    return this.numTicks >= 100;
   }
   //ticks need to be reset when game restarts
   resetLevel() {
@@ -162,10 +163,25 @@ class Level2 extends Level {
   constructor() {
     super();
   };
-  draw(player1, player2, foods) {
-    this.basicLevelDraw(player1, player2, foods);
+
+  spikeHit(player1, player2, spikes) {
+    for(let i = 0; i < spikes.length; i++) {
+      player1.collideWithSpike(spikes[i], player2);
+      player2.collideWithSpike(spikes[i], player1);
+    }
+  }
+
+  draw(player1, player2, foods, spikes) {
+
+    this.foodEaten(player1, player2, foods);
+    this.spikeHit(player1, player2, spikes);
+
+    this.basicLevelDraw(player1, player2, foods, spikes);
     for (let i = 0; i < foods.length; i++) {
       foods[i].show();
+    }
+    for (let i = 0; i < spikes.length; i++) {
+      spikes[i].show();
     }
   }
   advanceToNextLevel(player1, player2) {
@@ -183,10 +199,16 @@ class Level3 extends Level {
   constructor() {
     super();
   };
-  draw(player1, player2, foods) {
-    this.basicLevelDraw(player1, player2, foods);
+  draw(player1, player2, foods, spikes) {
+    this.foodEaten(player1, player2, foods);
+    this.spikeHit(player1, player2, spikes);
+
+    this.basicLevelDraw(player1, player2, foods, spikes);
     for (let i = 0; i < foods.length; i++) {
       foods[i].show();
+    }
+    for (let i = 0; i < spikes.length; i++) {
+      spikes[i].show();
     }
   }
   advanceToNextLevel(player1, player2) {
@@ -205,20 +227,28 @@ class FinalLevel extends Level {
     super();
     this.numTicks = 0;
   }
-  draw(player1, player2, foods) {
+  draw(player1, player2, foods, spikes) {
     // this.dissolvePlayer(player1, player2);
-    console.log("you are dead");
+    // console.log("you are dead");
     // background(255, 0, 0);
     noStroke();
     text("GAME OVER!!!", windowWidth / 2, windowHeight / 2);
     stroke(255, 0, 0);
-    if (player1.total <= 0) {
-      noFill();
+
+    if (player2.total <= 0 && player1.total <= 0) {
+      for (var i = 0; i < 250; i--) {
+      }
+      ellipse(player1.x, player1.y, 50);
+      ellipse(player2.x, player2.y, 50);
+
+
+    } else if (player2.total <= 0 && player1.total > 0) {
+      ellipse(player2.x, player2.y, 50);
+    } else if (player1.total <= 0 && player2.total > 0){
       ellipse(player1.x, player1.y, 100);
-    } else if (player2.total <= 0) {
-      noFill();
-      ellipse(player2.x, player2.y, 100);
-    } else {}
+
+    } else {
+    }
     this.numTicks++;
   }
   advanceToNextLevel(player1, player2) {
