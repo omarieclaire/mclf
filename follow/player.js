@@ -178,9 +178,9 @@ class Player {
     }
 
     //loop player around screen
-    var windowLoopSpacer = 30;
+    var windowLoopSpacer = 20;
     if (this.x < 0 - windowLoopSpacer) {
-      this.x = windowWidth - windowLoopSpacer;
+      this.x = windowWidth + windowLoopSpacer;
       for (var i = 0; i < this.playerRings.length; i++) {
         var theRing = this.playerRings[i];
         theRing.updateLocation(windowWidth - windowLoopSpacer, theRing.y);
@@ -194,7 +194,7 @@ class Player {
         theRing.updateLocation(0 - windowLoopSpacer, theRing.y);
       }
     } else if (this.y < 0 - windowLoopSpacer) {
-      this.y = windowHeight - windowLoopSpacer;
+      this.y = windowHeight + windowLoopSpacer;
       for (var i = 0; i < this.playerRings.length; i++) {
         var theRing = this.playerRings[i];
         theRing.updateLocation(theRing.x, windowHeight - windowLoopSpacer);

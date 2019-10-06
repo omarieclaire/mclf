@@ -107,11 +107,10 @@ class Level0 extends Level {
     textSize(standardTextSize);
     textAlign(CENTER, TOP);
     text("Are you a follower?", windowWidth / 2, windowHeight / 2);
-
   }
 
   advanceToNextLevel(player1, player2) {
-    return this.numTicks >= 2000;
+    return this.numTicks >= 200;
   }
 
   //ticks need to be reset when game restarts
@@ -236,19 +235,14 @@ class FinalLevel extends Level {
     stroke(255, 0, 0);
 
     if (player2.total <= 0 && player1.total <= 0) {
-      for (var i = 0; i < 250; i--) {
-      }
       ellipse(player1.x, player1.y, 50);
       ellipse(player2.x, player2.y, 50);
-
-
     } else if (player2.total <= 0 && player1.total > 0) {
       ellipse(player2.x, player2.y, 50);
     } else if (player1.total <= 0 && player2.total > 0){
       ellipse(player1.x, player1.y, 100);
 
-    } else {
-    }
+    } else {}
     this.numTicks++;
   }
   advanceToNextLevel(player1, player2) {
