@@ -1,3 +1,15 @@
+// like snake but you have to be creative - square, thing to catch, you get bigger
+// you have to move up down left and right - avoid going in the same direction as the other player
+// each being controlled by the things you hate.
+
+
+//visually interesting draw people in, durable, accessible, visible (kinestheticlly feel the other player)
+// different coloured Rings
+
+//two monitors and controled with head (window)
+//
+
+
 // HIGH LEVEL
 // IMMEDIATELY communicate follow status to both players
 // communicate direction more
