@@ -736,8 +736,8 @@ nav a:hover {
   }
   .home-about-textbox ul {
     padding: .15em 13.7em .15em 13.7em;
-    font-size: 1.1em;
-    line-height: 1.5em;
+    /* font-size: 1.1em; */
+    /* line-height: 1.5em; */
 
   }
   .home-about-textbox li {
