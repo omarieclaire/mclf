@@ -460,12 +460,16 @@ p:last-of-type {
 
 .highlightme {
 
-  background-color: rgba(250, 128, 114, .2); /* salmon */
+  background-color: rgba(250, 128, 114, .15); /* salmon */
 }
 
 strong {
  font-weight: 600;
  color:rgb(57, 5, 84);
+}
+
+.slightBold {
+  font-weight: 525;
 }
 
 /* header
