@@ -8,50 +8,48 @@ var mic, soundFile; // input sources, press T to toggleInput()
 var fft;
 var smoothing = 0.8; // play with this, between 0 and .99
 var binCount = 1024; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
-var particles =  new Array(binCount);
+var particles = new Array(binCount);
 
 
 let video;
 let poseNet;
 let poses = [];
 let skullImage;
+let sclHelper = 40;
 
-const flipHorizontal = false;
-//
-// let leftEyeImage;
-// let rightEyeImage;
+//flipHorizontal = true;
 
+// https://github.com/tensorflow/tfjs-models/tree/master/posenet#keypoints
 
-/*
-https://github.com/tensorflow/tfjs-models/tree/master/posenet#keypoints
-
-Available parts are:
-0   nose
-1	leftEye
-2	rightEye
-3	leftEar
-4	rightEar
-5	leftShoulder
-6	rightShoulder
-7	leftElbow
-8	rightElbow
-9	leftWrist
-10	rightWrist
-11	leftHip
-12	rightHip
-13	leftKnee
-14	rightKnee
-15	leftAnkle
-16	rightAnkle
-=== */
-
-//choose body part to track
-let keypointIndex = 0;
+let noseIndex = 0;
+let leftEyeIndex = 1;
+let rightEyeIndex = 2;
+let leftEarIndex = 3;
+let rightEarIndex = 4;
+let leftShoulderIndex = 5;
+let rightShoulderIndex = 6;
+let leftElbowIndex = 7;
+let rightElbowIndex = 8;
+let leftWristIndex = 9;
+let rightWristIndex = 10;
+let leftHipIndex = 11;
+let rightHipIndex = 12;
+let leftKneeIndex = 13;
+let rightKneeIndex = 14;
+let leftAnkleIndex = 15;
+let rightAnkleIndex = 16;
 
 function preload() {
   skullImage = loadImage("skull.png");
-  // leftEyeImage = loadImage("emojiEye.png");
-  // rightEyeImage = loadImage("emojiEye2.png");
+  torsoImage = loadImage("torso.png");
+  lshinImage = loadImage("lshin.png");
+  rshinImage = loadImage("rshin.png");
+  lthighImage = loadImage("lthigh.png");
+  rthighImage = loadImage("rthigh.png");
+  lbicepImage = loadImage("lbicep.png");
+  rbicepImage = loadImage("rbicep.png");
+  lhandImage = loadImage("lhand.png");
+  rhandImage = loadImage("rhand.png");
 }
 
 
@@ -62,13 +60,17 @@ function setup() {
   noStroke();
 
 
-  // load posenet model and link to vide - with a single detection
-  poseNet = ml5.poseNet(video, modelReady);
+
+  // load posenet model and link to video - with a single detection
+  poseNet = ml5.poseNet(video, modelReady, { flipHorizontal: true});
+
   // poseNet.on("pose", gotPoses);
   // set up an event which adds an array to "poses" with each new pose
-  poseNet.on('pose', function(results) {
+  let poseCallback = function(results) {
     poses = results;
-  });
+  };
+  poseNet.on('pose', poseCallback);
+
   // Hide the video element, and just show the canvas
   video.hide();
 
@@ -90,25 +92,103 @@ function setup() {
 
 
 function draw() {
+  background(255);
   //draw video
+  translate(video.width, 0);
+  //flip video
+  scale(-1,1);
   image(video, 0, 0, width, height);
 
-  filter(THRESHOLD);
+  // filter(THRESHOLD);
 
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
 
-    //try changing to value of keypointIndex in line 22!
-    let xpos = pose.keypoints[keypointIndex].position.x;
-    let ypos = pose.keypoints[keypointIndex].position.y;
-
-    ellipse(int(xpos), int(ypos), 50, 50);
+    // strokeWeight(1);
+    // stroke(0, 0, 255, 100);
     tint(255, 200);
-    let skullSize = 300;
-    image(skullImage, xpos - skullSize/2, ypos- skullSize/2, skullSize, skullSize);
+    let skullSize = 200;
+    //skull
+    let skullXPos = pose.keypoints[noseIndex].position.x;
+    let skullYPos = pose.keypoints[noseIndex].position.y;
+    image(skullImage, skullXPos - skullSize / 2, skullYPos - skullSize / 2, skullSize, skullSize);
 
+    push();
+    imageMode(CORNERS);
+
+    //knee to foot
+    let rightAnkleKeypoint = pose.keypoints[rightAnkleIndex];
+    let rightAnkleXPos = rightAnkleKeypoint.position.x;
+    let rightAnkleYPos = rightAnkleKeypoint.position.y;
+
+    let leftAnkleKeypoint = pose.keypoints[leftAnkleIndex];
+    let leftAnkleXPos = leftAnkleKeypoint.position.x;
+    let leftAnkleYPos = leftAnkleKeypoint.position.y;
+
+    let rightKneeKeypoint = pose.keypoints[rightKneeIndex];
+    let rightKneeXPos = rightKneeKeypoint.position.x;
+    let rightKneeYPos = rightKneeKeypoint.position.y;
+
+    let leftKneeKeypoint = pose.keypoints[leftKneeIndex];
+    let leftKneeXPos = leftKneeKeypoint.position.x;
+    let leftKneeYPos = leftKneeKeypoint.position.y;
+    // line(rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
+    image(lshinImage, rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
+    image(rshinImage, leftKneeXPos, leftKneeYPos, leftAnkleXPos, leftAnkleYPos);
+
+    //hip to knee
+    let rightHipKeypoint = pose.keypoints[rightHipIndex];
+    let rightHipXPos = rightHipKeypoint.position.x;
+    let rightHipYPos = rightHipKeypoint.position.y;
+
+    let leftHipKeypoint = pose.keypoints[leftHipIndex];
+    let leftHipXPos = leftHipKeypoint.position.x;
+    let leftHipYPos = leftHipKeypoint.position.y;
+    // line(rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
+    image(lthighImage, rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
+    image(rthighImage, leftHipXPos, leftHipYPos, leftKneeXPos, leftKneeYPos);
+
+
+    //torso
+    let rightShoulderKeypoint = pose.keypoints[rightShoulderIndex];
+    let rightShoulderXPos = rightShoulderKeypoint.position.x;
+    let rightShoulderYPos = rightShoulderKeypoint.position.y;
+
+    let leftShoulderKeypoint = pose.keypoints[leftShoulderIndex];
+    let leftShoulderXPos = leftShoulderKeypoint.position.x;
+    let leftShoulderYPos = leftShoulderKeypoint.position.y;
+
+    // line(rightShoulderXPos, rightShoulderYPos, rightHipXPos, rightHipYPos);
+    image(torsoImage, rightShoulderXPos - sclHelper, rightShoulderYPos - sclHelper, leftHipXPos + sclHelper * 2, leftHipYPos + sclHelper);
+
+    //bicep
+    let rightElbowKeypoint = pose.keypoints[rightElbowIndex];
+    let rightElbowXPos = rightElbowKeypoint.position.x;
+    let rightElbowYPos = rightElbowKeypoint.position.y;
+
+    let leftElbowKeypoint = pose.keypoints[leftElbowIndex];
+    let leftElbowXPos = leftElbowKeypoint.position.x;
+    let leftElbowYPos = leftElbowKeypoint.position.y;
+    // line(rightShoulderXPos, rightShoulderYPos, rightElbowXPos, rightElbowYPos);
+    image(lbicepImage, rightShoulderXPos, rightShoulderYPos, rightElbowXPos, rightElbowYPos);
+    image(rbicepImage, leftShoulderXPos, leftShoulderYPos, leftElbowXPos, leftElbowYPos);
+
+
+    //hand
+    let rightWristKeypoint = pose.keypoints[rightWristIndex];
+    let rightWristXPos = rightWristKeypoint.position.x;
+    let rightWristYPos = rightWristKeypoint.position.y;
+
+    let leftWristKeypoint = pose.keypoints[leftWristIndex];
+    let leftWristXPos = leftWristKeypoint.position.x;
+    let leftWristYPos = rightWristKeypoint.position.y;
+    // line(rightElbowXPos, rightElbowYPos, rightWristXPos, rightWristYPos);
+    image(lhandImage, rightElbowXPos, rightElbowYPos, rightWristXPos, rightWristYPos);
+    image(rhandImage, leftElbowXPos, leftElbowYPos, leftWristXPos, leftWristYPos);
+
+    pop();
 
   }
 
@@ -124,7 +204,7 @@ function draw() {
     var thisLevel = map(spectrum[i], 0, 255, 0, 1);
 
     // update values based on amplitude at this part of the frequency spectrum
-    particles[i].update( thisLevel );
+    particles[i].update(thisLevel);
 
     // draw the particle
     particles[i].draw();
@@ -132,6 +212,7 @@ function draw() {
     // update x position (in case we change the bin count while live coding)
     particles[i].position.x = map(i, 0, binCount, 0, width * 2);
   }
+
 }
 
 //let me know when the model is loaded and ready
@@ -146,15 +227,15 @@ function modelReady() {
 var Particle = function(position) {
   this.position = position;
   this.scale = random(0, 1);
-  this.speed = createVector(0, random(0, 10) );
-  this.color = [random(0, 255), random(0,255), random(0,255)];
+  this.speed = createVector(0, random(0, 10));
+  this.color = [random(0, 255), random(0, 255), random(0, 255)];
 }
 
 var theyExpand = 1;
 
 // use FFT bin level to change speed and diameter
 Particle.prototype.update = function(someLevel) {
-  this.position.y += this.speed.y / (someLevel*2);
+  this.position.y += this.speed.y / (someLevel * 2);
   if (this.position.y > height) {
     this.position.y = 0;
   }
@@ -188,7 +269,7 @@ function keyPressed() {
 // To prevent feedback, mic doesnt send its output.
 // So we need to tell fft to listen to the mic, and then switch back.
 function toggleInput() {
-  if (soundFile.isPlaying() ) {
+  if (soundFile.isPlaying()) {
     soundFile.pause();
     mic.start();
     fft.setInput(mic);
