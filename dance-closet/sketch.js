@@ -41,6 +41,7 @@ let rightAnkleIndex = 16;
 
 function preload() {
   skullImage = loadImage("skull.png");
+  neckImage = loadImage("neck.png");
   torsoImage = loadImage("torso.png");
   lshinImage = loadImage("lshin.png");
   rshinImage = loadImage("rshin.png");
@@ -113,7 +114,6 @@ function draw() {
     //skull
     let skullXPos = pose.keypoints[noseIndex].position.x;
     let skullYPos = pose.keypoints[noseIndex].position.y;
-    image(skullImage, skullXPos - skullSize / 2, skullYPos - skullSize / 2, skullSize, skullSize);
 
     push();
     imageMode(CORNERS);
@@ -161,7 +161,6 @@ function draw() {
     let leftShoulderYPos = leftShoulderKeypoint.position.y;
 
     // line(rightShoulderXPos, rightShoulderYPos, rightHipXPos, rightHipYPos);
-    image(torsoImage, rightShoulderXPos - sclHelper, rightShoulderYPos - sclHelper, leftHipXPos + sclHelper * 2, leftHipYPos + sclHelper);
 
     //bicep
     let rightElbowKeypoint = pose.keypoints[rightElbowIndex];
@@ -175,7 +174,6 @@ function draw() {
     image(lbicepImage, rightShoulderXPos, rightShoulderYPos, rightElbowXPos, rightElbowYPos);
     image(rbicepImage, leftShoulderXPos, leftShoulderYPos, leftElbowXPos, leftElbowYPos);
 
-
     //hand
     let rightWristKeypoint = pose.keypoints[rightWristIndex];
     let rightWristXPos = rightWristKeypoint.position.x;
@@ -188,7 +186,11 @@ function draw() {
     image(lhandImage, rightElbowXPos, rightElbowYPos, rightWristXPos, rightWristYPos);
     image(rhandImage, leftElbowXPos, leftElbowYPos, leftWristXPos, leftWristYPos);
 
+    image(neckImage, skullXPos, skullYPos + skullYPos/3, skullXPos + sclHelper, rightShoulderYPos);
+    image(torsoImage, rightShoulderXPos - sclHelper, rightShoulderYPos - sclHelper, leftHipXPos + sclHelper * 2, leftHipYPos + sclHelper);
+
     pop();
+    image(skullImage, skullXPos - skullSize / 2, skullYPos - skullSize / 2, skullSize, skullSize);
 
   }
 
