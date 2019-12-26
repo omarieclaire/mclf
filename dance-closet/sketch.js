@@ -12,7 +12,7 @@ let video;
 let poseNet;
 let poses = [];
 let skullImage;
-let sclHelper = 40;
+let sclHelper;
 
 let noseIndex = 0;
 let leftEyeIndex = 1;
@@ -36,16 +36,23 @@ let skeletons = [];
 
 function preload() {
   skullImage = loadImage("skull.png");
+  noseImage = loadImage("skull.png");
+  lEyeImage = loadImage("eye.png");
+  rEyeImage = loadImage("eye.png");
+  lEarImage = loadImage("skull.png");
+  rEarImage = loadImage("skull.png");
+
+
   neckImage = loadImage("neck.png");
   torsoImage = loadImage("torso.png");
-  lshinImage = loadImage("lshin.png");
-  rshinImage = loadImage("rshin.png");
-  lthighImage = loadImage("lthigh.png");
-  rthighImage = loadImage("rthigh.png");
-  lbicepImage = loadImage("lbicep.png");
-  rbicepImage = loadImage("rbicep.png");
-  lhandImage = loadImage("lhand.png");
-  rhandImage = loadImage("rhand.png");
+  lShinImage = loadImage("lshin.png");
+  rShinImage = loadImage("rshin.png");
+  lThighImage = loadImage("lthigh.png");
+  rThighImage = loadImage("rthigh.png");
+  lBicepImage = loadImage("lbicep.png");
+  rBicepImage = loadImage("rbicep.png");
+  lHandImage = loadImage("lhand.png");
+  rHandImage = loadImage("rhand.png");
 }
 
 function setup() {
@@ -90,6 +97,7 @@ function lerpHelper (old, pose, poseIndex) {
   old.y = calculatedY;
 }
 
+
 function draw() {
   background(255);
   //flip video
@@ -106,6 +114,25 @@ function draw() {
     // skull
     let skullXPos = pose.keypoints[noseIndex].position.x;
     let skullYPos = pose.keypoints[noseIndex].position.y;
+    // nose
+    let noseXPos = pose.keypoints[noseIndex].position.x;
+    let noseYPos = pose.keypoints[noseIndex].position.y;
+
+    //eyes
+    let rightEyeXPos = pose.keypoints[rightEyeIndex].position.x;
+    let rightEyeYPos = pose.keypoints[rightEyeIndex].position.y;
+
+    let leftEyeXPos = pose.keypoints[leftEyeIndex].position.x;
+    let leftEyeYPos = pose.keypoints[leftEyeIndex].position.y;
+
+    //ears
+    let rightEarXPos = pose.keypoints[rightEarIndex].position.x;
+    let rightEarYPos = pose.keypoints[rightEarIndex].position.y;
+
+    let leftEarXPos = pose.keypoints[leftEarIndex].position.x;
+    let leftEarYPos = pose.keypoints[leftEarIndex].position.y;
+
+
     //knee to foot
     let rightAnkleXPos = pose.keypoints[rightAnkleIndex].position.x;
     let rightAnkleYPos = pose.keypoints[rightAnkleIndex].position.y;
@@ -150,6 +177,15 @@ function draw() {
       skeleton = {
         skull: {x: skullXPos, y: skullYPos},
 
+        nose: {x: noseXPos, y: noseYPos},
+
+        rightEye: {x: rightEyeXPos, y: rightEyeYPos},
+        leftEye: {x: leftEyeXPos, y: leftEyeYPos},
+
+        rightEar: {x: rightEarXPos, y: rightEarYPos},
+        leftEar: {x: leftEarXPos, y: leftEarYPos},
+
+
         rightAnkle: {x: rightAnkleXPos, y: rightAnkleYPos},
         leftAnkle: {x: leftAnkleXPos, y: leftAnkleYPos},
 
@@ -171,6 +207,13 @@ function draw() {
       }
     } else {
       lerpHelper(skeleton.skull, pose, noseIndex);
+      lerpHelper(skeleton.nose, pose, noseIndex);
+
+      lerpHelper(skeleton.rightEye, pose, rightEyeIndex);
+      lerpHelper(skeleton.leftEye, pose, leftEyeIndex);
+      lerpHelper(skeleton.rightEar, pose, rightEarIndex);
+      lerpHelper(skeleton.leftEar, pose, leftEarIndex);
+
       lerpHelper(skeleton.rightAnkle, pose, rightAnkleIndex);
       lerpHelper(skeleton.leftAnkle, pose, leftAnkleIndex);
       lerpHelper(skeleton.rightKnee, pose, leftAnkleIndex);
@@ -185,9 +228,17 @@ function draw() {
       lerpHelper(skeleton.rightWrist, pose, leftAnkleIndex);
     }
 
+
+    function scaleHelper () {
+      sclHelper = dist(skeleton.nose.x, skeleton.nose.y, skeleton.leftEye.x, skeleton.leftEye.y);
+    }
+
+    scaleHelper();
+
+
     // strokeWeight(1);
     // stroke(0, 0, 255, 100);
-    tint(255, 200);
+    tint(255, 170);
     let skullSize = 200;
     //skull
 
@@ -196,27 +247,48 @@ function draw() {
 
     //knee to foot
         // line(rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
-    image(lshinImage, skeleton.rightKnee.x, skeleton.rightKnee.y, skeleton.rightAnkle.x, skeleton.rightAnkle.y);
-    image(rshinImage, skeleton.leftKnee.x, skeleton.leftKnee.y, skeleton.leftAnkle.x, skeleton.leftAnkle.y);
+    image(lShinImage, skeleton.rightKnee.x, skeleton.rightKnee.y, skeleton.rightAnkle.x, skeleton.rightAnkle.y);
+    image(rShinImage, skeleton.leftKnee.x, skeleton.leftKnee.y, skeleton.leftAnkle.x, skeleton.leftAnkle.y);
     //hip to knee
-    image(lthighImage, skeleton.rightHip.x, skeleton.rightHip.y, skeleton.rightKnee.x, skeleton.rightKnee.y);
-    image(rthighImage, skeleton.leftHip.x, skeleton.leftHip.y, skeleton.leftKnee.x, skeleton.leftKnee.y);
+    image(lThighImage, skeleton.rightHip.x, skeleton.rightHip.y, skeleton.rightKnee.x, skeleton.rightKnee.y);
+    image(rThighImage, skeleton.leftHip.x, skeleton.leftHip.y, skeleton.leftKnee.x, skeleton.leftKnee.y);
     //bicep
-    image(lbicepImage, skeleton.rightShoulder.x, skeleton.rightShoulder.y, skeleton.rightElbow.x, skeleton.rightElbow.y);
-    image(rbicepImage, skeleton.leftShoulder.x, skeleton.leftShoulder.y, skeleton.leftElbow.x, skeleton.leftElbow.y);
+    image(lBicepImage, skeleton.rightShoulder.x, skeleton.rightShoulder.y, skeleton.rightElbow.x, skeleton.rightElbow.y);
+    image(rBicepImage, skeleton.leftShoulder.x, skeleton.leftShoulder.y, skeleton.leftElbow.x, skeleton.leftElbow.y);
     //hand
-    image(lhandImage, skeleton.rightElbow.x, skeleton.rightElbow.y, skeleton.rightWrist.x, skeleton.rightWrist.y);
-    image(rhandImage, skeleton.leftElbow.x, skeleton.leftElbow.y, skeleton.leftWrist.x, skeleton.leftWrist.y);
+    image(lHandImage, skeleton.rightElbow.x, skeleton.rightElbow.y, skeleton.rightWrist.x, skeleton.rightWrist.y);
+    image(rHandImage, skeleton.leftElbow.x, skeleton.leftElbow.y, skeleton.leftWrist.x, skeleton.leftWrist.y);
     //neck
     // image(neckImage, skeleton.skull.x, skeleton.skull.y + skullSize/3, skeleton.leftShoulder.x - skeleton.rightShoulder.y/2);
-
+    //ear
+    // image(lEarImage, skeleton.rightEar.x, skeleton.rightEar.y, skeleton.rightEar.x, skeleton.rightEar.y);
+    // image(rEarImage, skeleton.leftEar.x, skeleton.leftEar.y, skeleton.leftWrist.x, skeleton.leftWrist.y);
+    //torso
     image(torsoImage, skeleton.rightShoulder.x, skeleton.rightShoulder.y, skeleton.leftHip.x, skeleton.leftHip.y);
 
     pop();
-    //torso
-    image(skullImage, skeleton.skull.x - skullSize / 2, skeleton.skull.y - skullSize / 2, skullSize, skullSize);
+
+    push();
+
+
+    push();
+    imageMode(CENTER);
+    angleMode(DEGREES);
+    //translate is the point of origin for all drawing and all rotation
+    translate(skeleton.nose.x, skeleton.nose.y);
+    var skullAngle = skeleton.leftEye.y - skeleton.rightEye.y;
+    rotate(skullAngle, skeleton.nose.x);
+    image(skullImage, 0, 0, sclHelper*5, sclHelper*5);
+    pop();
+
+    //eye
+    // image(lEyeImage, skeleton.rightEye.x, skeleton.rightEye.y, sclHelper/2, sclHelper/2);
+    // image(rEyeImage, skeleton.leftEye.x, skeleton.leftEye.y, sclHelper/2, sclHelper/2);
+    pop();
 
   }
+
+
 
   // returns an array with [binCount] amplitude readings from lowest to highest frequencies
   var spectrum = fft.analyze(binCount);
