@@ -1,8 +1,6 @@
-/*
-  Visuals: Analyze the frequency spectrum with FFT (Fast Fourier Transform) Draw a 1024 particles system that represents bins of the FFT frequency spectrum.  Example by Jason Sigal
-
-Body rec: Copyright (c) 2018 ml5 This software is released under the MIT License. https://opensource.org/licenses/MIT ml5 Example PoseNet example using p5.js Modified based on Kyle McDonald's ml5 poseNet sketch: https://editor.p5js.org/kylemcdonald/sketches/H1OoUd9h7
-*/
+// Visuals: Analyze the frequency spectrum with FFT (Fast Fourier Transform) Draw a 1024 particles system that represents bins of the FFT frequency spectrum.  Example by Jason Sigal
+// Body rec: Copyright (c) 2018 ml5 This software is released under the MIT License. https://opensource.org/licenses/MIT ml5 Example PoseNet example using p5.js Modified based on Kyle McDonald's ml5 poseNet sketch: https://editor.p5js.org/kylemcdonald/sketches/H1OoUd9h7
+// https://github.com/tensorflow/tfjs-models/tree/master/posenet#keypoints
 
 var mic, soundFile; // input sources, press T to toggleInput()
 var fft;
@@ -10,16 +8,11 @@ var smoothing = 0.8; // play with this, between 0 and .99
 var binCount = 1024; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
 var particles = new Array(binCount);
 
-
 let video;
 let poseNet;
 let poses = [];
 let skullImage;
 let sclHelper = 40;
-
-//flipHorizontal = true;
-
-// https://github.com/tensorflow/tfjs-models/tree/master/posenet#keypoints
 
 let noseIndex = 0;
 let leftEyeIndex = 1;
@@ -55,7 +48,6 @@ function preload() {
   rhandImage = loadImage("rhand.png");
 }
 
-
 function setup() {
   createCanvas(640, 480);
   video = createCapture(VIDEO);
@@ -64,15 +56,12 @@ function setup() {
 
   // load posenet model and link to video - with a single detection
   poseNet = ml5.poseNet(video, modelReady, { flipHorizontal: true});
-
-  // poseNet.on("pose", gotPoses);
   // set up an event which adds an array to "poses" with each new pose
   let poseCallback = function(results) {
     poses = results;
   };
   poseNet.on('pose', poseCallback);
-
-  // Hide the video element, and just show the canvas
+  // Hide the video - just show the canvas
   video.hide();
 
   mic = new p5.AudioIn();
@@ -103,59 +92,97 @@ function lerpHelper (old, pose, poseIndex) {
 
 function draw() {
   background(255);
-  //draw video
-  translate(video.width, 0);
   //flip video
+  translate(video.width, 0);
   scale(-1,1);
+  //draw video
   image(video, 0, 0, width, height);
-
+  //set threshhold filter
   // filter(THRESHOLD);
-
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
-
     // skull
     let skullXPos = pose.keypoints[noseIndex].position.x;
     let skullYPos = pose.keypoints[noseIndex].position.y;
     //knee to foot
-    let rightAnkleKeypoint = pose.keypoints[rightAnkleIndex];
-    let rightAnkleXPos = rightAnkleKeypoint.position.x;
-    let rightAnkleYPos = rightAnkleKeypoint.position.y;
+    let rightAnkleXPos = pose.keypoints[rightAnkleIndex].position.x;
+    let rightAnkleYPos = pose.keypoints[rightAnkleIndex].position.y;
 
-    let leftAnkleKeypoint = pose.keypoints[leftAnkleIndex];
-    let leftAnkleXPos = leftAnkleKeypoint.position.x;
-    let leftAnkleYPos = leftAnkleKeypoint.position.y;
+    let leftAnkleXPos = pose.keypoints[leftAnkleIndex].position.x;
+    let leftAnkleYPos = pose.keypoints[leftAnkleIndex].position.y;
 
-    let rightKneeKeypoint = pose.keypoints[rightKneeIndex];
-    let rightKneeXPos = rightKneeKeypoint.position.x;
-    let rightKneeYPos = rightKneeKeypoint.position.y;
+    let rightKneeXPos = pose.keypoints[rightKneeIndex].position.x;
+    let rightKneeYPos = pose.keypoints[rightKneeIndex].position.y;
 
-    let leftKneeKeypoint = pose.keypoints[leftKneeIndex];
-    let leftKneeXPos = leftKneeKeypoint.position.x;
-    let leftKneeYPos = leftKneeKeypoint.position.y;
+    let leftKneeXPos = pose.keypoints[leftKneeIndex].position.x;
+    let leftKneeYPos = pose.keypoints[leftKneeIndex].position.y;
 
-    let rightHipKeypoint = pose.keypoints[rightHipIndex];
-    let rightHipXPos = rightHipKeypoint.position.x;
-    let rightHipYPos = rightHipKeypoint.position.y;
+    let rightHipXPos = pose.keypoints[rightHipIndex].position.x;
+    let rightHipYPos = pose.keypoints[rightHipIndex].position.y;
 
-    let leftHipKeypoint = pose.keypoints[leftHipIndex];
-    let leftHipXPos = leftHipKeypoint.position.x;
-    let leftHipYPos = leftHipKeypoint.position.y;
+    let leftHipXPos = pose.keypoints[leftHipIndex].position.x;
+    let leftHipYPos = pose.keypoints[leftHipIndex].position.y;
+
+    let rightShoulderXPos = pose.keypoints[rightShoulderIndex].position.x;
+    let rightShoulderYPos = pose.keypoints[rightShoulderIndex].position.y;
+
+    let leftShoulderXPos = pose.keypoints[leftShoulderIndex].position.x;
+    let leftShoulderYPos = pose.keypoints[leftShoulderIndex].position.y;
+
+    let rightElbowXPos = pose.keypoints[rightElbowIndex].position.x;
+    let rightElbowYPos = pose.keypoints[rightElbowIndex].position.y;
+
+    let leftElbowXPos = pose.keypoints[leftElbowIndex].position.x;
+    let leftElbowYPos = pose.keypoints[leftElbowIndex].position.y;
+
+    let rightWristXPos = pose.keypoints[rightWristIndex].position.x;
+    let rightWristYPos = pose.keypoints[rightWristIndex].position.y;
+
+    let leftWristXPos = pose.keypoints[leftWristIndex].position.x;
+    let leftWristYPos = pose.keypoints[leftWristIndex].position.y;
+
 
     let skeleton = skeletons[i];
     if(typeof(skeleton) === 'undefined') {
       // we haven't seen this skeleton before
       skeleton = {
         skull: {x: skullXPos, y: skullYPos},
+
         rightAnkle: {x: rightAnkleXPos, y: rightAnkleYPos},
-        leftAnkle: {x: leftAnkleXPos, y: leftAnkleYPos}
+        leftAnkle: {x: leftAnkleXPos, y: leftAnkleYPos},
+
+        leftKnee: {x: leftKneeXPos, y: leftKneeYPos},
+        rightKnee: {x: rightKneeXPos, y: rightKneeYPos},
+
+        leftHip: {x: leftHipXPos, y: leftHipYPos},
+        rightHip: {x: rightHipXPos, y: rightHipYPos},
+
+        leftShoulder: {x: leftShoulderXPos, y: leftShoulderYPos},
+        rightShoulder: {x: rightShoulderXPos, y: rightShoulderYPos},
+
+        leftElbow: {x: leftElbowXPos, y: leftElbowYPos},
+        rightElbow: {x: rightElbowXPos, y: rightElbowYPos},
+
+        leftWrist: {x: leftWristXPos, y: leftWristYPos},
+        rightWrist: {x: rightWristXPos, y: rightWristYPos}
+
       }
     } else {
       lerpHelper(skeleton.skull, pose, noseIndex);
       lerpHelper(skeleton.rightAnkle, pose, rightAnkleIndex);
       lerpHelper(skeleton.leftAnkle, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightKnee, pose, leftAnkleIndex);
+      lerpHelper(skeleton.leftKnee, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightHip, pose, leftAnkleIndex);
+      lerpHelper(skeleton.leftHip, pose, leftAnkleIndex);
+      lerpHelper(skeleton.leftShoulder, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightShoulder, pose, leftAnkleIndex);
+      lerpHelper(skeleton.leftElbow, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightElbow, pose, leftAnkleIndex);
+      lerpHelper(skeleton.leftWrist, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightWrist, pose, leftAnkleIndex);
     }
 
     // strokeWeight(1);
@@ -169,54 +196,24 @@ function draw() {
 
     //knee to foot
         // line(rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
-    image(lshinImage, rightKneeXPos, rightKneeYPos, skeleton.rightAnkle.x, skeleton.rightAnkle.y);
-    image(rshinImage, leftKneeXPos, leftKneeYPos, skeleton.leftAnkle.x, skeleton.leftAnkle.y);
-
+    image(lshinImage, skeleton.rightKnee.x, skeleton.rightKnee.y, skeleton.rightAnkle.x, skeleton.rightAnkle.y);
+    image(rshinImage, skeleton.leftKnee.x, skeleton.leftKnee.y, skeleton.leftAnkle.x, skeleton.leftAnkle.y);
     //hip to knee
-    // line(rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
-    image(lthighImage, rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
-    image(rthighImage, leftHipXPos, leftHipYPos, leftKneeXPos, leftKneeYPos);
-
-
-    //torso
-    let rightShoulderKeypoint = pose.keypoints[rightShoulderIndex];
-    let rightShoulderXPos = rightShoulderKeypoint.position.x;
-    let rightShoulderYPos = rightShoulderKeypoint.position.y;
-
-    let leftShoulderKeypoint = pose.keypoints[leftShoulderIndex];
-    let leftShoulderXPos = leftShoulderKeypoint.position.x;
-    let leftShoulderYPos = leftShoulderKeypoint.position.y;
-
-    // line(rightShoulderXPos, rightShoulderYPos, rightHipXPos, rightHipYPos);
-
+    image(lthighImage, skeleton.rightHip.x, skeleton.rightHip.y, skeleton.rightKnee.x, skeleton.rightKnee.y);
+    image(rthighImage, skeleton.leftHip.x, skeleton.leftHip.y, skeleton.leftKnee.x, skeleton.leftKnee.y);
     //bicep
-    let rightElbowKeypoint = pose.keypoints[rightElbowIndex];
-    let rightElbowXPos = rightElbowKeypoint.position.x;
-    let rightElbowYPos = rightElbowKeypoint.position.y;
-
-    let leftElbowKeypoint = pose.keypoints[leftElbowIndex];
-    let leftElbowXPos = leftElbowKeypoint.position.x;
-    let leftElbowYPos = leftElbowKeypoint.position.y;
-    // line(rightShoulderXPos, rightShoulderYPos, rightElbowXPos, rightElbowYPos);
-    image(lbicepImage, rightShoulderXPos, rightShoulderYPos, rightElbowXPos, rightElbowYPos);
-    image(rbicepImage, leftShoulderXPos, leftShoulderYPos, leftElbowXPos, leftElbowYPos);
-
+    image(lbicepImage, skeleton.rightShoulder.x, skeleton.rightShoulder.y, skeleton.rightElbow.x, skeleton.rightElbow.y);
+    image(rbicepImage, skeleton.leftShoulder.x, skeleton.leftShoulder.y, skeleton.leftElbow.x, skeleton.leftElbow.y);
     //hand
-    let rightWristKeypoint = pose.keypoints[rightWristIndex];
-    let rightWristXPos = rightWristKeypoint.position.x;
-    let rightWristYPos = rightWristKeypoint.position.y;
+    image(lhandImage, skeleton.rightElbow.x, skeleton.rightElbow.y, skeleton.rightWrist.x, skeleton.rightWrist.y);
+    image(rhandImage, skeleton.leftElbow.x, skeleton.leftElbow.y, skeleton.leftWrist.x, skeleton.leftWrist.y);
+    //neck
+    // image(neckImage, skeleton.skull.x, skeleton.skull.y + skullSize/3, skeleton.leftShoulder.x - skeleton.rightShoulder.y/2);
 
-    let leftWristKeypoint = pose.keypoints[leftWristIndex];
-    let leftWristXPos = leftWristKeypoint.position.x;
-    let leftWristYPos = rightWristKeypoint.position.y;
-    // line(rightElbowXPos, rightElbowYPos, rightWristXPos, rightWristYPos);
-    image(lhandImage, rightElbowXPos, rightElbowYPos, rightWristXPos, rightWristYPos);
-    image(rhandImage, leftElbowXPos, leftElbowYPos, leftWristXPos, leftWristYPos);
-
-    image(neckImage, skullXPos, skullYPos + skullYPos/3, skullXPos + sclHelper, rightShoulderYPos);
-    image(torsoImage, rightShoulderXPos - sclHelper, rightShoulderYPos - sclHelper, leftHipXPos + sclHelper * 2, leftHipYPos + sclHelper);
+    image(torsoImage, skeleton.rightShoulder.x, skeleton.rightShoulder.y, skeleton.leftHip.x, skeleton.leftHip.y);
 
     pop();
+    //torso
     image(skullImage, skeleton.skull.x - skullSize / 2, skeleton.skull.y - skullSize / 2, skullSize, skullSize);
 
   }
