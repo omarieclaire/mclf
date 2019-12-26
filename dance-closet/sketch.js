@@ -39,6 +39,8 @@ let rightKneeIndex = 14;
 let leftAnkleIndex = 15;
 let rightAnkleIndex = 16;
 
+let skeletons = [];
+
 function preload() {
   skullImage = loadImage("skull.png");
   neckImage = loadImage("neck.png");
@@ -59,8 +61,6 @@ function setup() {
   video = createCapture(VIDEO);
   video.size(width, height);
   noStroke();
-
-
 
   // load posenet model and link to video - with a single detection
   poseNet = ml5.poseNet(video, modelReady, { flipHorizontal: true});
@@ -91,6 +91,15 @@ function setup() {
   }
 }
 
+function lerpHelper (old, pose, poseIndex) {
+  let poseX = pose.keypoints[poseIndex].position.x;
+  let poseY = pose.keypoints[poseIndex].position.y;
+  let calculatedX = lerp(old.x, poseX, 0.2);
+  let calculatedY = lerp(old.y, poseY, 0.2);
+
+  old.x = calculatedX;
+  old.y = calculatedY;
+}
 
 function draw() {
   background(255);
@@ -107,17 +116,9 @@ function draw() {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
 
-    // strokeWeight(1);
-    // stroke(0, 0, 255, 100);
-    tint(255, 200);
-    let skullSize = 200;
-    //skull
+    // skull
     let skullXPos = pose.keypoints[noseIndex].position.x;
     let skullYPos = pose.keypoints[noseIndex].position.y;
-
-    push();
-    imageMode(CORNERS);
-
     //knee to foot
     let rightAnkleKeypoint = pose.keypoints[rightAnkleIndex];
     let rightAnkleXPos = rightAnkleKeypoint.position.x;
@@ -134,11 +135,7 @@ function draw() {
     let leftKneeKeypoint = pose.keypoints[leftKneeIndex];
     let leftKneeXPos = leftKneeKeypoint.position.x;
     let leftKneeYPos = leftKneeKeypoint.position.y;
-    // line(rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
-    image(lshinImage, rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
-    image(rshinImage, leftKneeXPos, leftKneeYPos, leftAnkleXPos, leftAnkleYPos);
 
-    //hip to knee
     let rightHipKeypoint = pose.keypoints[rightHipIndex];
     let rightHipXPos = rightHipKeypoint.position.x;
     let rightHipYPos = rightHipKeypoint.position.y;
@@ -146,6 +143,36 @@ function draw() {
     let leftHipKeypoint = pose.keypoints[leftHipIndex];
     let leftHipXPos = leftHipKeypoint.position.x;
     let leftHipYPos = leftHipKeypoint.position.y;
+
+    let skeleton = skeletons[i];
+    if(typeof(skeleton) === 'undefined') {
+      // we haven't seen this skeleton before
+      skeleton = {
+        skull: {x: skullXPos, y: skullYPos},
+        rightAnkle: {x: rightAnkleXPos, y: rightAnkleYPos},
+        leftAnkle: {x: leftAnkleXPos, y: leftAnkleYPos}
+      }
+    } else {
+      lerpHelper(skeleton.skull, pose, noseIndex);
+      lerpHelper(skeleton.rightAnkle, pose, rightAnkleIndex);
+      lerpHelper(skeleton.leftAnkle, pose, leftAnkleIndex);
+    }
+
+    // strokeWeight(1);
+    // stroke(0, 0, 255, 100);
+    tint(255, 200);
+    let skullSize = 200;
+    //skull
+
+    push();
+    imageMode(CORNERS);
+
+    //knee to foot
+        // line(rightKneeXPos, rightKneeYPos, rightAnkleXPos, rightAnkleYPos);
+    image(lshinImage, rightKneeXPos, rightKneeYPos, skeleton.rightAnkle.x, skeleton.rightAnkle.y);
+    image(rshinImage, leftKneeXPos, leftKneeYPos, skeleton.leftAnkle.x, skeleton.leftAnkle.y);
+
+    //hip to knee
     // line(rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
     image(lthighImage, rightHipXPos, rightHipYPos, rightKneeXPos, rightKneeYPos);
     image(rthighImage, leftHipXPos, leftHipYPos, leftKneeXPos, leftKneeYPos);
@@ -190,7 +217,7 @@ function draw() {
     image(torsoImage, rightShoulderXPos - sclHelper, rightShoulderYPos - sclHelper, leftHipXPos + sclHelper * 2, leftHipYPos + sclHelper);
 
     pop();
-    image(skullImage, skullXPos - skullSize / 2, skullYPos - skullSize / 2, skullSize, skullSize);
+    image(skullImage, skeleton.skull.x - skullSize / 2, skeleton.skull.y - skullSize / 2, skullSize, skullSize);
 
   }
 
@@ -252,6 +279,8 @@ Particle.prototype.draw = function() {
     this.diameter, this.diameter
   );
 }
+
+
 
 // ================
 // Helper Functions
