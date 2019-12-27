@@ -41,8 +41,6 @@ function preload() {
   rEyeImage = loadImage("eye.png");
   lEarImage = loadImage("skull.png");
   rEarImage = loadImage("skull.png");
-
-
   neckImage = loadImage("neck.png");
   torsoImage = loadImage("torso.png");
   lShinImage = loadImage("lshin.png");
@@ -67,7 +65,27 @@ function setup() {
   let poseCallback = function(results) {
     poses = results;
   };
-  poseNet.on('pose', poseCallback);
+  poseNet.on('pose', poseCallback, {
+  architecture: 'MobileNetV1',
+  imageScaleFactor: 0.3,
+  // Can be one of 8, 16, 32 (Stride 16, 32 are supported for the ResNet architecture and
+  // stride 8, 16, 32 are supported for the MobileNetV1 architecture). It specifies the
+  // output stride of the PoseNet model. The smaller the value, the larger the output
+  // resolution, and more accurate the model at the cost of speed. Set this to a larger
+  // value to increase speed at the cost of accuracy.
+  outputStride: 32,
+  flipHorizontal: true,
+  minConfidence: 0.5,
+  maxPoseDetections: 5,
+  scoreThreshold: 0.5,
+  nmsRadius: 20,
+  detectionType: 'multiple',
+  // Can be one of 161, 193, 257, 289, 321, 353, 385, 417, 449, 481, 513, and 801.
+  // Set this to a smaller value to increase speed at the cost of accuracy.
+  inputResolution: 161,
+  multiplier: 0.75,
+  quantBytes: 2,
+});
   // Hide the video - just show the canvas
   video.hide();
 
@@ -90,11 +108,15 @@ function setup() {
 function lerpHelper (old, pose, poseIndex) {
   let poseX = pose.keypoints[poseIndex].position.x;
   let poseY = pose.keypoints[poseIndex].position.y;
-  let calculatedX = lerp(old.x, poseX, 0.2);
-  let calculatedY = lerp(old.y, poseY, 0.2);
+  let calculatedX = lerp(old.x, poseX, 0.7);
+  let calculatedY = lerp(old.y, poseY, 0.7);
 
   old.x = calculatedX;
   old.y = calculatedY;
+}
+
+function scaleHelper(skeleton) {
+  return dist(skeleton.nose.x, skeleton.nose.y, skeleton.leftEye.x, skeleton.leftEye.y);
 }
 
 
@@ -104,7 +126,7 @@ function draw() {
   translate(video.width, 0);
   scale(-1,1);
   //draw video
-  image(video, 0, 0, width, height);
+  // image(video, 0, 0, width, height);
   //set threshhold filter
   // filter(THRESHOLD);
   // Loop through all the poses detected
@@ -205,36 +227,29 @@ function draw() {
         rightWrist: {x: rightWristXPos, y: rightWristYPos}
 
       }
+      skeletons[i] = skeleton;
     } else {
       lerpHelper(skeleton.skull, pose, noseIndex);
       lerpHelper(skeleton.nose, pose, noseIndex);
-
       lerpHelper(skeleton.rightEye, pose, rightEyeIndex);
       lerpHelper(skeleton.leftEye, pose, leftEyeIndex);
       lerpHelper(skeleton.rightEar, pose, rightEarIndex);
       lerpHelper(skeleton.leftEar, pose, leftEarIndex);
-
       lerpHelper(skeleton.rightAnkle, pose, rightAnkleIndex);
       lerpHelper(skeleton.leftAnkle, pose, leftAnkleIndex);
-      lerpHelper(skeleton.rightKnee, pose, leftAnkleIndex);
-      lerpHelper(skeleton.leftKnee, pose, leftAnkleIndex);
-      lerpHelper(skeleton.rightHip, pose, leftAnkleIndex);
-      lerpHelper(skeleton.leftHip, pose, leftAnkleIndex);
-      lerpHelper(skeleton.leftShoulder, pose, leftAnkleIndex);
-      lerpHelper(skeleton.rightShoulder, pose, leftAnkleIndex);
-      lerpHelper(skeleton.leftElbow, pose, leftAnkleIndex);
-      lerpHelper(skeleton.rightElbow, pose, leftAnkleIndex);
-      lerpHelper(skeleton.leftWrist, pose, leftAnkleIndex);
-      lerpHelper(skeleton.rightWrist, pose, leftAnkleIndex);
+      lerpHelper(skeleton.rightKnee, pose, rightKneeIndex);
+      lerpHelper(skeleton.leftKnee, pose, leftKneeIndex);
+      lerpHelper(skeleton.rightHip, pose, rightHipIndex);
+      lerpHelper(skeleton.leftHip, pose, leftHipIndex);
+      lerpHelper(skeleton.leftShoulder, pose, leftShoulderIndex);
+      lerpHelper(skeleton.rightShoulder, pose, rightShoulderIndex);
+      lerpHelper(skeleton.leftElbow, pose, leftElbowIndex);
+      lerpHelper(skeleton.rightElbow, pose, rightElbowIndex);
+      lerpHelper(skeleton.leftWrist, pose, leftWristIndex);
+      lerpHelper(skeleton.rightWrist, pose, rightWristIndex);
     }
 
-
-    function scaleHelper () {
-      sclHelper = dist(skeleton.nose.x, skeleton.nose.y, skeleton.leftEye.x, skeleton.leftEye.y);
-    }
-
-    scaleHelper();
-
+    sclHelper = scaleHelper(skeleton);
 
     // strokeWeight(1);
     // stroke(0, 0, 255, 100);
@@ -277,7 +292,7 @@ function draw() {
     //translate is the point of origin for all drawing and all rotation
     translate(skeleton.nose.x, skeleton.nose.y);
     var skullAngle = skeleton.leftEye.y - skeleton.rightEye.y;
-    rotate(skullAngle, skeleton.nose.x);
+    rotate(skullAngle, [skeleton.nose.x, skeleton.nose.y]);
     image(skullImage, 0, 0, sclHelper*5, sclHelper*5);
     pop();
 
