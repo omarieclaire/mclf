@@ -1,6 +1,7 @@
 // Visuals: Analyze the frequency spectrum with FFT (Fast Fourier Transform) Draw a 1024 particles system that represents bins of the FFT frequency spectrum.  Example by Jason Sigal
 // Body rec: Copyright (c) 2018 ml5 This software is released under the MIT License. https://opensource.org/licenses/MIT ml5 Example PoseNet example using p5.js Modified based on Kyle McDonald's ml5 poseNet sketch: https://editor.p5js.org/kylemcdonald/sketches/H1OoUd9h7
 // https://github.com/tensorflow/tfjs-models/tree/master/posenet#keypoints
+// https://learn.ml5js.org/docs/#/reference/posenet
 
 var mic, soundFile; // input sources, press T to toggleInput()
 var fft;
