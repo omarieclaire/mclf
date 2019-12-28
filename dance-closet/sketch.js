@@ -13,7 +13,6 @@ let video;
 let poseNet;
 let poses = [];
 let skullImage;
-let sclHelper;
 
 let noseIndex = 0;
 let leftEyeIndex = 1;
@@ -116,10 +115,15 @@ function lerpHelper (old, pose, poseIndex) {
   old.y = calculatedY;
 }
 
-function scaleHelper(skeleton) {
+function noseEyeDistance(skeleton) {
   return dist(skeleton.nose.x, skeleton.nose.y, skeleton.leftEye.x, skeleton.leftEye.y);
 }
 
+function lerpedDistance(oldDistance, newDistance) {
+  let calculatedScale = lerp(oldDistance, newDistance, 0.5);
+
+  return calculatedScale;
+}
 
 function draw() {
   background(255);
@@ -225,9 +229,9 @@ function draw() {
         rightElbow: {x: rightElbowXPos, y: rightElbowYPos},
 
         leftWrist: {x: leftWristXPos, y: leftWristYPos},
-        rightWrist: {x: rightWristXPos, y: rightWristYPos}
-
+        rightWrist: {x: rightWristXPos, y: rightWristYPos},
       }
+      skeleton['noseEyeDistance'] = noseEyeDistance(skeleton);
       skeletons[i] = skeleton;
     } else {
       lerpHelper(skeleton.skull, pose, noseIndex);
@@ -248,9 +252,9 @@ function draw() {
       lerpHelper(skeleton.rightElbow, pose, rightElbowIndex);
       lerpHelper(skeleton.leftWrist, pose, leftWristIndex);
       lerpHelper(skeleton.rightWrist, pose, rightWristIndex);
+      skeleton.noseEyeDistance = lerpedDistance(skeleton.noseEyeDistance, noseEyeDistance(skeleton))
     }
 
-    sclHelper = scaleHelper(skeleton);
 
     // strokeWeight(1);
     // stroke(0, 0, 255, 100);
@@ -294,7 +298,7 @@ function draw() {
     translate(skeleton.nose.x, skeleton.nose.y);
     var skullAngle = skeleton.leftEye.y - skeleton.rightEye.y;
     rotate(skullAngle, [skeleton.nose.x, skeleton.nose.y]);
-    image(skullImage, 0, 0, sclHelper*5, sclHelper*5);
+    image(skullImage, 0, 0, skeleton.noseEyeDistance*5, skeleton.noseEyeDistance*5);
     pop();
 
     //eye
