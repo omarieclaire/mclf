@@ -121,7 +121,6 @@ function noseEyeDistance(skeleton) {
 
 function lerpedDistance(oldDistance, newDistance) {
   let calculatedScale = lerp(oldDistance, newDistance, 0.5);
-
   return calculatedScale;
 }
 
@@ -212,7 +211,6 @@ function draw() {
         rightEar: {x: rightEarXPos, y: rightEarYPos},
         leftEar: {x: leftEarXPos, y: leftEarYPos},
 
-
         rightAnkle: {x: rightAnkleXPos, y: rightAnkleYPos},
         leftAnkle: {x: leftAnkleXPos, y: leftAnkleYPos},
 
@@ -254,7 +252,6 @@ function draw() {
       lerpHelper(skeleton.rightWrist, pose, rightWristIndex);
       skeleton.noseEyeDistance = lerpedDistance(skeleton.noseEyeDistance, noseEyeDistance(skeleton))
     }
-
 
     // strokeWeight(1);
     // stroke(0, 0, 255, 100);
@@ -345,11 +342,11 @@ function modelReady() {
 var Particle = function(position) {
   this.position = position;
   this.scale = random(0, 1);
-  this.speed = createVector(0, random(0, 10));
-  this.color = [random(0, 255), random(0, 255), random(0, 255)];
+  this.speed = createVector(0, random(0, 20));
+  this.color = [random(0, 255), random(0, 0), random(0, 255), random(50, 200)];
 }
 
-var theyExpand = 1;
+var theyExpand = 2;
 
 // use FFT bin level to change speed and diameter
 Particle.prototype.update = function(someLevel) {

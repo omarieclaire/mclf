@@ -34,8 +34,8 @@ body {
 
 img {
   max-width: 100%;
-  /* height: auto; */
-}
+  /* display: block; */
+  height: auto;}
 
 .image {
   display: block;
@@ -432,7 +432,7 @@ strong {
 }
 
 .slightBold {
-  font-weight: 525;
+  font-weight: 500;
 }
 
 /* header
@@ -960,7 +960,7 @@ footer {
 
 #timer {
   color: #000;
-  font-family: Arial;
+  font-family: arial;
   font-size: 30px;
 }
 
