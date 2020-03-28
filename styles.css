@@ -78,16 +78,27 @@ footer::after {
 
 /* table  */
 th, td {
-  padding: 15px;
+  padding: 2px;
+  border-bottom: .5px solid #fa8071;
+  /* border: .5px solid #fa8071; */
 }
 
 th {
   text-align: left;
+  background: #ffe2e2;
+  color: rgba(100, 0, 130, 0.81);
+  font-weight: bold;
+  /* border: 1px solid salmon; */
 }
 
 table {
-  border-spacing: 5px;
+  border-spacing: 0px;
+  font-size: .75em;
+  /* border: 1px solid #fa8071;} */
 }
+
+
+
 
 /* Column system
 =================== */
@@ -397,6 +408,7 @@ hr.blog-preview-divider {
 }
 
 @media (min-width: 60rem) {
+
   .button {}
 
   .button-port {
@@ -417,6 +429,26 @@ hr.blog-preview-divider {
     /* width: 100%; */
     /* height: 100%; */
   }
+
+  /* table  */
+  th, td {
+    padding: 15px;
+    /* border: 1px solid #fa8071; */
+  }
+
+  th {
+    text-align: left;
+
+
+  }
+
+  table {
+    width: 100%;
+   border-collapse: collapse;
+    border-spacing: 1px;
+    border: 1px solid #fa8071;}
+  }
+
 }
 
 .date {
@@ -697,6 +729,7 @@ nav a:hover {
   top: 1.8rem;
   padding: 0 .425em;
 }
+
 
 /* general text padding */
 @media (min-width: 37rem) {
