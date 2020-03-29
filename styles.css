@@ -438,15 +438,13 @@ hr.blog-preview-divider {
 
   th {
     text-align: left;
-
-
   }
 
   table {
     width: 100%;
    border-collapse: collapse;
     border-spacing: 1px;
-    border: 1px solid #fa8071;}
+    border: 1px solid #fa8071;
   }
 
 }
@@ -479,10 +477,10 @@ strong {
 =================== */
 header {
   margin: 0em;
-  /* background-color: rgba(245, 243, 251, .98); */
+  background-color: rgba(245, 243, 251, .98);
   color: inherit;
   text-align: center;
-  /* position: fixed; */
+  position: fixed;
   z-index: 999;
   width: 100%;
 }
@@ -504,7 +502,7 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  margin-left: 1em;
+  margin-left: .45em;
   height: 100%;
   display: flex;
   align-items: center;
@@ -697,10 +695,16 @@ nav a:hover {
     padding-bottom: 9vh;
   }
 }
+@media (min-width: 60rem) {
+  .home-about-textbox-outline {
+    outline: 1px solid salmon;
+    outline-offset: -2.5em;
+  }
+}
 
 .home-about-textbox-outline {
   outline: 1px solid salmon;
-  outline-offset: -2.5em;
+  /* outline-offset: -.4em; */
 }
 
 .home-about-textbox {
