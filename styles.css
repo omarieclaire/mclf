@@ -23,13 +23,22 @@ img {
   width: 20rem;
 }
 
+.shrink-image {
+  display: block;
+  margin-top: 3rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+  width: 15rem;
+}
+
 .wide-image {
   display: block;
   margin-top: 3rem;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 3rem;
-  width: 35rem;
+  width: 30rem;
 }
 
 .image-blog-teaser {
