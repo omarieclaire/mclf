@@ -211,6 +211,12 @@ body {
   font-style: italic;
 }
 
+.img-caption {
+  text-align: center;
+  font-style: italic;
+  margin-top: -2.5rem;
+}
+
 h1 {
   text-align: center;
   /* text-transform: uppercase; */
