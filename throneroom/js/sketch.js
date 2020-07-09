@@ -1,6 +1,6 @@
 let database;
 let writing;
-let input, writeButton, wordBox;
+let input, wordBox;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -14,7 +14,7 @@ let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
 let tiles = {
   1: {
-    'writing': 'writing',
+    'writing': '',
     'drawing': [],
     'tile': 1,
     'firebaseKey': null,
@@ -26,7 +26,7 @@ let tiles = {
     }
   },
   2: {
-    'writing': 'writing',
+    'writing': '',
     'drawing': [],
     'tile': 2,
     'firebaseKey': null,
@@ -55,11 +55,10 @@ function setup() {
   canvas = createCanvas(900, 617);
 
   input = createInput(); // make input for text
-  writeButton = createButton('toilet thoughts'); // make button for submitting text
+  input.elt.addEventListener('keyup', updateWriting);
 // toilet thoughts - give the next person something to consider
 // what do you wish you could tell your younger self?
 // what do you want to tell the next person in this bathroom
-  writeButton.mousePressed(printText);
   wordBox = createElement('h2', '');
 
   textAlign(CENTER);
@@ -132,11 +131,17 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
       vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
     }
     endShape();
+    // printText();
   }
   pop();
 }
 
+function drawTileWriting(tile) {
+  wordBox.html(tile.writing);
+}
+
 function displayDrawing() {
+  // let text = printText();
   for (const tileId in tiles) {
     let tile = tiles[tileId];
     // why does this work??
@@ -145,12 +150,15 @@ function displayDrawing() {
     drawTile(tile);
     if (!drawCanvasToggle) { // if the canvas is closed
       drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
+      // wordBox.html(text);
     } else {
       if (currentTile.tile == tileId) { // if the current tile is open
         drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
         drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
+        drawTileWriting(tile);
       } else {
         drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
+        // wordBox.html(text);
       }
     }
   }
@@ -159,11 +167,9 @@ function displayDrawing() {
 function toggleCanvasToolsVisibility() {
   if (canvasToolsVisible) {
     input.hide();
-    writeButton.hide();
     wordBox.hide();
   } else {
     input.show();
-    writeButton.show();
     wordBox.show();
   }
   canvasToolsVisible = !canvasToolsVisible
@@ -212,7 +218,6 @@ function displayDrawCanvas() {
   pop();
 
   input.position(drawCanvasX + 10, drawCanvasY + 10);
-  writeButton.position(input.x + input.width, drawCanvasY + 10);
   wordBox.position(drawCanvasX + drawCanvasW / 2, drawCanvasY + drawCanvasY / 2);
 
 }
@@ -229,11 +234,16 @@ function highlightActiveTile() {
   pop();
 }
 
+function updateWriting(event) {
+  currentTile.writing = input.value()
+}
+
 function printText() {
   const words = input.value();
   wordBox.html(words);
-  currentTile.writing = words;
+  currentTile.writing = words; // add the words to the currtile object
   input.value('');
+  // return words;
 }
 
 function draw() {
@@ -258,7 +268,7 @@ function draw() {
 
 function saveDrawing(tile) {
   let id = tile['tile']; // grab the tile id
-  if (tiles[id]['drawing'].length > 0) { // if the drawing is not nothing
+  if (tiles[id]['drawing'].length > 0 || tiles[id]['writing'] != "") { // if the drawing is not nothing
     let ref = database.ref('graffitiWall'); // make a new reference to the graffitiWall database
     function dataSent(err, status) {}
     if (tiles[id]['firebaseKey'] == null) {
@@ -276,8 +286,9 @@ function buildMap(data) {
     let key = keys[i]; // grab the key
     let tileId = graffitiWall[key]['tile']; // grab the tileID
     tiles[tileId]['firebaseKey'] = key;
-    tiles[tileId]['drawing'] = graffitiWall[key]['drawing'];
-    tiles[tileId]['writing'] = graffitiWall[key]['writing'];
+    tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
+    tiles[tileId]['writing'] = graffitiWall[key]['writing'] || "";
+    // console.log(tiles[tileId]['writing']);
 
   }
 }
