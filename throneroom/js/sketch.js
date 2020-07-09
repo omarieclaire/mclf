@@ -1,5 +1,6 @@
 let database;
 let writing;
+let input, writeButton, wordBox;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -9,16 +10,18 @@ let drawCanvasW = 500;
 let drawCanvasH = 300;
 let drawCanvasX = 150;
 let drawCanvasY = 50;
+let canvasToolsVisible = false;
+const SCALEFACTOR = 0.145;
 let tiles = {
   1: {
     'writing': 'writing',
     'drawing': [],
     'tile': 1,
-    'firebaseKey' : null,
+    'firebaseKey': null,
     'width': 70,
     'height': 40,
     'position': {
-      'x': 10,
+      'x': 55,
       'y': 50
     }
   },
@@ -26,11 +29,11 @@ let tiles = {
     'writing': 'writing',
     'drawing': [],
     'tile': 2,
-    'firebaseKey' : null,
+    'firebaseKey': null,
     'width': 70,
     'height': 40,
     'position': {
-      'x': 10,
+      'x': 55,
       'y': 100
     }
   }
@@ -39,18 +42,34 @@ let currentTile = tiles[1];
 
 let bg;
 
+
+// audio setup
 var myAudio = document.createElement('audio');
 if (myAudio.canPlayType('audio/mpeg')) {
-  myAudio.setAttribute('src','audio/song.mp3');
+  myAudio.setAttribute('src', 'audio/song.mp3');
 }
+
 
 function setup() {
   bg = loadImage('img/toilet2.png');
-  canvas = createCanvas(990, 617);
+  canvas = createCanvas(900, 617);
+
+  input = createInput(); // make input for text
+  writeButton = createButton('toilet thoughts'); // make button for submitting text
+// toilet thoughts - give the next person something to consider
+// what do you wish you could tell your younger self?
+// what do you want to tell the next person in this bathroom
+  writeButton.mousePressed(printText);
+  wordBox = createElement('h2', '');
+
+  textAlign(CENTER);
+  textSize(50);
+
   function toggleDrawCanvasAndStartPath() {
     toggleDrawCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
   }
+
   canvas.mousePressed(toggleDrawCanvasAndStartPath);
   // canvas = createCanvas(windowWidth, windowHeight);
   //canvas.mousePressed(startPath);
@@ -67,14 +86,14 @@ function setup() {
   };
   firebase.initializeApp(config);
   database = firebase.database();
-  var params = getURLParams();  // get URL params for permalink
+  var params = getURLParams(); // get URL params for permalink
   if (params.id) {
     showDrawing(params.id);
   }
 
-  var ref = database.ref('drawings'); // get the drawings
+  var ref = database.ref('graffitiWall'); // get the graffitiWall
   ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
-  ref.once('value', buildMap, errData);  // buildMap at the start
+  ref.once('value', buildMap, errData); // buildMap at the start
 }
 
 
@@ -90,9 +109,11 @@ function endPath() {
   isDrawing = false; // set isdrawing to false
 }
 
-function drawTile(tile){
+function drawTile(tile) {
   push();
-  stroke('gray');
+  // fill();
+  strokeWeight(.25);
+  stroke('white');
   fill('none');
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
@@ -100,8 +121,9 @@ function drawTile(tile){
 
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
-  translate(translateX, translateY);
   scale(scaleFactor, scaleFactor);
+  translate(translateX, translateY);
+
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
@@ -115,19 +137,36 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 }
 
 function displayDrawing() {
-  for(const tileId in tiles) {
+  for (const tileId in tiles) {
     let tile = tiles[tileId];
+    // why does this work??
+    let translateX = tile.position.x / SCALEFACTOR - drawCanvasX;
+    let translateY = tile.position.y / SCALEFACTOR - drawCanvasY;
     drawTile(tile);
-    if(!drawCanvasToggle) { // if the canvas is closed
-      drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y);
+    if (!drawCanvasToggle) { // if the canvas is closed
+      drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
     } else {
-      if(currentTile.tile == tileId) { // if the current tile is open
-        drawTileDrawing(tile, 1.0, 0, 0);  // draw it BIG
+      if (currentTile.tile == tileId) { // if the current tile is open
+        drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+        drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
       } else {
-        drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y); // draw each other tile drawing scaled down
+        drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
       }
     }
   }
+}
+
+function toggleCanvasToolsVisibility() {
+  if (canvasToolsVisible) {
+    input.hide();
+    writeButton.hide();
+    wordBox.hide();
+  } else {
+    input.show();
+    writeButton.show();
+    wordBox.show();
+  }
+  canvasToolsVisible = !canvasToolsVisible
 }
 
 function detectMouseLocation() {
@@ -145,6 +184,7 @@ function detectMouseLocation() {
 function toggleDrawCanvas() {
   let tile = detectMouseLocation(); // grab mouse location (over which tile?)
   if (clickOnButton) {
+    toggleCanvasToolsVisibility();
     if (drawCanvasToggle) { // if drawcanvas is open
       saveDrawing(tile); // save to specific tile
     } else { // if drawcanvas is closed
@@ -163,41 +203,45 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
-function drawCanvas(){
+function displayDrawCanvas() {
   push();
   fill('white');
   stroke('black');
   strokeWeight(3);
   rect(drawCanvasX, drawCanvasY, drawCanvasW, drawCanvasH);
   pop();
+
+  input.position(drawCanvasX + 10, drawCanvasY + 10);
+  writeButton.position(input.x + input.width, drawCanvasY + 10);
+  wordBox.position(drawCanvasX + drawCanvasW / 2, drawCanvasY + drawCanvasY / 2);
+
 }
 
 // ahref.addEventListener('click', showDrawing);
 // tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
 
 
-function highlightActiveTile(){
-  // push();
-  // stroke(40);
-  // stroke('red');
-  // fill('yellow');
-  // rect(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
-  // pop();
+function highlightActiveTile() {
+  push();
+  stroke(40);
+  stroke('blue');
+  rect(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+  pop();
+}
+
+function printText() {
+  const words = input.value();
+  wordBox.html(words);
+  currentTile.writing = words;
+  input.value('');
 }
 
 function draw() {
   background(bg);
-
-  // need to know when a click happens
-
-// clickhandler on the canvas
-
-  // if they are, toggleDrawCanvas
-
   if (drawCanvasToggle) { // if canvas is open
     highlightActiveTile();
-    drawCanvas();
-    if (isDrawing) {  // if person isdrawing
+    displayDrawCanvas();
+    if (isDrawing) { // if person isdrawing
       if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
         let point = { // grab the x and y of each point
           x: mouseX,
@@ -208,13 +252,14 @@ function draw() {
     }
     noFill(); // don't fill the draw stroke
   }
+
   displayDrawing(); // show the drawing
 }
 
 function saveDrawing(tile) {
   let id = tile['tile']; // grab the tile id
   if (tiles[id]['drawing'].length > 0) { // if the drawing is not nothing
-    let ref = database.ref('drawings'); // make a new reference to the drawings database
+    let ref = database.ref('graffitiWall'); // make a new reference to the graffitiWall database
     function dataSent(err, status) {}
     if (tiles[id]['firebaseKey'] == null) {
       let result = ref.push(tile, dataSent); // push the data to the ref we created above
@@ -225,13 +270,15 @@ function saveDrawing(tile) {
 
 // integrate buildmap into tilemap
 function buildMap(data) {
-  let drawings = data.val(); // grab all database entries
-  let keys = drawings ? Object.keys(drawings) : []; // grab keys - if keys isn't empty
-  for (let i = 0; i < keys.length; i++) {  // for each key
+  let graffitiWall = data.val(); // grab all database entries
+  let keys = graffitiWall ? Object.keys(graffitiWall) : []; // grab keys - if keys isn't empty
+  for (let i = 0; i < keys.length; i++) { // for each key
     let key = keys[i]; // grab the key
-    let tileId = drawings[key]['tile']; // grab the tileID
+    let tileId = graffitiWall[key]['tile']; // grab the tileID
     tiles[tileId]['firebaseKey'] = key;
-    tiles[tileId]['drawing'] = drawings[key]['drawing'];
+    tiles[tileId]['drawing'] = graffitiWall[key]['drawing'];
+    tiles[tileId]['writing'] = graffitiWall[key]['writing'];
+
   }
 }
 
@@ -243,24 +290,24 @@ function gotData(data) {
     elts[i].remove(); // remove dom elements
   }
 
-  // let drawings = data.val(); // grab all drawings from firebase
-  // let keys = drawings ? Object.keys(drawings) : []; // if there are keys, grab them all
+  // let graffitiWall = data.val(); // grab all graffitiWall from firebase
+  // let keys = graffitiWall ? Object.keys(graffitiWall) : []; // if there are keys, grab them all
   // for (let i = 0; i < keys.length; i++) { // foreach
-    // let key = keys[i]; // grab the key
-    // let li = createElement('li', ''); // create li element
-    // li.class('listing'); // give each the 'listing' class
-    // let ahref = createA('#', key); // make a link element with the key in it
-    // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
-    // var ahref = document.createElement('a');
-    // ahref.setAttribute('href', '#');
-    // ahref.addEventListener('click', showDrawing);
-    // ahref.innerHTML = key;
-    // ahref = new p5.Element(ahref);
-    // ahref.parent(li);
-    // let perma = createA('?id=' + key, 'permalink'); // set up permalink
-    // perma.parent(li); // parent it to the list
-    // perma.style('padding', '4px'); // style it
-    // li.parent('drawinglist'); // parent it to the drawing list
+  // let key = keys[i]; // grab the key
+  // let li = createElement('li', ''); // create li element
+  // li.class('listing'); // give each the 'listing' class
+  // let ahref = createA('#', key); // make a link element with the key in it
+  // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
+  // var ahref = document.createElement('a');
+  // ahref.setAttribute('href', '#');
+  // ahref.addEventListener('click', showDrawing);
+  // ahref.innerHTML = key;
+  // ahref = new p5.Element(ahref);
+  // ahref.parent(li);
+  // let perma = createA('?id=' + key, 'permalink'); // set up permalink
+  // perma.parent(li); // parent it to the list
+  // perma.style('padding', '4px'); // style it
+  // li.parent('drawinglist'); // parent it to the drawing list
   // }
 }
 
@@ -285,5 +332,5 @@ function showDrawing(key) { //show drawing
 
 
 function clearDrawing() {
-  tiles['1']['drawing'] = [];
+  tiles[currentTile]['drawing'] = [];
 }
