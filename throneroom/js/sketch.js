@@ -39,9 +39,14 @@ let currentTile = tiles[1];
 
 let bg;
 
+var myAudio = document.createElement('audio');
+if (myAudio.canPlayType('audio/mpeg')) {
+  myAudio.setAttribute('src','audio/song.mp3');
+}
+
 function setup() {
   bg = loadImage('img/toilet2.png');
-  canvas = createCanvas(800, 517);
+  canvas = createCanvas(990, 617);
   function toggleDrawCanvasAndStartPath() {
     toggleDrawCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
@@ -71,6 +76,7 @@ function setup() {
   ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
   ref.once('value', buildMap, errData);  // buildMap at the start
 }
+
 
 function startPath() {
   if (drawCanvasToggle && inDrawCanvasCheck()) {
@@ -113,7 +119,7 @@ function displayDrawing() {
     let tile = tiles[tileId];
     drawTile(tile);
     if(!drawCanvasToggle) { // if the canvas is closed
-      drawTileDrawing(tile, 0.2, -tile.position.x, -tile.position.y);
+      drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y);
     } else {
       if(currentTile.tile == tileId) { // if the current tile is open
         drawTileDrawing(tile, 1.0, 0, 0);  // draw it BIG
@@ -128,6 +134,7 @@ function detectMouseLocation() {
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
+      myAudio.play();
       clickOnButton = true;
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
@@ -236,25 +243,25 @@ function gotData(data) {
     elts[i].remove(); // remove dom elements
   }
 
-  let drawings = data.val(); // grab all drawings from firebase
-  let keys = drawings ? Object.keys(drawings) : []; // if there are keys, grab them all
-  for (let i = 0; i < keys.length; i++) { // foreach
-    let key = keys[i]; // grab the key
-    let li = createElement('li', ''); // create li element
-    li.class('listing'); // give each the 'listing' class
+  // let drawings = data.val(); // grab all drawings from firebase
+  // let keys = drawings ? Object.keys(drawings) : []; // if there are keys, grab them all
+  // for (let i = 0; i < keys.length; i++) { // foreach
+    // let key = keys[i]; // grab the key
+    // let li = createElement('li', ''); // create li element
+    // li.class('listing'); // give each the 'listing' class
     // let ahref = createA('#', key); // make a link element with the key in it
     // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
-    var ahref = document.createElement('a');
-    ahref.setAttribute('href', '#');
-    ahref.addEventListener('click', showDrawing);
-    ahref.innerHTML = key;
-    ahref = new p5.Element(ahref);
-    ahref.parent(li);
-    let perma = createA('?id=' + key, 'permalink'); // set up permalink
-    perma.parent(li); // parent it to the list
-    perma.style('padding', '4px'); // style it
-    li.parent('drawinglist'); // parent it to the drawing list
-  }
+    // var ahref = document.createElement('a');
+    // ahref.setAttribute('href', '#');
+    // ahref.addEventListener('click', showDrawing);
+    // ahref.innerHTML = key;
+    // ahref = new p5.Element(ahref);
+    // ahref.parent(li);
+    // let perma = createA('?id=' + key, 'permalink'); // set up permalink
+    // perma.parent(li); // parent it to the list
+    // perma.style('padding', '4px'); // style it
+    // li.parent('drawinglist'); // parent it to the drawing list
+  // }
 }
 
 function errData(err) { // show me the errors
