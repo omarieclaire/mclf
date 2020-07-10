@@ -1,6 +1,6 @@
 let database;
 let writing;
-let input, wordBox;
+let inputBox, wordBox;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -15,6 +15,11 @@ const SCALEFACTOR = 0.145;
 let tiles = {
   1: {
     'writing': '',
+    // 'writing2': {
+    //   'x': 10,
+    //   'y': 10,
+    //   'content': 'blah blah'
+    // },
     'drawing': [],
     'tile': 1,
     'firebaseKey': null,
@@ -54,12 +59,14 @@ function setup() {
   bg = loadImage('img/toilet2.png');
   canvas = createCanvas(900, 617);
 
-  input = createInput(); // make input for text
-  input.elt.addEventListener('keyup', updateWriting);
-// toilet thoughts - give the next person something to consider
-// what do you wish you could tell your younger self?
-// what do you want to tell the next person in this bathroom
-  wordBox = createElement('h2', '');
+  inputBox = createInput(""); // make input for text
+  inputBox.addClass('input');
+  inputBox.style('font-size', '2rem', 'width', '400px', 'color', '#ff0000');
+  inputBox.input(updateWriting);
+  // inputBox.elt.addEventListener('keyup', updateWriting);
+
+// toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
+  // wordBox = createElement('h2', '');
 
   textAlign(CENTER);
   textSize(50);
@@ -74,6 +81,7 @@ function setup() {
   //canvas.mousePressed(startPath);
   canvas.parent('canvascontainer'); //SET THE PARENT OF THE CANVAS TO THE CANVAS CONTAINER?
   canvas.mouseReleased(endPath); // WHEN THE MOUSE IS RELEASED, stop COLLECTING X AND Y POINTS
+
 
   // FIREBASE AUTH STUFF
   var config = {
@@ -131,17 +139,15 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
       vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
     }
     endShape();
-    // printText();
   }
   pop();
 }
 
 function drawTileWriting(tile) {
-  wordBox.html(tile.writing);
+  // wordBox.html(tile.writing);
 }
 
 function displayDrawing() {
-  // let text = printText();
   for (const tileId in tiles) {
     let tile = tiles[tileId];
     // why does this work??
@@ -150,7 +156,6 @@ function displayDrawing() {
     drawTile(tile);
     if (!drawCanvasToggle) { // if the canvas is closed
       drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
-      // wordBox.html(text);
     } else {
       if (currentTile.tile == tileId) { // if the current tile is open
         drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
@@ -158,7 +163,6 @@ function displayDrawing() {
         drawTileWriting(tile);
       } else {
         drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
-        // wordBox.html(text);
       }
     }
   }
@@ -166,11 +170,11 @@ function displayDrawing() {
 
 function toggleCanvasToolsVisibility() {
   if (canvasToolsVisible) {
-    input.hide();
-    wordBox.hide();
+    inputBox.hide();
+    // wordBox.hide();
   } else {
-    input.show();
-    wordBox.show();
+    inputBox.show();
+    // wordBox.show();
   }
   canvasToolsVisible = !canvasToolsVisible
 }
@@ -181,6 +185,7 @@ function detectMouseLocation() {
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
       myAudio.play();
       clickOnButton = true;
+
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
@@ -217,8 +222,8 @@ function displayDrawCanvas() {
   rect(drawCanvasX, drawCanvasY, drawCanvasW, drawCanvasH);
   pop();
 
-  input.position(drawCanvasX + 10, drawCanvasY + 10);
-  wordBox.position(drawCanvasX + drawCanvasW / 2, drawCanvasY + drawCanvasY / 2);
+  inputBox.position(drawCanvasX + 50, drawCanvasY + 50);
+  // wordBox.position(drawCanvasX + drawCanvasW / 2, drawCanvasY + drawCanvasY / 2);
 
 }
 
@@ -226,7 +231,7 @@ function displayDrawCanvas() {
 // tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
 
 
-function highlightActiveTile() {
+function highlightOpenTile() {
   push();
   stroke(40);
   stroke('blue');
@@ -235,21 +240,20 @@ function highlightActiveTile() {
 }
 
 function updateWriting(event) {
-  currentTile.writing = input.value()
+  currentTile.writing = inputBox.value()
 }
 
 function printText() {
-  const words = input.value();
-  wordBox.html(words);
+  const words = inputBox.value();
+  // wordBox.html(words);
   currentTile.writing = words; // add the words to the currtile object
-  input.value('');
-  // return words;
+  inputBox.value('');
 }
 
 function draw() {
   background(bg);
   if (drawCanvasToggle) { // if canvas is open
-    highlightActiveTile();
+    highlightOpenTile();
     displayDrawCanvas();
     if (isDrawing) { // if person isdrawing
       if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
