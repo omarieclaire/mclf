@@ -59,7 +59,8 @@ function setup() {
   bg = loadImage('img/toilet2.png');
   canvas = createCanvas(900, 617);
 
-  inputBox = createInput(""); // make input for text
+  inputBox = createElement('textarea'); // make input for text
+  // inputBox = createInput(""); // make input for text
   inputBox.addClass('input');
   inputBox.style('font-size', '2rem', 'width', '400px', 'color', '#ff0000');
   inputBox.input(updateWriting);
