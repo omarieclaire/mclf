@@ -1,6 +1,9 @@
 let database;
 let writing;
 let inputBox, wordBox;
+let tools;
+let penSelect = true;
+let writeSelect = false;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -62,12 +65,12 @@ function setup() {
   inputBox = createElement('textarea'); // make input for text
   // inputBox = createInput(""); // make input for text
   inputBox.addClass('input');
-  inputBox.style('font-size', '2rem', 'width', '400px', 'color', '#ff0000');
   inputBox.input(updateWriting);
   // inputBox.elt.addEventListener('keyup', updateWriting);
+  // inputBox.maxlength = 5; // doesn't work :(
 
 // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
-  // wordBox = createElement('h2', '');
+// wordBox = createElement('h2', '');
 
   textAlign(CENTER);
   textSize(50);
@@ -148,6 +151,18 @@ function drawTileWriting(tile) {
   // wordBox.html(tile.writing);
 }
 
+function drawTools(){
+  let toolWidth = 40;
+  let toolSpacer = 10;
+  push();
+  stroke('black');
+  fill('blue');
+  penSelect = rect(drawCanvasX + drawCanvasW - (toolWidth + toolSpacer), drawCanvasY + toolSpacer, toolWidth, toolWidth);
+  fill('green');
+  writeSelect = rect(drawCanvasX + drawCanvasW - (toolWidth + toolSpacer), drawCanvasY + toolWidth  + toolSpacer +toolSpacer, toolWidth, toolWidth);
+  pop();
+}
+
 function displayDrawing() {
   for (const tileId in tiles) {
     let tile = tiles[tileId];
@@ -169,12 +184,15 @@ function displayDrawing() {
   }
 }
 
+
 function toggleCanvasToolsVisibility() {
   if (canvasToolsVisible) {
     inputBox.hide();
     // wordBox.hide();
   } else {
     inputBox.show();
+    inputBox.html(currentTile.writing);
+    // drawTools();
     // wordBox.show();
   }
   canvasToolsVisible = !canvasToolsVisible
@@ -196,12 +214,12 @@ function detectMouseLocation() {
 function toggleDrawCanvas() {
   let tile = detectMouseLocation(); // grab mouse location (over which tile?)
   if (clickOnButton) {
-    toggleCanvasToolsVisibility();
     if (drawCanvasToggle) { // if drawcanvas is open
       saveDrawing(tile); // save to specific tile
     } else { // if drawcanvas is closed
       currentTile = tile //update currenttile
     }
+    toggleCanvasToolsVisibility();
     drawCanvasToggle = !drawCanvasToggle; // toggle canvas
   }
   clickOnButton = false;
@@ -256,6 +274,8 @@ function draw() {
   if (drawCanvasToggle) { // if canvas is open
     highlightOpenTile();
     displayDrawCanvas();
+    drawTools();
+
     if (isDrawing) { // if person isdrawing
       if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
         let point = { // grab the x and y of each point
@@ -269,6 +289,7 @@ function draw() {
   }
 
   displayDrawing(); // show the drawing
+
 }
 
 function saveDrawing(tile) {
