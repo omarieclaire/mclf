@@ -1,9 +1,14 @@
 let database;
+let DBLUE = '#a5c7da';
+let LBLUE = '#f0fafc';
+let LPINK = '#fb9c96';
+let DPINK = '#f1635a';
 let writing;
 let inputBox, wordBox;
-let tools;
-let penSelect = true;
-let writeSelect = false;
+let toolWidth = 40;
+let toolSpacer = 10;
+let penSelect = false;
+let paintSelect = true;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -15,14 +20,21 @@ let drawCanvasX = 150;
 let drawCanvasY = 50;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
+let penSelectButton = {
+  'x': drawCanvasX + drawCanvasW + toolSpacer,
+  'y': drawCanvasY,
+  'width': toolWidth,
+  'height': toolWidth,
+};
+let paintSelectButton = {
+  'x': drawCanvasX + drawCanvasW + toolSpacer,
+  'y': drawCanvasY + toolWidth + toolSpacer,
+  'width': toolWidth,
+  'height': toolWidth,
+};
 let tiles = {
   1: {
     'writing': '',
-    // 'writing2': {
-    //   'x': 10,
-    //   'y': 10,
-    //   'content': 'blah blah'
-    // },
     'drawing': [],
     'tile': 1,
     'firebaseKey': null,
@@ -69,8 +81,8 @@ function setup() {
   // inputBox.elt.addEventListener('keyup', updateWriting);
   // inputBox.maxlength = 5; // doesn't work :(
 
-// toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
-// wordBox = createElement('h2', '');
+  // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
+  // wordBox = createElement('h2', '');
 
   textAlign(CENTER);
   textSize(50);
@@ -78,6 +90,8 @@ function setup() {
   function toggleDrawCanvasAndStartPath() {
     toggleDrawCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
+    detectMouseOnTool();
+
   }
 
   canvas.mousePressed(toggleDrawCanvasAndStartPath);
@@ -99,14 +113,13 @@ function setup() {
   database = firebase.database();
   var params = getURLParams(); // get URL params for permalink
   if (params.id) {
-    showDrawing(params.id);
+    // showDrawing(params.id);
   }
 
   var ref = database.ref('graffitiWall'); // get the graffitiWall
   ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
   ref.once('value', buildMap, errData); // buildMap at the start
 }
-
 
 function startPath() {
   if (drawCanvasToggle && inDrawCanvasCheck()) {
@@ -125,7 +138,11 @@ function drawTile(tile) {
   // fill();
   strokeWeight(.25);
   stroke('white');
-  fill('none');
+  if (tile.firebaseKey != null) {
+    fill('DBLUE');
+  } else {
+    fill('white');
+  }
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
 }
@@ -147,20 +164,25 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   pop();
 }
 
-function drawTileWriting(tile) {
+function drawTileWriting(tile) { // WTF???
   // wordBox.html(tile.writing);
 }
 
-function drawTools(){
-  let toolWidth = 40;
+function drawTools() {
   let toolSpacer = 10;
-  push();
-  stroke('black');
-  fill('blue');
-  penSelect = rect(drawCanvasX + drawCanvasW - (toolWidth + toolSpacer), drawCanvasY + toolSpacer, toolWidth, toolWidth);
-  fill('green');
-  writeSelect = rect(drawCanvasX + drawCanvasW - (toolWidth + toolSpacer), drawCanvasY + toolWidth  + toolSpacer +toolSpacer, toolWidth, toolWidth);
-  pop();
+  push(); // rect push
+  fill('gray');
+  rect(penSelectButton.x, penSelectButton.y, penSelectButton.width, penSelectButton.height);
+  fill('gray');
+  rect(paintSelectButton.x, paintSelectButton.y, paintSelectButton.width, paintSelectButton.width);
+  pop(); // rect pop
+  push(); // text style push
+  noStroke();
+  fill('white');
+  textSize(12);
+  text('write', penSelectButton.x + toolSpacer, penSelectButton.y + toolSpacer);
+  text('draw', paintSelectButton.x + toolSpacer, paintSelectButton.y + toolSpacer);
+  pop(); // text style pop
 }
 
 function displayDrawing() {
@@ -174,7 +196,10 @@ function displayDrawing() {
       drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
     } else {
       if (currentTile.tile == tileId) { // if the current tile is open
+        // push();
+
         drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+        // pop();
         drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
         drawTileWriting(tile);
       } else {
@@ -184,35 +209,48 @@ function displayDrawing() {
   }
 }
 
-
 function toggleCanvasToolsVisibility() {
-  if (canvasToolsVisible) {
-    inputBox.hide();
-    // wordBox.hide();
-  } else {
-    inputBox.show();
-    inputBox.html(currentTile.writing);
-    // drawTools();
-    // wordBox.show();
+  if (canvasToolsVisible) { // if closing the tile
+    inputBox.hide(); // hide the input box
+  } else { // if opening the tile
+    inputBox.html(currentTile.writing); // show any typed words
   }
   canvasToolsVisible = !canvasToolsVisible
 }
 
-function detectMouseLocation() {
+function detectMouseOnTile() {
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      myAudio.play();
+      // myAudio.play();
       clickOnButton = true;
-
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
   clickOnButton = false;
 }
 
+function detectMouseOnTool() {
+  inputBox.html(currentTile.writing); // show any typed words
+
+  if (mouseX > penSelectButton.x && mouseX < penSelectButton.x + penSelectButton.width && mouseY > penSelectButton.y && mouseY < penSelectButton.y + penSelectButton.height) {
+    penSelect = true;
+    paintSelect = false;
+    inputBox.show();
+  } else if (mouseX > paintSelectButton.x && mouseX < paintSelectButton.x + toolWidth && mouseY > paintSelectButton.y && mouseY < paintSelectButton.y + toolWidth) {
+    penSelect = false;
+    paintSelect = true;
+    inputBox.hide();
+  } else {
+    penSelect = false;
+    paintSelect = false;
+
+  }
+}
+
+
 function toggleDrawCanvas() {
-  let tile = detectMouseLocation(); // grab mouse location (over which tile?)
+  let tile = detectMouseOnTile(); // grab mouse location (over which tile?)
   if (clickOnButton) {
     if (drawCanvasToggle) { // if drawcanvas is open
       saveDrawing(tile); // save to specific tile
@@ -352,20 +390,20 @@ function errData(err) { // show me the errors
   console.log(err);
 }
 
-function showDrawing(key) { //show drawing
-  if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
-    key = key.target.innerHTML; // set key to this.html?
-  }
-  var theTileId;
-  for (const tileId in tiles) { // for each tile
-    let tile = tiles[tileId]; // grab the id
-    if (tile.firebaseKey === key) {
-      theTileId = tileId;
-    }
-  }
-  currentTile = tiles[theTileId];
-  drawCanvasToggle = true;
-}
+// function showDrawing(key) { //show drawing
+//   if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
+//     key = key.target.innerHTML; // set key to this.html?
+//   }
+//   var theTileId;
+//   for (const tileId in tiles) { // for each tile
+//     let tile = tiles[tileId]; // grab the id
+//     if (tile.firebaseKey === key) {
+//       theTileId = tileId;
+//     }
+//   }
+//   currentTile = tiles[theTileId];
+//   drawCanvasToggle = true;
+// }
 
 
 function clearDrawing() {
