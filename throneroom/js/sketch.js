@@ -1,4 +1,5 @@
 let database;
+let scene = 'toilet';
 let activeToolColor = 'green';
 let inactiveToolColor = 'grey'
 let DBLUE = '#a5c7da';
@@ -9,159 +10,60 @@ let writing;
 let textInputBox;
 let toolWidth = 40;
 let toolSpacer = 10;
-let penSelect = false;
-let paintSelect = false;
+// let writeToolSelect = false;
+// let drawToolSelect = false;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
 let isDrawing = false;
 let graffitiCanvasToggle = false;
-let grafittiCanvasW = 500;
-let grafittiCanvasH = 300;
-let grafittiCanvasX = 150;
+let grafittiCanvasW = 440;
+let grafittiCanvasH = 280;
+let grafittiCanvasX = 200;
 let grafittiCanvasY = 50;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
-let penSelectButton = {
+let writeToolSelectButton = {
   'x': grafittiCanvasX + grafittiCanvasW + toolSpacer,
   'y': grafittiCanvasY,
   'width': toolWidth,
   'height': toolWidth,
+  'select' : false
 };
-let paintSelectButton = {
+let drawToolSelectButton = {
   'x': grafittiCanvasX + grafittiCanvasW + toolSpacer,
   'y': grafittiCanvasY + toolWidth + toolSpacer,
   'width': toolWidth,
   'height': toolWidth,
+  'select' : true
+
 };
-let tiles = {
-  1: {
-    'writing': '',
-    'drawing': [],
-    'tile': 1,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 50
-    }
-  },
-  2: {
-    'writing': '',
-    'drawing': [],
-    'tile': 2,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 100
-    }
-  },
-  3: {
-    'writing': '',
-    'drawing': [],
-    'tile': 3,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 150
-    }
-  },
-  4: {
-    'writing': '',
-    'drawing': [],
-    'tile': 4,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 200
-    }
-  },
-  5: {
-    'writing': '',
-    'drawing': [],
-    'tile': 5,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 250
-    }
-  },
-  6: {
-    'writing': '',
-    'drawing': [],
-    'tile': 6,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 300
-    }
-  },
-  7: {
-    'writing': '',
-    'drawing': [],
-    'tile': 7,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 350
-    }
-  },
-  8: {
-    'writing': '',
-    'drawing': [],
-    'tile': 8,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 400
-    }
-  },
-  9 : {
-    'writing': '',
-    'drawing': [],
-    'tile': 9,
-    'firebaseKey': null,
-    'width': 70,
-    'height': 40,
-    'position': {
-      'x': 55,
-      'y': 500
-    }
-  }
-};
+
 let currentTile = tiles[1];
 
-let bg;
+let toilet1;
+let toilet2;
+let tp1;
+let tp2;
+
+function preload() {
+  toilet1 = loadImage('img/toilet1.png');
+  toilet2 = loadImage('img/toilet2.png');
+  tp1 = loadImage('img/tp1.png');
+  tp2 = loadImage('img/tp2.png');}
 
 function setup() {
-  bg = loadImage('img/toilet2.png');
+
+
   canvas = createCanvas(900, 617);
   textInputBox = createElement('textarea'); // make input for text
   textInputBox.addClass('input');
   textInputBox.input(updateWriting);
   textInputBox.position(grafittiCanvasX + 50, grafittiCanvasY + 50);
   textInputBox.hide();
-  // textInputBox.elt.addEventListener('keyup', updateWriting);
   // textInputBox.maxlength = 5; // doesn't work :(
 
   // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
-  // wordBox = createElement('h2', '');
-
   var myAudio = document.createElement('audio');
   if (myAudio.canPlayType('audio/mpeg')) {
     myAudio.setAttribute('src', 'audio/song.mp3');
@@ -215,10 +117,10 @@ function drawTile(tile) {
   // fill();
   strokeWeight(.25);
   stroke(DBLUE);
-  if (tile.firebaseKey != null) { // show tile availabitity by color
+  if (tile.firebaseKey != null) { // show tile availability by color
     fill(DBLUE);
   } else {
-    fill('white');
+    fill(255, 70);
   }
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
@@ -264,20 +166,21 @@ function highlightOpen(x, y, w, h) {
 function graffitiTools() {
   let toolSpacer = 10;
   push(); // rect push
-  if (penSelect == true) {
+  if (drawToolSelectButton.select == true) {
     fill(activeToolColor);
-    rect(penSelectButton.x, penSelectButton.y, penSelectButton.width, penSelectButton.height);
+    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.height);
     fill(inactiveToolColor);
-    rect(paintSelectButton.x, paintSelectButton.y, paintSelectButton.width, paintSelectButton.width);
-  } else if (paintSelect == true) {
+    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
+  } else if (writeToolSelectButton.select == true) {
     fill(activeToolColor);
-    rect(paintSelectButton.x, paintSelectButton.y, paintSelectButton.width, paintSelectButton.width);
+    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
     fill(inactiveToolColor);
-    rect(penSelectButton.x, penSelectButton.y, penSelectButton.width, penSelectButton.height);
+    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.width);
   } else {
     fill(inactiveToolColor);
-    rect(paintSelectButton.x, paintSelectButton.y, paintSelectButton.width, paintSelectButton.width);
-    rect(penSelectButton.x, penSelectButton.y, penSelectButton.width, penSelectButton.height);
+    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
+    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.height);
+
   }
 
   pop(); // rect pop
@@ -286,8 +189,8 @@ function graffitiTools() {
   fill('white');
   textAlign(CENTER);
   textSize(12);
-  text('write', penSelectButton.x, penSelectButton.y, penSelectButton.width, penSelectButton.width);
-  text('draw', paintSelectButton.x, paintSelectButton.y, paintSelectButton.width, paintSelectButton.width);
+  text('write', writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.width);
+  text('draw', drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.width);
   pop(); // text style pop
 }
 
@@ -319,19 +222,25 @@ function detectMouseOnTile() {
 }
 
 function detectMouseOnTool() {
-  if (mouseX > penSelectButton.x && mouseX < penSelectButton.x + penSelectButton.width && mouseY > penSelectButton.y && mouseY < penSelectButton.y + penSelectButton.height) {
-    penSelect = true;
-    // highlightOpen(penSelect.x, penSelect.y, penSelect.width, penSelect.width)
-    paintSelect = false;
+  if (mouseX > writeToolSelectButton.x && mouseX < writeToolSelectButton.x + writeToolSelectButton.width && mouseY > writeToolSelectButton.y && mouseY < writeToolSelectButton.y + writeToolSelectButton.height) {
+    console.log("clicked on write");
+    writeToolSelectButton.select = true;
+    drawToolSelectButton.select = false;
+    console.log(`write should be true - it is ${writeToolSelectButton.select}`);
+    console.log(`draw should be false - it is ${drawToolSelectButton.select}`);
     textInputBox.show();
     textInputBox.value(currentTile.writing);
-  } else if (mouseX > paintSelectButton.x && mouseX < paintSelectButton.x + toolWidth && mouseY > paintSelectButton.y && mouseY < paintSelectButton.y + toolWidth) {
-    penSelect = false;
-    paintSelect = true;
+  } else if (mouseX > drawToolSelectButton.x && mouseX < drawToolSelectButton.x + toolWidth && mouseY > drawToolSelectButton.y && mouseY < drawToolSelectButton.y + toolWidth) {
+    console.log("clicked on draw")
+    console.log(`draw should be true - it is ${drawToolSelectButton.select}`);
+    console.log(`write should be false - it is ${writeToolSelectButton.select}`);
+    drawToolSelectButton.select = true;
+    writeToolSelectButton.select = false;
     textInputBox.hide();
   } else {
-    penSelect = false;
-    paintSelect = false;
+    console.log("in the else");
+    writeToolSelectButton.select = false;
+    drawToolSelectButton.select = false;
 
   }
 }
@@ -358,16 +267,17 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
-function displayGrafittiCanvas() {
+function drawGrafittiCanvas() {
   push();
-  // fill('255, 50');
+  fill('255, 50');
   stroke('black');
   strokeWeight(3);
   rect(grafittiCanvasX, grafittiCanvasY, grafittiCanvasW, grafittiCanvasH);
   noStroke();
   fill('black');
-  textSize(22);
-  text(currentTile.writing, grafittiCanvasX, grafittiCanvasY, grafittiCanvasW, grafittiCanvasH);
+  textSize(23);
+  textFont('monospace');
+  text(currentTile.writing, grafittiCanvasX + 50, grafittiCanvasY + 50, grafittiCanvasW - 100, grafittiCanvasH - 100);
   pop();
 }
 
@@ -376,13 +286,15 @@ function updateWriting(event) { // anytime there is input
   currentTile.writing = textInputBox.value() // add the typed letters to currtile.writing
 }
 
-function draw() {
-  background(bg);
+function toiletDraw() {
+  background(toilet1);
+  image(tp1, 670, 240);
+
   noFill(); // don't fill the draw stroke
 
   if (graffitiCanvasToggle) { // if canvas is open
     highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
-    displayGrafittiCanvas();
+    drawGrafittiCanvas();
     graffitiTools();
 
     if (isDrawing) { // if person isdrawing
@@ -398,6 +310,7 @@ function draw() {
   }
 
   displayTileGrafitti(); // show the drawing
+
 }
 
 function saveDrawing(tile) {
@@ -409,6 +322,26 @@ function saveDrawing(tile) {
       let result = ref.push(tile, dataSent); // push the data to the ref we created above
       tiles[id]['firebaseKey'] = result.key;
     }
+  }
+}
+
+function mirrorDraw(){
+
+}
+
+function sinkDraw(){
+
+}
+
+function draw(){
+  if (scene == 'toilet') {
+    toiletDraw();
+  } else if (scene == 'mirror') {
+    mirrorDraw();
+  } else if (scene == 'sink') {
+    sinkDraw();
+  } else if (scene == 'end') {
+    endDraw();
   }
 }
 

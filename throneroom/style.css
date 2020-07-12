@@ -1,0 +1,25 @@
+body {
+  background-color: lightblue;
+}
+
+.input {
+  outline: none;
+  resize: none;
+  color: transparent
+  background: transparent;
+  resize: none;
+  border: 0 none;
+  font-size: 2rem;
+  width: 400px;
+  height: 200px;
+  overflow:none;
+}
+
+.closeInput{
+  background: 'blue';
+  border: 2px 'black';
+  background: 'blue';
+
+
+
+}
