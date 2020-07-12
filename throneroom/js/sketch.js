@@ -17,22 +17,22 @@ let tileId = 1;
 let clickOnButton = false;
 let isDrawing = false;
 let graffitiCanvasToggle = false;
-let grafittiCanvasW = 440;
-let grafittiCanvasH = 280;
-let grafittiCanvasX = 200;
-let grafittiCanvasY = 50;
+let graffitiCanvasW = 440;
+let graffitiCanvasH = 280;
+let graffitiCanvasX = 200;
+let graffitiCanvasY = 50;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
 let writeToolSelectButton = {
-  'x': grafittiCanvasX + grafittiCanvasW + toolSpacer,
-  'y': grafittiCanvasY,
+  'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+  'y': graffitiCanvasY,
   'width': toolWidth,
   'height': toolWidth,
   'select' : false
 };
 let drawToolSelectButton = {
-  'x': grafittiCanvasX + grafittiCanvasW + toolSpacer,
-  'y': grafittiCanvasY + toolWidth + toolSpacer,
+  'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+  'y': graffitiCanvasY + toolWidth + toolSpacer,
   'width': toolWidth,
   'height': toolWidth,
   'select' : true
@@ -59,7 +59,7 @@ function setup() {
   textInputBox = createElement('textarea'); // make input for text
   textInputBox.addClass('input');
   textInputBox.input(updateWriting);
-  textInputBox.position(grafittiCanvasX + 50, grafittiCanvasY + 50);
+  textInputBox.position(graffitiCanvasX + 50, graffitiCanvasY + 50);
   textInputBox.hide();
   // textInputBox.maxlength = 5; // doesn't work :(
 
@@ -70,7 +70,7 @@ function setup() {
   }
 
   function mouseFunctions() {
-    toggleAndSaveGrafittiCanvas();
+    toggleAndSaveGraffitiCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
     detectMouseOnTool();
   }
@@ -143,14 +143,18 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   pop();
 }
 
-function drawTileWriting(tile, scaleFactor, translateX, translateY){
+function drawTileWriting(tile, scaleFactor, x, y, w, h){
   push();
-  textAlign(CENTER, CENTER);
-//  rectMode(CORNER);
-  //scale(scaleFactor, scaleFactor);
-  //translate(translateX, translateY);
-  // text('a', 0, 0, 100, 100);
-  text(tile.writing, tile.position.x, tile.position.y, tile.width, tile.height);
+  noStroke();
+  fill('black');
+  textSize(43);
+  textFont('monospace');
+  scale(scaleFactor, scaleFactor);
+  // translate(translateX, translateY);
+  text(tile['writing'], x, y, w, h);
+
+  // text(currentTile.writing, graffitiCanvasX + 50, graffitiCanvasY + 50, graffitiCanvasW - 100, graffitiCanvasH - 100);
+
   pop();
 }
 
@@ -194,18 +198,25 @@ function graffitiTools() {
   pop(); // text style pop
 }
 
-function displayTileGrafitti() {
+function displayTileGraffiti() {
   for (const tileId in tiles) {
     let tile = tiles[tileId];
     // why does this translate work??
-    let translateX = tile.position.x / SCALEFACTOR - grafittiCanvasX;
-    let translateY = tile.position.y / SCALEFACTOR - grafittiCanvasY;
+    let translateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
+    let translateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
+    let translateX2 = tile.position.x / SCALEFACTOR;
+    let translateY2 = tile.position.y / SCALEFACTOR;
+    let translateWidth = tile.width / SCALEFACTOR;
+    let translateHeight = tile.height / SCALEFACTOR;
+
     drawTile(tile); // draw the actual tile rect
     if(graffitiCanvasToggle && currentTile.tile == tileId) {
       drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+      drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
+
     }
     drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
-    drawTileWriting(tile, SCALEFACTOR, translateX, translateY);
+    drawTileWriting(tile, SCALEFACTOR, translateX2, translateY2, translateWidth, translateHeight);
   }
 }
 
@@ -240,7 +251,7 @@ function detectMouseOnTool() {
   }
 }
 
-function toggleAndSaveGrafittiCanvas() {
+function toggleAndSaveGraffitiCanvas() {
   let tile = detectMouseOnTile(); // grab mouse location (over which tile?)
   if (clickOnButton) {
     if (graffitiCanvasToggle) { // if drawcanvas is open
@@ -255,27 +266,30 @@ function toggleAndSaveGrafittiCanvas() {
 }
 
 function inDrawCanvasCheck() { // check if in the drawcanvas
-  if (mouseX > grafittiCanvasX && mouseX < grafittiCanvasX + grafittiCanvasW && mouseY > grafittiCanvasY && mouseY < grafittiCanvasY + grafittiCanvasH) {
+  if (mouseX > graffitiCanvasX && mouseX < graffitiCanvasX + graffitiCanvasW && mouseY > graffitiCanvasY && mouseY < graffitiCanvasY + graffitiCanvasH) {
     return true;
   } else {
     return false;
   }
 }
 
-function drawGrafittiCanvas() {
+function drawGraffitiCanvas() {
   push();
   fill('255, 50');
   stroke('black');
   strokeWeight(3);
-  rect(grafittiCanvasX, grafittiCanvasY, grafittiCanvasW, grafittiCanvasH);
-  noStroke();
-  fill('black');
-  textSize(23);
-  textFont('monospace');
-  text(currentTile.writing, grafittiCanvasX + 50, grafittiCanvasY + 50, grafittiCanvasW - 100, grafittiCanvasH - 100);
+  rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
+
+  // noStroke();
+  // fill('black');
+  // textSize(43);
+  // textFont('monospace');
+  // text(currentTile.writing, graffitiCanvasX + 50, graffitiCanvasY + 50, graffitiCanvasW - 100, graffitiCanvasH - 100);
+
+
+
   pop();
 }
-
 
 function updateWriting(event) { // anytime there is input
   currentTile.writing = textInputBox.value() // add the typed letters to currtile.writing
@@ -289,7 +303,7 @@ function toiletDraw() {
 
   if (graffitiCanvasToggle) { // if canvas is open
     highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
-    drawGrafittiCanvas();
+    drawGraffitiCanvas();
     graffitiTools();
 
     if (isDrawing) { // if person isdrawing
@@ -304,7 +318,7 @@ function toiletDraw() {
     noFill(); // don't fill the draw stroke
   }
 
-  displayTileGrafitti(); // show the drawing
+  displayTileGraffiti(); // show the drawing
 
 }
 
@@ -357,11 +371,14 @@ function buildMap(data) {
 
 //CALLBACK
 function gotData(data) {
+  // if anything changes in the database, update my tilemap
+
+
   // clear the listing?
-  let elts = selectAll('.listing'); // grab all (all what?)
-  for (let i = 0; i < elts.length; i++) { // foreach
-    elts[i].remove(); // remove dom elements
-  }
+  // let elts = selectAll('.listing'); // grab all (all what?)
+  // for (let i = 0; i < elts.length; i++) { // foreach
+    // elts[i].remove(); // remove dom elements
+  // }
 
   // let graffitiWall = data.val(); // grab all graffitiWall from firebase
   // let keys = graffitiWall ? Object.keys(graffitiWall) : []; // if there are keys, grab them all
