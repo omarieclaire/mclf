@@ -237,11 +237,6 @@ function detectMouseOnTool() {
     drawToolSelectButton.select = true;
     writeToolSelectButton.select = false;
     textInputBox.hide();
-  } else {
-    console.log("in the else");
-    writeToolSelectButton.select = false;
-    drawToolSelectButton.select = false;
-
   }
 }
 
