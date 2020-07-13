@@ -1,3 +1,34 @@
+
+// ~create save button and clear button write functions for foreach
+
+
+// TODO
+// ~pull from the database constantly
+// ~when someone clicks on a tile, it's "taken" in the db and no one else can take it
+// ~better solution than the text area solution! text is overlapping and messy
+// ~why so slow? (drawing text)
+// ~limit characters in text box!
+// ~fix draw order problem - big drawing > grafdrawcan > little drawings > toilet paper > tiles
+// ~what if you type it types and if you draw it draws? no buttons, just intuition?
+// ~drawing works on mobile?
+// ~make an animation on click
+// ~integrate second scene - timer makes button appear "go to sink"
+// ~integrate third scene - timer makes coundown appear
+// *click on words in text to go to other words in text?*
+// ~make drawing tools - text option makes big text box, paint options changes color
+// ~click on toilet paper for special tile with flush button - flush sound when done and animation
+// ~make sound effects - open tile, close tile, isdrawing
+// ~make fonts and integrate fonts and text angle
+// ~input text without input box field - flashing blinker
+// ~create entry and closing level
+//
+//
+// THINKING
+// ~how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
+//
+
+
+
 let tiles = {
     1: {
       'writing': '',
@@ -720,3 +751,8 @@ let tiles = {
       }
     },
   };
+
+// Set 'taken': false to every tile.
+for(const tileId in tiles) {
+  tiles[tileId].taken = false;
+}

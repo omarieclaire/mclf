@@ -14,7 +14,6 @@ let toolSpacer = 10;
 // let drawToolSelect = false;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
-let clickOnButton = false;
 let isDrawing = false;
 let graffitiCanvasToggle = false;
 let graffitiCanvasW = 440;
@@ -23,20 +22,40 @@ let graffitiCanvasX = 200;
 let graffitiCanvasY = 50;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
-let writeToolSelectButton = {
-  'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  'y': graffitiCanvasY,
-  'width': toolWidth,
-  'height': toolWidth,
-  'select' : false
-};
-let drawToolSelectButton = {
-  'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  'y': graffitiCanvasY + toolWidth + toolSpacer,
-  'width': toolWidth,
-  'height': toolWidth,
-  'select' : true
 
+let toolButtons = {
+  write: {
+    'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    'y': graffitiCanvasY,
+    'width': toolWidth,
+    'height': toolWidth,
+    'text': 'write',
+    'select': false
+  },
+  draw: {
+    'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    'y': graffitiCanvasY + toolWidth + toolSpacer,
+    'width': toolWidth,
+    'height': toolWidth,
+    'text': 'draw',
+    'select': false
+  },
+  clear: {
+    'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    'y': graffitiCanvasY + (toolWidth * 2) + (toolSpacer * 2),
+    'width': toolWidth,
+    'height': toolWidth,
+    'text': 'clear',
+    'select': false
+  },
+  save: {
+    'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    'y': graffitiCanvasY + (toolWidth * 3) + (toolSpacer * 3),
+    'width': toolWidth,
+    'height': toolWidth,
+    'text': 'save',
+    'select': false
+  }
 };
 
 let currentTile = tiles[1];
@@ -46,11 +65,15 @@ let toilet2;
 let tp1;
 let tp2;
 
+// don't delete me
+function dataSent(data, err) {}
+
 function preload() {
   toilet1 = loadImage('img/toilet1.png');
   toilet2 = loadImage('img/toilet2.png');
   tp1 = loadImage('img/tp1.png');
-  tp2 = loadImage('img/tp2.png');}
+  tp2 = loadImage('img/tp2.png');
+}
 
 function setup() {
 
@@ -59,7 +82,7 @@ function setup() {
   textInputBox = createElement('textarea'); // make input for text
   textInputBox.addClass('input');
   textInputBox.input(updateWriting);
-  textInputBox.position(graffitiCanvasX + 50, graffitiCanvasY + 50);
+  textInputBox.position(graffitiCanvasX, graffitiCanvasY);
   textInputBox.hide();
   // textInputBox.maxlength = 5; // doesn't work :(
 
@@ -70,7 +93,7 @@ function setup() {
   }
 
   function mouseFunctions() {
-    toggleAndSaveGraffitiCanvas();
+    toggleGraffitiCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
     detectMouseOnTool();
   }
@@ -93,7 +116,7 @@ function setup() {
   database = firebase.database();
   // var params = getURLParams(); // get URL params for permalink
   // if (params.id) {
-    // showDrawing(params.id);
+  // showDrawing(params.id);
   // }
   var ref = database.ref('graffitiWall'); // get the graffitiWall
   ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
@@ -117,7 +140,9 @@ function drawTile(tile) {
   // fill();
   strokeWeight(.25);
   stroke(DBLUE);
-  if (tile.firebaseKey != null) { // show tile availability by color
+  if(tile.taken) {
+    fill('green');
+  } else if(tile.writing != "" || tile.drawing.length > 0) {
     fill(DBLUE);
   } else {
     fill(255, 70);
@@ -130,6 +155,8 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
+  stroke('black');
+  strokeWeight(5);
 
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
@@ -143,7 +170,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   pop();
 }
 
-function drawTileWriting(tile, scaleFactor, x, y, w, h){
+function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
   fill('black');
@@ -169,33 +196,23 @@ function highlightOpen(x, y, w, h) {
 
 function graffitiTools() {
   let toolSpacer = 10;
-  push(); // rect push
-  if (drawToolSelectButton.select == true) {
-    fill(activeToolColor);
-    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.height);
-    fill(inactiveToolColor);
-    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
-  } else if (writeToolSelectButton.select == true) {
-    fill(activeToolColor);
-    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
-    fill(inactiveToolColor);
-    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.width);
-  } else {
-    fill(inactiveToolColor);
-    rect(writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.height);
-    rect(drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.height);
 
+  for (const tool in toolButtons) {
+    let btn = toolButtons[tool]
+    if (btn.select == true) {
+      fill(activeToolColor);
+    } else {
+      fill(inactiveToolColor)
+    }
+    rect(btn.x, btn.y, btn.width, btn.height);
+    push();
+    noStroke();
+    fill('white');
+    textAlign(CENTER);
+    textSize(12);
+    text(btn.text, btn.x, btn.y, btn.width, btn.height);
+    pop();
   }
-
-  pop(); // rect pop
-  push(); // text style push
-  noStroke();
-  fill('white');
-  textAlign(CENTER);
-  textSize(12);
-  text('write', writeToolSelectButton.x, writeToolSelectButton.y, writeToolSelectButton.width, writeToolSelectButton.width);
-  text('draw', drawToolSelectButton.x, drawToolSelectButton.y, drawToolSelectButton.width, drawToolSelectButton.width);
-  pop(); // text style pop
 }
 
 function displayTileGraffiti() {
@@ -210,7 +227,7 @@ function displayTileGraffiti() {
     let translateHeight = tile.height / SCALEFACTOR;
 
     drawTile(tile); // draw the actual tile rect
-    if(graffitiCanvasToggle && currentTile.tile == tileId) {
+    if (graffitiCanvasToggle && currentTile.tile == tileId) {
       drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
       drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
 
@@ -220,49 +237,82 @@ function displayTileGraffiti() {
   }
 }
 
+// returns undefined when not clicking on a tile
 function detectMouseOnTile() {
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
       // myAudio.play();
-      clickOnButton = true;
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
-  clickOnButton = false;
+}
+
+function saveTile(tile) {
+  let id = tile['tile']; // grab the tile id
+
+  if(tile['firebaseKey'] === null) {
+    // firebaseKey is null, therefore we need to CREATE a new entry in the database.
+    let ref = database.ref('graffitiWall'); // make a new reference to the graffitiWall database
+    let result = ref.push(tile, dataSent); // push the data to the ref we created above
+    tiles[id]['firebaseKey'] = result.key;
+  } else {
+    // firebaseKey is not null, so this already exists in the database
+    // therefore we need to UPDATE the entry in the database.
+    let ref = database.ref('graffitiWall/' + tile['firebaseKey']);
+    ref.update(tile);
+  }
+}
+
+function clearTile() {
+  textInputBox.value("");
+  currentTile.drawing = [];
+  currentTile.writing = [""];
 }
 
 function detectMouseOnTool() {
-  if (mouseX > writeToolSelectButton.x && mouseX < writeToolSelectButton.x + writeToolSelectButton.width && mouseY > writeToolSelectButton.y && mouseY < writeToolSelectButton.y + writeToolSelectButton.height) {
-    console.log("clicked on write");
-    writeToolSelectButton.select = true;
-    drawToolSelectButton.select = false;
-    console.log(`write should be true - it is ${writeToolSelectButton.select}`);
-    console.log(`draw should be false - it is ${drawToolSelectButton.select}`);
+  for (const tool in toolButtons) {
+    let btn = toolButtons[tool]
+    if (mouseX > btn.x && mouseX < btn.x + btn.width && mouseY > btn.y && mouseY < btn.y + btn.height) {
+      console.log(`clicked on ${btn}`);
+      btn.select = true;
+      //can I set all all other buttons false
+    } else {
+      btn.select = false;
+    }
+  }
+
+  if (toolButtons.write.select) {
     textInputBox.show();
     textInputBox.value(currentTile.writing);
-  } else if (mouseX > drawToolSelectButton.x && mouseX < drawToolSelectButton.x + toolWidth && mouseY > drawToolSelectButton.y && mouseY < drawToolSelectButton.y + toolWidth) {
-    console.log("clicked on draw")
-    console.log(`draw should be true - it is ${drawToolSelectButton.select}`);
-    console.log(`write should be false - it is ${writeToolSelectButton.select}`);
-    drawToolSelectButton.select = true;
-    writeToolSelectButton.select = false;
+  } else if (toolButtons.draw.select) {
     textInputBox.hide();
+  } else if (toolButtons.clear.select) {
+    clearTile();
+  } else if (toolButtons.save.select) {
+    saveTile(currentTile);
   }
 }
 
-function toggleAndSaveGraffitiCanvas() {
+function toggleGraffitiCanvas() {
+  const openedTile = currentTile;
   let tile = detectMouseOnTile(); // grab mouse location (over which tile?)
-  if (clickOnButton) {
+  if (typeof(tile) !== 'undefined') {
     if (graffitiCanvasToggle) { // if drawcanvas is open
-      saveDrawing(tile); // save to specific tile
+      openedTile['taken'] = false;
+      saveTile(openedTile); // save to specific tile
       textInputBox.hide();
+      graffitiCanvasToggle = !graffitiCanvasToggle; // toggle canvas
     } else { // if drawcanvas is closed
       currentTile = tile //update currenttile
+      if(tile.taken === false) {
+        // "take" the tiles
+        tile['taken'] = true;
+        saveTile(tile);
+        graffitiCanvasToggle = !graffitiCanvasToggle; // toggle canvas
+      }
     }
-    graffitiCanvasToggle = !graffitiCanvasToggle; // toggle canvas
   }
-  clickOnButton = false;
 }
 
 function inDrawCanvasCheck() { // check if in the drawcanvas
@@ -317,32 +367,19 @@ function toiletDraw() {
     }
     noFill(); // don't fill the draw stroke
   }
-
   displayTileGraffiti(); // show the drawing
 
 }
 
-function saveDrawing(tile) {
-  let id = tile['tile']; // grab the tile id
-  if (tiles[id]['drawing'].length > 0 || tiles[id]['writing'] != "") { // if the drawing is not nothing
-    let ref = database.ref('graffitiWall'); // make a new reference to the graffitiWall database
-    function dataSent(err, status) {}
-    if (tiles[id]['firebaseKey'] == null) {
-      let result = ref.push(tile, dataSent); // push the data to the ref we created above
-      tiles[id]['firebaseKey'] = result.key;
-    }
-  }
-}
-
-function mirrorDraw(){
+function mirrorDraw() {
 
 }
 
-function sinkDraw(){
+function sinkDraw() {
 
 }
 
-function draw(){
+function draw() {
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
@@ -364,6 +401,7 @@ function buildMap(data) {
     tiles[tileId]['firebaseKey'] = key;
     tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
     tiles[tileId]['writing'] = graffitiWall[key]['writing'] || "";
+    tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
     // console.log(tiles[tileId]['writing']);
 
   }
@@ -371,13 +409,14 @@ function buildMap(data) {
 
 //CALLBACK
 function gotData(data) {
+  buildMap(data);
   // if anything changes in the database, update my tilemap
 
 
   // clear the listing?
   // let elts = selectAll('.listing'); // grab all (all what?)
   // for (let i = 0; i < elts.length; i++) { // foreach
-    // elts[i].remove(); // remove dom elements
+  // elts[i].remove(); // remove dom elements
   // }
 
   // let graffitiWall = data.val(); // grab all graffitiWall from firebase
@@ -405,6 +444,11 @@ function errData(err) { // show me the errors
   console.log(err);
 }
 
+window.addEventListener("beforeunload", function(event) {
+  updateTileTaken(currentTile, false);
+});
+
+
 // function showDrawing(key) { //show drawing
 //   if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
 //     key = key.target.innerHTML; // set key to this.html?
@@ -419,8 +463,3 @@ function errData(err) { // show me the errors
 //   currentTile = tiles[theTileId];
 //   drawCanvasToggle = true;
 // }
-
-
-function clearDrawing() {
-  tiles[currentTile]['drawing'] = [];
-}

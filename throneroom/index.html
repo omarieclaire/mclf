@@ -1,51 +1,3 @@
-<!--
-TODO P1
-
-display text on small tiles
-
-pul from the database constantly
-
-when someone clicks on a tile, it's "taken" in the db and no one else can take it
-
-create save button and clear button write functions for foreach
-
-why so slow?
-limit characters in text box!
-
-fix draw order problem - big drawing > grafdrawcan > little drawings > toilet paper > tiles
-
-
-what if you type it types and if you draw it draws? no buttons, just intuition?
-
-drawing works on mobile?
-
-make an animation on click
-
-integrate second scene - timer makes button appear "go to sink"
-integrate third scene - timer makes coundown appear
-
-*click on words in text to go to other words in text?*
-
-TODO P2
-
-make drawing tools - text option makes big text box, paint options changes color
-
-click on toilet paper for special tile with flush button - flush sound when done and animation
-make sound effects - open tile, close tile, isdrawing
-
-
-TODO P3
-make fonts and integrate fonts and text angle
-input text without input box field - flashing blinker
-create entry and closing level
-
-
-THINKING
-how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
-
--->
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,20 +15,6 @@ how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse
 </head>
 
 <body>
-	<!-- HAVE THE CANVAS PLACED IN A PARTICULAR DIV -->
   <div id ="canvascontainer"></div>
-  <!-- <button id="saveButton">save</button> -->
-  <!-- <button id="clearButton">clear</button> -->
-  <!-- <p>
-		<label for="words"></label>
-		<input type="text" id="words" name="words" required
-       minlength="1" maxlength="40" size="10">
-
-  </p> -->
-
-  <!-- <img src="img/toilet2.png" alt="no"></img> -->
-
-		<!-- ORDERED LIST -->
-    <ol id="drawinglist"></ol>
 </body>
 </html>
