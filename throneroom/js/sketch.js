@@ -7,6 +7,7 @@ let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
 let DPINK = '#f1635a';
 let writing;
+let textStorage = "";
 let textInputBox;
 let toolWidth = 40;
 let toolSpacer = 10;
