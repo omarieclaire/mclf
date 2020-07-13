@@ -161,11 +161,13 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
-    beginShape(); // draw
-    for (let j = 0; j < path.length; j++) { // for each coordinate in the path
-      vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
+    if(typeof(path) !== 'undefined') {
+      beginShape(); // draw
+      for (let j = 0; j < path.length; j++) { // for each coordinate in the path
+        vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
+      }
+      endShape();
     }
-    endShape();
   }
   pop();
 }
