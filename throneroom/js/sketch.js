@@ -400,12 +400,12 @@ function buildMap(data) {
   for (let i = 0; i < keys.length; i++) { // for each key
     let key = keys[i]; // grab the key
     let tileId = graffitiWall[key]['tile']; // grab the tileID
-    tiles[tileId]['firebaseKey'] = key;
-    tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
-    tiles[tileId]['writing'] = graffitiWall[key]['writing'] || "";
-    tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
-    // console.log(tiles[tileId]['writing']);
-
+    if (tileId !== currentTile.tile) { // do the updates
+      tiles[tileId]['firebaseKey'] = key;
+      tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
+      tiles[tileId]['writing'] = graffitiWall[key]['writing'] || "";
+      tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
+    }
   }
 }
 
