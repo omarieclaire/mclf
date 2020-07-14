@@ -4,6 +4,7 @@
 // TODO
 
 // TEXT
+// when grafcanvas is open, can write - when typing, push each char to currenttile.writing, when close/"save"
 // ~what if you type it types and if you draw it draws? no buttons, just intuition?
 // ~add each keyup in currentTile.text (push then clear it on save)
 // ~limit characters in text box
@@ -24,6 +25,7 @@
 //
 // ~ integrate handwashing
 // ~ link to other video call - show off your makeup
+// ~more tiles? mathmatically place them?
 //
 // THINKING
 // ~how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
@@ -343,54 +345,54 @@ let tiles = {
     //     'y': 300
     //   }
     // },
-    27: {
-      'writing': '',
-      'drawing': [],
-      'tile': 27,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 200,
-        'y': 350
-      }
-    },
-    28: {
-      'writing': '',
-      'drawing': [],
-      'tile': 28,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 200,
-        'y': 400
-      }
-    },
-    29: {
-      'writing': '',
-      'drawing': [],
-      'tile': 29,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 200,
-        'y': 450
-      }
-    },
-    30: {
-      'writing': '',
-      'drawing': [],
-      'tile': 30,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 200,
-        'y': 500
-      }
-    },
+    // 27: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 27,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 200,
+    //     'y': 350
+    //   }
+    // },
+    // 28: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 28,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 200,
+    //     'y': 400
+    //   }
+    // },
+    // 29: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 29,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 200,
+    //     'y': 450
+    //   }
+    // },
+    // 30: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 30,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 200,
+    //     'y': 500
+    //   }
+    // },
     // 31: {
     //   'writing': '',
     //   'drawing': [],
@@ -463,54 +465,54 @@ let tiles = {
     //     'y': 300
     //   }
     // },
-    37: {
-      'writing': '',
-      'drawing': [],
-      'tile': 37,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 600,
-        'y': 350
-      }
-    },
-    38: {
-      'writing': '',
-      'drawing': [],
-      'tile': 38,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 600,
-        'y': 400
-      }
-    },
-    39: {
-      'writing': '',
-      'drawing': [],
-      'tile': 39,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 600,
-        'y': 450
-      }
-    },
-    40: {
-      'writing': '',
-      'drawing': [],
-      'tile': 40,
-      'firebaseKey': null,
-      'width': 70,
-      'height': 40,
-      'position': {
-        'x': 600,
-        'y': 500
-      }
-    },
+    // 37: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 37,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 600,
+    //     'y': 350
+    //   }
+    // },
+    // 38: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 38,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 600,
+    //     'y': 400
+    //   }
+    // },
+    // 39: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 39,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 600,
+    //     'y': 450
+    //   }
+    // },
+    // 40: {
+    //   'writing': '',
+    //   'drawing': [],
+    //   'tile': 40,
+    //   'firebaseKey': null,
+    //   'width': 70,
+    //   'height': 40,
+    //   'position': {
+    //     'x': 600,
+    //     'y': 500
+    //   }
+    // },
     41: {
       'writing': '',
       'drawing': [],
@@ -559,42 +561,42 @@ let tiles = {
         'y': 200
       }
     },
-    // 45: {
-    //   'writing': '',
-    //   'drawing': [],
-    //   'tile': 45,
-    //   'firebaseKey': null,
-    //   'width': 70,
-    //   'height': 40,
-    //   'position': {
-    //     'x': 700,
-    //     'y': 250
-    //   }
-    // },
-    // 46: {
-    //   'writing': '',
-    //   'drawing': [],
-    //   'tile': 46,
-    //   'firebaseKey': null,
-    //   'width': 70,
-    //   'height': 40,
-    //   'position': {
-    //     'x': 700,
-    //     'y': 300
-    //   }
-    // },
-    // 47: {
-    //   'writing': '',
-    //   'drawing': [],
-    //   'tile': 47,
-    //   'firebaseKey': null,
-    //   'width': 70,
-    //   'height': 40,
-    //   'position': {
-    //     'x': 700,
-    //     'y': 350
-    //   }
-    // },
+    45: {
+      'writing': '',
+      'drawing': [],
+      'tile': 45,
+      'firebaseKey': null,
+      'width': 70,
+      'height': 40,
+      'position': {
+        'x': 700,
+        'y': 250
+      }
+    },
+    46: {
+      'writing': '',
+      'drawing': [],
+      'tile': 46,
+      'firebaseKey': null,
+      'width': 70,
+      'height': 40,
+      'position': {
+        'x': 700,
+        'y': 300
+      }
+    },
+    47: {
+      'writing': '',
+      'drawing': [],
+      'tile': 47,
+      'firebaseKey': null,
+      'width': 70,
+      'height': 40,
+      'position': {
+        'x': 700,
+        'y': 350
+      }
+    },
     48: {
       'writing': '',
       'drawing': [],
