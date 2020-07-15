@@ -193,8 +193,8 @@ function captureDrawing(){
 
 function drawTile(tile) {
   push();
-  strokeWeight(.5);
-  stroke(DBLUE);
+  strokeWeight(0);
+  //stroke(DBLUE);
   if (tile.taken) {
     fill('green');
   } else if (tile.writing != "" || tile.drawing.length > 0) {
@@ -272,12 +272,10 @@ function graffitiTools() {
 }
 
 function displayLargeTileGraffiti() {
-  for (const tileId in tiles) {
-    let tile = tiles[tileId];
-    if (graffitiCanvasOpen && currentTile.tile == tileId) {
-      drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
-      drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
-    }
+  if(graffitiCanvasOpen) {
+    let tile = tiles[currentTile.tile];
+    drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+    drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   }
 }
 
@@ -381,25 +379,26 @@ function drawGraffitiCanvas() {
   push();
   stroke('black');
   strokeWeight(3);
-  rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   fill(255);
+  rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   pop();
 }
 
 function toiletDraw() {
-  background('255, 20, 30');
-  // background(toilet1);
+  //background('255, 20, 30');
+  image(toilet1,0,0);
+  //background(toilet1);
   displaySmallTileGraffiti(); // show the drawing
-  image(tp1, 670, 240);
+  //image(tp1, 670, 240);
   // image(tp1, 0, 0);
 
   if (graffitiCanvasOpen) { // if canvas is open
-    highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
-    drawGraffitiCanvas();
-    graffitiTools();
-    displayLargeTileGraffiti(); // show the drawing
-    captureDrawing();
     noFill(); // don't fill the draw stroke
+    //highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+    drawGraffitiCanvas();
+    //graffitiTools();
+    //displayLargeTileGraffiti(); // show the drawing
+    //captureDrawing();
   }
 }
 
