@@ -76,7 +76,9 @@ function preload() {
 }
 
 function setup() {
-  canvas = createCanvas(900, 617, WEBGL);
+  // canvas = createCanvas(900, 617, );
+  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+
   textFont(firaFont, 36);
 
   // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
@@ -92,7 +94,6 @@ function setup() {
   }
 
   canvas.mousePressed(mouseFunctions);
-  // canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent('canvascontainer'); // PARENT THE CANVAS TO THE CANVAS CONTAINER
   canvas.mouseReleased(endPath); // WHEN MOUSE IS RELEASED, stop COLLECTING X AND Y POINTS
 
@@ -179,7 +180,7 @@ function endPath() {
   isDrawing = false; // set isdrawing to false
 }
 
-function captureDrawing(){
+function captureDrawing() {
   if (isDrawing) { // if person isdrawing
     if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
       let point = { // grab the x and y of each point
@@ -272,7 +273,7 @@ function graffitiTools() {
 }
 
 function displayLargeTileGraffiti() {
-  if(graffitiCanvasOpen) {
+  if (graffitiCanvasOpen) {
     let tile = tiles[currentTile.tile];
     drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
     drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
@@ -375,22 +376,65 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
+function draw3dTiles(){
+  let canvasTop = -windowHeight/3.8;
+  let canvasLeft = -windowWidth/3.5;
+  for (let i = 0; i < 10; i++) { // draw one column
+   push();
+   let y = canvasTop + (i * 25);
+   rotateY(.6);
+   translate(canvasLeft, y, 0);
+   plane(30, 20);
+   pop();
+   for (let u = 0; u < 5; u++) { // draw a row for each column
+     push();
+     let x = canvasLeft + (u * 35);
+     rotateY(.6);
+     translate(x, y, 0);
+     plane(30, 20);
+     pop();
+   }
+ }
+}
+
+function draw3dTileRoom() {
+    draw3dTiles();
+    rotateY(PI/1.6); // something funny here with the rotate adding together
+    draw3dTiles();
+  }
+
+
+
 function drawGraffitiCanvas() {
   push();
   stroke('black');
   strokeWeight(3);
-  fill(255);
+  // noStroke();
+
+  fill(255, 255, 250);
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   pop();
 }
 
 function toiletDraw() {
+  normalMaterial();
+
   //background('255, 20, 30');
-  image(toilet1,0,0);
+
+  // push();
+  // texture(toilet1);
+  // plane(600, 400);
+  // pop();
+  // image(toilet1, -windowWidth/2.5, -windowHeight/2);
   //background(toilet1);
   displaySmallTileGraffiti(); // show the drawing
+  console.log(windowWidth, windowHeight);
+
   image(tp1, 670, 240);
   // image(tp1, 0, 0);
+
+  draw3dTileRoom();
+
 
   if (graffitiCanvasOpen) { // if canvas is open
     noFill(); // don't fill the draw stroke
@@ -400,6 +444,8 @@ function toiletDraw() {
     displayLargeTileGraffiti(); // show the drawing
     captureDrawing();
   }
+  // unused3dTiles2();
+
 }
 
 function mirrorDraw() {
@@ -411,7 +457,7 @@ function sinkDraw() {
 }
 
 function draw() {
-  translate(-width / 2, -height / 2, 0);
+  // translate(-width / 2, -height / 2, 0);
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
