@@ -6,15 +6,11 @@ let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
 let DPINK = '#f1635a';
-// let writing;
-// let textStorage = "";
-// let textInputBox;
 let toolWidth = 40;
 let toolSpacer = 10;
-// let writeToolSelect = false;
-// let drawToolSelect = false;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
+let angle = 2;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
 let graffitiCanvasW = 440;
@@ -76,21 +72,12 @@ function preload() {
   toilet2 = loadImage('img/toilet2.png');
   tp1 = loadImage('img/tp1.png');
   tp2 = loadImage('img/tp2.png');
-  firaFont = loadFont('audio/FiraSans-Book.otf');
+  firaFont = loadFont('fonts/FiraSans-Book.otf');
 }
 
 function setup() {
-  //textFont('monospace');
-
-  canvas = createCanvas(900, 617); //, WEBGL);
-
-
-  // textInputBox = createElement('textarea'); // make input for text
-  // textInputBox.addClass('input');
-  // textInputBox.input(updateWriting);
-  // textInputBox.position(graffitiCanvasX, graffitiCanvasY);
-  // textInputBox.hide();
-  // textInputBox.maxlength = 5; // doesn't work :(
+  canvas = createCanvas(900, 617, WEBGL);
+  textFont(firaFont, 36);
 
   // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
   var myAudio = document.createElement('audio');
@@ -134,6 +121,9 @@ function setup() {
     if (graffitiCanvasOpen) { // if canvas isopen
 
       switch (key) {
+        case "Backspace": // IE/Edge specific value
+          currentTile.writing = currentTile.writing.slice(0, -1);
+          break;
         case "Down": // IE/Edge specific value
         case "ArrowDown":
           // Do something for "down arrow" key press.
@@ -141,6 +131,13 @@ function setup() {
         case "Up": // IE/Edge specific value
         case "ArrowUp":
           // Do something for "up arrow" key press.
+          break;
+        case "Meta":
+        case "Alt":
+        case "Control":
+        case "CapsLock":
+          break;
+        case "Tab":
           break;
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
@@ -151,6 +148,9 @@ function setup() {
           // Do something for "right arrow" key press.
           break;
         case "Enter":
+          // Do something for "enter" or "return" key press.
+          break;
+        case "Shift":
           // Do something for "enter" or "return" key press.
           break;
         case "Esc": // IE/Edge specific value
@@ -179,10 +179,21 @@ function endPath() {
   isDrawing = false; // set isdrawing to false
 }
 
+function captureDrawing(){
+  if (isDrawing) { // if person isdrawing
+    if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
+      let point = { // grab the x and y of each point
+        x: mouseX,
+        y: mouseY
+      };
+      currentPath.push(point); // push that x and y into the currentpath array
+    }
+  }
+}
+
 function drawTile(tile) {
   push();
-  // fill();
-  strokeWeight(.25);
+  strokeWeight(.5);
   stroke(DBLUE);
   if (tile.taken) {
     fill('green');
@@ -200,7 +211,8 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
   stroke('black');
-  strokeWeight(5);
+  noFill();
+  strokeWeight(1);
 
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
@@ -216,40 +228,26 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   pop();
 }
 
-// function displayTextStorage(tile, scaleFactor, x, y, w, h) {
-//   push();
-//   noStroke();
-//   fill('red');
-//   textSize(40);
-//   scale(scaleFactor, scaleFactor);
-//   text(currentTile['writing'], graffitiCanvasX + 50, graffitiCanvasY + 50, graffitiCanvasW - 100, graffitiCanvasH - 100);
-//   pop();
-// }
-
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
   fill('black');
   textSize(43);
   scale(scaleFactor, scaleFactor);
-  // translate(translateX, translateY);
   text(tile['writing'], x, y, w, h);
-  // text(tile['writing'], graffitiCanvasX + 50, graffitiCanvasY + 50, graffitiCanvasW - 100, graffitiCanvasH - 100);
   pop();
 }
 
 function highlightOpen(x, y, w, h) {
   push();
   stroke(40);
-  stroke('red');
-  // fill('yellow');
+  fill('yellow');
   rect(x, y, w, h);
   pop();
 }
 
 function graffitiTools() {
   let toolSpacer = 10;
-
   for (const tool in toolButtons) {
     let btn = toolButtons[tool]
     if (btn.select == true) {
@@ -273,7 +271,17 @@ function graffitiTools() {
   }
 }
 
-function displayTileGraffiti() {
+function displayLargeTileGraffiti() {
+  for (const tileId in tiles) {
+    let tile = tiles[tileId];
+    if (graffitiCanvasOpen && currentTile.tile == tileId) {
+      drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+      drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
+    }
+  }
+}
+
+function displaySmallTileGraffiti() {
   for (const tileId in tiles) {
     let tile = tiles[tileId];
     // why does this translate work??
@@ -283,26 +291,15 @@ function displayTileGraffiti() {
     let writetranslateY = tile.position.y / SCALEFACTOR;
     let translateWidth = tile.width / SCALEFACTOR;
     let translateHeight = tile.height / SCALEFACTOR;
-
     drawTile(tile); // draw the actual tile rect
-    if (graffitiCanvasOpen && currentTile.tile == tileId) {
-      drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
-      drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
-      // displayTextStorage(currentTile['writing'], 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
-
-    }
     if (tile['writing'] !== []) { // if not empty
       drawTileDrawing(tile, SCALEFACTOR, drawtranslateX, drawtranslateY);
       drawTileWriting(tile, SCALEFACTOR, writetranslateX, writetranslateY, translateWidth, translateHeight);
-      // displayTextStorage(currentTile['writing'], SCALEFACTOR, translateX2, translateY2, translateWidth, translateHeight);
-
     }
-
   }
 }
 
-// returns undefined when not clicking on a tile
-function detectMouseOnTile() {
+function detectMouseOnTile() { // returns undefined when not clicking on a tile
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
@@ -325,10 +322,8 @@ function saveTile(tile) {
 }
 
 function clearTile() {
-  // textInputBox.value("");
-  // currentTile.writing = "";
   currentTile.drawing = [];
-  currentTile.writing = [""];
+  currentTile.writing = "";
 }
 
 function detectMouseOnTool() {
@@ -337,20 +332,19 @@ function detectMouseOnTool() {
     if (mouseX > btn.x && mouseX < btn.x + btn.width && mouseY > btn.y && mouseY < btn.y + btn.height) {
       console.log(`clicked on ${btn}`);
       btn.select = true;
-      //can I set all all other buttons false
     } else {
       btn.select = false;
     }
   }
   if (toolButtons.clear.select) {
     clearTile();
-  // } else if (toolButtons.write.select) {
-  //   textInputBox.show();
-  //   textInputBox.value(currentTile.writing);
-  // } else if (toolButtons.draw.select) {
-  //   textInputBox.hide();
-  // } else if (toolButtons.save.select) {
-  //   saveTile(currentTile);
+    // } else if (toolButtons.write.select) {
+    //   textInputBox.show();
+    //   textInputBox.value(currentTile.writing);
+    // } else if (toolButtons.draw.select) {
+    //   textInputBox.hide();
+    // } else if (toolButtons.save.select) {
+    //   saveTile(currentTile);
   }
 }
 
@@ -385,50 +379,28 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
 
 function drawGraffitiCanvas() {
   push();
-  fill('255');
   stroke('black');
   strokeWeight(3);
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
-
-  // noStroke();
-  // fill('black');
-  // textSize(43);
-  // textFont('monospace');
-  // text(currentTile.writing, graffitiCanvasX + 50, graffitiCanvasY + 50, graffitiCanvasW - 100, graffitiCanvasH - 100);
-
-
-
+  fill(255);
   pop();
-}
-
-function updateWriting(event) { // anytime there is input
-  // currentTile.writing = textInputBox.value() // add the typed letters to currtile.writing
 }
 
 function toiletDraw() {
   background('255, 20, 30');
-
   // background(toilet1);
-  // image(tp1, 670, 240);
-  noFill(); // don't fill the draw stroke
+  displaySmallTileGraffiti(); // show the drawing
+  image(tp1, 670, 240);
+  // image(tp1, 0, 0);
 
   if (graffitiCanvasOpen) { // if canvas is open
     highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
     graffitiTools();
-
-    if (isDrawing) { // if person isdrawing
-      if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
-        let point = { // grab the x and y of each point
-          x: mouseX,
-          y: mouseY
-        };
-        currentPath.push(point); // push that x and y into the currentpath array
-      }
-    }
+    displayLargeTileGraffiti(); // show the drawing
+    captureDrawing();
     noFill(); // don't fill the draw stroke
   }
-  displayTileGraffiti(); // show the drawing
 }
 
 function mirrorDraw() {
@@ -440,6 +412,7 @@ function sinkDraw() {
 }
 
 function draw() {
+  translate(-width / 2, -height / 2, 0);
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
@@ -471,33 +444,6 @@ function buildMap(data) {
 function gotData(data) {
   buildMap(data);
   // if anything changes in the database, update my tilemap
-
-
-  // clear the listing?
-  // let elts = selectAll('.listing'); // grab all (all what?)
-  // for (let i = 0; i < elts.length; i++) { // foreach
-  // elts[i].remove(); // remove dom elements
-  // }
-
-  // let graffitiWall = data.val(); // grab all graffitiWall from firebase
-  // let keys = graffitiWall ? Object.keys(graffitiWall) : []; // if there are keys, grab them all
-  // for (let i = 0; i < keys.length; i++) { // foreach
-  // let key = keys[i]; // grab the key
-  // let li = createElement('li', ''); // create li element
-  // li.class('listing'); // give each the 'listing' class
-  // let ahref = createA('#', key); // make a link element with the key in it
-  // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
-  // var ahref = document.createElement('a');
-  // ahref.setAttribute('href', '#');
-  // ahref.addEventListener('click', showDrawing);
-  // ahref.innerHTML = key;
-  // ahref = new p5.Element(ahref);
-  // ahref.parent(li);
-  // let perma = createA('?id=' + key, 'permalink'); // set up permalink
-  // perma.parent(li); // parent it to the list
-  // perma.style('padding', '4px'); // style it
-  // li.parent('drawinglist'); // parent it to the drawing list
-  // }
 }
 
 function errData(err) { // show me the errors
@@ -508,19 +454,3 @@ window.addEventListener("beforeunload", function(event) {
   currentTile['taken'] = false;
   saveTile(currentTile);
 });
-
-
-// function showDrawing(key) { //show drawing
-//   if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
-//     key = key.target.innerHTML; // set key to this.html?
-//   }
-//   var theTileId;
-//   for (const tileId in tiles) { // for each tile
-//     let tile = tiles[tileId]; // grab the id
-//     if (tile.firebaseKey === key) {
-//       theTileId = tileId;
-//     }
-//   }
-//   currentTile = tiles[theTileId];
-//   drawCanvasToggle = true;
-// }
