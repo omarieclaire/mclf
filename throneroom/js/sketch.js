@@ -389,16 +389,16 @@ function toiletDraw() {
   image(toilet1,0,0);
   //background(toilet1);
   displaySmallTileGraffiti(); // show the drawing
-  //image(tp1, 670, 240);
+  image(tp1, 670, 240);
   // image(tp1, 0, 0);
 
   if (graffitiCanvasOpen) { // if canvas is open
     noFill(); // don't fill the draw stroke
-    //highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+    highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
-    //graffitiTools();
-    //displayLargeTileGraffiti(); // show the drawing
-    //captureDrawing();
+    graffitiTools();
+    displayLargeTileGraffiti(); // show the drawing
+    captureDrawing();
   }
 }
 
