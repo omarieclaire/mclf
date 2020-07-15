@@ -66,6 +66,7 @@ let toilet1;
 let toilet2;
 let tp1;
 let tp2;
+let firaFont;
 
 // don't delete me
 function dataSent(data, err) {}
@@ -75,12 +76,14 @@ function preload() {
   toilet2 = loadImage('img/toilet2.png');
   tp1 = loadImage('img/tp1.png');
   tp2 = loadImage('img/tp2.png');
+  firaFont = loadFont('audio/FiraSans-Book.otf');
 }
 
 function setup() {
-  canvas = createCanvas(900, 617);
+  //textFont('monospace');
 
-  // textFont('monospace');
+  canvas = createCanvas(900, 617); //, WEBGL);
+
 
   // textInputBox = createElement('textarea'); // make input for text
   // textInputBox.addClass('input');
@@ -126,43 +129,39 @@ function setup() {
   ref.once('value', buildMap, errData); // buildMap at the start
 
   function handleKeyDown(event) {
-    if (graffitiCanvasOpen) { // if canvas isopen
-      currentTile.writing += event.key; // add to the text
-    }
-    const charList = 'abcdefghijklmnopqrstuvwxyz0123456789';
     const key = event.key; //toLowerCase();
 
-    switch (key) {
-      case "Down": // IE/Edge specific value
-      case "ArrowDown":
-        // Do something for "down arrow" key press.
-        break;
-      case "Up": // IE/Edge specific value
-      case "ArrowUp":
-        // Do something for "up arrow" key press.
-        break;
-      case "Left": // IE/Edge specific value
-      case "ArrowLeft":
-        // Do something for "left arrow" key press.
-        break;
-      case "Right": // IE/Edge specific value
-      case "ArrowRight":
-        // Do something for "right arrow" key press.
-        break;
-      case "Enter":
-        // Do something for "enter" or "return" key press.
-        break;
-      case "Esc": // IE/Edge specific value
-      case "Escape":
-        // Do something for "esc" key press.
-        break;
-      default:
-        // textStorage += key;
-        return; // Quit when this doesn't handle the key event.
-    }
+    if (graffitiCanvasOpen) { // if canvas isopen
 
-    // we are only interested in alphanumeric keys
-    //if (charList.indexOf(key) === -1) return;
+      switch (key) {
+        case "Down": // IE/Edge specific value
+        case "ArrowDown":
+          // Do something for "down arrow" key press.
+          break;
+        case "Up": // IE/Edge specific value
+        case "ArrowUp":
+          // Do something for "up arrow" key press.
+          break;
+        case "Left": // IE/Edge specific value
+        case "ArrowLeft":
+          // Do something for "left arrow" key press.
+          break;
+        case "Right": // IE/Edge specific value
+        case "ArrowRight":
+          // Do something for "right arrow" key press.
+          break;
+        case "Enter":
+          // Do something for "enter" or "return" key press.
+          break;
+        case "Esc": // IE/Edge specific value
+        case "Escape":
+          // Do something for "esc" key press.
+          break;
+        default:
+          currentTile.writing += event.key; // add to the text
+          return; // Quit when this doesn't handle the key event.
+      }
+    }
   }
 
   document.addEventListener('keydown', handleKeyDown);
