@@ -398,9 +398,11 @@ function draw3dTiles(){
 }
 
 function draw3dTileRoom() {
+  push();
     draw3dTiles();
     rotateY(PI/1.6); // something funny here with the rotate adding together
     draw3dTiles();
+    pop();
   }
 
 
@@ -418,23 +420,18 @@ function drawGraffitiCanvas() {
 
 function toiletDraw() {
   normalMaterial();
-
-  //background('255, 20, 30');
+  background('grey');
 
   // push();
   // texture(toilet1);
   // plane(600, 400);
   // pop();
   // image(toilet1, -windowWidth/2.5, -windowHeight/2);
-  //background(toilet1);
   displaySmallTileGraffiti(); // show the drawing
-  console.log(windowWidth, windowHeight);
-
-  image(tp1, 670, 240);
+  // image(tp1, 670, 240);
   // image(tp1, 0, 0);
 
-  draw3dTileRoom();
-
+  // draw3dTileRoom();
 
   if (graffitiCanvasOpen) { // if canvas is open
     noFill(); // don't fill the draw stroke
@@ -444,8 +441,6 @@ function toiletDraw() {
     displayLargeTileGraffiti(); // show the drawing
     captureDrawing();
   }
-  // unused3dTiles2();
-
 }
 
 function mirrorDraw() {
@@ -457,7 +452,7 @@ function sinkDraw() {
 }
 
 function draw() {
-  // translate(-width / 2, -height / 2, 0);
+  translate(-width / 2, -height / 2, 0);
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
