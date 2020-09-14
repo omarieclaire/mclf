@@ -1,0 +1,90 @@
+/* html {
+    overflow: hidden;
+} */
+
+html {
+    background-color: black;
+
+}
+
+
+body {
+    margin: 0;
+    font-size: 26px;
+    color: #ffffff;
+    height: 100vh;
+    perspective: 1px;
+    transform-style: preserve-3d;
+    overflow-x:hidden;
+    overflow-y:auto;
+    /* background: url('images/bg.png'), auto; */
+    cursor: url('images/cursor.png'), auto;
+    background: url(images/bgl.png), url(images/bgr.png);
+    background-position: top 0 left 0, top 0 right 0 ;
+    background-size: 20% auto, 20% auto;
+    background-repeat: no-repeat, no-repeat;
+
+}
+
+h1 {
+  font-size: 2rem;
+  color: white;
+  text-align: center;
+  margin: 5rem 0 20rem 0;
+  padding: 15rem 0 0 0;
+}
+.parallax-wrapper {
+    width: 100vw;
+    height:100vh;
+    padding-top:20vh;
+    box-sizing: border-box;
+    transform-style: preserve-3d;
+    cursor: url('images/cursor.png'), auto;
+
+}
+
+/* this will be the background */
+.parallax-wrapper::before {
+    content:"";
+    width: 100vw;
+    height: 90vh;
+    top:0;
+    left:0;
+    background-image: url("images/main.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    z-index: -1;
+    transform:translateZ(-1px) scale(2);
+}
+
+.parallax-wrapper::before {
+
+}
+
+.regular-wrapper {
+    width: 100vw;
+    height:100vh;
+    padding-top:20vh;
+    background-color: black;
+    /* background-image: url("images/main.png"); */
+    z-index: 2;
+    position: relative;
+    cursor: url('images/cursor2.png'), auto;
+
+}
+.content {
+    /* margin: 0 auto;
+    padding: 50px;
+    width: 50%;
+    color: white; */
+    /* background: #aaa; */
+}
+
+.visible, .invisible {
+  opacity: 0.0;
+  transition: opacity 0.5s ease;
+}
+.visible {
+  opacity: 1.0;
+}
