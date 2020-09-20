@@ -1,83 +1,103 @@
 var userState = {
-	name: "",
 	level: 'begin',
-	answerToQuestion1: false,
-	answerToQuestion2: false,
-	answerToQuestion3: false,
-	answerToQuestion4: false,
-	answerToQuestion5: false,
-	answerToQuestion6: false,
-	answerToQuestion7: false,
+	upOrDown: false,
+	darkOrJoy: false,
+	chaosOrGentle: false,
+	forestOrMeadow: false,
+	outOrIn: false,
+	morningOrNight: false,
+	unfoldOrCyle: false,
 };
-
-var begin;
-
-function toggleSceneViz(lastScene, nextScene){
-	lastScene.style.display = "none";
-	nextScene.style.display = "block";
-}
 
 function windowOnLoad() {
 	const gameSetup = document.getElementById('gameSetup');
-	const scene1 = document.getElementById('begin');
-	const scene2 = document.getElementById('submerge');
-	const scene3 = document.getElementById('emerge');
-	const scene4 = document.getElementById('soften');
-	const scene5 = document.getElementById('stretch');
-	const scene6 = document.getElementById('over');
-	const scene7 = document.getElementById('under');
-	const scene8 = document.getElementById('light');
-	const scene9 = document.getElementById('dark');
-	const scene10 = document.getElementById('branches');
-	const scene11 = document.getElementById('roots');
-	const scene12 = document.getElementById('northernlights');
-	const scene13 = document.getElementById('rainbow');
-	const scene14 = document.getElementById('destroy');
-	const scene15 = document.getElementById('create');
+	const begin = document.getElementById('begin');
+	const up = document.getElementById('up');
+	const down = document.getElementById('down');
+	const dark = document.getElementById('dark');
+	const joy = document.getElementById('joy');
+	const chaos = document.getElementById('chaos');
+	const gentle = document.getElementById('gentle');
+	const forest = document.getElementById('forest');
+	const meadow = document.getElementById('meadow');
+	const out = document.getElementById('out');
+	const inner = document.getElementById('inner');
+	const morning = document.getElementById('morning');
+	const night = document.getElementById('night');
+	const unfold = document.getElementById('unfold');
+	const cycle = document.getElementById('cycle');
 
-	scene1.style.display = "none";
-	scene2.style.display = "none";
-	scene3.style.display = "none";
-	scene4.style.display = "none";
-	scene5.style.display = "none";
-	scene6.style.display = "none";
-	scene7.style.display = "none";
-	scene8.style.display = "none";
-	scene9.style.display = "none";
-	scene10.style.display = "none";
-	scene11.style.display = "none";
-	scene12.style.display = "none";
-	scene13.style.display = "none";
-	scene14.style.display = "none";
-	scene15.style.display = "none";
-
-
-	// DOM element for the input field
-	const seekInput = document.getElementById('seek');
-
-	// DOM element for the span we'll use to update with
-	// the value of the input field
-	const nameSpanText = document.getElementById('nametext');
-	// function that gets called whenever "keyup" event happens
-	// on the input field
-	function handleNameInput(event) {
-		nameSpanText.innerHTML = seekInput.value;
-	}
-	// configure the input field to call the above function on the keyup event
-	seekInput.addEventListener('keyup', handleNameInput);
+	begin.style.display = "none";
+	up.style.display = "none";
+	down.style.display = "none";
+	dark.style.display = "none";
+	joy.style.display = "none";
+	chaos.style.display = "none";
+	gentle.style.display = "none";
+	forest.style.display = "none";
+	meadow.style.display = "none";
+	out.style.display = "none";
+	inner.style.display = "none";
+	morning.style.display = "none";
+	night.style.display = "none";
+	unfold.style.display = "none";
+	cycle.style.display = "none";
 
 
-	var enterbtn = document.getElementById('enterbtn');
+	var enterbtn = document.getElementById('enterbtn'); //get the button
+
 	function myButtonHandler(event) {
-		gameSetup.style.display = "none";
-		scene1.style.display = "block";
-		console.log("yup");
-
-		// userState.level = "cool";
-
-		event.preventDefault();
+		begin.style.display = "block";
+		userState.level = "cool";
+		// event.preventDefault();
 	}
 	enterbtn.addEventListener('click', myButtonHandler);
+
+	const upLink = document.getElementById('upLink');
+	const downLink = document.getElementById('downLink');
+	const darkLink = document.getElementById('darkLink');
+	const joyLink = document.getElementById('joyLink');
+	const chaosLink = document.getElementById('chaosLink');
+	const gentleLink = document.getElementById('gentleLink');
+	const forestLink = document.getElementById('forestLink');
+	const meadowLink = document.getElementById('meadowLink');
+	const outLink = document.getElementById('outLink');
+	const innerLink = document.getElementById('innerLink');
+	const morningLink = document.getElementById('morningLink');
+	const nightLink = document.getElementById('nightLink');
+	const unfoldLink = document.getElementById('unfoldLink');
+	const cycleLink = document.getElementById('cycleLink');
+
+	function makeLinkHandler(link) {
+		function linkHandler(event) {
+			link.style.display = "block";
+		}
+		return linkHandler;
+	}
+
+	function myLinkHandler(event) {
+		if(buttonName == 'up-link') {
+			up.style.display = "block";
+		} else if(buttonName = "down-link"){
+			down.style.display = "block";
+		}
+	}
+
+//creates and runs a function makeLinkHandler which returns a function
+	upLink.addEventListener('click', makeLinkHandler(up));
+	downLink.addEventListener('click', makeLinkHandler(down));
+	darkLink.addEventListener('click', makeLinkHandler(dark));
+	joyLink.addEventListener('click', makeLinkHandler(joy));
+	chaosLink.addEventListener('click', makeLinkHandler(chaos));
+	gentleLink.addEventListener('click', makeLinkHandler(gentle));
+	forestLink.addEventListener('click', makeLinkHandler(forest));
+	meadowLink.addEventListener('click', makeLinkHandler(meadow));
+	outLink.addEventListener('click', makeLinkHandler(out));
+	innerLink.addEventListener('click', makeLinkHandler(inner));
+	morningLink.addEventListener('click', makeLinkHandler(morning));
+	nightLink.addEventListener('click', makeLinkHandler(night));
+	unfoldLink.addEventListener('click', makeLinkHandler(unfold));
+	cycleLink.addEventListener('click', makeLinkHandler(cycle));
 }
 
 window.addEventListener('load', windowOnLoad);

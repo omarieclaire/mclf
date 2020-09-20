@@ -4,150 +4,190 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <script src="play.js" type="text/javascript"></script> -->
   <link href="styles.css" rel="stylesheet" type="text/css">
 
   <title>Mood Ring</title>
 </head>
 
 <body>
-  <!-- <div class="navbar"><span>HELLLLOOOO</span></div> -->
-
-
-  <!-- <div class="parallax-wrapper"> -->
-  <div id="#main-wrapper" class="content">
+  <div id="start-screen" class="level">
     <h1>Mood Ring</h1>
-    <!-- <img id="main-image" class="bg" alt="shapes" src="images/main.png"> -->
-    <p><a id="enterbtn" href="#begin">begin</a></p>
-  <!-- </div> -->
-
-
-  <!-- <div class="regular-wrapper"> -->
-    <div id="begin" class="content">
-      <!-- <img id="emergesubmerge-image" class="bg" alt="emergesubmerge" src="images/emergesubmerge.png"> -->
-      <p><a href="#emerge">emerge</a> or <a href="#submerge">submerge</a> ?</p>
+    <div class="row1">
+      <img id="climber" class="image" alt="climber" src="images/startScreen/climber.png">
+      <img id="swimmer" class="image" alt="swimmer" src="images/startScreen/swimmer.png">
     </div>
-  <!-- </div> -->
+    <div class="row2">
+      <img id="creaturesL" class="image" alt="creatures" src="images/startScreen/creaturesL.png">
+      <img id="titling" class="image" alt="titling" src="images/startScreen/titling.png">
+      <img id="creaturesR" class="image" alt="creatures" src="images/startScreen/creaturesR.png">
 
-    <div id="submerge" class="content">
-      <!-- <img id="stretchsoften-image" class="bg" alt="stretchsoften" src="images/stretchsoften.png"> -->
-      <p><a href="#soften">soften</a> or <a href="#stretch">stretch</a> ?</p>
+    </div>
+    <div class="row3">
+      <button id="enterbtn" class="button">Begin</button>
+      <img id="greenGlow" class="image" alt="greenGlow" src="images/startScreen/greenGlow.png">
+    </div>
+  </div>
+
+
+  <div id="begin" class="level level1">
+    <div class="row2">
+      <img id="upimg" class="image choiceImage" alt="up" src="images/choices/up.png">
+      <img id="downimg" class="image choiceImage" alt="down" src="images/choices/down.png">
+    </div>
+    <div class="row1">
+      <p class="choice"><a id="upLink" href="#up">up</a> or <a id="downLink" href=" #down">down</a> ?</p>
+    </div>
+  </div>
+
+  <div id="down" class="level level2">
+    <div class="row2">
+      <img id="outimg" class="image choiceImage" alt="out" src="images/choices/out.png">
+      <img id="inimg" class="image choiceImage" alt="inner" src="images/choices/in.png">
+    </div>
+  <div class="row1">
+    <p><a id="outLink" href=" #out">out</a> or <a id="innerLink" href=" #inner">inner</a> ?</p>
+  </div>
+  </div>
+
+  <div id="up" class="level level2">
+    <div class="row2">
+      <img id="darkimg" class="image choiceImage" alt="dark" src="images/choices/dark.png">
+      <img id="joyimg" class="image choiceImage" alt="joy" src="images/choices/joy.png">
+    </div>
+    <div class="row1">
+      <p><a id="darkLink" href=" #dark">dark</a> or <a id="joyLink" href=" #joy">joy</a> ?</p>
+    </div>
+  </div>
+
+
+    <div id="out" class="level level2">
+      <div class="row2">
+      <img id="morningimg" class="image choiceImage" alt="morning" src="images/choices/morning.png">
+      <img id="nightimg" class="image choiceImage" alt="night" src="images/choices/night.png">
+    </div>
+    <div class="row1">
+      <p><a id="morningLink" href=" #morning">morning</a> or <a id="nightLink" href=" #night">night</a> ?</p>
+    </div>
+  </div>
+
+    <div id="inner" class="level level2">
+      <div class="row2">
+      <img id="unfoldimg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png">
+      <img id="cycleimg" class="image choiceImage" alt="cycle" src="images/choices/cycle.png">
+    </div>
+    <div class="row1">
+      <p><a id="unfoldLink" href=" #unfold">unfold</a> or <a id="cycleLink" href=" #cycle">cycle</a> ?</p>
+    </div>
+  </div>
+
+    <div id="dark" class="level level2">
+      <div class="row2">
+      <img id="chaosimg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png">
+      <img id="gentleimg" class="image choiceImage" alt="gentle" src="images/choices/gentle.png">
+    </div>
+    <div class="row1">
+      <p><a id="chaosLink" href=" #chaos">chaos</a> or <a id="gentleLink" href=" #gentle">gentle</a> ?</p>
+    </div>
+  </div>
+
+    <div id="joy" class="level level2">
+      <div class="row2">
+      <img id="forestimg" class="image choiceImage" alt="forest" src="images/choices/forest.png">
+      <img id="meadowimg" class="image choiceImage" alt="meadow" src="images/choices/meadow.png">
+    </div>
+    <div class="row1">
+      <p><a id="forestLink" href=" #forest">forest</a> or <a id="meadowLink" href=" #meadow">meadow</a> ?</p>
+    </div>
+  </div>
+
+    <!-- TERMINAL -->
+
+    <div id="night" class="level level3 musiccolumn">
+      <p>SlowPitchSound</p>
+      <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
+        <div id="musicbutton1" class="musicbutton"></div>
+      </div>      <audio id="player1" controls preload>
+        <source src="sounds/SlowPitchSound-YouBettaChangeftDistantDust.mp3" type="audio/mpeg">
+      </audio>
     </div>
 
-  <div id="emerge" class="step" data-rel-x="2000" data-rel-y="0" data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight" data-goto-next-list="overunder-pro shapes-pro">
-    <!-- <img id="overunder-image" class="bg" alt="overunder" src="images/overunder.png"> -->
-    <p><a href="#over">over</a> or <a href="#under">under</a> ?</p>
-  </div>
-
-  <div id="soften" class="step" data-rel-x="2000" data-rel-y="0" data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight" data-goto-next-list="overunder-con overunder shapes">
-    <!-- <img id="darklight-image" class="bg" alt="darklight" src="images/darklight.png"> -->
-    <p><a href="#dark">dark</a> or <a href="#light">light</a> ?</p>
-  </div>
-
-  <div id="stretch" class="step" data-rel-x="2000" data-rel-y="0" data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight" data-goto-next-list="sunmoon sunmoon-con overunder-pro shapes-pro">
-    <!-- <img id="northernlightsrainbow-image" class="bg" alt="northernlightsrainbow" src="images/northernlightsrainbow.png"> -->
-    <p><a href="#northernlights">northern lights</a> or <a href="#rainbow">rainbow</a> ?</p>
-  </div>
-
-  <div id="over" class="step" data-rel-x="2000" data-rel-y="0" data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight" data-goto-next-list=" applepie overunder-con shapes-con">
-    <!-- <img id="branchesroots-image" class="bg" alt="branchesroots" src="images/branchesroots.png"> -->
-    <p><a href="#branches">branches</a> or <a href="#roots">roots</a> ?</p>
-  </div>
-
-  <div id="under" class="step" data-rel-x="2000" data-rel-y="0" data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight" data-goto-next-list="overunder-con  overunder shapes">
-    <!-- <img id="createdestroy-image" class="bg" alt="createdestroy" src="images/createdestroy.png"> -->
-    <p><a href="#create">create</a> or <a href="#destroy">destroy</a> ?</p>
-  </div>
-
-  <!-- TERMINAL -->
-
-  <div id="light" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Phoenix ~ Anachnid</p>
-    <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
-      <div id="musicbutton1" class="musicbutton"></div>
+    <div id="forest" class="level level3 musiccolumn">
+      <p>Mas Aya</p>
+      <div id="musicbuttoncontainer2" class="musicbuttoncontainer hide">
+        <div id="musicbutton2" class="musicbutton"></div>
+      </div>
+      <audio id="player2" controls preload>
+        <source src="sounds/MasAya-AGAKHAN.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player1" controls preload>
-      <source src="sounds/light.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="dark" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Ooooo ~ Veneer</p>
-    <div id="musicbuttoncontainer2" class="musicbuttoncontainer hide">
-      <div id="musicbutton2" class="musicbutton"></div>
+    <div id="chaos" class="level level3 musiccolumn">
+      <p>Klapshmock</p>
+      <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
+        <div id="musicbutton3" class="musicbutton"></div>
+      </div>
+      <audio id="player3" controls preload>
+        <source src="sounds/Klapshmock-AttackZoneX.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player2" controls preload>
-      <source src="sounds/dark.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="branches" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Black Girls Flying ~ OBUXUM</p>
-    <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
-      <div id="musicbutton3" class="musicbutton"></div>
+    <div id="gentle" class="level level3 musiccolumn">
+      <p>Deidre</p>
+      <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
+        <div id="musicbutton4" class="musicbutton"></div>
+      </div>
+      <audio id="player4" controls preload>
+        <source src="sounds/Deidre-Numb.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player3" controls preload>
-      <source src="sounds/branches.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="roots" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Figures ~ Jessie Reyez</p>
-    <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
-      <div id="musicbutton4" class="musicbutton"></div>
+    <div id="cycle" class="level level3 musiccolumn">
+      <p>Bucko</p>
+      <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
+        <div id="musicbutton5" class="musicbutton"></div>
+      </div>
+      <audio id="player5" controls preload>
+        <source src="sounds/Bucko-ProTesting.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player4" controls preload>
-      <source src="sounds/roots.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="rainbow" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Para Transcribir (SOL) ~ Lido Pimienta</p>
-    <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
-      <div id="musicbutton5" class="musicbutton"></div>
+    <div id="unfold" class="level level3 musiccolumn">
+      <p>Melody McKiver</p>
+      <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
+        <div id="musicbutton6" class="musicbutton"></div>
+      </div>
+      <audio id="player6" controls preload>
+        <source src="sounds/MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player5" controls preload>
-      <source src="sounds/rainbow.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="northernlights" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>SIVULIVINIVUT ~ Tanya Tagaq</p>
-    <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
-      <div id="musicbutton6" class="musicbutton"></div>
+    <div id="meadow" class="level level3 musiccolumn">
+      <p>Orchidae</p>
+      <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
+        <div id="musicbutton7" class="musicbutton"></div>
+      </div>
+      <audio id="player7" controls preload>
+        <source src="sounds/Orchidae-LoveDemo.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player6" controls preload>
-      <source src="sounds/northernlights.mp3" type="audio/mpeg">
-    </audio>
-  </div>
 
-  <div id="destroy" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Lucifer Stand ~ Cindy Lee</p>
-    <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
-      <div id="musicbutton7" class="musicbutton"></div>
+    <div id="morning" class="level level3 musiccolumn">
+      <p>Century Egg</p>
+      <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
+        <div id="musicbutton8" class="musicbutton"></div>
+      </div>
+      <audio id="player8" controls preload>
+        <source src="sounds/CenturyEgg-IWillMakeUpAMethod.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="player7" controls preload>
-      <source src="sounds/destroy.mp3" type="audio/mpeg">
-    </audio>
-  </div>
-
-  <div id="create" class="step musiccolumn" data-rel-x="2000" data-rel-y="0">
-    <p>Forward Always ~ Marcus Floats</p>
-    <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
-      <div id="musicbutton8" class="musicbutton"></div>
-    </div>
-    <audio id="player8" controls preload>
-      <source src="sounds/create.mp3" type="audio/mpeg">
-    </audio>
-  </div>
-
-</div>
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    <script src="play.js"></script>
 
-  <script src="main.js" defer></script>
+    <script src="play-audio.js"></script>
+    <script src="main.js" defer></script>
 
 
 </body>

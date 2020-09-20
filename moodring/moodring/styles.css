@@ -1,90 +1,253 @@
 /* html {
     overflow: hidden;
 } */
-
 html {
-    background-color: black;
+  background-color: black;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  font-size: 26px;
+  color: #ffffff;
+  height: 100vh;
+  perspective: 1px;
+  transform-style: preserve-3d;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* background: url('images/bg.png'), auto; */
+  /* cursor: url('images/char/swimLady.png') 12 18, auto; */
+}
+
+a:link, a:visited {
+  /* background-color: blue; */
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: black;
+  cursor: url('images/char/plantLady.png') 12 18, auto;
 
 }
 
+.image {
+  align-self: center;
+  width: 9rem;
+  padding: .1rem;
+}
 
-body {
-    margin: 0;
-    font-size: 26px;
-    color: #ffffff;
-    height: 100vh;
-    perspective: 1px;
-    transform-style: preserve-3d;
-    overflow-x:hidden;
-    overflow-y:auto;
-    /* background: url('images/bg.png'), auto; */
-    cursor: url('images/cursor.png'), auto;
-    background: url(images/bgl.png), url(images/bgr.png);
-    background-position: top 0 left 0, top 0 right 0 ;
-    background-size: 20% auto, 20% auto;
-    background-repeat: no-repeat, no-repeat;
+#titling {
+  width: 13rem;
+}
 
+#creaturesL {
+  width: 6rem;
+}
+#creaturesL {
+  width: 6rem;
+}
+
+#greenGlow {
+  z-index: 5;
+}
+
+.choiceImage {
+  width: 6rem;
+  padding: .1rem;
+}
+
+.choice {
+  align-self: center;
+}
+
+.level {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 2px;
+  grid-template-areas:
+    "top top top"
+    "middle middle middle"
+    "bottom bottom bottom";
+  height: 100vh;
+  width: 100vw;
+}
+
+.row1{
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+  padding: 1rem;
+  margin: 2rem;
+}
+
+.row2{
+  grid-area: middle;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.row3{
+  grid-area: bottom;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  z-index: 99
+}
+
+#enterbtn{
+  margin-bottom: -5rem;
+  z-index: 10;
+
+}
+
+.level1 {
+  background: url(images/walls/2l.png), url(images/walls/2r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.level2 {
+  background: url(images/walls/3l.png), url(images/walls/3r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+
+.level3 {
+  display: flex;  /* temp fix */
+  flex-direction: column; /* temp fix */
+  align-items: center;/* temp fix */
+  background: url(images/walls/4l.png), url(images/walls/4r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#start-screen {
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 2px;
+  grid-template-areas:
+    "top top top"
+    "middle middle middle"
+    "bottom bottom bottom"; */
+  background: url(images/walls/1l.png), url(images/walls/1r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+
+
+#up {
+  /* Level 1 */
+}
+
+#down {
+  /* Level 1 */
+}
+
+#dark {
+  /* Level 2 */
+}
+
+#joy {
+  /* Level 2 */
+}
+
+#chaos {
+  /* Level 3 */
+}
+
+#gentle {
+  /* Level 3 */
+}
+
+#spirited {
+  /* Level 3 */
+}
+
+#chill {
+  /* Level 3 */
+}
+
+#out {
+  /* Level 2 */
+}
+
+#in {
+  /* Level 2 */
+}
+
+#morning {
+  /* Level 3 */
+}
+
+#night {
+  /* Level 3 */
+}
+
+#unfold {
+  /* Level 3 */
+}
+
+#cycle {
+  /* Level 3 */
 }
 
 h1 {
-  font-size: 2rem;
-  color: white;
+  /* font-size: 2rem; */
+  /* color: white; */
+  /* text-align: center; */
+  visibility: hidden;
+  display: none;
+
+}
+
+.button {
+  background-color: black;
+  border: dotted;
+  border-width: 0.1px;
+  border-top: blue;
+  color: #f46925;
+  padding: 20px 40px 30px 40px;
   text-align: center;
-  margin: 5rem 0 20rem 0;
-  padding: 15rem 0 0 0;
-}
-.parallax-wrapper {
-    width: 100vw;
-    height:100vh;
-    padding-top:20vh;
-    box-sizing: border-box;
-    transform-style: preserve-3d;
-    cursor: url('images/cursor.png'), auto;
-
+  text-decoration: none;
+  /* display: inline-block; */
+  font-size: 20px;
+  margin: 4px 2px;
+  border-radius: 50%;
+  /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 }
 
-/* this will be the background */
-.parallax-wrapper::before {
-    content:"";
-    width: 100vw;
-    height: 90vh;
-    top:0;
-    left:0;
-    background-image: url("images/main.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    position: absolute;
-    z-index: -1;
-    transform:translateZ(-1px) scale(2);
-}
-
-.parallax-wrapper::before {
-
-}
-
-.regular-wrapper {
-    width: 100vw;
-    height:100vh;
-    padding-top:20vh;
-    background-color: black;
-    /* background-image: url("images/main.png"); */
-    z-index: 2;
-    position: relative;
-    cursor: url('images/cursor2.png'), auto;
-
-}
 .content {
-    /* margin: 0 auto;
+  /* margin: 0 auto;
     padding: 50px;
     width: 50%;
     color: white; */
-    /* background: #aaa; */
+  /* background: #aaa; */
 }
 
 .visible, .invisible {
   opacity: 0.0;
   transition: opacity 0.5s ease;
 }
+
 .visible {
   opacity: 1.0;
 }
