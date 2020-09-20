@@ -31,7 +31,7 @@ a:link, a:visited {
 
 a:hover, a:active {
   background-color: black;
-  cursor: url('images/char/plantLady.png') 12 18, auto;
+  /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 
 }
 

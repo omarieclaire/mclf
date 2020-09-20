@@ -1,12 +1,12 @@
 var userState = {
 	level: 'begin',
-	upOrDown: false,
-	darkOrJoy: false,
-	chaosOrGentle: false,
-	forestOrMeadow: false,
-	outOrIn: false,
-	morningOrNight: false,
-	unfoldOrCyle: false,
+	upOrDown: undefined,
+	darkOrJoy: undefined,
+	chaosOrGentle: undefined,
+	forestOrMeadow: undefined,
+	outOrIn: undefined,
+	morningOrNight: undefined,
+	unfoldOrCyle: undefined,
 };
 
 function windowOnLoad() {
@@ -48,7 +48,10 @@ function windowOnLoad() {
 
 	function myButtonHandler(event) {
 		begin.style.display = "block";
-		userState.level = "cool";
+		enterbtn.innerHTML = 'scroll down';
+
+
+		// userState.level = "cool";
 		// event.preventDefault();
 	}
 	enterbtn.addEventListener('click', myButtonHandler);
@@ -68,36 +71,30 @@ function windowOnLoad() {
 	const unfoldLink = document.getElementById('unfoldLink');
 	const cycleLink = document.getElementById('cycleLink');
 
-	function makeLinkHandler(link) {
+	function makeLinkHandler(link, stateKey, stateValue) {
 		function linkHandler(event) {
 			link.style.display = "block";
+			userState[stateKey] = stateValue;
+			console.log(JSON.stringify(userState));
 		}
 		return linkHandler;
 	}
 
-	function myLinkHandler(event) {
-		if(buttonName == 'up-link') {
-			up.style.display = "block";
-		} else if(buttonName = "down-link"){
-			down.style.display = "block";
-		}
-	}
-
 //creates and runs a function makeLinkHandler which returns a function
-	upLink.addEventListener('click', makeLinkHandler(up));
-	downLink.addEventListener('click', makeLinkHandler(down));
-	darkLink.addEventListener('click', makeLinkHandler(dark));
-	joyLink.addEventListener('click', makeLinkHandler(joy));
-	chaosLink.addEventListener('click', makeLinkHandler(chaos));
-	gentleLink.addEventListener('click', makeLinkHandler(gentle));
-	forestLink.addEventListener('click', makeLinkHandler(forest));
-	meadowLink.addEventListener('click', makeLinkHandler(meadow));
-	outLink.addEventListener('click', makeLinkHandler(out));
-	innerLink.addEventListener('click', makeLinkHandler(inner));
-	morningLink.addEventListener('click', makeLinkHandler(morning));
-	nightLink.addEventListener('click', makeLinkHandler(night));
-	unfoldLink.addEventListener('click', makeLinkHandler(unfold));
-	cycleLink.addEventListener('click', makeLinkHandler(cycle));
+	upLink.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up'));
+	downLink.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down'));
+	darkLink.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark'));
+	joyLink.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy'));
+	chaosLink.addEventListener('click', makeLinkHandler(chaos, 'chaosOrGentle', 'chaos'));
+	gentleLink.addEventListener('click', makeLinkHandler(gentle, 'chaosOrGentle', 'gentle'));
+	forestLink.addEventListener('click', makeLinkHandler(forest, 'forestOrMeadow', 'forest'));
+	meadowLink.addEventListener('click', makeLinkHandler(meadow, 'forestOrMeadow', 'meadow'));
+	outLink.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out'));
+	innerLink.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner'));
+	morningLink.addEventListener('click', makeLinkHandler(morning, 'morningOrNight', 'morning'));
+	nightLink.addEventListener('click', makeLinkHandler(night, 'morningOrNight', 'night'));
+	unfoldLink.addEventListener('click', makeLinkHandler(unfold, 'unfoldOrCycle', 'unfold'));
+	cycleLink.addEventListener('click', makeLinkHandler(cycle, 'unfoldOrCycle', 'cycle'));
 }
 
 window.addEventListener('load', windowOnLoad);
