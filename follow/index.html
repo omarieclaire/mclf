@@ -70,44 +70,128 @@
       <div class="home-about-textbox">
         <h1>Follow<br><span class="subtitle">A two-player cooperative game</span></h1>
 
-        <p>Follow explores the ways we move together. Follow is a cooperative game about the intimacy of opposition, and the delicate balance of shared control.</p>
+        <p class="quote"><strong>Is there intimacy in opposition? How do we move together when we lead and follow?</strong></p>
 
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/3t13XOceq0Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<br>
-<br>
+            <p>I made Follow for <a target="_blank" href="https://gamecenter.nyu.edu/events/no-quarter/">The No Quarter Exhibition</a> during my residency at <a target="_blank" href="https://gamecenter.nyu.edu/"> the NYU Game Center</a>.</p>
 
-        <p>The basic structure is:</p>
-        <ul>
-          <li>Two players, two enormous LED buttons (each player controls one button)</li>
-          <li>On the screen, some very minimal circles (representing players) surrounded by rings (representing energy)</li>
-          <li>The left button can only pull both onscreen players left, and the left player starts losing rings/energy to the right player</li>
-          <li>The right button can only both onscreen players right, and the right player starts losing rings/energy to the left player</li>
-          <li>If both press their buttons everything momentarily pauses in place</li>
-          <li>If either player runs out of rings the game ends</li>
-        </ul>
-        <p>There are also some falling mini-spikes that "pop" rings and falling rings that players can catch.</p>
-        <p>Follow continues a thread that came out of my earlier games: <a target="_blank" href="https://marieflanagan.com/closer/"> Closer</a>, a game where the single playable controller is cooperatively and continuously shared between two players and <a target="_blank" href="https://marieflanagan.com/common/"> Common</a>, where the entire game emerges from the stewardship
-          and maintenance of the relationships of the players.</p>
-        <p>With follow I was thinking about the nature of opposition, leading/following, shared control, and balance.</p>
+            <p>Follow is a two player cooperative game, with a custom controller. Follow explores the space of leading/following, the intimacy of opposition, and the delicate balance of shared control.</p>
 
-        <p>Thanks to the NYU Game Center and the No Quarter Commission that made this possible. Thank you to Arnab Chakravarty for collaborating on the controller: everything from cutting the box, to being a wonderful collaborator, to contributing
-          Arduino code. </p>
+            <!-- <img src="../img/blog-images/fo-follow.png" alt=“follow game" class="wide-image image"> -->
 
-          <h2>Alternate Versions</h2>
-          <p>I designed (and even coded) a number of alternate prototypes. I'd love to explore these further someday. I'm also curious about making a rope controller option.</p>
+            <h2>How Follow Works</h2>
+    <ul>
+              <li>There are two players and two enormous LED buttons. Each player controls one button.</li>
+              <li>On the screen, there are circles (representing players) surrounded by rings (representing energy)</li>
+              <li>When the left player presses their button, both players are pulled left, and the left player starts losing rings/energy to the right player.</li>
+              <li>When the right player presses their button, both players are pulled right, and the right player starts losing rings/energy to the left player.</li>
+              <li>Movement never stops - unless both players hold their buttons simultaneously, which freezes them in place.</li>
+              <li>There are some falling mini-spikes that "pop" rings if they hit a player, and falling rings that players can catch.</li>
+              <li>When either player runs out of rings the game ends for both.</li>
+            </ul>
 
-        <img src="../img/blog-images/ny-followcontroll.jpeg" alt="a number of different control setups" class="wide-image image">
+            <div class="vidContent">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/3t13XOceq0Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <br>
 
-        <img src="../img/port-follow.jpg" alt="a number of different control setups" class="wide-image image">
-        <p class="img-caption" style="margin-top:0;"> Photo by the wonderful <a target="_blank" href="http://uglymachine.net/">EMi</a> </p>
+            <h2>Concept</h2>
+            <p>Follow is an exploration of:</p>
+            <ul>
+              <li>Following and leading</li>
+              <li>The intimacy of opposition</li>
+              <li>The nature of connection, shared control, shared fates</li>
+            </ul>
+            <img src="../img/port-follow.jpg" alt="a number of different control setups" class="wide-image image">
+            <p class="img-caption" style="margin-top:0;"> Photo by <a target="_blank" href="http://uglymachine.net/">EMi</a> </p>
 
-        <!--
 
-                <img src="../img/blog-images/ny-followbox.jpeg" alt="drawing of an hourglass running low" class="wide-image image">
-                <p class="img-caption" style="margin-top:0;"><em>Follow</em> - Early cardboard box prototype<p>
- -->
+            <p>Follow continues a thread that came out of my earlier games: <a target="_blank" href="https://marieflanagan.com/closer/"> Closer</a>, a game where the single playable controller is cooperatively and continuously shared between two players and <a target="_blank" href="https://marieflanagan.com/common/"> Common</a>, where the entire game emerges from the stewardship
+              and maintenance of the relationships of the players.</p>
 
-      </div>
+            <!-- <img src="../img/blog-images/fo-players.png" alt="children playing Follow" class="wide-image image"> -->
+
+            <h2>Questions</h2>
+            <ul>
+              <li>What is the relationship between the one who is leading and the one who is following?</li>
+              <li>Why do we define ourselves in opposition to an other? what does this mean about our relationship with the other?</li>
+              <li>What does it feel like to share control equally with another person?</li>
+            </ul>
+
+            <!-- <img src="../img/blog-images/co-me.png" alt="me playing Common" class="wide-image image"> -->
+            <h2>Design needs:</h2>
+            <ul>
+              <li>Players feel connected and have oppositional symmetry</li>
+              <li>Maps to keyboard for screen component & for better accessibility</li>
+              <li>Each player can see or feel the direction of the other player</li>
+            </ul>
+
+            <h2>Early ideas for alternative controllers:</h2>
+            <h3>Shared LED ropes or pulleys</h3>
+            <ul>
+              <li>Rainbow LEDs inside clear tubing?</li>
+              <li>Players pull to steer (we should go this way, we should go that way)</li>
+              <li>Design challenge - can we retain some independance for each player? So they aren’t only being pulled around</li>
+              <li>Technical challenge - which sensors?</li>
+            </ul>
+
+            <img src="../img/blog-images/fo-rope.png" alt="rope" class="wide-image image">
+
+
+            <h3>4 large shared LED buttons + central switch for player control</h3>
+            <ul>
+              <li>Either player can switch directions after hitting the central toggle button</li>
+              <li>Button lights change to communicate if it is p1 or p2</li>
+              <li>Making something that feels great and calls to people</li>
+            </ul>
+
+            <img src="../img/blog-images/fo-buttons.png" alt="buttons" class="wide-image image">
+
+
+            <h3>2 large joysticks and LED strips</h3>
+            <ul>
+              <li>2 Joysticks (or control buttons) are placed in a giant cross of LED strips, which light up according to direction and “follow” status</li>
+              <li>Should the controllers connect somehow?</li>
+            </ul>
+
+            <img src="../img/blog-images/fo-joysticks.png" alt="buttons" class="wide-image image">
+
+
+            <h3>Spinning Disks</h3>
+            <ul>
+              <li>Use swivel chair plates ($15 online) and 6 (3 foot) wooden circles (existing in the game center) to build two large spinny controllers that players sit on top of and spin to turn on screen characters.</li>
+              <li>Design challenge: players seeing the screen while spinning</li>
+              <li>Will players feel connected to each other? </li>
+              <li>Technical challenges: which sensors? & where to mount sensors/power without spinning cables?</li>
+            </ul>
+
+            <img src="../img/blog-images/fo-discs.png" alt="buttons" class="wide-image image">
+
+
+              <h2>Alternate Versions</h2>
+              <p>I designed (and even coded) a number of alternate prototypes. I'd love to explore these further someday. I'm also curious about making a rope controller option.</p>
+
+            <img src="../img/blog-images/ny-followcontroll.jpeg" alt="a number of different control setups" class="wide-image image">
+
+
+                        <h2>Tools:</h2>
+                        <p>I used <a target="_blank" href="https://p5js.org/"> p5.js</a> for the game visuals, <a target="_blank" href="https://www.arduino.cc/"> Arduino</a> and <a target="_blank" href="https://github.com/p5-serial/p5.serialcontrol"> p5.serialControl</a> for the custom controller, and vanilla Javascript for the game.</p>
+                        <!-- <img src="../img/blog-images/co-wireframe.png" alt="wireframe of screens" class="wide-image image"> -->
+
+                        <h2>Process:</h2>
+                        <p>Follow was conceptualized, designed, and built in 8 weeks.</p>
+
+                        <img src="../img/blog-images/ny-followbox.jpeg" alt="drawing of an hourglass running low" class="wide-image image">
+                        <p class="img-caption" style="margin-top:0;"><em>Follow</em> - Early cardboard box prototype<p>
+
+
+
+            <h2>Community and Collaborators</h2>
+
+
+            <p>Thanks to the NYU Game Center and the No Quarter Commission that made this possible. Thank you to Arnab Chakravarty for collaborating on the controller: everything from cutting the box, to being a wonderful collaborator, to contributing
+              Arduino code. </p>
+
+           </div>
 
 
       <div class="socialsharebox">
