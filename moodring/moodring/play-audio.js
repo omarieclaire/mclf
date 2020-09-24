@@ -43,35 +43,33 @@
   var button7 = makeAudioButton('#musicbutton7', '#musicbuttoncontainer7', '#player7');
   var button8 = makeAudioButton('#musicbutton8', '#musicbuttoncontainer8', '#player8');
 
-  /**
-   var test = true,
-       but = d.querySelector( '#musicbutton' ),
-       aud = d.querySelector( '#player' );
-       aud.classList.add( 'remove' );
-       d.querySelector( '#musicbuttoncontainer' ).classList.remove( 'hide' );
-
-   but.addEventListener('click',
-      function() {
-         if ( test === true ) {
-              but.classList.add( 'pause' );
-              test = false;
-              aud.play();
-         }
-         else {
-              changeSVG();
-              aud.pause();
-         }
-      }, false );
-
-   aud.addEventListener( 'ended',
-      function() {
-         changeSVG();
-         aud.load();
-       }, false );
-
-   function changeSVG() {
-      but.classList.remove( 'pause' );
-      test = true;
-    }
-    */
+   // var test = true,
+   //     but = d.querySelector( '#musicbutton' ),
+   //     aud = d.querySelector( '#player' );
+   //     aud.classList.add( 'remove' );
+   //     d.querySelector( '#musicbuttoncontainer' ).classList.remove( 'hide' );
+   //
+   // but.addEventListener('click',
+   //    function() {
+   //       if ( test === true ) {
+   //            but.classList.add( 'pause' );
+   //            test = false;
+   //            aud.play();
+   //       }
+   //       else {
+   //            changeSVG();
+   //            aud.pause();
+   //       }
+   //    }, false );
+   //
+   // aud.addEventListener( 'ended',
+   //    function() {
+   //       changeSVG();
+   //       aud.load();
+   //     }, false );
+   //
+   // function changeSVG() {
+   //    but.classList.remove( 'pause' );
+   //    test = true;
+   //  }
  }( document ));

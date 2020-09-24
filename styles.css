@@ -397,6 +397,11 @@ hr.blog-preview-divider {
   width: 100%;
 }
 
+.button-port-text {
+
+
+}
+
 .button-invisible {
   width: 10%;
   height: 10%;
@@ -427,16 +432,23 @@ hr.blog-preview-divider {
   .button {}
 
   .button-port {
-    font-size: 1.5rem;
+    font-size: 1rem;
     display: inline-block;
     text-decoration: none;
-    text-transform: uppercase;
-    border-style: none;
+    text-transform: none;
+    /* border-style: none; */
     /* findme */
     /* width: 100%; */
+    padding: .6em 3em;
     font-weight: 100;
     letter-spacing: 0.07em;
     /* background: rgba(14, 8, 45, .9); */
+  }
+  .button-port-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 6rem;
+
   }
 
   .button-invisible {

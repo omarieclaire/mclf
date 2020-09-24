@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <div id="start-screen" class="level">
+  <div id="startScreen" class="">
     <h1>Mood Ring</h1>
     <div class="row1">
       <img id="climber" class="image" alt="climber" src="images/startScreen/climber.png">
@@ -20,7 +20,6 @@
       <img id="creaturesL" class="image" alt="creatures" src="images/startScreen/creaturesL.png">
       <img id="titling" class="image" alt="titling" src="images/startScreen/titling.png">
       <img id="creaturesR" class="image" alt="creatures" src="images/startScreen/creaturesR.png">
-
     </div>
     <div class="row3">
       <button type="button" id="enterbtn" class="button">begin</button>
@@ -29,156 +28,227 @@
   </div>
 
 
-  <div id="begin" class="level level1">
-    <div class="row2">
-      <img id="upimg" class="image choiceImage" alt="up" src="images/choices/up.png">
-      <img id="downimg" class="image choiceImage" alt="down" src="images/choices/down.png">
-    </div>
-    <div class="row1">
-      <p class="choice"><a id="upLink" href="#up">up</a> or <a id="downLink" href=" #down">down</a> ?</p>
-    </div>
-  </div>
-
-  <div id="down" class="level level2">
-    <div class="row2">
-      <img id="outimg" class="image choiceImage" alt="out" src="images/choices/out.png">
-      <img id="inimg" class="image choiceImage" alt="inner" src="images/choices/in.png">
-    </div>
-  <div class="row1">
-    <p><a id="outLink" href=" #out">out</a> or <a id="innerLink" href=" #inner">inner</a> ?</p>
-  </div>
-  </div>
-
-  <div id="up" class="level level2">
-    <div class="row2">
-      <img id="darkimg" class="image choiceImage" alt="dark" src="images/choices/dark.png">
-      <img id="joyimg" class="image choiceImage" alt="joy" src="images/choices/joy.png">
-    </div>
-    <div class="row1">
-      <p><a id="darkLink" href=" #dark">dark</a> or <a id="joyLink" href=" #joy">joy</a> ?</p>
-    </div>
-  </div>
-
-
-    <div id="out" class="level level2">
-      <div class="row2">
-      <img id="morningimg" class="image choiceImage" alt="morning" src="images/choices/morning.png">
-      <img id="nightimg" class="image choiceImage" alt="night" src="images/choices/night.png">
-    </div>
-    <div class="row1">
-      <p><a id="morningLink" href=" #morning">morning</a> or <a id="nightLink" href=" #night">night</a> ?</p>
-    </div>
-  </div>
-
-    <div id="inner" class="level level2">
-      <div class="row2">
-      <img id="unfoldimg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png">
-      <img id="cycleimg" class="image choiceImage" alt="cycle" src="images/choices/cycle.png">
-    </div>
-    <div class="row1">
-      <p><a id="unfoldLink" href=" #unfold">unfold</a> or <a id="cycleLink" href=" #cycle">cycle</a> ?</p>
-    </div>
-  </div>
-
-    <div id="dark" class="level level2">
-      <div class="row2">
-      <img id="chaosimg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png">
-      <img id="gentleimg" class="image choiceImage" alt="gentle" src="images/choices/gentle.png">
-    </div>
-    <div class="row1">
-      <p><a id="chaosLink" href=" #chaos">chaos</a> or <a id="gentleLink" href=" #gentle">gentle</a> ?</p>
-    </div>
-  </div>
-
-    <div id="joy" class="level level2">
-      <div class="row2">
-      <img id="forestimg" class="image choiceImage" alt="forest" src="images/choices/forest.png">
-      <img id="meadowimg" class="image choiceImage" alt="meadow" src="images/choices/meadow.png">
-    </div>
-    <div class="row1">
-      <p><a id="forestLink" href=" #forest">forest</a> or <a id="meadowLink" href=" #meadow">meadow</a> ?</p>
-    </div>
-  </div>
-
-    <!-- TERMINAL -->
-
-    <div id="night" class="level level3 musiccolumn">
-      <p>SlowPitchSound</p>
-      <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
-        <div id="musicbutton1" class="musicbutton"></div>
-      </div>      <audio id="player1" controls preload>
-        <source src="sounds/SlowPitchSound-YouBettaChangeftDistantDust.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-
-    <div id="forest" class="level level3 musiccolumn">
-      <p>Mas Aya</p>
-      <div id="musicbuttoncontainer2" class="musicbuttoncontainer hide">
-        <div id="musicbutton2" class="musicbutton"></div>
+  <div id="begin" class="level1">
+    <div class="level">
+      <div class="textRow">
+        <p class="choice"><a id="upLink1" href="#up">up</a> or <a id="downLink1" href=" #down">down</a> ?</p>
       </div>
-      <audio id="player2" controls preload>
-        <source src="sounds/MasAya-AGAKHAN.mp3" type="audio/mpeg">
-      </audio>
+      <div class="imageRow">
+        <a href="#up"><img id="upLink" class="image choiceImage" alt="up" src="images/choices/up.png"></a>
+        <a href="#down"><img id="downLink" class="image choiceImage" alt="down" src="images/choices/down.png"></a>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="down" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="outLink1" href=" #out">out</a> or <a id="innerLink1" href=" #inner">inner</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#out"><img id="outLink" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
+        <a href="#inner"><img id="innerLink" class="image choiceImage" alt="inner" src="images/choices/in.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="up" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="darkLink1" href=" #dark">dark</a> or <a id="joyLink1" href=" #joy">joy</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#dark"><img id="darkLink" class="image choiceImage" alt="dark" src="images/choices/dark.png"></a>
+        <a href="#joy"><img id="joyLink" class="image choiceImage" alt="joy" src="images/choices/joy.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div id="out" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="morningLink1" href=" #morning">morning</a> or <a id="nightLink1" href=" #night">night</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#morning"><img id="morningLink" class="image choiceImage" alt="morning" src="images/choices/morning.png"></a>
+        <a href="#night"><img id="nightLink" class="image choiceImage" alt="night" src="images/choices/night.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="inner" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="unfoldLink1" href=" #unfold">unfold</a> or <a id="cycleLink1" href=" #cycle">cycle</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#unfold"><img id="unfoldLink" class="image choiceImage" alt="unfold" src="images/choices/unfold.png"></a>
+        <a href="#cycle"><img id="cycleLink" class="image choiceImage" alt="cycle" src="images/choices/cycle.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="dark" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="chaosLink1" href=" #chaos">chaos</a> or <a id="gentleLink1" href=" #gentle">gentle</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#chaos"><img id="chaosLink" class="image choiceImage" alt="chaos" src="images/choices/chaos.png"></a>
+        <a href="#gentle"><img id="gentleLink" class="image choiceImage" alt="gentle" src="images/choices/gentle.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="joy" class="level2">
+    <div class="level">
+      <div class="textRow">
+        <p><a id="forestLink1" href=" #forest">forest</a> or <a id="meadowLink1" href=" #meadow">meadow</a> ?</p>
+      </div>
+      <div class="imageRow">
+        <a href="#forest"><img id="forestLink" class="image choiceImage" alt="forest" src="images/choices/forest.png"></a>
+        <a href="#meadow"><img id="meadowLink" class="image choiceImage" alt="meadow" src="images/choices/meadow.png"></a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TERMINAL -->
+
+  <div id="night" class="level3 musiccolumn">
+    <div class="level">
+      <div class="textRow">
+        <p>SlowPitchSound</p>
+      </div>
+      <div class="imageRow">
+        <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
+          <div id="musicbutton1" class="musicbutton"></div>
+        </div> <audio id="player1" controls preload>
+          <source src="sounds/SlowPitchSound-YouBettaChangeftDistantDust.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="forest" class="level3 musiccolumn">
+    <div class="level">
+      <div class="textRow">
+        <p>Mas Aya</p>
+      </div>
+      <div class="imageRow">
+        <div id="musicbuttoncontainer2" class="musicbuttoncontainer hide">
+          <div id="musicbutton2" class="musicbutton"></div>
+        </div>
+        <audio id="player2" controls preload>
+          <source src="sounds/MasAya-AGAKHAN.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+    </div>
+  </div>
+
+
+    <div id="chaos" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Klapshmock</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
+            <div id="musicbutton3" class="musicbutton"></div>
+          </div>
+          <audio id="player3" controls preload>
+            <source src="sounds/Klapshmock-AttackZoneX.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+      </div>
     </div>
 
-    <div id="chaos" class="level level3 musiccolumn">
-      <p>Klapshmock</p>
-      <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
-        <div id="musicbutton3" class="musicbutton"></div>
+    <div id="gentle" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Deidre</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
+            <div id="musicbutton4" class="musicbutton"></div>
+          </div>
+          <audio id="player4" controls preload>
+            <source src="sounds/Deidre-Numb.mp3" type="audio/mpeg">
+          </audio>
+        </div>
       </div>
-      <audio id="player3" controls preload>
-        <source src="sounds/Klapshmock-AttackZoneX.mp3" type="audio/mpeg">
-      </audio>
     </div>
 
-    <div id="gentle" class="level level3 musiccolumn">
-      <p>Deidre</p>
-      <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
-        <div id="musicbutton4" class="musicbutton"></div>
+    <div id="cycle" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Bucko</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
+            <div id="musicbutton5" class="musicbutton"></div>
+          </div>
+          <audio id="player5" controls preload>
+            <source src="sounds/Bucko-ProTesting.mp3" type="audio/mpeg">
+          </audio>
+        </div>
       </div>
-      <audio id="player4" controls preload>
-        <source src="sounds/Deidre-Numb.mp3" type="audio/mpeg">
-      </audio>
     </div>
 
-    <div id="cycle" class="level level3 musiccolumn">
-      <p>Bucko</p>
-      <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
-        <div id="musicbutton5" class="musicbutton"></div>
+    <div id="unfold" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Melody McKiver</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
+            <div id="musicbutton6" class="musicbutton"></div>
+          </div>
+          <audio id="player6" controls preload>
+            <source src="sounds/MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3" type="audio/mpeg">
+          </audio>
+        </div>
       </div>
-      <audio id="player5" controls preload>
-        <source src="sounds/Bucko-ProTesting.mp3" type="audio/mpeg">
-      </audio>
     </div>
 
-    <div id="unfold" class="level level3 musiccolumn">
-      <p>Melody McKiver</p>
-      <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
-        <div id="musicbutton6" class="musicbutton"></div>
+    <div id="meadow" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Orchidae</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
+            <div id="musicbutton7" class="musicbutton"></div>
+          </div>
+          <audio id="player7" controls preload>
+            <source src="sounds/Orchidae-LoveDemo.mp3" type="audio/mpeg">
+          </audio>
+        </div>
       </div>
-      <audio id="player6" controls preload>
-        <source src="sounds/MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3" type="audio/mpeg">
-      </audio>
     </div>
 
-    <div id="meadow" class="level level3 musiccolumn">
-      <p>Orchidae</p>
-      <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
-        <div id="musicbutton7" class="musicbutton"></div>
+    <div id="morning" class="level3 musiccolumn">
+      <div class="level">
+        <div class="textRow">
+          <p>Century Egg</p>
+        </div>
+        <div class="imageRow">
+          <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
+            <div id="musicbutton8" class="musicbutton"></div>
+          </div>
+          <audio id="player8" controls preload>
+            <source src="sounds/CenturyEgg-IWillMakeUpAMethod.mp3" type="audio/mpeg">
+          </audio>
+        </div>
       </div>
-      <audio id="player7" controls preload>
-        <source src="sounds/Orchidae-LoveDemo.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-
-    <div id="morning" class="level level3 musiccolumn">
-      <p>Century Egg</p>
-      <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
-        <div id="musicbutton8" class="musicbutton"></div>
-      </div>
-      <audio id="player8" controls preload>
-        <source src="sounds/CenturyEgg-IWillMakeUpAMethod.mp3" type="audio/mpeg">
-      </audio>
     </div>
 
 

@@ -1,3 +1,53 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
 /* html {
     overflow: hidden;
 } */
@@ -65,8 +115,14 @@ a:hover, a:active {
   align-self: center;
 }
 
-.level {
-  display: grid;
+.choice:hover {
+	/* background: green; */
+
+	align-self: center;
+}
+
+#startScreen {
+	display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 2px;
@@ -76,6 +132,10 @@ a:hover, a:active {
     "bottom bottom bottom";
   height: 100vh;
   width: 100vw;
+  background: url(images/walls/1l.png), url(images/walls/1r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
 }
 
 .row1{
@@ -105,6 +165,40 @@ a:hover, a:active {
   align-content: center;
   z-index: 99
 }
+
+.level {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-gap: 2px;
+  grid-template-areas:
+    ". . . . "
+    ". textRow textRow ."
+    ". imageRow imageRow ."
+		". . . . ";
+  height: 100vh;
+  width: 100vw;
+}
+
+.textRow{
+  grid-area: textRow;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+  padding: 1rem;
+  margin: 2rem;
+}
+.imageRow{
+  grid-area: imageRow;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+  padding: 1rem;
+  margin: 2rem;
+}
+
 
 #enterbtn{
   margin-bottom: -5rem;
@@ -136,23 +230,6 @@ a:hover, a:active {
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
-
-#start-screen {
-  /* display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-gap: 2px;
-  grid-template-areas:
-    "top top top"
-    "middle middle middle"
-    "bottom bottom bottom"; */
-  background: url(images/walls/1l.png), url(images/walls/1r.png);
-  background-position: top 0 left 0, top 0 right 0;
-  background-size: auto 100%, auto 100%;
-  background-repeat: no-repeat, no-repeat;
-}
-
-
 
 #up {
   /* Level 1 */
@@ -233,6 +310,16 @@ h1 {
   margin: 4px 2px;
   border-radius: 50%;
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
+}
+
+button:hover{
+	color: orange;
+}
+
+button:active{
+	color: orange;
+	transform: translateY(4px);
+
 }
 
 .content {

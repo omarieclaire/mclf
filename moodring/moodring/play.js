@@ -48,7 +48,7 @@ function windowOnLoad() {
 
 	function myButtonHandler(event) {
 		begin.style.display = "block";
-		enterbtn.innerHTML = 'scroll down';
+		enterbtn.innerHTML = 'scroll';
 
 
 		// userState.level = "cool";
