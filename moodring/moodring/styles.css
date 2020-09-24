@@ -72,8 +72,8 @@ body {
 
 a:link, a:visited {
   /* background-color: blue; */
-  color: white;
-  padding: 14px 25px;
+  color: #799be2;
+  /* padding: 14px 25px; */
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -202,6 +202,7 @@ a:hover, a:active {
   justify-content: space-around;
   padding: 1rem;
   margin: 2rem;
+	text-align: center;
 }
 .imageRow{
   grid-area: imageRow;
@@ -337,7 +338,7 @@ h1 {
 }
 
 button:hover{
-	color: orange;
+	color: purple;
 }
 
 button:active{

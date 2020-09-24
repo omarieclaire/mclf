@@ -1,3 +1,4 @@
+// stores what decision the user has made
 var userState = {
 	level: 'begin',
 	upOrDown: undefined,
@@ -9,8 +10,9 @@ var userState = {
 	unfoldOrCyle: undefined,
 };
 
+// get each "level"
 function windowOnLoad() {
-	const gameSetup = document.getElementById('gameSetup');
+	const startScreen = document.getElementById('startScreen');
 	const begin = document.getElementById('begin');
 	const up = document.getElementById('up');
 	const down = document.getElementById('down');
@@ -27,6 +29,7 @@ function windowOnLoad() {
 	const unfold = document.getElementById('unfold');
 	const cycle = document.getElementById('cycle');
 
+// set each level to be invisible
 	begin.style.display = "none";
 	up.style.display = "none";
 	down.style.display = "none";
@@ -44,18 +47,14 @@ function windowOnLoad() {
 	cycle.style.display = "none";
 
 
-	var enterbtn = document.getElementById('enterbtn'); //get the button
-
-	function myButtonHandler(event) {
+	var enterbtn = document.getElementById('enterbtn'); // get the button
+	enterbtn.addEventListener('click', myButtonHandler); // add an eventlistener to the enter button
+	function myButtonHandler(event) {  // set the begin to visible when you click on the enter button
 		begin.style.display = "block";
 		enterbtn.innerHTML = 'scroll';
-
-
-		// userState.level = "cool";
-		// event.preventDefault();
 	}
-	enterbtn.addEventListener('click', myButtonHandler);
 
+// get all the links
 	const upLink = document.getElementById('upLink');
 	const downLink = document.getElementById('downLink');
 	const darkLink = document.getElementById('darkLink');
@@ -70,6 +69,21 @@ function windowOnLoad() {
 	const nightLink = document.getElementById('nightLink');
 	const unfoldLink = document.getElementById('unfoldLink');
 	const cycleLink = document.getElementById('cycleLink');
+// get all the images
+	const upImg = document.getElementById('upImg');
+	const downImg = document.getElementById('downImg');
+	const darkImg = document.getElementById('darkImg');
+	const joyImg = document.getElementById('joyImg');
+	const chaosImg = document.getElementById('chaosImg');
+	const gentleImg = document.getElementById('gentleImg');
+	const forestImg = document.getElementById('forestImg');
+	const meadowImg = document.getElementById('meadowImg');
+	const outImg = document.getElementById('outImg');
+	const innerImg = document.getElementById('innerImg');
+	const morningImg = document.getElementById('morningImg');
+	const nightImg = document.getElementById('nightImg');
+	const unfoldImg = document.getElementById('unfoldImg');
+	const cycleImg = document.getElementById('cycleImg');
 
 	function makeLinkHandler(link, stateKey, stateValue) {
 		function linkHandler(event) {
@@ -81,20 +95,35 @@ function windowOnLoad() {
 	}
 
 //creates and runs a function makeLinkHandler which returns a function
-	upLink.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up'));
-	downLink.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down'));
-	darkLink.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark'));
-	joyLink.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy'));
-	chaosLink.addEventListener('click', makeLinkHandler(chaos, 'chaosOrGentle', 'chaos'));
-	gentleLink.addEventListener('click', makeLinkHandler(gentle, 'chaosOrGentle', 'gentle'));
-	forestLink.addEventListener('click', makeLinkHandler(forest, 'forestOrMeadow', 'forest'));
-	meadowLink.addEventListener('click', makeLinkHandler(meadow, 'forestOrMeadow', 'meadow'));
-	outLink.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out'));
-	innerLink.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner'));
-	morningLink.addEventListener('click', makeLinkHandler(morning, 'morningOrNight', 'morning'));
-	nightLink.addEventListener('click', makeLinkHandler(night, 'morningOrNight', 'night'));
-	unfoldLink.addEventListener('click', makeLinkHandler(unfold, 'unfoldOrCycle', 'unfold'));
-	cycleLink.addEventListener('click', makeLinkHandler(cycle, 'unfoldOrCycle', 'cycle'));
+upLink.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up'));
+downLink.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down'));
+darkLink.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark'));
+joyLink.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy'));
+chaosLink.addEventListener('click', makeLinkHandler(chaos, 'chaosOrGentle', 'chaos'));
+gentleLink.addEventListener('click', makeLinkHandler(gentle, 'chaosOrGentle', 'gentle'));
+forestLink.addEventListener('click', makeLinkHandler(forest, 'forestOrMeadow', 'forest'));
+meadowLink.addEventListener('click', makeLinkHandler(meadow, 'forestOrMeadow', 'meadow'));
+outLink.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out'));
+innerLink.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner'));
+morningLink.addEventListener('click', makeLinkHandler(morning, 'morningOrNight', 'morning'));
+nightLink.addEventListener('click', makeLinkHandler(night, 'morningOrNight', 'night'));
+unfoldLink.addEventListener('click', makeLinkHandler(unfold, 'unfoldOrCycle', 'unfold'));
+cycleLink.addEventListener('click', makeLinkHandler(cycle, 'unfoldOrCycle', 'cycle'));
+
+upImg.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up'));
+downImg.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down'));
+darkImg.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark'));
+joyImg.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy'));
+chaosImg.addEventListener('click', makeLinkHandler(chaos, 'chaosOrGentle', 'chaos'));
+gentleImg.addEventListener('click', makeLinkHandler(gentle, 'chaosOrGentle', 'gentle'));
+forestImg.addEventListener('click', makeLinkHandler(forest, 'forestOrMeadow', 'forest'));
+meadowImg.addEventListener('click', makeLinkHandler(meadow, 'forestOrMeadow', 'meadow'));
+outImg.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out'));
+innerImg.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner'));
+morningImg.addEventListener('click', makeLinkHandler(morning, 'morningOrNight', 'morning'));
+nightImg.addEventListener('click', makeLinkHandler(night, 'morningOrNight', 'night'));
+unfoldImg.addEventListener('click', makeLinkHandler(unfold, 'unfoldOrCycle', 'unfold'));
+cycleImg.addEventListener('click', makeLinkHandler(cycle, 'unfoldOrCycle', 'cycle'));
 }
 
 window.addEventListener('load', windowOnLoad);
