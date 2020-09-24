@@ -124,12 +124,14 @@ a:hover, a:active {
 #startScreen {
 	display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 2px;
   grid-template-areas:
     "top top top"
     "middle middle middle"
-    "bottom bottom bottom";
+    ". bottom ."
+		". highlight .";
+;
   height: 100vh;
   width: 100vw;
   background: url(images/walls/1l.png), url(images/walls/1r.png);
@@ -150,6 +152,7 @@ a:hover, a:active {
 
 .row2{
   grid-area: middle;
+	/* grid-row: 1/4; */
   display: flex;
   align-items: center;
   align-content: center;
@@ -161,9 +164,20 @@ a:hover, a:active {
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
+  justify-items: center;
   align-content: center;
+	align-self: flex-end;
   z-index: 99
+}
+
+.row4{
+  grid-area: highlight;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-items: center;
+  align-content: center;
+  /* z-index: 99 */
 }
 
 .level {
@@ -226,6 +240,16 @@ a:hover, a:active {
   flex-direction: column; /* temp fix */
   align-items: center;/* temp fix */
   background: url(images/walls/4l.png), url(images/walls/4r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.level4 {
+  display: flex;  /* temp fix */
+  flex-direction: column; /* temp fix */
+  align-items: center;/* temp fix */
+  background: url(images/walls/5l.png), url(images/walls/5r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
