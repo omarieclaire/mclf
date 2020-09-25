@@ -107,19 +107,45 @@ a:hover, a:active {
 }
 
 .choiceImage {
-  width: 6rem;
+  width: 7rem;
   padding: .1rem;
+	opacity:0.6;
+
 }
+
+.choiceImage:hover {
+	/* stroke: 1rem solid yellow; */
+	/* display: inline-block; */
+	opacity:1;
+	filter: hue-rotate(90deg);
+	/* border-radius: 50%; */
+
+}
+
 
 .choice {
   align-self: center;
+	opacity:0.6;
+
 }
 
 .choice:hover {
-	/* background: green; */
-
-	align-self: center;
+	opacity:1;
 }
+
+.choiceLink:hover {
+	filter: hue-rotate(90deg);
+}
+
+/* .choice:active{
+	filter: hue-rotate(180deg);
+}
+
+.choice:focus{
+	filter: hue-rotate(180deg);
+} */
+
+
 
 #startScreen {
 	display: grid;
@@ -218,7 +244,10 @@ a:hover, a:active {
 #enterbtn{
   margin-bottom: -5rem;
   z-index: 10;
+}
 
+#enterbtn:focus{
+	outline: none;
 }
 
 .level1 {
@@ -364,6 +393,47 @@ button:active{
   opacity: 1.0;
 }
 
+/*************** Button stuff ****************************/
+.musiccolumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.musicbuttoncontainer {
+  width: 19rem;
+  height: 19rem;
+  margin: 1.5em auto;
+  border: 5px solid #fe827b;
+  opacity: .8;
+  /* border: 5px dotted #00e8c4 */
+  border-radius: 50%;
+  background-image: url(char/plantLady.png);
+  background-size: cover;
+}
+
+.musicbutton {
+  display: flex;
+  width: 24%;
+  height: 24%;
+  margin: 38% auto;
+  border: 5px solid #fe827b;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-image: url(images/play-pause-button.png);
+  background-size: 100% auto;
+  cursor: pointer;
+}
+
+.pause {
+  background-position: 0 -100%;
+}
+
 .hide {
-	display: none;
+  display: none;
+}
+
+.remove {
+  position: absolute;
+  left: -999px;
+  display: none;
 }
