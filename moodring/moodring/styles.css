@@ -363,3 +363,7 @@ button:active{
 .visible {
   opacity: 1.0;
 }
+
+.hide {
+	display: none;
+}

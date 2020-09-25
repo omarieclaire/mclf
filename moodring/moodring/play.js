@@ -85,6 +85,7 @@ function windowOnLoad() {
 	const unfoldImg = document.getElementById('unfoldImg');
 	const cycleImg = document.getElementById('cycleImg');
 
+// makes the function that is called when the links are clicked
 	function makeLinkHandler(link, stateKey, stateValue) {
 		function linkHandler(event) {
 			link.style.display = "block";
