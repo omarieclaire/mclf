@@ -10,40 +10,60 @@
 </head>
 
 <body>
-  <div id="startScreen" class="">
+  <div id="level0" class="">
     <h1>Mood Ring</h1>
     <div class="row1">
-      <img id="climber" class="image" alt="climber" src="images/startScreen/climber.png">
-      <img id="swimmer" class="image" alt="swimmer" src="images/startScreen/swimmer.png">
+        <img id="climber" class="image" alt="climber" src="images/level0/climber.png">
+      <img id="swimmer" class="image" alt="swimmer" src="images/level0/swimmer.png">
     </div>
     <div class="row2">
-      <img id="creaturesL" class="image" alt="creatures" src="images/startScreen/creaturesL.png">
-      <img id="titling" class="image" alt="titling" src="images/startScreen/titling.png">
-      <img id="creaturesR" class="image" alt="creatures" src="images/startScreen/creaturesR.png">
+      <img id="creaturesL" class="image" alt="creatures" src="images/level0/creaturesL.png">
+      <img id="titling" class="image" alt="titling" src="images/level0/titling.png">
+      <img id="creaturesR" class="image" alt="creatures" src="images/level0/creaturesR.png">
     </div>
     <div class="row3">
       <button type="button" id="enterbtn" class="button">begin</button>
     </div>
     <div class="row4">
-      <img id="greenGlow" class="image" alt="greenGlow" src="images/startScreen/greenGlow.png">
+      <img id="greenGlow" class="image" alt="greenGlow" src="images/level0/greenGlow.png">
     </div>
   </div>
 
+  <div id="spacer1" class="level1">
+    <div class="level">
+      <div class="textRow">
+        <p class="choice">First, form your question. What do you seek?</p>
+      </div>
+      <div class="imageRow">
+        <!-- <video id="fireVid" class="video" playsinline="" autoplay="" muted="" loop=""><source src="images/campfire-far.mp4" type="video/mp4"></video> -->
+        <img id="creaturesSpin" class="image" alt="creatures" src="images/level0/creaturesR.png">
 
-  <div id="begin" class="level1">
+      </div>
+      <div class="">
+
+      </div>
+    </div>
+  </div>
+
+  <div id="begin" class="level2">
     <div class="level">
       <div class="textRow">
         <p class="choice">will you float <a class="choiceLink" id="upLink" href="#up">up</a> or will you dive <a class="choiceLink" id="downLink" href=" #down">down</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#up"><img id="upImg" class="image choiceImage" alt="up" src="images/choices/up.png"></a>
+        <!-- <video id="bg-video" class="bg-video" playsinline="" autoplay="" muted="" loop=""><source src="images/campfire-far.mp4" type="video/mp4"></video> -->
+
         <a href="#down"><img id="downImg" class="image choiceImage" alt="down" src="images/choices/down.png"></a>
+      </div>
+      <div class="">
+
       </div>
     </div>
   </div>
 
 
-  <div id="down" class="level2">
+  <div id="down" class="level3">
     <div class="level">
       <div class="textRow">
         <p>do you flow <a class="choiceLink" id="outLink" href=" #out">out</a> or do you curl <a class="choiceLink" id="innerLink" href=" #inner">in</a> ?</p>
@@ -56,7 +76,7 @@
     </div>
   </div>
 
-  <div id="up" class="level2">
+  <div id="up" class="level3">
     <div class="level">
       <div class="textRow">
         <p>do you pull the deep flowing <a class="choiceLink" id="darkLink" href=" #dark">dark</a> or the light floating <a class="choiceLink" id="joyLink" href=" #joy">joy</a> ?</p>
@@ -70,7 +90,7 @@
   </div>
 
 
-  <div id="out" class="level3">
+  <div id="out" class="level4">
     <div class="level">
       <div class="textRow">
         <p>do you wait for the cusp of <a class="choiceLink" id="morningLink" href=" #morning">morning</a> or the deepening pulse of <a class="choiceLink" id="nightLink" href=" #night">night</a> ?</p>
@@ -83,7 +103,7 @@
     </div>
   </div>
 
-  <div id="inner" class="level3">
+  <div id="inner" class="level4">
     <div class="level">
       <div class="textRow">
         <p>does the pattern around you slowly <a class="choiceLink" id="unfoldLink" href=" #unfold">unfold</a> or does it <a class="choiceLink" id="cycleLink" href=" #cycle">cycle</a> ?</p>
@@ -96,7 +116,7 @@
     </div>
   </div>
 
-  <div id="dark" class="level3">
+  <div id="dark" class="level4">
     <div class="level">
       <div class="textRow">
         <p>will you enter the <a class="choiceLink" id="chaosLink" href=" #chaos">chaos</a> or undulate unto the <a class="choiceLink" id="gentleLink" href=" #gentle">gentle</a> ?</p>
@@ -109,7 +129,7 @@
     </div>
   </div>
 
-  <div id="joy" class="level3">
+  <div id="joy" class="level4">
     <div class="level">
       <div class="textRow">
         <p>will you wander through a deep <a class="choiceLink" id="forestLink" href=" #forest">forest</a> or wind your way over an endless <a class="choiceLink" id="meadowLink" href=" #meadow">meadow</a> ?</p>
@@ -124,7 +144,7 @@
 
   <!-- TERMINAL -->
 
-  <div id="night" class="level4 musiccolumn">
+  <div id="night" class="level5 musiccolumn">
     <div class="level">
       <div class="textRow">
         <p>SlowPitchSound</p>
@@ -140,7 +160,7 @@
   </div>
 
 
-  <div id="forest" class="level4 musiccolumn">
+  <div id="forest" class="level5 musiccolumn">
     <div class="level">
       <div class="textRow">
         <p>Mas Aya</p>
@@ -157,7 +177,7 @@
   </div>
 
 
-    <div id="chaos" class="level4 musiccolumn">
+    <div id="chaos" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Klapshmock</p>
@@ -173,7 +193,7 @@
       </div>
     </div>
 
-    <div id="gentle" class="level4 musiccolumn">
+    <div id="gentle" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Deidre</p>
@@ -189,7 +209,7 @@
       </div>
     </div>
 
-    <div id="cycle" class="level4 musiccolumn">
+    <div id="cycle" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Bucko</p>
@@ -205,7 +225,7 @@
       </div>
     </div>
 
-    <div id="unfold" class="level4 musiccolumn">
+    <div id="unfold" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Melody McKiver</p>
@@ -221,7 +241,7 @@
       </div>
     </div>
 
-    <div id="meadow" class="level4 musiccolumn">
+    <div id="meadow" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Orchidae</p>
@@ -237,7 +257,7 @@
       </div>
     </div>
 
-    <div id="morning" class="level4 musiccolumn">
+    <div id="morning" class="level5 musiccolumn">
       <div class="level">
         <div class="textRow">
           <p>Century Egg</p>
@@ -259,7 +279,7 @@
     <script src="play.js"></script>
 
     <script src="play-audio.js"></script>
-    <script src="main.js" defer></script>
+    <script src="scrollAnimations.js" defer></script>
 
 
 </body>

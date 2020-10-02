@@ -1,6 +1,6 @@
 // stores what decision the user has made
 var userState = {
-	level: 'begin',
+	level: 'spacer1',
 	upOrDown: undefined,
 	darkOrJoy: undefined,
 	chaosOrGentle: undefined,
@@ -13,6 +13,7 @@ var userState = {
 // get each "level"
 function windowOnLoad() {
 	const startScreen = document.getElementById('startScreen');
+	const spacer1 = document.getElementById('spacer1');
 	const begin = document.getElementById('begin');
 	const up = document.getElementById('up');
 	const down = document.getElementById('down');
@@ -30,6 +31,7 @@ function windowOnLoad() {
 	const cycle = document.getElementById('cycle');
 
 // set each level to be invisible
+spacer1.style.display = "none";
 	begin.style.display = "none";
 	up.style.display = "none";
 	down.style.display = "none";
@@ -50,7 +52,10 @@ function windowOnLoad() {
 	var enterbtn = document.getElementById('enterbtn'); // get the button
 	enterbtn.addEventListener('click', myButtonHandler); // add an eventlistener to the enter button
 	function myButtonHandler(event) {  // set the begin to visible when you click on the enter button
+		spacer1.style.display = "block";
 		begin.style.display = "block";
+
+		playSound("begin");
 		enterbtn.innerHTML = 'scroll';
 	}
 
@@ -85,9 +90,15 @@ function windowOnLoad() {
 	const unfoldImg = document.getElementById('unfoldImg');
 	const cycleImg = document.getElementById('cycleImg');
 
+	function playSound(name){
+		var audio = new Audio("../sounds/" + name + "Ding.mp3");
+		audio.play();
+}
+
 // makes the function that is called when the links are clicked
 	function makeLinkHandler(link, stateKey, stateValue) {
 		function linkHandler(event) {
+			playSound("gen");
 			link.style.display = "block";
 			userState[stateKey] = stateValue;
 			console.log(JSON.stringify(userState));

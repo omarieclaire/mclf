@@ -1,8 +1,3 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -23,6 +18,7 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
@@ -47,10 +43,6 @@ table {
 	border-spacing: 0;
 }
 
-
-/* html {
-    overflow: hidden;
-} */
 html {
   background-color: black;
   padding: 0;
@@ -147,7 +139,7 @@ a:hover, a:active {
 
 
 
-#startScreen {
+#level0 {
 	display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -157,13 +149,16 @@ a:hover, a:active {
     "middle middle middle"
     ". bottom ."
 		". highlight .";
-;
   height: 100vh;
   width: 100vw;
-  background: url(images/walls/1l.png), url(images/walls/1r.png);
+  background: url(images/walls/0l.png), url(images/walls/0r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
+}
+
+
+#climber{
 }
 
 .row1{
@@ -174,6 +169,7 @@ a:hover, a:active {
   justify-content: space-around;
   padding: 1rem;
   margin: 2rem;
+
 }
 
 .row2{
@@ -183,6 +179,9 @@ a:hover, a:active {
   align-items: center;
   align-content: center;
   justify-content: center;
+	animation: pulse 30s ease-in-out 0s alternate infinite;
+
+
 }
 
 .row3{
@@ -193,7 +192,8 @@ a:hover, a:active {
   justify-items: center;
   align-content: center;
 	align-self: flex-end;
-  z-index: 99
+  z-index: 99;
+
 }
 
 .row4{
@@ -250,15 +250,21 @@ a:hover, a:active {
 	outline: none;
 }
 
+
+#fireVid{
+	width: 10em;
+	height: auto;
+}
+
 .level1 {
-  background: url(images/walls/2l.png), url(images/walls/2r.png);
+  background: url(images/walls/1l.png), url(images/walls/1r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
 
 .level2 {
-  background: url(images/walls/3l.png), url(images/walls/3r.png);
+  background: url(images/walls/2l.png), url(images/walls/2r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -266,6 +272,16 @@ a:hover, a:active {
 
 
 .level3 {
+  display: flex;  /* temp fix */
+  flex-direction: column; /* temp fix */
+  align-items: center;/* temp fix */
+  background: url(images/walls/3l.png), url(images/walls/3r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.level4 {
   display: flex;  /* temp fix */
   flex-direction: column; /* temp fix */
   align-items: center;/* temp fix */
@@ -400,14 +416,14 @@ button:active{
 }
 
 .musicbuttoncontainer {
-  width: 19rem;
-  height: 19rem;
+  width: 15rem;
+  height: 15rem;
   margin: 1.5em auto;
   border: 5px solid #fe827b;
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
-  background-image: url(char/plantLady.png);
+  background-image: url(images/char/plantLady.png);
   background-size: cover;
 }
 
@@ -436,4 +452,36 @@ button:active{
   position: absolute;
   left: -999px;
   display: none;
+}
+
+/* .bg-video{
+	width: 20rem;
+	z-index: 1;
+} */
+
+
+@keyframes pulse {
+  0% {
+    /* transform: rotateX(20deg); */
+    /* transform: translateY(10px); */
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.5);
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
