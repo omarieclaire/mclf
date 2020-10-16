@@ -1,6 +1,7 @@
 // stores what decision the user has made
 var userState = {
-	level: 'spacer1',
+	level: 'none',
+	question: 'question',
 	upOrDown: undefined,
 	darkOrJoy: undefined,
 	chaosOrGentle: undefined,
@@ -13,7 +14,7 @@ var userState = {
 // get each "level"
 function windowOnLoad() {
 	const startScreen = document.getElementById('startScreen');
-	const spacer1 = document.getElementById('spacer1');
+	const question = document.getElementById('question');
 	const begin = document.getElementById('begin');
 	const up = document.getElementById('up');
 	const down = document.getElementById('down');
@@ -29,9 +30,12 @@ function windowOnLoad() {
 	const night = document.getElementById('night');
 	const unfold = document.getElementById('unfold');
 	const cycle = document.getElementById('cycle');
+	const credits = document.getElementById('credits');
+
+
 
 // set each level to be invisible
-spacer1.style.display = "none";
+	question.style.display = "none";
 	begin.style.display = "none";
 	up.style.display = "none";
 	down.style.display = "none";
@@ -47,17 +51,45 @@ spacer1.style.display = "none";
 	night.style.display = "none";
 	unfold.style.display = "none";
 	cycle.style.display = "none";
+	credits.style.display = "none";
+
 
 
 	var enterbtn = document.getElementById('enterbtn'); // get the button
 	enterbtn.addEventListener('click', myButtonHandler); // add an eventlistener to the enter button
 	function myButtonHandler(event) {  // set the begin to visible when you click on the enter button
-		spacer1.style.display = "block";
-		begin.style.display = "block";
+		question.style.display = "block";
+		// begin.style.display = "block";
 
 		playSound("begin");
 		enterbtn.innerHTML = 'scroll';
 	}
+
+	const questionText = document.getElementById('questionText');
+	const questionButton = document.getElementById('questionButton');
+	questionButton.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
+	function questionBtnHandler(event) {
+		userState.question = questionText.value;
+		console.log(userState.question);
+		playSound("begin");
+		questionButton.innerHTML = 'received';
+		questionText.classList.add('fadeAnimation');
+		questionText.style.visibility = "hidden";
+		begin.style.display = "block";
+		displayQuestion();
+
+	}
+
+
+function displayQuestion() {
+    var x = document.getElementsByClassName("displayQuestion");
+		var i;
+		for (i = 0; i < x.length; i++) {
+		  x[i].innerHTML = userState.question;
+		}
+		// x.innerHTML = "Paragraph changed!";
+}
+
 
 // get all the links
 	const upLink = document.getElementById('upLink');
@@ -95,13 +127,21 @@ spacer1.style.display = "none";
 		audio.play();
 }
 
+
 // makes the function that is called when the links are clicked
 	function makeLinkHandler(link, stateKey, stateValue) {
 		function linkHandler(event) {
 			playSound("gen");
 			link.style.display = "block";
 			userState[stateKey] = stateValue;
-			console.log(JSON.stringify(userState));
+			console.log(JSON.stringify(userState))
+			var x = document.getElementsByClassName("finalImageRow");
+			for (var i = 0; i < x.length; i++) {
+				const img = document.createElement('img');
+				img.setAttribute('src', `images/choices/${stateValue}.png`);
+				img.setAttribute('class', 'finalImage');
+				x[i].appendChild(img);
+			}
 		}
 		return linkHandler;
 	}

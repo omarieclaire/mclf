@@ -5,15 +5,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="styles.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet">
 
   <title>Mood Ring</title>
 </head>
 
 <body>
-  <div id="level0" class="">
+  <div id="level0" class="level0">
     <h1>Mood Ring</h1>
     <div class="row1">
-        <img id="climber" class="image" alt="climber" src="images/level0/climber.png">
+      <img id="climber" class="image" alt="climber" src="images/level0/climber.png">
       <img id="swimmer" class="image" alt="swimmer" src="images/level0/swimmer.png">
     </div>
     <div class="row2">
@@ -22,26 +23,30 @@
       <img id="creaturesR" class="image" alt="creatures" src="images/level0/creaturesR.png">
     </div>
     <div class="row3">
-      <button type="button" id="enterbtn" class="button">begin</button>
-    </div>
-    <div class="row4">
+      <button type="button" id="enterbtn" class="button">start</button>
       <img id="greenGlow" class="image" alt="greenGlow" src="images/level0/greenGlow.png">
     </div>
   </div>
 
-  <div id="spacer1" class="level1">
+  <div id="question" class="level1">
     <div class="level">
+
       <div class="textRow">
-        <p class="choice">First, form your question. What do you seek?</p>
+        <form>
+          <p class="questionRow">Welcome. What do you seek?</p>
+          <p class="textRow">
+            <textarea name="text" class="choice" id="questionText" placeholder=""></textarea>
+          </p>
+          <div class="submit">
+            <button type="button" id="questionButton" class="button">Send</button>
+          </div>
+        </form>
       </div>
       <div class="imageRow">
         <!-- <video id="fireVid" class="video" playsinline="" autoplay="" muted="" loop=""><source src="images/campfire-far.mp4" type="video/mp4"></video> -->
         <img id="creaturesSpin" class="image" alt="creatures" src="images/level0/creaturesR.png">
-
       </div>
-      <div class="">
 
-      </div>
     </div>
   </div>
 
@@ -70,7 +75,7 @@
       </div>
       <div class="imageRow">
         <a href="#out"><img id="outImg" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
-        <a href="#inner"><img id="innerImg" class="image choiceImage" alt="inner" src="images/choices/in.png"></a>
+        <a href="#inner"><img id="innerImg" class="image choiceImage" alt="inner" src="images/choices/inner.png"></a>
       </div>
 
     </div>
@@ -142,30 +147,36 @@
     </div>
   </div>
 
+  <!-- finalImageRow OF CHOICES -->
+
   <!-- TERMINAL -->
 
   <div id="night" class="level5 musiccolumn">
     <div class="level">
-      <div class="textRow">
-        <p>SlowPitchSound</p>
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
       </div>
-      <div class="imageRow">
+      <div class="musicRow">
         <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
           <div id="musicbutton1" class="musicbutton"></div>
         </div> <audio id="player1" controls preload>
           <source src="sounds/SlowPitchSound-YouBettaChangeftDistantDust.mp3" type="audio/mpeg">
         </audio>
       </div>
+      <div class="textRow">
+        <p>SlowPitchSound</p>
+      </div>
+      <div class="finalImageRow"></div>
     </div>
   </div>
 
 
   <div id="forest" class="level5 musiccolumn">
     <div class="level">
-      <div class="textRow">
-        <p>Mas Aya</p>
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
       </div>
-      <div class="imageRow">
+      <div class="musicRow">
         <div id="musicbuttoncontainer2" class="musicbuttoncontainer hide">
           <div id="musicbutton2" class="musicbutton"></div>
         </div>
@@ -173,113 +184,166 @@
           <source src="sounds/MasAya-AGAKHAN.mp3" type="audio/mpeg">
         </audio>
       </div>
+      <div class="textRow">
+        <p>Mas Aya</p>
+      </div>
+      <div class="finalImageRow"></div>
     </div>
   </div>
 
 
-    <div id="chaos" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Klapshmock</p>
-        </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
-            <div id="musicbutton3" class="musicbutton"></div>
-          </div>
-          <audio id="player3" controls preload>
-            <source src="sounds/Klapshmock-AttackZoneX.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+  <div id="chaos" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
       </div>
-    </div>
 
-    <div id="gentle" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Deidre</p>
+      <div class="musicRow">
+        <div id="musicbuttoncontainer3" class="musicbuttoncontainer hide">
+          <div id="musicbutton3" class="musicbutton"></div>
         </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
-            <div id="musicbutton4" class="musicbutton"></div>
-          </div>
-          <audio id="player4" controls preload>
-            <source src="sounds/Deidre-Numb.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+        <audio id="player3" controls preload>
+          <source src="sounds/Klapshmock-AttackZoneX.mp3" type="audio/mpeg">
+        </audio>
       </div>
-    </div>
-
-    <div id="cycle" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Bucko</p>
-        </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
-            <div id="musicbutton5" class="musicbutton"></div>
-          </div>
-          <audio id="player5" controls preload>
-            <source src="sounds/Bucko-ProTesting.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+      <div class="textRow">
+        <p>Klapshmock</p>
       </div>
+      <div class="finalImageRow"></div>
     </div>
+  </div>
 
-    <div id="unfold" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Melody McKiver</p>
-        </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
-            <div id="musicbutton6" class="musicbutton"></div>
-          </div>
-          <audio id="player6" controls preload>
-            <source src="sounds/MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+  <div id="gentle" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
       </div>
-    </div>
 
-    <div id="meadow" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Orchidae</p>
+      <div class="musicRow">
+        <div id="musicbuttoncontainer4" class="musicbuttoncontainer hide">
+          <div id="musicbutton4" class="musicbutton"></div>
         </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
-            <div id="musicbutton7" class="musicbutton"></div>
-          </div>
-          <audio id="player7" controls preload>
-            <source src="sounds/Orchidae-LoveDemo.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+        <audio id="player4" controls preload>
+          <source src="sounds/Deidre-Numb.mp3" type="audio/mpeg">
+        </audio>
       </div>
-    </div>
-
-    <div id="morning" class="level5 musiccolumn">
-      <div class="level">
-        <div class="textRow">
-          <p>Century Egg</p>
-        </div>
-        <div class="imageRow">
-          <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
-            <div id="musicbutton8" class="musicbutton"></div>
-          </div>
-          <audio id="player8" controls preload>
-            <source src="sounds/CenturyEgg-IWillMakeUpAMethod.mp3" type="audio/mpeg">
-          </audio>
-        </div>
+      <div class="textRow">
+        <p>Deidre</p>
       </div>
+      <div class="finalImageRow"></div>
     </div>
+  </div>
+
+  <div id="cycle" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
+      </div>
+
+      <div class="musicRow">
+        <div id="musicbuttoncontainer5" class="musicbuttoncontainer hide">
+          <div id="musicbutton5" class="musicbutton"></div>
+        </div>
+        <audio id="player5" controls preload>
+          <source src="sounds/Bucko-ProTesting.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+      <div class="textRow">
+        <p>Bucko</p>
+      </div>
+      <div class="finalImageRow"></div>
+    </div>
+  </div>
+
+  <div id="unfold" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
+      </div>
+
+      <div class="musicRow">
+        <div id="musicbuttoncontainer6" class="musicbuttoncontainer hide">
+          <div id="musicbutton6" class="musicbutton"></div>
+        </div>
+        <audio id="player6" controls preload>
+          <source src="sounds/MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+      <div class="textRow">
+        <p>Melody McKiver</p>
+      </div>
+      <div class="finalImageRow"></div>
+    </div>
+  </div>
+
+  <div id="meadow" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
+      </div>
+
+      <div class="musicRow">
+        <div id="musicbuttoncontainer7" class="musicbuttoncontainer hide">
+          <div id="musicbutton7" class="musicbutton"></div>
+        </div>
+        <audio id="player7" controls preload>
+          <source src="sounds/Orchidae-LoveDemo.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+      <div class="textRow">
+        <p>Orchidae</p>
+      </div>
+      <div class="finalImageRow"></div>
+    </div>
+  </div>
+
+  <div id="morning" class="level5 musiccolumn">
+    <div class="level">
+      <div class="questionRow">
+        <p class="questionRow displayQuestion"></p>
+      </div>
+
+      <div class="musicRow">
+        <div id="musicbuttoncontainer8" class="musicbuttoncontainer hide">
+          <div id="musicbutton8" class="musicbutton"></div>
+        </div>
+        <audio id="player8" controls preload>
+          <source src="sounds/CenturyEgg-IWillMakeUpAMethod.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+      <div class="textRow">
+        <p>Century Egg</p>
+      </div>
+      <div class="finalImageRow"></div>
+
+    </div>
+  </div>
+
+  <div class="" id="credits">
+    <p>Listen/buy Learn more
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
-    <script src="play.js"></script>
+      Mood Ring Vol. 2 is a project of [Debaser](www.debaser.ca)
 
-    <script src="play-audio.js"></script>
-    <script src="scrollAnimations.js" defer></script>
+      Programming by Marie LeBlanc Flanagan
+      Artwork and graphic design by Robin Richardson-Dupuis
+      Score by Emily McQuarrie
+      Mastering by Philip Shaw Bova
+
+      Special thanks to Conor Bryan, Calum Jeacle, Heather D’Alessio, and Philippe Charbonneau
+
+      Thank you to the Canada Council for the Arts
+      [CCA Logo - download here]
+    </p>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script src="play.js"></script>
+
+  <script src="play-audio.js"></script>
+  <script src="scrollAnimations.js" defer></script>
 
 
 </body>
