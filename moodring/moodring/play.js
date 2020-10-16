@@ -58,11 +58,11 @@ function windowOnLoad() {
 	var enterbtn = document.getElementById('enterbtn'); // get the button
 	enterbtn.addEventListener('click', myButtonHandler); // add an eventlistener to the enter button
 	function myButtonHandler(event) {  // set the begin to visible when you click on the enter button
+		window.location.hash='question'; // transport down the page
 		question.style.display = "block";
 		// begin.style.display = "block";
-
 		playSound("begin");
-		enterbtn.innerHTML = 'scroll';
+		// enterbtn.innerHTML = 'scroll';
 	}
 
 	const questionText = document.getElementById('questionText');
@@ -73,8 +73,8 @@ function windowOnLoad() {
 		console.log(userState.question);
 		playSound("begin");
 		questionButton.innerHTML = 'received';
-		questionText.classList.add('fadeAnimation');
-		questionText.style.visibility = "hidden";
+		questionText.classList.add('fade');
+		// questionText.style.visibility = "hidden";
 		begin.style.display = "block";
 		displayQuestion();
 
