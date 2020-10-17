@@ -66,16 +66,6 @@ function windowOnLoad() {
 		beginBtn.innerHTML = 'scroll';
 	}
 
-	var readybtn = document.getElementById('readybtn'); // get the button
-	readybtn.addEventListener('click', readyBtnButtonHandler); // add an eventlistener to the enter button
-	function readyBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
-		// window.location.hash='question'; // transport down the page
-		question.style.display = "block";
-		questions3.style.display = "block";
-		playSound("begin");
-		readybtn.innerHTML = 'scroll';
-	}
-
 	const seekText = document.getElementById('seekText');
 	const seekBtn = document.getElementById('seekBtn');
 	seekBtn.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
@@ -86,10 +76,18 @@ function windowOnLoad() {
 		seekBtn.innerHTML = 'received';
 		seekText.classList.add('fade');
 		// seekText.style.visibility = "hidden";
+		questions3.style.display = "block";
 		begin.style.display = "block";
 		displayQuestion();
-
 	}
+
+	// var readyBtn = document.getElementById('readyBtn'); // get the button
+	// readyBtn.addEventListener('click', readyBtnButtonHandler); // add an eventlistener to the enter button
+	// function readyBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
+	// 	begin.style.display = "block";
+	// 	playSound("begin");
+	// 	readyBtn.innerHTML = 'scroll';
+	// }
 
 
 function displayQuestion() {

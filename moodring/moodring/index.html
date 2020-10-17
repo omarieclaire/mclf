@@ -32,7 +32,7 @@
     <div class="level">
       <div class="textRow">
         <form>
-          <p class="questionRow">Welcome. What do you seek?</p>
+          <p class="questionRow">What do you seek?</p>
           <p class="textRow">
             <textarea name="text" class="choice" id="seekText" placeholder=""></textarea>
           </p>
@@ -49,10 +49,10 @@
 
   <div id="questions3" class="level1">
     <div class="level">
-      <div class="textRow">
-        <p class="questionRow" id="questionstxt">3 Questions for you, seeker</p>
-        <button type="button" id="readybtn" class="button">I am ready</button>
-      </div>
+        <p class="textRow" id="questionstxt">3 questions for you<br>seeker</p>
+        <p class="questionRow">
+          <!-- <button type="button" id="readyBtn" class="button">I am ready</button> -->
+        </p>
       <div class="imageRow">
         <img id="creaturesSpin2" class="image" alt="creatures" src="images/level0/creaturesR.png">
       </div>
@@ -62,7 +62,7 @@
   <div id="begin" class="level2">
     <div class="level">
       <div class="textRow">
-        <p class="choice">One: will you float <a class="choiceLink" id="upLink" href="#up">up</a> or will you dive <a class="choiceLink" id="downLink" href=" #down">down</a> ?</p>
+        <p class="choice"> <span class="number">One:</span><br>will you float <a class="choiceLink" id="upLink" href="#up">up</a> or will you dive <a class="choiceLink" id="downLink" href=" #down">down</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#up"><img id="upImg" class="image choiceImage" alt="up" src="images/choices/up.png"></a>
@@ -74,11 +74,10 @@
     </div>
   </div>
 
-
   <div id="down" class="level3">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Two: do you flow <a class="choiceLink" id="outLink" href=" #out">out</a> or do you curl <a class="choiceLink" id="innerLink" href=" #inner">in</a> ?</p>
+        <p class="choice"> <span class="number">Two:</span><br>do you flow <a class="choiceLink" id="outLink" href=" #out">out</a> or do you curl <a class="choiceLink" id="innerLink" href=" #inner">in</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#out"><img id="outImg" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
@@ -91,7 +90,7 @@
   <div id="up" class="level3">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Two: do you pull the deep flowing <a class="choiceLink" id="darkLink" href=" #dark">dark</a> or the light floating <a class="choiceLink" id="joyLink" href=" #joy">joy</a> ?</p>
+        <p class="choice"> <span class="number">Two:</span><br>do you pull the deep flowing <a class="choiceLink" id="darkLink" href=" #dark">dark</a> or the light floating <a class="choiceLink" id="joyLink" href=" #joy">joy</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#dark"><img id="darkImg" class="image choiceImage" alt="dark" src="images/choices/dark.png"></a>
@@ -105,7 +104,7 @@
   <div id="out" class="level4">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Three: do you wait for the cusp of <a class="choiceLink" id="morningLink" href=" #morning">morning</a> or the deepening pulse of <a class="choiceLink" id="nightLink" href=" #night">night</a> ?</p>
+        <p class="choice"> <span class="number">Three:</span><br>do you wait for the cusp of <a class="choiceLink" id="morningLink" href=" #morning">morning</a> or the deepening pulse of <a class="choiceLink" id="nightLink" href=" #night">night</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#morning"><img id="morningImg" class="image choiceImage" alt="morning" src="images/choices/morning.png"></a>
@@ -118,7 +117,7 @@
   <div id="inner" class="level4">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Three: does the pattern around you slowly <a class="choiceLink" id="unfoldLink" href=" #unfold">unfold</a> or does it <a class="choiceLink" id="cycleLink" href=" #cycle">cycle</a> ?</p>
+        <p class="choice"> <span class="number">Three:</span><br>does the pattern around you slowly <a class="choiceLink" id="unfoldLink" href=" #unfold">unfold</a> or does it <a class="choiceLink" id="cycleLink" href=" #cycle">cycle</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#unfold"><img id="unfoldImg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png"></a>
@@ -131,7 +130,7 @@
   <div id="dark" class="level4">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Three: will you enter the <a class="choiceLink" id="chaosLink" href=" #chaos">chaos</a> or undulate unto the <a class="choiceLink" id="gentleLink" href=" #gentle">gentle</a> ?</p>
+        <p class="choice"> <span class="number">Three:</span><br>will you enter the <a class="choiceLink" id="chaosLink" href=" #chaos">chaos</a> or undulate unto the <a class="choiceLink" id="gentleLink" href=" #gentle">gentle</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#chaos"><img id="chaosImg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png"></a>
@@ -144,7 +143,7 @@
   <div id="joy" class="level4">
     <div class="level">
       <div class="textRow">
-        <p class="choice">Three: will you wander through a deep <a class="choiceLink" id="forestLink" href=" #forest">forest</a> or wind your way over an endless <a class="choiceLink" id="meadowLink" href=" #meadow">meadow</a> ?</p>
+        <p class="choice"> <span class="number">Three:</span><br>will you wander through a deep <a class="choiceLink" id="forestLink" href=" #forest">forest</a> or wind your way over an endless <a class="choiceLink" id="meadowLink" href=" #meadow">meadow</a> ?</p>
       </div>
       <div class="imageRow">
         <a href="#forest"><img id="forestImg" class="image choiceImage" alt="forest" src="images/choices/forest.png"></a>
@@ -153,8 +152,6 @@
 
     </div>
   </div>
-
-  <!-- finalImageRow OF CHOICES -->
 
   <!-- TERMINAL -->
 

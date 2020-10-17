@@ -62,7 +62,7 @@ body {
   font-family: 'PT Mono', monospace;
   letter-spacing: .25rem;
   margin: 0;
-  font-size: 26px;
+  font-size: 1.3rem;
   color: #ffffff;
   height: 100vh;
   perspective: 1px;
@@ -127,7 +127,7 @@ width: 10rem;
 
 #greenGlow {
   z-index: 5;
-  width: 10em;
+  width: 15rem;
 }
 
 .choiceImage {
@@ -147,6 +147,7 @@ width: 10rem;
 .choice {
   align-self: center;
   opacity: 0.6;
+  line-height: 2rem;
 }
 
 .choice:hover {
@@ -192,7 +193,14 @@ width: 10rem;
 }
 
 #questionstxt {
-  animation: fade 3s ease-in-out 0s alternate infinite;
+  animation: fadeOut 3s ease-in-out 0s alternate infinite;
+}
+
+.number {
+  letter-spacing: .55rem;
+  font-size: 2rem;
+  font-weight: bolder;
+  color: rgb(129 103 192 / .64);
 }
 
 .row3 {
@@ -258,10 +266,16 @@ width: 10rem;
 
 #seekText {
   margin: 0;
-  font-size: 26px;
+  font-size: 1.5rem;
   color: #8073c7;
   margin: 2rem;
-  perspective: 1px;
+}
+
+textarea {
+  width: 35vw;
+  height: 25vh;
+  
+
 }
 
 .displayQuestion {
@@ -277,7 +291,6 @@ width: 10rem;
   font-size: 20px;
   color: #8073c7;
   margin: 2rem;
-  perspective: 1px;
 }
 
 #level0 {
@@ -463,7 +476,7 @@ h1 {
   color: #c2f08e;
   /* text-transform: uppercase; */
   text-decoration: none;
-  font-size: 20px;
+  font-size: 1rem;
   text-align: center;
   border: .5px solid #c2f08e;
   padding: 7px 20px;
@@ -572,6 +585,20 @@ button:active {
 
   50% {
     opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
   }
 
   100% {
