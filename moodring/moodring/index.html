@@ -1,32 +1,3 @@
-<!-- TODO -->
-<!-- add image 1, 2, 3, and song to player object and use those for final screen -->
-<!-- works on mobile - images & layout -->
-<!-- works on mobile - UX & UI -->
-<!-- transitions and animations on buttons -->
-<!-- transitions and animations on choices -->
-<!-- integrate scroll trigger animations -->
-<!-- "final" images are limited to last three choices -->
-<!-- "song" is limited to 1 -->
-<!-- image optimization: svgs with the animations? -->
-<!-- credits display at end -->
-<!-- works in chrome, firefox, IE -->
-<!-- modify text -->
-
-<!-- Design Considerations -->
-<!-- numbers for the questions? -->
-
-<!-- IF TIME -->
-<!-- things that follow the cursor? -->
-<!-- music player animates - "length of song/where you are in the song" -->
-<!-- choose your character -->
-<!-- text generation for final screen? -->
-
-<!-- ROBIN? -->
-<!-- blank wall divs between levels? -->
-<!-- mobile images - all but esp walls -->
-<!-- welcome, what do you seek page -->
-<!-- romance in final landing screen - more a reward/"world" -->
-
 <!DOCTYPE html>
 <html lang="">
 
@@ -52,30 +23,39 @@
       <img id="creaturesR" class="image" alt="creatures" src="images/level0/creaturesR.png">
     </div>
     <div class="row3">
-      <button type="button" id="enterbtn" class="button">start</button>
+      <button type="button" id="beginBtn" class="button">begin</button>
       <img id="greenGlow" class="image" alt="greenGlow" src="images/level0/greenGlow.png">
     </div>
   </div>
 
-  <div id="question" class="level1">
+  <div id="yourQuestion" class="level1">
     <div class="level">
-
       <div class="textRow">
         <form>
           <p class="questionRow">Welcome. What do you seek?</p>
           <p class="textRow">
-            <textarea name="text" class="choice" id="questionText" placeholder=""></textarea>
+            <textarea name="text" class="choice" id="seekText" placeholder=""></textarea>
           </p>
           <div class="submit">
-            <button type="button" id="questionButton" class="button">Send</button>
+            <button type="button" id="seekBtn" class="button">ask</button>
           </div>
         </form>
       </div>
       <div class="imageRow">
-        <!-- <video id="fireVid" class="video" playsinline="" autoplay="" muted="" loop=""><source src="images/campfire-far.mp4" type="video/mp4"></video> -->
         <img id="creaturesSpin" class="image" alt="creatures" src="images/level0/creaturesR.png">
       </div>
+    </div>
+  </div>
 
+  <div id="questions3" class="level1">
+    <div class="level">
+      <div class="textRow">
+        <p class="questionRow" id="questionstxt">3 Questions for you, seeker</p>
+        <button type="button" id="readybtn" class="button">I am ready</button>
+      </div>
+      <div class="imageRow">
+        <img id="creaturesSpin2" class="image" alt="creatures" src="images/level0/creaturesR.png">
+      </div>
     </div>
   </div>
 

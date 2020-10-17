@@ -28,7 +28,7 @@ function init() {
       trigger: "#level0",
       start: "0", //animation starts at this point  - 20 px above the top of the trigger element
       end: "+=100",
-      // scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
+      scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
       pinSpacing: false,
       // pin: "#climber"
     }
@@ -41,7 +41,7 @@ function init() {
   // .from("#titling", {
     // y : innerHeight * 1,
     // rotate : 180
-   // })
+  //  })
    // .from("#begin", { y : innerHeight * 1 })
 
    gsap.timeline({

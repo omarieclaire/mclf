@@ -14,7 +14,8 @@ var userState = {
 // get each "level"
 function windowOnLoad() {
 	const startScreen = document.getElementById('startScreen');
-	const question = document.getElementById('question');
+	const yourQuestion = document.getElementById('yourQuestion');
+	const questions3 = document.getElementById('questions3');
 	const begin = document.getElementById('begin');
 	const up = document.getElementById('up');
 	const down = document.getElementById('down');
@@ -35,7 +36,8 @@ function windowOnLoad() {
 
 
 // set each level to be invisible
-	question.style.display = "none";
+	yourQuestion.style.display = "none";
+	questions3.style.display = "none";
 	begin.style.display = "none";
 	up.style.display = "none";
 	down.style.display = "none";
@@ -55,26 +57,35 @@ function windowOnLoad() {
 
 
 
-	var enterbtn = document.getElementById('enterbtn'); // get the button
-	enterbtn.addEventListener('click', myButtonHandler); // add an eventlistener to the enter button
-	function myButtonHandler(event) {  // set the begin to visible when you click on the enter button
-		window.location.hash='question'; // transport down the page
-		question.style.display = "block";
-		// begin.style.display = "block";
+	var beginBtn = document.getElementById('beginBtn'); // get the button
+	beginBtn.addEventListener('click', beginBtnButtonHandler); // add an eventlistener to the enter button
+	function beginBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
+		// window.location.hash='question'; // transport down the page
+		yourQuestion.style.display = "block";
 		playSound("begin");
-		// enterbtn.innerHTML = 'scroll';
+		beginBtn.innerHTML = 'scroll';
 	}
 
-	const questionText = document.getElementById('questionText');
-	const questionButton = document.getElementById('questionButton');
-	questionButton.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
+	var readybtn = document.getElementById('readybtn'); // get the button
+	readybtn.addEventListener('click', readyBtnButtonHandler); // add an eventlistener to the enter button
+	function readyBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
+		// window.location.hash='question'; // transport down the page
+		question.style.display = "block";
+		questions3.style.display = "block";
+		playSound("begin");
+		readybtn.innerHTML = 'scroll';
+	}
+
+	const seekText = document.getElementById('seekText');
+	const seekBtn = document.getElementById('seekBtn');
+	seekBtn.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
 	function questionBtnHandler(event) {
-		userState.question = questionText.value;
+		userState.question = seekText.value;
 		console.log(userState.question);
 		playSound("begin");
-		questionButton.innerHTML = 'received';
-		questionText.classList.add('fade');
-		// questionText.style.visibility = "hidden";
+		seekBtn.innerHTML = 'received';
+		seekText.classList.add('fade');
+		// seekText.style.visibility = "hidden";
 		begin.style.display = "block";
 		displayQuestion();
 

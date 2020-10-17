@@ -189,7 +189,10 @@ width: 10rem;
 .fade{
   animation: fade 5s ease-out 0s normal;
   animation-fill-mode: forwards;
+}
 
+#questionstxt {
+  animation: fade 3s ease-in-out 0s alternate infinite;
 }
 
 .row3 {
@@ -244,16 +247,16 @@ width: 10rem;
   margin: 2rem;
 }
 
-#enterbtn {
+#beginBtn {
   margin-bottom: -5rem;
   z-index: 10;
 }
 
-#enterbtn:focus {
+#beginBtn:focus {
   outline: none;
 }
 
-#questionText {
+#seekText {
   margin: 0;
   font-size: 26px;
   color: #8073c7;
@@ -274,15 +277,6 @@ width: 10rem;
   font-size: 20px;
   color: #8073c7;
   margin: 2rem;
-  perspective: 1px;
-}
-
-.questionButton {
-  margin: 0;
-  font-size: 26px;
-  color: #8073c7;
-  margin: 2rem;
-  ;
   perspective: 1px;
 }
 
