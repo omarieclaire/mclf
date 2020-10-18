@@ -9,6 +9,10 @@ var userState = {
 	outOrIn: undefined,
 	morningOrNight: undefined,
 	unfoldOrCyle: undefined,
+	q1: undefined,
+	q2: undefined,
+	q3: undefined,
+	song: undefined
 };
 
 // get each "level"

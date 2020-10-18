@@ -87,18 +87,10 @@ a:hover, a:active {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 }
 
-.image {
+.image, .finalImage, .choiceImage {
   align-self: center;
-  width: 9rem;
-  padding: .1rem;
-}
-
-.finalImage {
-	/* align-self: center; */
-  /* flex-grow: 1; */
-	/* flex-basis: 2rem; */
-width: 10rem;
-  /* padding: .1rem; */
+  max-width: 15vw;
+  padding: .3rem;
 }
 
 .finalImageRow {
@@ -127,11 +119,11 @@ width: 10rem;
 
 #greenGlow {
   z-index: 5;
-  width: 15rem;
+  max-width: 25vw;
 }
 
 .choiceImage {
-  width: 7rem;
+  /* width: 10rem; */
   padding: .1rem;
   opacity: 0.6;
 }
@@ -274,7 +266,7 @@ width: 10rem;
 textarea {
   width: 35vw;
   height: 25vh;
-  
+
 
 }
 
@@ -319,9 +311,9 @@ textarea {
   grid-template-areas:
     ". . . . "
     ". questionRow questionRow ."
+    ". textRow textRow ."
     ". imageRow imageRow ."
 		". musicRow musicRow ."
-		". textRow textRow ."
     ". . . . ";
   height: 100vh;
   width: 100vw;
@@ -594,7 +586,7 @@ button:active {
 
 @keyframes fadeOut {
   0% {
-    opacity: 1;
+    opacity: .4;
   }
 
   50% {
