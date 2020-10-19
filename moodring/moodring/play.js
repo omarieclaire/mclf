@@ -163,15 +163,16 @@ function windowOnLoad() {
 	}
 
 	function renderSong(userState) {
-		if(userState.q3 === undefined) {
+		if (userState.q3 === undefined) {
 			return;
 		}
 
 		var song = songMap[userState.q3];
-		
+		console.log(`the song is: ${JSON.stringify(song)}`);
+
 		var audioSrc = document.getElementById('audioSource');
 		audioSrc.setAttribute('src', `sounds/${song.file}`);
-		
+
 		var artistText = document.getElementById('artist');
 		artistText.textContent = song.artist;
 
@@ -179,7 +180,11 @@ function windowOnLoad() {
 		titleText.textContent = song.title;
 
 		terminal.display = 'block';
-		console.log('render audio');
+		console.log(document.getElementById('musicbutton1'));
+		
+		// force the browser to refresh the audio source
+		var audio = document.getElementById('player1');
+		audio.load();
 	}
 
 	// draws the final images based on userState
