@@ -219,6 +219,8 @@ function windowOnLoad() {
 	// called when the links are clicked
 	function makeLinkHandler(link, stateKey, stateValue, level) {
 		function linkHandler(event) {
+			event.preventDefault()
+
 			playSound("gen");
 			link.style.display = "block";
 			playerState[stateKey] = stateValue;

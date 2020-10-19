@@ -412,15 +412,59 @@ textarea {
 }
 
 @media (min-height: 680px), screen and (orientation: portrait) {
-  #beginLvl {}
-  #playerQuestionLvl {}
-  #questions3Lvl {}
-  .choice1Lvl {}
-  .choice2Lvl {}
-  .choice3Lvl {}
-  #findSongLvl {}
-  #lastLvl {}
-  #creditsLvl {}
+  #beginLvl {
+    background: url(images/walls/0lm.png), url(images/walls/0rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #playerQuestionLvl {
+    background: url(images/walls/1lm.png), url(images/walls/1rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  #questions3Lvl {
+    background: url(images/walls/2lm.png), url(images/walls/2rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  .choice1Lvl {
+    background: url(images/walls/3lm.png), url(images/walls/3rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  .choice2Lvl {
+    background: url(images/walls/4lm.png), url(images/walls/4rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  .choice3Lvl {
+    background: url(images/walls/5lm.png), url(images/walls/5rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  #findSongLvl {
+    background: url(images/walls/6lm.png), url(images/walls/6rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  #lastLvl {
+    background: url(images/walls/7lm.png), url(images/walls/7rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
+  #creditsLvl {
+    background: url(images/walls/8lm.png), url(images/walls/8rm.png);
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+
+  }
 
 }
 
