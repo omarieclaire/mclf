@@ -35,13 +35,13 @@
   }
 
   var button1 = makeAudioButton('#musicbutton1', '#musicbuttoncontainer1', '#player1');
-  var button2 = makeAudioButton('#musicbutton2', '#musicbuttoncontainer2', '#player2');
-  var button3 = makeAudioButton('#musicbutton3', '#musicbuttoncontainer3', '#player3');
-  var button4 = makeAudioButton('#musicbutton4', '#musicbuttoncontainer4', '#player4');
-  var button5 = makeAudioButton('#musicbutton5', '#musicbuttoncontainer5', '#player5');
-  var button6 = makeAudioButton('#musicbutton6', '#musicbuttoncontainer6', '#player6');
-  var button7 = makeAudioButton('#musicbutton7', '#musicbuttoncontainer7', '#player7');
-  var button8 = makeAudioButton('#musicbutton8', '#musicbuttoncontainer8', '#player8');
+  //var button2 = makeAudioButton('#musicbutton2', '#musicbuttoncontainer2', '#player2');
+  //var button3 = makeAudioButton('#musicbutton3', '#musicbuttoncontainer3', '#player3');
+  //var button4 = makeAudioButton('#musicbutton4', '#musicbuttoncontainer4', '#player4');
+  //var button5 = makeAudioButton('#musicbutton5', '#musicbuttoncontainer5', '#player5');
+  //var button6 = makeAudioButton('#musicbutton6', '#musicbuttoncontainer6', '#player6');
+  //var button7 = makeAudioButton('#musicbutton7', '#musicbuttoncontainer7', '#player7');
+  //var button8 = makeAudioButton('#musicbutton8', '#musicbuttoncontainer8', '#player8');
 
    // var test = true,
    //     but = d.querySelector( '#musicbutton' ),

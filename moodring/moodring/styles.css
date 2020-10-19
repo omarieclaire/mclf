@@ -93,7 +93,7 @@ a:hover, a:active {
   padding: .3rem;
 }
 
-.finalImageRow {
+#finalImageRow {
   grid-area: imageRow;
   display: flex;
 	/* flex-direction: column; */
@@ -270,7 +270,7 @@ textarea {
 
 }
 
-.displayQuestion {
+.playerQuestion {
   margin: 0;
   font-size: 2rem;
   color: #d5ff9f;
