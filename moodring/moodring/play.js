@@ -1,5 +1,5 @@
-// stores what decision the user has made
-var userState = {
+// stores what decision the player has made
+var playerState = {
 	level: 'none',
 	question: 'question',
 	upOrDown: undefined,
@@ -61,37 +61,37 @@ const songMap = {
 
 // get each "level"
 function windowOnLoad() {
-	const startScreen = document.getElementById('startScreen');
-	const yourQuestion = document.getElementById('yourQuestion');
-	const questions3 = document.getElementById('questions3');
-	const begin = document.getElementById('begin');
-	const up = document.getElementById('up');
-	const down = document.getElementById('down');
-	const dark = document.getElementById('dark');
-	const joy = document.getElementById('joy');
-	const out = document.getElementById('out');
-	const inner = document.getElementById('inner');
-	const terminal = document.getElementById('terminal');
-	const credits = document.getElementById('credits');
+	const beginLvl = document.getElementById('beginLvl');
+	const playerQuestionLvl = document.getElementById('playerQuestionLvl');
+	const questions3Lvl = document.getElementById('questions3Lvl');
+	const choice1Lvl = document.getElementById('choice1Lvl');
+	const upLvl = document.getElementById('upLvl');
+	const downLvl = document.getElementById('downLvl');
+	const darkLvl = document.getElementById('darkLvl');
+	const joyLvl = document.getElementById('joyLvl');
+	const outLvl = document.getElementById('outLvl');
+	const innerLvl = document.getElementById('innerLvl');
+	const lastLvl = document.getElementById('lastLvl');
+	const creditsLvl = document.getElementById('creditsLvl');
 
 	// set each level to be invisible
-	yourQuestion.style.display = "none";
-	questions3.style.display = "none";
-	begin.style.display = "none";
-	up.style.display = "none";
-	down.style.display = "none";
-	dark.style.display = "none";
-	joy.style.display = "none";
-	out.style.display = "none";
-	inner.style.display = "none";
-	credits.style.display = "none";
-	terminal.style.display = "none";
+	playerQuestionLvl.style.display = "none";
+	questions3Lvl.style.display = "none";
+	choice1Lvl.style.display = "none";
+	upLvl.style.display = "none";
+	downLvl.style.display = "none";
+	darkLvl.style.display = "none";
+	joyLvl.style.display = "none";
+	outLvl.style.display = "none";
+	innerLvl.style.display = "none";
+	creditsLvl.style.display = "none";
+	lastLvl.style.display = "none";
 
 	var beginBtn = document.getElementById('beginBtn'); // get the button
 	beginBtn.addEventListener('click', beginBtnButtonHandler); // add an eventlistener to the enter button
 	function beginBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
 		// window.location.hash='question'; // transport down the page
-		yourQuestion.style.display = "block";
+		playerQuestionLvl.style.display = "block";
 		playSound("begin");
 		beginBtn.innerHTML = 'scroll';
 	}
@@ -101,12 +101,12 @@ function windowOnLoad() {
 
 	seekBtn.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
 	function questionBtnHandler(event) {
-		userState.question = seekText.value;
+		playerState.question = seekText.value;
 		playSound("begin");
 		seekBtn.innerHTML = 'received';
 		seekText.classList.add('fade');
-		questions3.style.display = "block";
-		begin.style.display = "block";
+		questions3Lvl.style.display = "block";
+		choice1Lvl.style.display = "block";
 		displayPlayerQuestion();
 	}
 
@@ -122,7 +122,7 @@ function windowOnLoad() {
 		var x = document.getElementsByClassName("playerQuestion");
 		var i;
 		for (i = 0; i < x.length; i++) {
-			x[i].innerHTML = userState.question;
+			x[i].innerHTML = playerState.question;
 		}
 	}
 
@@ -162,12 +162,12 @@ function windowOnLoad() {
 		audio.play();
 	}
 
-	function renderSong(userState) {
-		if (userState.q3 === undefined) {
+	function renderSong(playerState) {
+		if (playerState.q3 === undefined) {
 			return;
 		}
 
-		var song = songMap[userState.q3];
+		var song = songMap[playerState.q3];
 		console.log(`the song is: ${JSON.stringify(song)}`);
 
 		var audioSrc = document.getElementById('audioSource');
@@ -179,7 +179,7 @@ function windowOnLoad() {
 		var titleText = document.getElementById('title');
 		titleText.textContent = song.title;
 
-		terminal.display = 'block';
+		lastLvl.display = 'block';
 		console.log(document.getElementById('musicbutton1'));
 		
 		// force the browser to refresh the audio source
@@ -187,33 +187,33 @@ function windowOnLoad() {
 		audio.load();
 	}
 
-	// draws the final images based on userState
-	function renderUserState(userState) {
+	// draws the final images based on playerState
+	function renderplayerState(playerState) {
 		var finalImageRow = document.getElementById("finalImageRow");
 		// clear images inside <div> so you can add new ones
 		finalImageRow.innerHTML = '';
 
-		if (userState.q1 !== undefined) {
+		if (playerState.q1 !== undefined) {
 			const img = document.createElement('img');
-			img.setAttribute('src', `images/choices/${userState.q1}.png`);
+			img.setAttribute('src', `images/choices/${playerState.q1}.png`);
 			img.setAttribute('class', 'finalImage');
 			finalImageRow.appendChild(img);
 		}
 
-		if (userState.q2 !== undefined) {
+		if (playerState.q2 !== undefined) {
 			const img = document.createElement('img');
-			img.setAttribute('src', `images/choices/${userState.q2}.png`);
+			img.setAttribute('src', `images/choices/${playerState.q2}.png`);
 			img.setAttribute('class', 'finalImage');
 			finalImageRow.appendChild(img);
 		}
 
-		if (userState.q3 !== undefined) {
+		if (playerState.q3 !== undefined) {
 			const img = document.createElement('img');
-			img.setAttribute('src', `images/choices/${userState.q3}.png`);
+			img.setAttribute('src', `images/choices/${playerState.q3}.png`);
 			img.setAttribute('class', 'finalImage');
 			finalImageRow.appendChild(img);
 		}
-		console.log('render user state');
+		console.log('render player state');
 	}
 
 	// called when the links are clicked
@@ -221,56 +221,56 @@ function windowOnLoad() {
 		function linkHandler(event) {
 			playSound("gen");
 			link.style.display = "block";
-			userState[stateKey] = stateValue;
-			console.log(JSON.stringify(userState))
+			playerState[stateKey] = stateValue;
+			console.log(JSON.stringify(playerState))
 			if (level === 1) {
-				userState.q1 = stateValue;
+				playerState.q1 = stateValue;
 				// only re-render if they've answered all the questions
-				renderUserState(userState);
-				renderSong(userState);
+				renderplayerState(playerState);
+				renderSong(playerState);
 			} else if (level === 2) {
-				userState.q2 = stateValue;
-				renderUserState(userState);
-				renderSong(userState);
+				playerState.q2 = stateValue;
+				renderplayerState(playerState);
+				renderSong(playerState);
 			} else if (level === 3) {
-				userState.q3 = stateValue;
-				renderUserState(userState);
-				renderSong(userState);
+				playerState.q3 = stateValue;
+				renderplayerState(playerState);
+				renderSong(playerState);
 			}
 		}
 		return linkHandler;
 	}
 
 	//creates and runs a function makeLinkHandler which returns a function
-	upLink.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up', 1));
-	downLink.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down', 1));
-	darkLink.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark', 2));
-	joyLink.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy', 2));
-	chaosLink.addEventListener('click', makeLinkHandler(terminal, 'chaosOrGentle', 'chaos', 3));
-	gentleLink.addEventListener('click', makeLinkHandler(terminal, 'chaosOrGentle', 'gentle', 3));
-	forestLink.addEventListener('click', makeLinkHandler(terminal, 'forestOrMeadow', 'forest', 3));
-	meadowLink.addEventListener('click', makeLinkHandler(terminal, 'forestOrMeadow', 'meadow', 3));
-	outLink.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out', 2));
-	innerLink.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner', 2));
-	morningLink.addEventListener('click', makeLinkHandler(terminal, 'morningOrNight', 'morning', 3));
-	nightLink.addEventListener('click', makeLinkHandler(terminal, 'morningOrNight', 'night', 3));
-	unfoldLink.addEventListener('click', makeLinkHandler(terminal, 'unfoldOrCycle', 'unfold', 3));
-	cycleLink.addEventListener('click', makeLinkHandler(terminal, 'unfoldOrCycle', 'cycle', 3));
+	upLink.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 1));
+	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 1));
+	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 2));
+	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 2));
+	chaosLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 3));
+	gentleLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 3));
+	forestLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 3));
+	meadowLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 3));
+	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 2));
+	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 2));
+	morningLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 3));
+	nightLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 3));
+	unfoldLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 3));
+	cycleLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 3));
 
-	upImg.addEventListener('click', makeLinkHandler(up, 'upOrDown', 'up', 1));
-	downImg.addEventListener('click', makeLinkHandler(down, 'upOrDown', 'down', 1));
-	darkImg.addEventListener('click', makeLinkHandler(dark, 'darkOrJoy', 'dark', 2));
-	joyImg.addEventListener('click', makeLinkHandler(joy, 'darkOrJoy', 'joy', 2));
-	chaosImg.addEventListener('click', makeLinkHandler(terminal, 'chaosOrGentle', 'chaos', 3));
-	gentleImg.addEventListener('click', makeLinkHandler(terminal, 'chaosOrGentle', 'gentle', 3));
-	forestImg.addEventListener('click', makeLinkHandler(terminal, 'forestOrMeadow', 'forest', 3));
-	meadowImg.addEventListener('click', makeLinkHandler(terminal, 'forestOrMeadow', 'meadow', 3));
-	outImg.addEventListener('click', makeLinkHandler(out, 'outOrInner', 'out', 2));
-	innerImg.addEventListener('click', makeLinkHandler(inner, 'outOrInner', 'inner', 2));
-	morningImg.addEventListener('click', makeLinkHandler(terminal, 'morningOrNight', 'morning', 3));
-	nightImg.addEventListener('click', makeLinkHandler(terminal, 'morningOrNight', 'night', 3));
-	unfoldImg.addEventListener('click', makeLinkHandler(terminal, 'unfoldOrCycle', 'unfold', 3));
-	cycleImg.addEventListener('click', makeLinkHandler(terminal, 'unfoldOrCycle', 'cycle', 3));
+	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 1));
+	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 1));
+	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 2));
+	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 2));
+	chaosImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 3));
+	gentleImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 3));
+	forestImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 3));
+	meadowImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 3));
+	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 2));
+	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 2));
+	morningImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 3));
+	nightImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 3));
+	unfoldImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 3));
+	cycleImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 3));
 }
 
 window.addEventListener('load', windowOnLoad);

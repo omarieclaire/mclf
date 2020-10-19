@@ -25,7 +25,7 @@ ScrollTrigger.defaults({
 function init() {
   gsap.timeline({
     scrollTrigger:{
-      trigger: "#level0",
+      trigger: "#landingScreenLevel",
       start: "0", //animation starts at this point  - 20 px above the top of the trigger element
       end: "+=100",
       scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
@@ -42,7 +42,7 @@ function init() {
     // y : innerHeight * 1,
     // rotate : 180
   //  })
-   // .from("#begin", { y : innerHeight * 1 })
+   // .from("#choice1Lvl", { y : innerHeight * 1 })
 
    gsap.timeline({
      scrollTrigger:{

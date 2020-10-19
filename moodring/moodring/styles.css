@@ -258,7 +258,7 @@ a:hover, a:active {
 
 #seekText {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: playerQuestionLvl.5rem;
   color: #8073c7;
   margin: 2rem;
 }
@@ -275,7 +275,7 @@ textarea {
   font-size: 2rem;
   color: #d5ff9f;
   /* margin: 2rem; */
-  perspective: 1px;
+  perspective: playerQuestionLvlpx;
 }
 
 #questionButton {
@@ -285,7 +285,7 @@ textarea {
   margin: 2rem;
 }
 
-#level0 {
+#beginLvl {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
@@ -319,21 +319,21 @@ textarea {
   width: 100vw;
 }
 
-.level1 {
+#playerQuestionLvl {
   background: url(images/walls/1l.png), url(images/walls/1r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
 
-.level2 {
+#questions3Lvl {
   background: url(images/walls/2l.png), url(images/walls/2r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
 
-.level3 {
+.choice1Lvl {
   display: flex;
   /* temp fix */
   flex-direction: column;
@@ -346,7 +346,7 @@ textarea {
   background-repeat: no-repeat, no-repeat;
 }
 
-.level4 {
+.choice2Lvl {
   display: flex;
   /* temp fix */
   flex-direction: column;
@@ -359,7 +359,7 @@ textarea {
   background-repeat: no-repeat, no-repeat;
 }
 
-.level5 {
+.choice3Lvl {
   display: flex;
   /* temp fix */
   flex-direction: column;
@@ -372,7 +372,20 @@ textarea {
   background-repeat: no-repeat, no-repeat;
 }
 
-.terminalLevel {
+#findSongLvl {
+  display: flex;
+  /* temp fix */
+  flex-direction: column;
+  /* temp fix */
+  align-items: center;
+  /* temp fix */
+  background: url(images/walls/6l.png), url(images/walls/6r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#lastLvl {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
@@ -384,6 +397,33 @@ textarea {
 	height: 100vh;
   width: 100vw;
 }
+
+#creditsLvl {
+  display: flex;
+  /* temp fix */
+  flex-direction: column;
+  /* temp fix */
+  align-items: center;
+  /* temp fix */
+  background: url(images/walls/5l.png), url(images/walls/5r.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+@media (min-height: 680px), screen and (orientation: portrait) {
+  #beginLvl {}
+  #playerQuestionLvl {}
+  #questions3Lvl {}
+  .choice1Lvl {}
+  .choice2Lvl {}
+  .choice3Lvl {}
+  #findSongLvl {}
+  #lastLvl {}
+  #creditsLvl {}
+
+}
+
 
 .questionRow{
 	  grid-area: questionRow;
@@ -572,7 +612,7 @@ button:active {
 
 @keyframes fade {
   0% {
-    opacity: 1;
+    opacity: .6;
   }
 
   50% {
@@ -586,11 +626,11 @@ button:active {
 
 @keyframes fadeOut {
   0% {
-    opacity: .4;
+    opacity: .6;
   }
 
   50% {
-    opacity: .5;
+    opacity: .3;
   }
 
   100% {
