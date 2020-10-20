@@ -159,9 +159,9 @@ function windowOnLoad() {
 	const unfoldImg = document.getElementById('unfoldImg');
 	const cycleImg = document.getElementById('cycleImg');
 
-	const backgroundMusic = new Audio("../sounds/backgroundMusic.mp3");
-	const beginSound = new Audio("../sounds/beginSound.mp3");
-	const genSound = new Audio("../sounds/genSound.mp3");
+	const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
+	const beginSound = new Audio("./sounds/beginSound.mp3");
+	const genSound = new Audio("./sounds/genSound.mp3");
 
 	function playSound(audio) {
 		audio.play();
