@@ -191,6 +191,7 @@ function windowOnLoad() {
 		var audio = document.getElementById('player1');
 		audio.load();
 		creditsLvl.style.display = 'grid';
+		backgroundMusic.pause();
 
 	}
 
