@@ -73,6 +73,15 @@ body {
   /* cursor: url('images/char/swimLady.png') 12 18, auto; */
 }
 
+#artist {
+  font-size: 1rem;
+
+}
+
+#title {
+  font-size: 1.5rem;
+}
+
 a:link, a:visited {
   /* background-color: blue; */
   color: #799be2;
@@ -80,6 +89,10 @@ a:link, a:visited {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+}
+
+#debaserLink {
+  color: #992be7;
 }
 
 a:hover, a:active {
@@ -94,9 +107,21 @@ a:hover, a:active {
 }
 
 #finalImageRow {
-  grid-area: imageRow;
+  grid-area: finalImageRow;
   display: flex;
-	/* flex-direction: column; */
+	flex-direction: row;
+	justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  /* justify-content: space-evenly; */
+	z-index: -10;
+	opacity: .8;
+}
+
+#friendsRow {
+  grid-area: friendsRow;
+  display: flex;
+	flex-direction: row;
 	justify-content: space-around;
   align-items: center;
   align-content: center;
@@ -104,6 +129,46 @@ a:hover, a:active {
 	z-index: -10;
 	opacity: .5;
 }
+
+#glowRow {
+  grid-area: glowRow;
+  display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+  align-self: flex-end;
+	z-index: -5;
+  opacity: .5;
+}
+
+#wavesRow {
+  grid-area: wavesRow;
+  /* grid-row: 1/4; */
+	/* flex-direction: column; */
+  /* align-items: center; */
+  /* align-content: center; */
+  max-width:100vw;
+  z-index: -10;
+}     
+
+#waves {
+  max-width: 100vw;
+}
+
+#musicCreditRow {
+  grid-area: musicCreditRow;
+  display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+	z-index: -10;
+  opacity: .5;
+  text-align: center;
+} 
 
 #titling {
   width: 13rem;
@@ -117,7 +182,7 @@ a:hover, a:active {
   width: 6rem;
 }
 
-#greenGlow {
+#greenGlow, #greenGlow2 {
   z-index: 5;
   max-width: 25vw;
 }
@@ -159,8 +224,8 @@ a:hover, a:active {
 } */
 #climber {}
 
-.row1 {
-  grid-area: top;
+.beginLvlRow1 {
+  grid-area: beginLvlRow1;
   display: flex;
   align-items: center;
   align-content: center;
@@ -169,14 +234,34 @@ a:hover, a:active {
   margin: 2rem;
 }
 
-.row2 {
-  grid-area: middle;
+.beginLvlRow2 {
+  grid-area: beginLvlRow2;
   /* grid-row: 1/4; */
   display: flex;
   align-items: center;
   align-content: center;
   justify-content: center;
   animation: pulse 30s ease-in-out 0s alternate infinite;
+}
+
+.beginLvlRow3 {
+  grid-area: beginLvlRow3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-items: center;
+  align-content: center;
+  align-self: flex-end;
+  z-index: 99;
+}
+
+.simpleColumn{
+  grid-area: simpleColumn;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-around;
 }
 
 .fade{
@@ -195,27 +280,6 @@ a:hover, a:active {
   color: rgb(129 103 192 / .64);
 }
 
-.row3 {
-  grid-area: bottom;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-items: center;
-  align-content: center;
-  align-self: flex-end;
-  z-index: 99;
-}
-
-.row4 {
-  grid-area: highlight;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-items: center;
-  align-content: center;
-  /* z-index: 99 */
-}
-
 .textRow {
   grid-area: textRow;
   display: flex;
@@ -227,7 +291,7 @@ a:hover, a:active {
   text-align: center;
 }
 
-.musicRow {
+#musicRow {
 	grid-area: musicRow;
   display: flex;
   align-items: center;
@@ -266,8 +330,6 @@ a:hover, a:active {
 textarea {
   width: 35vw;
   height: 25vh;
-
-
 }
 
 .playerQuestion {
@@ -291,11 +353,11 @@ textarea {
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 0px;
   grid-template-areas:
-    "top top top"
-    "middle middle middle"
-    ". bottom .";
+    "beginLvlRow1 beginLvlRow1 beginLvlRow1"
+    "beginLvlRow2 beginLvlRow2 beginLvlRow2"
+    ". beginLvlRow3 .";
   /* ". highlight ."; */
-  height: 110vh;
+  height: 100vh;
   width: 100vw;
   background: url(images/walls/0l.png), url(images/walls/0r.png);
   background-position: top 0 left 0, top 0 right 0;
@@ -303,30 +365,49 @@ textarea {
   background-repeat: no-repeat, no-repeat;
 }
 
-.level {
+#playerQuestionLvl {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-gap: 2px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 0px;
   grid-template-areas:
-    ". . . . "
-    ". questionRow questionRow ."
-    ". textRow textRow ."
-    ". imageRow imageRow ."
-		". musicRow musicRow ."
-    ". . . . ";
+  ". . ."
+    ". simpleColumn ."
+    ". . .";
   height: 100vh;
   width: 100vw;
-}
-
-#playerQuestionLvl {
   background: url(images/walls/1l.png), url(images/walls/1r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
 
+.choiceLvl {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-gap: 2px;
+  grid-template-areas:
+    ". . . "
+    ". questionRow ."
+    ". textRow ."
+    ". imageRow ."
+    ". . . ";
+  height: 100vh;
+  width: 100vw;
+}
+
 #questions3Lvl {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 0px;
+  grid-template-areas:
+  ". . ."
+    ". simpleColumn ."
+    ". . .";
+  height: 100vh;
+  width: 100vw;
   background: url(images/walls/2l.png), url(images/walls/2r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
@@ -334,12 +415,6 @@ textarea {
 }
 
 .choice1Lvl {
-  display: flex;
-  /* temp fix */
-  flex-direction: column;
-  /* temp fix */
-  align-items: center;
-  /* temp fix */
   background: url(images/walls/3l.png), url(images/walls/3r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
@@ -347,12 +422,6 @@ textarea {
 }
 
 .choice2Lvl {
-  display: flex;
-  /* temp fix */
-  flex-direction: column;
-  /* temp fix */
-  align-items: center;
-  /* temp fix */
   background: url(images/walls/4l.png), url(images/walls/4r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
@@ -360,12 +429,6 @@ textarea {
 }
 
 .choice3Lvl {
-  display: flex;
-  /* temp fix */
-  flex-direction: column;
-  /* temp fix */
-  align-items: center;
-  /* temp fix */
   background: url(images/walls/5l.png), url(images/walls/5r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
@@ -379,7 +442,7 @@ textarea {
   /* temp fix */
   align-items: center;
   /* temp fix */
-  background: url(images/walls/6l.png), url(images/walls/6r.png);
+  background: url(images/walls/6l.png), url(images/walls/6l.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -387,31 +450,85 @@ textarea {
 
 #lastLvl {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2px;
   grid-template-areas:
-    ". questionRow ."
-    ". songRow ."
-    ". infoRow .";
-	height: 100vh;
+    ". . . . "
+    ". displayQuestionRow displayQuestionRow ."
+    ". musicRow musicRow ."
+    ". musicCreditRow musicCreditRow ."
+    ". finalImageRow finalImageRow ."
+    ". friendsRow friendsRow ."
+    ". glowRow glowRow ."
+    "wavesRow wavesRow wavesRow wavesRow"
+    ". . . . ";
+  height: 100vh;
   width: 100vw;
-}
-
-#creditsLvl {
-  display: flex;
-  /* temp fix */
-  flex-direction: column;
-  /* temp fix */
-  align-items: center;
-  /* temp fix */
-  background: url(images/walls/5l.png), url(images/walls/5r.png);
+  background: url(images/walls/7l.png), url(images/walls/7r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
 
-@media (min-height: 680px), screen and (orientation: portrait) {
+#creditsLvl {
+  display: grid;
+  grid-template-columns: .25fr 1fr .25fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-gap: 2rem;
+  grid-template-areas:
+    ". . . "
+    ". dLogoRow ."
+    ". buttonsRow ."
+    ". creditsTextRow ."
+    ". cLogoRow ."
+    ". . .";
+  height: 100vh;
+  width: 100vw;
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+  background-color: #78a5e8;
+}
+
+#dLogoRow {
+  grid-area: dLogoRow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+#buttonsRow {
+  grid-area: buttonsRow;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+#creditsTextRow {
+  grid-area: creditsTextRow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  color: black;
+  font-size: 1rem;
+  letter-spacing: normal;
+}
+
+#cLogoRow {
+  grid-area: cLogoRow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+/* @media (max-width: 680px), screen and (orientation: portrait) {
   #beginLvl {
     background: url(images/walls/0lm.png), url(images/walls/0rm.png);
     background-size: auto 100%, auto 100%;
@@ -466,11 +583,11 @@ textarea {
 
   }
 
-}
+} */
 
 
-.questionRow{
-	  grid-area: questionRow;
+#displayQuestionRow{
+	  grid-area: displayQuestionRow;
 	  display: flex;
 	  align-items: center;
 	  align-content: center;
@@ -480,7 +597,7 @@ textarea {
 	  text-align: center;
 }
 	.songRow{}
-		.infoRow{}
+	.infoRow{}
 
 #up {
   /* Level 1 */
@@ -576,6 +693,36 @@ button:active {
   /* transform: translateY(4px); */
 }
 
+.creditsButton {
+  background-color: #78a5e8;
+  background: 78a5e8;
+  color:black;
+  /* text-transform: uppercase; */
+  text-decoration: none;
+  font-size: 1rem;
+  text-align: center;
+  border: .5px solid black;
+  padding: 7px 20px;
+  margin: 4px 2px;
+  /* cursor: url('images/char/plantLady.png') 12 18, auto; */
+  transition: all 1s ease 0s;
+  opacity: .75;
+}
+
+creditsButton:hover {
+  color: purple;
+  /* background: #f6b93b; */
+  border-color: purple;
+  /* padding: 1.5rem; */
+  transition: all 1s ease 0s;
+  border-radius: 50px;
+}
+
+creditsButton:active {
+  /* color: orange; */
+  /* transform: translateY(4px); */
+}
+
 .content {
   /* margin: 0 auto;
     padding: 50px;
@@ -607,7 +754,7 @@ button:active {
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
-  background-image: url(images/char/plantLady.png);
+  background-image: url(images/gem-play.gif);
   background-size: cover;
 }
 

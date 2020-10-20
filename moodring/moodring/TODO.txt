@@ -1,0 +1,31 @@
+TODO
+fix responsive background
+"other choice" fades away and your choice is highlighted
+blank wall divs between levels?
+works on mobile - images & layout
+works on mobile - UX & UI
+transitions and animations on buttons
+integrate scroll trigger animations
+  1. Temporarily "lock" a background in place while I scroll in animated elements (unlock when I click a button)
+  2. Have an animation that starts animating when I click a button, continues animating when I scroll, and finishes animating when I reach another div.
+image optimization: svgs with the animations?
+credits display at end
+works in chrome, firefox, IE
+modify text
+
+Design Considerations
+numbers for the questions?
+scrolljacking / scrolling
+
+IF TIME
+things that follow the cursor?
+music player animates - "length of song/where you are in the song"
+choose your character
+text generation for final screen?
+animating waves
+
+
+how does max width work? 
+is it good to have the images in the background
+how does css grid work? Is it better to have many grids or to have elements I don't use? 
+is it better to have empty slots or to have padding?

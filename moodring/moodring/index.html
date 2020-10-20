@@ -13,182 +13,189 @@
 <body>
   <div id="beginLvl" class="beginLvl">
     <h1>Mood Ring</h1>
-    <div class="row1">
-      <img id="climber" class="image" alt="climber" src="images/level0/climber.png">
-      <img id="swimmer" class="image" alt="swimmer" src="images/level0/swimmer.png">
+    <div class="beginLvlRow1">
+      <img id="climber" class="image" alt="climber" src="images/beginLvl/climber.png">
+      <img id="swimmer" class="image" alt="swimmer" src="images/beginLvl/swimmer.png">
     </div>
-    <div class="row2">
-      <img id="creaturesL" class="image" alt="creatures" src="images/level0/creaturesL.png">
-      <img id="titling" class="image" alt="titling" src="images/level0/titling.png">
-      <img id="creaturesR" class="image" alt="creatures" src="images/level0/creaturesR.png">
+    <div class="beginLvlRow2">
+      <img id="creaturesL" class="image" alt="creatures" src="images/beginLvl/creaturesL.png">
+      <img id="titling" class="image" alt="titling" src="images/beginLvl/titling.png">
+      <img id="creaturesR" class="image" alt="creatures" src="images/beginLvl/creaturesR.png">
     </div>
-    <div class="row3">
+    <div class="beginLvlRow3">
       <button type="button" id="beginBtn" class="button">begin</button>
-      <img id="greenGlow" class="image" alt="greenGlow" src="images/level0/greenGlow.png">
+      <img id="greenGlow" class="image" alt="greenGlow" src="images/beginLvl/greenGlow.png">
     </div>
   </div>
 
-  <div id="playerQuestionLvl" class="level1">
-    <div class="level">
-      <div class="textRow">
-        <form>
-          <p class="questionRow">What do you seek?</p>
-          <p class="textRow">
-            <textarea name="text" class="choice" id="seekText" placeholder=""></textarea>
-          </p>
-          <div class="submit">
-            <button type="button" id="seekBtn" class="button">ask</button>
-          </div>
-        </form>
-      </div>
-      <div class="imageRow">
-        <img id="creaturesSpin" class="image" alt="creatures" src="images/level0/creaturesR.png">
-      </div>
+  <div id="playerQuestionLvl" class="">
+    <div class="simpleColumn">
+      <img id="plantLady" class="image" alt="plantLady" src="images/lastLvl/plantlady.png">
+
+      <p>What do you seek?</p>
+      <form>
+        <textarea name="text" class="choice" id="seekText" placeholder=""></textarea>
+      </form>
+      <button type="button" id="seekBtn" class="button">ask</button>
+      <!-- <img id="creaturesSpin" class="image" alt="creatures" src="images/beginLvl/creaturesR.png"> -->
     </div>
   </div>
 
-  <div id="questions3Lvl" class="level1">
-    <div class="level">
-        <p class="textRow" id="questionstxt">3 questions for you<br>seeker</p>
-        <p class="questionRow">
-          <!-- <button type="button" id="readyBtn" class="button">I am ready</button> -->
-        </p>
-      <div class="imageRow">
-        <img id="creaturesSpin2" class="image" alt="creatures" src="images/level0/creaturesR.png">
-      </div>
+  <div id="questions3Lvl" class="">
+    <div class="simpleColumn">
+      <img id="greenSwimmer" class="image" alt="greenSwimmer" src="images/lastLvl/swimmer02.png">
+
+      <p id="questionstxt">3 questions for you<br>seeker</p>
     </div>
   </div>
 
-  <div id="choice1Lvl" class="choice1Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">One:</span><br>will you float <a class="choiceLink" id="upLink" href="#">up</a> or will you dive <a class="choiceLink" id="downLink" href="#">down</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="upImg" class="image choiceImage" alt="up" src="images/choices/up02.gif"></a>
-        <a href="#"><img id="downImg" class="image choiceImage" alt="down" src="images/choices/down.png"></a>
-      </div>
-      <div class="">
-
-      </div>
+  <div id="choice1Lvl" class="choiceLvl choice1Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">One:</span><br>will you float <a class="choiceLink" id="upLink"
+          href="#">up</a> or will you dive <a class="choiceLink" id="downLink" href="#">down</a> ?</p>
+    </div>
+    <div class="imageRow">
+      <a href="#"><img id="upImg" class="image choiceImage" alt="up" src="images/choices/up02.gif"></a>
+      <a href="#"><img id="downImg" class="image choiceImage" alt="down" src="images/choices/down.png"></a>
+    </div>
+    <div class="">
     </div>
   </div>
 
-  <div id="downLvl" class="choice2Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Two:</span><br>do you flow <a class="choiceLink" id="outLink" href=" #">out</a> or do you curl <a class="choiceLink" id="innerLink" href=" #">in</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="outImg" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
-        <a href="#"><img id="innerImg" class="image choiceImage" alt="inner" src="images/choices/inner.png"></a>
-      </div>
-
+  <div id="downLvl" class="choiceLvl choice2Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Two:</span><br>do you flow <a class="choiceLink" id="outLink"
+          href=" #">out</a> or do you curl <a class="choiceLink" id="innerLink" href=" #">in</a> ?</p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="outImg" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
+      <a href="#"><img id="innerImg" class="image choiceImage" alt="inner" src="images/choices/inner.png"></a>
+    </div>
+
   </div>
 
-  <div id="upLvl" class="choice2Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Two:</span><br>do you pull the deep flowing <a class="choiceLink" id="darkLink" href=" #">dark</a> or the light floating <a class="choiceLink" id="joyLink" href=" #">joy</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="darkImg" class="image choiceImage" alt="dark" src="images/choices/dark.png"></a>
-        <a href="#"><img id="joyImg" class="image choiceImage" alt="joy" src="images/choices/joy.png"></a>
-      </div>
-
+  <div id="upLvl" class="choiceLvl choice2Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Two:</span><br>do you pull the deep flowing <a class="choiceLink"
+          id="darkLink" href=" #">dark</a> or the light floating <a class="choiceLink" id="joyLink" href=" #">joy</a> ?
+      </p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="darkImg" class="image choiceImage" alt="dark" src="images/choices/dark.png"></a>
+      <a href="#"><img id="joyImg" class="image choiceImage" alt="joy" src="images/choices/joy.png"></a>
+    </div>
+
   </div>
 
 
-  <div id="outLvl" class="choice3Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Three:</span><br>do you wait for the cusp of <a class="choiceLink" id="morningLink" href=" #">morning</a> or the deepening pulse of <a class="choiceLink" id="nightLink" href=" #">night</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="morningImg" class="image choiceImage" alt="morning" src="images/choices/morning.png"></a>
-        <a href="#"><img id="nightImg" class="image choiceImage" alt="night" src="images/choices/night.png"></a>
-      </div>
-
+  <div id="outLvl" class="choiceLvl choice3Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Three:</span><br>do you wait for the cusp of <a class="choiceLink"
+          id="morningLink" href=" #">morning</a> or the deepening pulse of <a class="choiceLink" id="nightLink"
+          href=" #">night</a> ?</p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="morningImg" class="image choiceImage" alt="morning" src="images/choices/morning.png"></a>
+      <a href="#"><img id="nightImg" class="image choiceImage" alt="night" src="images/choices/night.png"></a>
+    </div>
+
   </div>
 
-  <div id="innerLvl" class="choice3Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Three:</span><br>does the pattern around you slowly <a class="choiceLink" id="unfoldLink" href=" #">unfold</a> or does it <a class="choiceLink" id="cycleLink" href=" #">cycle</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="unfoldImg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png"></a>
-        <a href="#"><img id="cycleImg" class="image choiceImage" alt="cycle" src="images/choices/cycle.png"></a>
-      </div>
-
+  <div id="innerLvl" class="choiceLvl choice3Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Three:</span><br>does the pattern around you slowly <a class="choiceLink"
+          id="unfoldLink" href=" #">unfold</a> or does it <a class="choiceLink" id="cycleLink" href=" #">cycle</a> ?</p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="unfoldImg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png"></a>
+      <a href="#"><img id="cycleImg" class="image choiceImage" alt="cycle" src="images/choices/cycle.png"></a>
+    </div>
+
   </div>
 
-  <div id="darkLvl" class="choice3Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Three:</span><br>will you enter the <a class="choiceLink" id="chaosLink" href=" #">chaos</a> or undulate unto the <a class="choiceLink" id="gentleLink" href=" #">gentle</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="chaosImg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png"></a>
-        <a href="#"><img id="gentleImg" class="image choiceImage" alt="gentle" src="images/choices/gentle.png"></a>
-      </div>
-
+  <div id="darkLvl" class="choiceLvl choice3Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Three:</span><br>will you enter the <a class="choiceLink" id="chaosLink"
+          href=" #">chaos</a> or undulate unto the <a class="choiceLink" id="gentleLink" href=" #">gentle</a> ?</p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="chaosImg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png"></a>
+      <a href="#"><img id="gentleImg" class="image choiceImage" alt="gentle" src="images/choices/gentle.png"></a>
+    </div>
+
   </div>
 
-  <div id="joyLvl" class="choice3Lvl">
-    <div class="level">
-      <div class="textRow">
-        <p class="choice"> <span class="number">Three:</span><br>will you wander through a deep <a class="choiceLink" id="forestLink" href="#">forest</a> or wind your way over an endless <a class="choiceLink" id="meadowLink" href=" #">meadow</a> ?</p>
-      </div>
-      <div class="imageRow">
-        <a href="#"><img id="forestImg" class="image choiceImage" alt="forest" src="images/choices/forest.png"></a>
-        <a href="#"><img id="meadowImg" class="image choiceImage" alt="meadow" src="images/choices/meadow.png"></a>
-      </div>
-
+  <div id="joyLvl" class="choiceLvl choice3Lvl">
+    <div class="textRow">
+      <p class="choice"> <span class="number">Three:</span><br>will you wander through a deep <a class="choiceLink"
+          id="forestLink" href="#">forest</a> or wind your way over an endless <a class="choiceLink" id="meadowLink"
+          href=" #">meadow</a> ?</p>
     </div>
+    <div class="imageRow">
+      <a href="#"><img id="forestImg" class="image choiceImage" alt="forest" src="images/choices/forest.png"></a>
+      <a href="#"><img id="meadowImg" class="image choiceImage" alt="meadow" src="images/choices/meadow.png"></a>
+    </div>
+
   </div>
 
   <!-- lastLvl -->
 
-  <div id='lastLvl' class="level5 musiccolumn">
-    <div class="level">
-      <div class="questionRow">
-        <p class="questionRow playerQuestion"></p>
+  <div id='lastLvl' class="">
+    <div id="displayQuestionRow">
+      <p class="playerQuestion"></p>
+    </div>
+    <div id="finalImageRow"></div>
+    <div id="musicRow">
+      <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
+        <div id="musicbutton1" class="musicbutton"></div>
       </div>
-      <div class="musicRow">
-        <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
-          <div id="musicbutton1" class="musicbutton"></div>
-        </div> 
-        <audio id="player1" controls preload>
-          <source id='audioSource' src='sounds/Bucko-ProTesting.mp3' type="audio/mpeg">
-        </audio>
-      </div>
-      <div class="textRow">
-        <p><span id="artist"></span> - <span id="title"></span></p>
-      </div>
-      <div id="finalImageRow"></div>
+      <audio id="player1" controls preload>
+        <source id='audioSource' src='sounds/Bucko-ProTesting.mp3' type="audio/mpeg">
+      </audio>
+    </div>
+    <div id="friendsRow">
+      <!-- <img id="plantLady" class="image" alt="plantLady" src="images/lastLvl/plantlady.png"> -->
+      <!-- <img id="redSnake" class="image" alt="redSnake" src="images/lastLvl/snake04.png"> -->
+      <!-- <img id="greenSnake" class="image" alt="greenSnake" src="images/lastLvl/snake04.png"> -->
+      <!-- <img id="blueSwimmer" class="image" alt="blueSwimmer" src="images/lastLvl/swimmer03.png"> -->
+      <!-- <img id="greenSwimmer" class="image" alt="greenSwimmer" src="images/lastLvl/swimmer02.png"> -->
+    </div>
+    <div id="musicCreditRow">
+      <p><span id="artist"></span></p>
+      <p><span id="title"></span></p>
+    </div>
+    <div id="glowRow">
+      <!-- <img id="greenGlow2" class="image" alt="greenGlow" src="images/beginLvl/greenGlow.png"> -->
+    </div>
+    <div id="wavesRow">
+      <img id="waves" class="image" alt="waves" src="images/lastLvl/waves.png">
     </div>
   </div>
 
-  <div class="" id="creditsLvl">
-    <p>Listen/buy Learn more
-
-      Mood Ring Vol. 2 is a project of [Debaser](www.debaser.ca)
-      Programming: Marie LeBlanc Flanagan
-      Artwork and graphic design: Robin Richardson-Dupuis
-      Score: Emily McQuarrie
-      Mastering: Philip Shaw Bova
-      Special thanks to Conor Bryan, Calum Jeacle, Heather D’Alessio, and Philippe Charbonneau
-
-      Thank you to the Canada Council for the Arts
-      [CCA Logo - download here]
-    </p>
+  <div id="creditsLvl">
+    <div id="dLogoRow">
+      <img id="debaserLogo" class="image" alt="debaser Logo" src="images/debaserLogo.png">
+    </div>
+    <div id="buttonsRow">
+      <button type="button" id="learnMore" class="button creditsButton">Learn More</button>
+      <button type="button" id="startOver" class="button creditsButton">Begin Again</button>
+    </div>
+    <div id="creditsTextRow">
+      <p>Mood Ring Vol. 2 is a project of <a id="debaserLink" target="_blank" href="www.debaser.ca">Debaser</a></p>
+<br>
+      <p>Design & Code: Marie Claire LeBlanc Flanagan</p>
+      <p>Artwork & Graphic Design: Robin Richardson-Dupuis</p>
+      <p>Score: Emily McQuarrie</p>
+      <p>Mastering: Philip Shaw Bova</p>
+      <p>Special thanks to Conor Bryan, Calum Jeacle, Heather D’Alessio, and Philippe Charbonneau</p>
+    </div>
+    <div id="cLogoRow">
+      <img id="ccaLogo" class="image" alt="Canada Council Logo" src="images/canadaCouncilLogo.png">
+      </p>
+    </div>
   </div>
+  </div>
+
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>

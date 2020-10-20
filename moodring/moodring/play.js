@@ -91,7 +91,7 @@ function windowOnLoad() {
 	beginBtn.addEventListener('click', beginBtnButtonHandler); // add an eventlistener to the enter button
 	function beginBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
 		// window.location.hash='question'; // transport down the page
-		playerQuestionLvl.style.display = "block";
+		playerQuestionLvl.style.display = "grid";
 		playSound("begin");
 		beginBtn.innerHTML = 'scroll';
 	}
@@ -105,8 +105,8 @@ function windowOnLoad() {
 		playSound("begin");
 		seekBtn.innerHTML = 'received';
 		seekText.classList.add('fade');
-		questions3Lvl.style.display = "block";
-		choice1Lvl.style.display = "block";
+		questions3Lvl.style.display = "grid";
+		choice1Lvl.style.display = "grid";
 		displayPlayerQuestion();
 	}
 
@@ -179,12 +179,14 @@ function windowOnLoad() {
 		var titleText = document.getElementById('title');
 		titleText.textContent = song.title;
 
-		lastLvl.display = 'block';
+		lastLvl.display = 'grid';
 		console.log(document.getElementById('musicbutton1'));
-		
+
 		// force the browser to refresh the audio source
 		var audio = document.getElementById('player1');
 		audio.load();
+		creditsLvl.style.display = 'grid';
+
 	}
 
 	// draws the final images based on playerState
@@ -222,7 +224,7 @@ function windowOnLoad() {
 			event.preventDefault()
 
 			playSound("gen");
-			link.style.display = "block";
+			link.style.display = "grid";
 			playerState[stateKey] = stateValue;
 			console.log(JSON.stringify(playerState))
 			if (level === 1) {
