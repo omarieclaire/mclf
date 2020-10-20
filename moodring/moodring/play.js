@@ -185,8 +185,6 @@ function windowOnLoad() {
 		titleText.textContent = song.title;
 
 		lastLvl.display = 'grid';
-		backgroundMusic.pause(); 
-
 		console.log(document.getElementById('musicbutton1'));
 
 		// force the browser to refresh the audio source

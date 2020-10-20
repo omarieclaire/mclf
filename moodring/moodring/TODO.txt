@@ -1,20 +1,22 @@
 TODO
-debug the problem that happens when someone changes their mind
+
 add choice animation -  "other choice" fades away and your choice is highlighted
-add spacer walls between levels (when Robin delivers them)
-ensure it works on mobile - images & layout (need walls with portrait ratio from Robin)
-ensure it works on mobile - UX & UI (after item above)
+add spacer walls between levels (when Robin finished them)
+get it working on mobile - images & layout (when Robin finishes the mobile walls TODO - sort this out)
+make sure the UX & UI is good on mobile (after item above)
 add transitions and animations on all buttons
-integrate scroll trigger animations
+integrate scroll trigger animations (big project)
   1. Temporarily "lock" a background in place while I scroll in animated elements (unlock when I click a button)
   2. Have an animation that starts animating when I click a button, continues animating when I scroll, and finishes animating when I reach another div.
-get it to load much faster
-nicer looking png images for the logos at the end (need to get from Robin and Rachel)
-browser compatibility: works in chrome, firefox, IE
+get it to load much faster (important!)
+nicer looking png images for the logos at the end (ask Robin and Rachel for these)
+create the "start again" functionality in the code (funct to reset everything?)
+check browser compatibility: make it work in chrome, firefox, IE
 modify text - updates and tweaks!
-building a new custom music player with Robin's new gifs (this might be v. hard)
-integrating custom "last levels" (with code when Robin finishes them)
-integrating the clickable gifs - may be a big project (when Robin sends them in) 
+build a new custom music player with Robin's new gifs (this might be hard)
+integrate custom "last levels" with code (when Robin finishes them)
+integrate the clickable gifs (when Robin sends them in) this may also be hard
+debug the bug that happens when someone changes their mind
 
 IF TIME
 things that follow the cursor?
