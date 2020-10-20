@@ -59,6 +59,7 @@ const songMap = {
 	}
 }
 
+
 // get each "level"
 function windowOnLoad() {
 	const beginLvl = document.getElementById('beginLvl');
@@ -93,6 +94,7 @@ function windowOnLoad() {
 		// window.location.hash='question'; // transport down the page
 		playerQuestionLvl.style.display = "grid";
 		playSound("begin");
+		playSound("moodRing");
 		beginBtn.innerHTML = 'scroll';
 	}
 
@@ -158,7 +160,7 @@ function windowOnLoad() {
 	const cycleImg = document.getElementById('cycleImg');
 
 	function playSound(name) {
-		var audio = new Audio("../sounds/" + name + "Ding.mp3");
+		var audio = new Audio("../sounds/" + name + "Sound.mp3");
 		audio.play();
 	}
 
