@@ -93,8 +93,8 @@ function windowOnLoad() {
 	function beginBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
 		// window.location.hash='question'; // transport down the page
 		playerQuestionLvl.style.display = "grid";
-		playSound("begin");
-		playSound("moodRing");
+		playSound(beginSound);
+		playSound(backgroundMusic);
 		beginBtn.innerHTML = 'scroll';
 	}
 
@@ -104,7 +104,7 @@ function windowOnLoad() {
 	seekBtn.addEventListener('click', questionBtnHandler); // add an eventlistener to the  button
 	function questionBtnHandler(event) {
 		playerState.question = seekText.value;
-		playSound("begin");
+		playSound(beginSound);
 		seekBtn.innerHTML = 'received';
 		seekText.classList.add('fade');
 		questions3Lvl.style.display = "grid";
@@ -159,8 +159,11 @@ function windowOnLoad() {
 	const unfoldImg = document.getElementById('unfoldImg');
 	const cycleImg = document.getElementById('cycleImg');
 
-	function playSound(name) {
-		var audio = new Audio("../sounds/" + name + "Sound.mp3");
+	const backgroundMusic = new Audio("../sounds/backgroundMusic.mp3");
+	const beginSound = new Audio("../sounds/beginSound.mp3");
+	const genSound = new Audio("../sounds/genSound.mp3");
+
+	function playSound(audio) {
 		audio.play();
 	}
 
@@ -182,6 +185,8 @@ function windowOnLoad() {
 		titleText.textContent = song.title;
 
 		lastLvl.display = 'grid';
+		backgroundMusic.pause(); 
+
 		console.log(document.getElementById('musicbutton1'));
 
 		// force the browser to refresh the audio source
@@ -225,7 +230,7 @@ function windowOnLoad() {
 		function linkHandler(event) {
 			event.preventDefault()
 
-			playSound("gen");
+			playSound(genSound);
 			link.style.display = "grid";
 			playerState[stateKey] = stateValue;
 			console.log(JSON.stringify(playerState))

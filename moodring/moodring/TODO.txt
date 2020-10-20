@@ -1,5 +1,4 @@
 TODO
-add emily's music
 debug the problem that happens when someone changes their mind
 add choice animation -  "other choice" fades away and your choice is highlighted
 add spacer walls between levels (when Robin delivers them)

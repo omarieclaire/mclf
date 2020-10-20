@@ -16,6 +16,7 @@
     }
     button.addEventListener('click',
        function() {
+
           if ( test === true ) {
                button.classList.add( 'pause' );
                test = false;
