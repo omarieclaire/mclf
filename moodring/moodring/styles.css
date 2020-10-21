@@ -275,6 +275,8 @@ a:hover, a:active {
 
 #questionstxt {
   animation: fadeOut 3s ease-in-out 0s alternate infinite;
+  font-size: 1.1em;
+  line-height: 1.5em;
 }
 
 .number {
@@ -326,7 +328,7 @@ a:hover, a:active {
 
 #seekText {
   margin: 0;
-  font-size: playerQuestionLvl.5rem;
+  font-size: 1.5rem;
   color: #8073c7;
   margin: 2rem;
 }
@@ -334,18 +336,21 @@ a:hover, a:active {
 textarea {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
-  border-radius: 20px;
+  border-radius: 10px;
   width: 35vw;
   height: 25vh;
+  padding: 2rem;
+  font-size: 1.2em;
+  text-align: center;
+  background-color: #cfceff;
 
 }
 
 .playerQuestion {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1em;
   color: #d5ff9f;
   /* margin: 2rem; */
-  perspective: playerQuestionLvlpx;
 }
 
 #questionButton {
@@ -685,6 +690,7 @@ h1 {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
   transition: all 1s ease 0s;
   opacity: .75;
+  border-radius: 2px;
 }
 
 button:hover {
