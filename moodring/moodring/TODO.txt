@@ -17,6 +17,7 @@ build a new custom music player with Robin's new gifs (this might be hard)
 integrate custom "last levels" with code (when Robin finishes them)
 integrate the clickable gifs (when Robin sends them in) this may also be hard
 debug the bug that happens when someone changes their mind
+make sure this doesn't conflate light with good
 
 IF TIME
 things that follow the cursor?
