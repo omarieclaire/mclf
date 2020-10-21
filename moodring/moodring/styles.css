@@ -270,7 +270,7 @@ a:hover, a:active {
 }
 
 .glow{
-  animation: glow 10s ease-out 0s normal;
+  animation: glow 10s ease-out 0s alternate infinite;
 }
 
 #questionstxt {
