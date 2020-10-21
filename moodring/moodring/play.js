@@ -160,8 +160,11 @@ function windowOnLoad() {
 	const cycleImg = document.getElementById('cycleImg');
 
 	const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
+	backgroundMusic.load();
 	const beginSound = new Audio("./sounds/beginSound.mp3");
+	beginSound.load();
 	const genSound = new Audio("./sounds/genSound.mp3");
+	genSound.load();
 
 	function playSound(audio) {
 		audio.play();
