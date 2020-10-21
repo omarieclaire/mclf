@@ -34,7 +34,7 @@
 
       <p>What do you seek?</p>
       <form>
-        <textarea name="text" class="choice" id="seekText" placeholder=""></textarea>
+        <textarea name="text" class="choice" maxlength = "70" id="seekText" placeholder=""></textarea>
       </form>
       <button type="button" id="seekBtn" class="button">ask</button>
       <!-- <img id="creaturesSpin" class="image" alt="creatures" src="images/beginLvl/creaturesR.png"> -->
@@ -45,7 +45,7 @@
     <div class="simpleColumn">
       <img id="greenSwimmer" class="image" alt="greenSwimmer" src="images/lastLvl/swimmer02.png">
 
-      <p id="questionstxt">three questions<br>for you<br>seeker<br></p>
+      <p id="questionstxt">3 questions<br>for you<br>seeker<br></p>
     </div>
   </div>
 
@@ -64,14 +64,13 @@
 
   <div id="downLvl" class="choiceLvl choice2Lvl">
     <div class="textRow">
-      <p id="outOrInnerText" class="choice"> <span class="number">Two:</span><br>do you <a class="choiceLink" id="outLink"
+      <p id="outOrInnerText" class="choice"> <span class="number">One:</span><br>do you <a class="choiceLink" id="outLink"
           href=" #">flow out</a> or do you <a class="choiceLink" id="innerLink" href=" #">curl in</a>?</p>
     </div>
     <div class="imageRow">
       <a href="#"><img id="outImg" class="image choiceImage" alt="out" src="images/choices/out.png"></a>
       <a href="#"><img id="innerImg" class="image choiceImage" alt="inner" src="images/choices/inner.png"></a>
     </div>
-
   </div>
 
   <div id="upLvl" class="choiceLvl choice2Lvl">
@@ -84,9 +83,7 @@
       <a href="#"><img id="darkImg" class="image choiceImage" alt="dark" src="images/choices/dark.png"></a>
       <a href="#"><img id="joyImg" class="image choiceImage" alt="joy" src="images/choices/joy.png"></a>
     </div>
-
   </div>
-
 
   <div id="outLvl" class="choiceLvl choice3Lvl">
     <div class="textRow">
@@ -98,7 +95,6 @@
       <a href="#"><img id="morningImg" class="image choiceImage" alt="morning" src="images/choices/morning.png"></a>
       <a href="#"><img id="nightImg" class="image choiceImage" alt="night" src="images/choices/night.png"></a>
     </div>
-
   </div>
 
   <div id="innerLvl" class="choiceLvl choice3Lvl">
@@ -110,7 +106,6 @@
       <a href="#"><img id="unfoldImg" class="image choiceImage" alt="unfold" src="images/choices/unfold.png"></a>
       <a href="#"><img id="cycleImg" class="image choiceImage" alt="cycle" src="images/choices/cycle.png"></a>
     </div>
-
   </div>
 
   <div id="darkLvl" class="choiceLvl choice3Lvl">
@@ -122,7 +117,6 @@
       <a href="#"><img id="chaosImg" class="image choiceImage" alt="chaos" src="images/choices/chaos.png"></a>
       <a href="#"><img id="gentleImg" class="image choiceImage" alt="gentle" src="images/choices/gentle.png"></a>
     </div>
-
   </div>
 
   <div id="joyLvl" class="choiceLvl choice3Lvl">
@@ -135,7 +129,14 @@
       <a href="#"><img id="forestImg" class="image choiceImage" alt="forest" src="images/choices/forest.png"></a>
       <a href="#"><img id="meadowImg" class="image choiceImage" alt="meadow" src="images/choices/meadow.png"></a>
     </div>
+  </div>
 
+  <div id="findSongLvl" class="">
+    <div class="simpleColumn">
+      <img id="blueSwimmer" class="image" alt="blueSwimmer" src="images/lastLvl/swimmer03.png">
+      <p id="questionstxt">Find your song,<br>seeker?<br></p>
+      <button type="button" id="findSongBtn" class="button">yes</button>
+    </div>
   </div>
 
   <!-- lastLvl -->

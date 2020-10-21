@@ -2,14 +2,14 @@
 var playerState = {
 	level: 'none',
 	question: 'question',
-	upOrDown: undefined,
-	darkOrJoy: undefined,
-	chaosOrGentle: undefined,
-	forestOrMeadow: undefined,
-	outOrIn: undefined,
-	morningOrNight: undefined,
-	unfoldOrCyle: undefined,
-	numQuestionsAnswered: 0,
+	// upOrDown: undefined,
+	// darkOrJoy: undefined,
+	// chaosOrGentle: undefined,
+	// forestOrMeadow: undefined,
+	// outOrIn: undefined,
+	// morningOrNight: undefined,
+	// unfoldOrCyle: undefined,
+	// numQuestionsAnswered: 0,
 	q1: undefined,
 	q2: undefined,
 	q3: undefined,
@@ -59,7 +59,6 @@ const songMap = {
 	}
 }
 
-
 // get each "level"
 function windowOnLoad() {
 	const beginLvl = document.getElementById('beginLvl');
@@ -72,6 +71,7 @@ function windowOnLoad() {
 	const joyLvl = document.getElementById('joyLvl');
 	const outLvl = document.getElementById('outLvl');
 	const innerLvl = document.getElementById('innerLvl');
+	const findSongLvl = document.getElementById('findSongLvl');
 	const lastLvl = document.getElementById('lastLvl');
 	const creditsLvl = document.getElementById('creditsLvl');
 
@@ -85,8 +85,9 @@ function windowOnLoad() {
 	joyLvl.style.display = "none";
 	outLvl.style.display = "none";
 	innerLvl.style.display = "none";
-	creditsLvl.style.display = "none";
+	findSongLvl.style.display = "none";
 	lastLvl.style.display = "none";
+	creditsLvl.style.display = "none";
 
 	var beginBtn = document.getElementById('beginBtn'); // get the button
 	beginBtn.addEventListener('click', beginBtnButtonHandler); // add an eventlistener to the enter button
@@ -112,13 +113,16 @@ function windowOnLoad() {
 		displayPlayerQuestion();
 	}
 
-	// var readyBtn = document.getElementById('readyBtn'); // get the button
-	// readyBtn.addEventListener('click', readyBtnButtonHandler); // add an eventlistener to the enter button
-	// function readyBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
-	// 	begin.style.display = "block";
-	// 	playSound("begin");
-	// 	readyBtn.innerHTML = 'scroll';
-	// }
+	var findSongBtn = document.getElementById('findSongBtn');
+
+	findSongBtn.addEventListener('click', findSongBtnButtonHandler); 
+	function findSongBtnButtonHandler(event) {  
+		lastLvl.style.display = "grid";
+		creditsLvl.style.display = 'grid';
+		playSound("begin");
+		findSongBtn.innerHTML = 'scroll';
+		backgroundMusic.pause();
+	}
 
 	function displayPlayerQuestion() {
 		var x = document.getElementsByClassName("playerQuestion");
@@ -159,6 +163,7 @@ function windowOnLoad() {
 	const unfoldImg = document.getElementById('unfoldImg');
 	const cycleImg = document.getElementById('cycleImg');
 
+	// MUSIC 
 	const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
 	backgroundMusic.load();
 	const beginSound = new Audio("./sounds/beginSound.mp3");
@@ -174,9 +179,8 @@ function windowOnLoad() {
 		if (playerState.q3 === undefined) {
 			return;
 		}
-
 		var song = songMap[playerState.q3];
-		console.log(`the song is: ${JSON.stringify(song)}`);
+		// console.log(`the song is: ${JSON.stringify(song)}`);
 
 		var audioSrc = document.getElementById('audioSource');
 		audioSrc.setAttribute('src', `sounds/${song.file}`);
@@ -187,15 +191,9 @@ function windowOnLoad() {
 		var titleText = document.getElementById('title');
 		titleText.textContent = song.title;
 
-		lastLvl.display = 'grid';
-		console.log(document.getElementById('musicbutton1'));
-
 		// force the browser to refresh the audio source
 		var audio = document.getElementById('player1');
 		audio.load();
-		creditsLvl.style.display = 'grid';
-		backgroundMusic.pause();
-
 	}
 
 	// draws the final images based on playerState
@@ -285,31 +283,31 @@ function windowOnLoad() {
 	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up', 1));
 	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy', 2));
 	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
-	chaosLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
-	gentleLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
-	forestLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 'meadow',3));
-	meadowLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 'forest',3));
+	chaosLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
+	gentleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
+	forestLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3));
+	meadowLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3));
 	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
 	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
-	morningLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 'night',3));
-	nightLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 'morning',3));
-	unfoldLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
-	cycleLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
+	morningLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3));
+	nightLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3));
+	unfoldLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
+	cycleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
 
 	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down',1));
 	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up',1));
 	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy',2));
 	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
-	chaosImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
-	gentleImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
-	forestImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 'meadow',3));
-	meadowImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 'forest',3));
+	chaosImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
+	gentleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
+	forestImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3));
+	meadowImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3));
 	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
 	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
-	morningImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 'night',3));
-	nightImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 'morning',3));
-	unfoldImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
-	cycleImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
+	morningImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3));
+	nightImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3));
+	unfoldImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
+	cycleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
 }
 
 window.addEventListener('load', windowOnLoad);

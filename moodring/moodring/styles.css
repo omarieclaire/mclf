@@ -317,12 +317,12 @@ a:hover, a:active {
   margin: 2rem;
 }
 
-#beginBtn {
+#beginBtn, #findSongBtn {
   margin-bottom: -5rem;
   z-index: 10;
 }
 
-#beginBtn:focus {
+#beginBtn:focus, #findSongBtn {
   outline: none;
 }
 
@@ -337,9 +337,9 @@ textarea {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 10px;
-  width: 35vw;
+  width: 25vw;
   height: 25vh;
-  padding: 2rem;
+  padding: 3rem;
   font-size: 1.2em;
   text-align: center;
   background-color: #cfceff;
@@ -449,13 +449,17 @@ textarea {
 }
 
 #findSongLvl {
-  display: flex;
-  /* temp fix */
-  flex-direction: column;
-  /* temp fix */
-  align-items: center;
-  /* temp fix */
-  background: url(images/walls/6l.png), url(images/walls/6l.png);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 0px;
+  grid-template-areas:
+  ". . ."
+    ". simpleColumn ."
+    ". . .";
+  height: 100vh;
+  width: 100vw;
+  background: url(images/walls/6l.png), url(images/walls/6r.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
