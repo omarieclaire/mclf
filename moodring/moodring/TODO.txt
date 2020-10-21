@@ -1,6 +1,4 @@
 TODO
-
-add choice animation -  "other choice" fades away and your choice is highlighted
 add spacer walls between levels (when Robin finished them)
 get it working on mobile - images & layout (when Robin finishes the mobile walls TODO - sort this out)
 make sure the UX & UI is good on mobile (after item above)

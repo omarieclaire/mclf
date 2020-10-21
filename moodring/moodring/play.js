@@ -225,13 +225,36 @@ function windowOnLoad() {
 	}
 
 	// called when the links are clicked
-	function makeLinkHandler(link, stateKey, chosenValue, otherImage, level) {
+	function makeLinkHandler(link, stateKey, chosenValue, unchosenValue, level) {
 		function linkHandler(event) {
 			event.preventDefault()
 
 			playSound(genSound);
 
-			otherImage.classList.add('fade');
+			const chosenImageId = chosenValue+"Img"; 
+			const chosenImageDOM = document.getElementById(chosenImageId);
+			chosenImageDOM.classList.add('glow');
+
+			console.log(stateKey);
+
+			const chosenTextId = stateKey+"Text";
+			const textDom = document.getElementById(chosenTextId);
+
+			const chosenTextPhrase = chosenValue+"Link";
+			const textPhrase = document.getElementById(chosenTextPhrase).innerHTML;
+			// console.log(textDom);
+			textDom.innerHTML = textPhrase;
+			textDom.classList.add('glow');
+
+
+			const unchosenImageId = unchosenValue+"Img";
+			const unchosenImageDOM = document.getElementById(unchosenImageId);
+			unchosenImageDOM.classList.add('fade');
+
+			// const unchosenTextId = unchosenValue+"Link";
+			// const unchosenTextDOM = document.getElementById(unchosenTextId);
+			// unchosenTextDOM.classList.add('fade');
+
 
 			link.style.display = "grid";
 			playerState[stateKey] = chosenValue;
@@ -255,35 +278,35 @@ function windowOnLoad() {
 	}
 
 	//creates and runs a function makeLinkHandler which returns a function
-	upLink.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', downImg, 1));
-	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', upImg, 1));
-	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', joyImg, 2));
-	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', darkImg,2));
-	chaosLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', gentleImg,3));
-	gentleLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', chaosImg,3));
-	forestLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', meadowImg,3));
-	meadowLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', forestImg,3));
-	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', innerImg,2));
-	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', outImg,2));
-	morningLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', nightImg, 3));
-	nightLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', morningImg ,3));
-	unfoldLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', cycleImg,3));
-	cycleLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', unfoldImg,3));
+	upLink.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down', 1));
+	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up', 1));
+	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy', 2));
+	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
+	chaosLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
+	gentleLink.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
+	forestLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 'meadow',3));
+	meadowLink.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 'forest',3));
+	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
+	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
+	morningLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 'night',3));
+	nightLink.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 'morning',3));
+	unfoldLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
+	cycleLink.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
 
-	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', downImg,1));
-	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', upImg,1));
-	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', joyImg,2));
-	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', darkImg,2));
-	chaosImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', gentleImg,3));
-	gentleImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', chaosImg,3));
-	forestImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', meadowImg,3));
-	meadowImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', forestImg,3));
-	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', innerImg,2));
-	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', outImg,2));
-	morningImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', nightImg,3));
-	nightImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', morningImg,3));
-	unfoldImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', cycleImg,3));
-	cycleImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', unfoldImg,3));
+	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down',1));
+	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up',1));
+	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy',2));
+	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
+	chaosImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
+	gentleImg.addEventListener('click', makeLinkHandler(lastLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
+	forestImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'forest', 'meadow',3));
+	meadowImg.addEventListener('click', makeLinkHandler(lastLvl, 'forestOrMeadow', 'meadow', 'forest',3));
+	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
+	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
+	morningImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'morning', 'night',3));
+	nightImg.addEventListener('click', makeLinkHandler(lastLvl, 'morningOrNight', 'night', 'morning',3));
+	unfoldImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
+	cycleImg.addEventListener('click', makeLinkHandler(lastLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
 }
 
 window.addEventListener('load', windowOnLoad);
