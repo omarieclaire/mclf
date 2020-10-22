@@ -119,8 +119,8 @@ function windowOnLoad() {
 	function findSongBtnButtonHandler(event) {  
 		lastLvl.style.display = "grid";
 		creditsLvl.style.display = 'grid';
-		playSound("begin");
-		findSongBtn.innerHTML = 'scroll';
+		playSound(beginSound);
+		findSongBtn.innerHTML = 'scroll'; 
 		backgroundMusic.pause();
 	}
 

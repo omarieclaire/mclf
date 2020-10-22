@@ -612,7 +612,8 @@ textarea {
 	  justify-content: space-around;
 	  /* padding: 1rem; */
 	  /* margin: 2rem; */
-	  text-align: center;
+    text-align: center;
+    color: #d5ff9f;
 }
 	.songRow{}
 	.infoRow{}
