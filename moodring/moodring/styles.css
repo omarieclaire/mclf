@@ -270,6 +270,7 @@ a:hover, a:active {
 }
 
 .glow{
+  color: #78a5e8;
   animation: glow 10s ease-out 0s alternate infinite;
 }
 
