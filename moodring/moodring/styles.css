@@ -723,6 +723,16 @@ button:active {
   /* transform: translateY(4px); */
 }
 
+#muteBtn{
+  bottom:10px;
+  right:10px;
+  position: fixed;
+  background-color none;
+  background: #78a4e7;
+  border: .5px solid black;
+
+}
+
 .creditsButton {
   background-color: #78a5e8;
   background: 78a5e8;
