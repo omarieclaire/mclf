@@ -71,6 +71,7 @@ genSound.load();
 
 function playSound(audio) {
   audio.play();
+  audio.volume = 0.08;
 }
 
 var muted = false;
@@ -84,12 +85,17 @@ function pauseSound(audio) {
     audio.pause();
     muteBtn.innerHTML = "&#128266;";
   }
-  muted = !muted
-
+  muted = !muted;
 }
 
-function fadeSound(audio) {
-  audio.volume = 0;
+function fadeSound() {
+	console.log(backgroundMusic.volume);
+  if (backgroundMusic.volume > 0.01) {
+	backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
+    setTimeout(fadeSound, 800);
+  } else {
+    backgroundMusic.pause();
+  }
 }
 
 // get each "level"
@@ -177,7 +183,7 @@ function windowOnLoad() {
     creditsLvl.style.display = "grid";
     playSound(beginSound);
     findSongBtn.innerHTML = "scroll";
-    backgroundMusic.pause();
+    fadeSound();
   }
 
   function displayPlayerQuestion() {

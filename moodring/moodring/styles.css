@@ -86,9 +86,16 @@ a:hover, a:active {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 }
 
-.image, .finalImage, .choiceImage {
+.image, .choiceImage {
   align-self: center;
   max-width: 15vw;
+  padding: .3rem;
+}
+
+.finalImage {
+  align-self: center;
+  max-width: 7vw;
+  opacity: .8;
   padding: .3rem;
 }
 
