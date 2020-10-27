@@ -466,7 +466,7 @@ textarea {
 #spacer0 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/0rsp.png), url(images/walls/0lsp.png);
+  background: url(images/walls/0lsp.png), url(images/walls/0rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -475,7 +475,7 @@ textarea {
 #spacer1 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/1rsp.png), url(images/walls/1lsp.png);
+  background: url(images/walls/1lsp.png), url(images/walls/1rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -484,7 +484,7 @@ textarea {
 #spacer2 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/2rsp.png), url(images/walls/2lsp.png);
+  background: url(images/walls/2lsp.png), url(images/walls/2rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -493,7 +493,7 @@ textarea {
 #spacer3 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/3rsp.png), url(images/walls/3lsp.png);
+  background: url(images/walls/3lsp.png), url(images/walls/3rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -502,7 +502,7 @@ textarea {
 #spacer4 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/4rsp.png), url(images/walls/4lsp.png);
+  background: url(images/walls/4lsp.png), url(images/walls/4rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -511,7 +511,7 @@ textarea {
 #spacer5 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/5rsp.png), url(images/walls/5lsp.png);
+  background: url(images/walls/5lsp.png), url(images/walls/5rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
@@ -519,7 +519,7 @@ textarea {
 #spacer6 {
   height: 50vh;
   width: 100vw;
-  background: url(images/walls/6rsp.png), url(images/walls/6lsp.png);
+  background: url(images/walls/6lsp.png), url(images/walls/6rsp.png);
   background-position: top 0 left 0, top 0 right 0;
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
