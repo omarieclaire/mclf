@@ -1,16 +1,4 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
@@ -20,13 +8,13 @@ time, mark, audio, video {
 }
 
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
 *:focus {
-    outline: none;
+  outline: none;
 }
 
 body {
@@ -41,8 +29,7 @@ blockquote, q {
   quotes: none;
 }
 
-blockquote:before, blockquote:after,
-q:before, q:after {
+blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none;
 }
@@ -75,7 +62,6 @@ body {
 
 #artist {
   font-size: 1rem;
-
 }
 
 #title {
@@ -109,49 +95,49 @@ a:hover, a:active {
 #finalImageRow {
   grid-area: finalImageRow;
   display: flex;
-	flex-direction: row;
-	justify-content: space-around;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
   /* justify-content: space-evenly; */
-	z-index: -10;
-	opacity: .8;
+  z-index: -10;
+  opacity: .8;
 }
 
 #friendsRow {
   grid-area: friendsRow;
   display: flex;
-	flex-direction: row;
-	justify-content: space-around;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
-	z-index: -10;
-	opacity: .5;
+  z-index: -10;
+  opacity: .5;
 }
 
 #glowRow {
   grid-area: glowRow;
   display: flex;
-	flex-direction: column;
-	justify-content: space-around;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
   align-self: flex-end;
-	z-index: -5;
+  z-index: -5;
   opacity: .5;
 }
 
 #wavesRow {
   grid-area: wavesRow;
   /* grid-row: 1/4; */
-	/* flex-direction: column; */
+  /* flex-direction: column; */
   /* align-items: center; */
   /* align-content: center; */
-  max-width:100vw;
+  max-width: 100vw;
   z-index: -10;
-}     
+}
 
 #waves {
   max-width: 100vw;
@@ -160,15 +146,15 @@ a:hover, a:active {
 #musicCreditRow {
   grid-area: musicCreditRow;
   display: flex;
-	flex-direction: column;
-	justify-content: space-around;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
-	z-index: -10;
+  z-index: -10;
   opacity: .5;
   text-align: center;
-} 
+}
 
 #titling {
   width: 13rem;
@@ -222,6 +208,7 @@ a:hover, a:active {
 .choice:focus{
 	filter: hue-rotate(180deg);
 } */
+
 #climber {}
 
 .beginLvlRow1 {
@@ -255,7 +242,7 @@ a:hover, a:active {
   z-index: 99;
 }
 
-.simpleColumn{
+.simpleColumn {
   grid-area: simpleColumn;
   display: flex;
   flex-direction: column;
@@ -264,12 +251,12 @@ a:hover, a:active {
   justify-content: space-around;
 }
 
-.fade{
+.fade {
   animation: fade 5s ease-out 0s normal;
   animation-fill-mode: forwards;
 }
 
-.glow{
+.glow {
   color: #78a5e8;
   animation: glow 10s ease-out 0s alternate infinite;
 }
@@ -299,7 +286,7 @@ a:hover, a:active {
 }
 
 #musicRow {
-	grid-area: musicRow;
+  grid-area: musicRow;
   display: flex;
   align-items: center;
   align-content: center;
@@ -344,7 +331,6 @@ textarea {
   font-size: 1.2em;
   text-align: center;
   background-color: #cfceff;
-
 }
 
 .playerQuestion {
@@ -366,10 +352,7 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas:
-    "beginLvlRow1 beginLvlRow1 beginLvlRow1"
-    "beginLvlRow2 beginLvlRow2 beginLvlRow2"
-    ". beginLvlRow3 .";
+  grid-template-areas: "beginLvlRow1 beginLvlRow1 beginLvlRow1" "beginLvlRow2 beginLvlRow2 beginLvlRow2" ". beginLvlRow3 .";
   /* ". highlight ."; */
   height: 100vh;
   width: 100vw;
@@ -384,10 +367,7 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas:
-  ". . ."
-    ". simpleColumn ."
-    ". . .";
+  grid-template-areas: ". . ." ". simpleColumn ." ". . .";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/1l.png), url(images/walls/1r.png);
@@ -401,12 +381,7 @@ textarea {
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2px;
-  grid-template-areas:
-    ". . . "
-    ". questionRow ."
-    ". textRow ."
-    ". imageRow ."
-    ". . . ";
+  grid-template-areas: ". . . " ". questionRow ." ". textRow ." ". imageRow ." ". . . ";
   height: 100vh;
   width: 100vw;
 }
@@ -416,10 +391,7 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas:
-  ". . ."
-    ". simpleColumn ."
-    ". . .";
+  grid-template-areas: ". . ." ". simpleColumn ." ". . .";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/2l.png), url(images/walls/2r.png);
@@ -454,10 +426,7 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas:
-  ". . ."
-    ". simpleColumn ."
-    ". . .";
+  grid-template-areas: ". . ." ". simpleColumn ." ". . .";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/6l.png), url(images/walls/6r.png);
@@ -471,16 +440,7 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2px;
-  grid-template-areas:
-    ". . . . "
-    ". displayQuestionRow displayQuestionRow ."
-    ". musicRow musicRow ."
-    ". musicCreditRow musicCreditRow ."
-    ". finalImageRow finalImageRow ."
-    ". friendsRow friendsRow ."
-    ". glowRow glowRow ."
-    "wavesRow wavesRow wavesRow wavesRow"
-    ". . . . ";
+  grid-template-areas: ". . . . " ". displayQuestionRow displayQuestionRow ." ". musicRow musicRow ." ". musicCreditRow musicCreditRow ." ". finalImageRow finalImageRow ." ". friendsRow friendsRow ." ". glowRow glowRow ." "wavesRow wavesRow wavesRow wavesRow" ". . . . ";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/7l.png), url(images/walls/7r.png);
@@ -494,13 +454,7 @@ textarea {
   grid-template-columns: .25fr 1fr .25fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2rem;
-  grid-template-areas:
-    ". . . "
-    ". dLogoRow ."
-    ". buttonsRow ."
-    ". creditsTextRow ."
-    ". cLogoRow ."
-    ". . .";
+  grid-template-areas: ". . . " ". dLogoRow ." ". buttonsRow ." ". creditsTextRow ." ". cLogoRow ." ". . .";
   height: 100vh;
   width: 100vw;
   background-position: top 0 left 0, top 0 right 0;
@@ -508,6 +462,69 @@ textarea {
   background-repeat: no-repeat, no-repeat;
   background-color: #78a5e8;
 }
+
+#spacer0 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/0rsp.png), url(images/walls/0lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#spacer1 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/1rsp.png), url(images/walls/1lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#spacer2 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/2rsp.png), url(images/walls/2lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#spacer3 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/3rsp.png), url(images/walls/3lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#spacer4 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/4rsp.png), url(images/walls/4lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
+#spacer5 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/5rsp.png), url(images/walls/5lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+#spacer6 {
+  height: 50vh;
+  width: 100vw;
+  background: url(images/walls/6rsp.png), url(images/walls/6lsp.png);
+  background-position: top 0 left 0, top 0 right 0;
+  background-size: auto 100%, auto 100%;
+  background-repeat: no-repeat, no-repeat;
+}
+
 
 #dLogoRow {
   grid-area: dLogoRow;
@@ -546,77 +563,70 @@ textarea {
   text-align: center;
 }
 
-/* @media (max-width: 680px), screen and (orientation: portrait) {
+@media (max-width: 680px), screen and (orientation: portrait) {
   #beginLvl {
+    background-position: top 0 left 0, top 0 right 0;
     background: url(images/walls/0lm.png), url(images/walls/0rm.png);
-    background-size: auto 100%, auto 100%;
+    background-size: 35% 100%, 35% 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #playerQuestionLvl {
     background: url(images/walls/1lm.png), url(images/walls/1rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   #questions3Lvl {
     background: url(images/walls/2lm.png), url(images/walls/2rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   .choice1Lvl {
     background: url(images/walls/3lm.png), url(images/walls/3rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   .choice2Lvl {
     background: url(images/walls/4lm.png), url(images/walls/4rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   .choice3Lvl {
     background: url(images/walls/5lm.png), url(images/walls/5rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   #findSongLvl {
     background: url(images/walls/6lm.png), url(images/walls/6rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   #lastLvl {
     background: url(images/walls/7lm.png), url(images/walls/7rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
   #creditsLvl {
     background: url(images/walls/8lm.png), url(images/walls/8rm.png);
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
-
   }
-
-} */
-
-
-#displayQuestionRow{
-	  grid-area: displayQuestionRow;
-	  display: flex;
-	  align-items: center;
-	  align-content: center;
-	  justify-content: space-around;
-	  /* padding: 1rem; */
-	  /* margin: 2rem; */
-    text-align: center;
-    color: #d5ff9f;
 }
-	.songRow{}
-	.infoRow{}
+
+#displayQuestionRow {
+  grid-area: displayQuestionRow;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+  /* padding: 1rem; */
+  /* margin: 2rem; */
+  text-align: center;
+  color: #d5ff9f;
+}
+
+.songRow {}
+
+.infoRow {}
 
 #up {
   /* Level 1 */
@@ -716,7 +726,7 @@ button:active {
 .creditsButton {
   background-color: #78a5e8;
   background: 78a5e8;
-  color:black;
+  color: black;
   /* text-transform: uppercase; */
   text-decoration: none;
   font-size: 1rem;
@@ -761,6 +771,7 @@ creditsButton:active {
 }
 
 /*************** Button stuff ****************************/
+
 .musiccolumn {
   display: flex;
   flex-direction: column;
@@ -809,13 +820,13 @@ creditsButton:active {
 	width: 20rem;
 	z-index: 1;
 } */
+
 @keyframes pulse {
   0% {
     /* transform: rotateX(20deg); */
     /* transform: translateY(10px); */
     transform: scale(1);
   }
-
   100% {
     transform: scale(1.5);
   }
@@ -825,11 +836,9 @@ creditsButton:active {
   0% {
     opacity: .6;
   }
-
   50% {
     opacity: 0;
   }
-
   100% {
     opacity: 0;
   }
@@ -839,22 +848,15 @@ creditsButton:active {
   0% {
     filter: hue-rotate(30deg);
     transform: scale(1);
-
     /* transform:rotate(0deg);; */
-
   }
-
   50% {
     filter: hue-rotate(90deg);
     /* transform:rotate(5deg);; */
-
-
   }
-
   100% {
     filter: hue-rotate(120deg);
     transform: scale(1.3);
-
     /* transform:rotate(-5deg);; */
   }
 }
@@ -863,11 +865,9 @@ creditsButton:active {
   0% {
     opacity: .6;
   }
-
   50% {
     opacity: .3;
   }
-
   100% {
     opacity: 0;
   }

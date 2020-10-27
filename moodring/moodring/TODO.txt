@@ -1,5 +1,6 @@
 TODO
 add spacer walls between levels (when Robin finished them)
+add a thing that playfully invites player to scroll down. bouncing/swimming buddy? maybe this needs something from Robin as well.
 get it working on mobile - images & layout (when Robin finishes the mobile walls TODO - sort this out)
 make sure the UX & UI is good on mobile (after item above)
 add transitions and animations on all buttons

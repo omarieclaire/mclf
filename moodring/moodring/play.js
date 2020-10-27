@@ -75,6 +75,15 @@ function windowOnLoad() {
 	const lastLvl = document.getElementById('lastLvl');
 	const creditsLvl = document.getElementById('creditsLvl');
 
+	const spacer0 = document.getElementById('spacer0');
+	const spacer1 = document.getElementById('spacer1');
+	const spacer2 = document.getElementById('spacer2');
+	const spacer3 = document.getElementById('spacer3');
+	const spacer4 = document.getElementById('spacer4');
+	const spacer5 = document.getElementById('spacer5');
+	const spacer6 = document.getElementById('spacer6');
+	// const spacer7 = document.getElementById('spacer7');
+
 	// set each level to be invisible
 	playerQuestionLvl.style.display = "none";
 	questions3Lvl.style.display = "none";
@@ -89,11 +98,21 @@ function windowOnLoad() {
 	lastLvl.style.display = "none";
 	creditsLvl.style.display = "none";
 
+	spacer0.style.display = "none";
+	spacer1.style.display = "none";
+	spacer2.style.display = "none";
+	spacer3.style.display = "none";
+	spacer4.style.display = "none";
+	spacer5.style.display = "none";
+	spacer6.style.display = "none";
+	// spacer7.style.display = "none";
+
 	var beginBtn = document.getElementById('beginBtn'); // get the button
 	beginBtn.addEventListener('click', beginBtnButtonHandler); // add an eventlistener to the enter button
 	function beginBtnButtonHandler(event) {  // set the begin to visible when you click on the enter button
 		// window.location.hash='question'; // transport down the page
 		playerQuestionLvl.style.display = "grid";
+		spacer0.style.display = "grid";
 		playSound(beginSound);
 		playSound(backgroundMusic);
 		beginBtn.innerHTML = 'scroll';
@@ -109,6 +128,8 @@ function windowOnLoad() {
 		seekBtn.innerHTML = 'received';
 		seekText.classList.add('fade');
 		questions3Lvl.style.display = "grid";
+		spacer1.style.display = "grid";
+		spacer2.style.display = "grid";
 		choice1Lvl.style.display = "grid";
 		displayPlayerQuestion();
 	}
@@ -116,7 +137,8 @@ function windowOnLoad() {
 	var findSongBtn = document.getElementById('findSongBtn');
 
 	findSongBtn.addEventListener('click', findSongBtnButtonHandler); 
-	function findSongBtnButtonHandler(event) {  
+	function findSongBtnButtonHandler(event) { 
+		spacer6.style.display = "grid"; 
 		lastLvl.style.display = "grid";
 		creditsLvl.style.display = 'grid';
 		playSound(beginSound);
@@ -228,7 +250,7 @@ function windowOnLoad() {
 	}
 
 	// called when the links are clicked
-	function makeLinkHandler(link, stateKey, chosenValue, unchosenValue, level) {
+	function makeLinkHandler(link, stateKey, chosenValue, unchosenValue, level, spacer) {
 		function linkHandler(event) {
 			event.preventDefault()
 
@@ -258,8 +280,9 @@ function windowOnLoad() {
 			// const unchosenTextDOM = document.getElementById(unchosenTextId);
 			// unchosenTextDOM.classList.add('fade');
 
-
 			link.style.display = "grid";
+			spacer.style.display = "grid";
+
 			playerState[stateKey] = chosenValue;
 			console.log(JSON.stringify(playerState))
 			if (level === 1) {
@@ -281,35 +304,35 @@ function windowOnLoad() {
 	}
 
 	//creates and runs a function makeLinkHandler which returns a function
-	upLink.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down', 1));
-	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up', 1));
-	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy', 2));
-	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
-	chaosLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
-	gentleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
-	forestLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3));
-	meadowLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3));
-	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
-	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
-	morningLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3));
-	nightLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3));
-	unfoldLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
-	cycleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
+	upLink.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down', 1, spacer3));
+	downLink.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up', 1, spacer3));
+	darkLink.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy', 2, spacer4));
+	joyLink.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2, spacer4));
+	chaosLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3, spacer5));
+	gentleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3, spacer5));
+	forestLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3, spacer5));
+	meadowLink.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3, spacer5));
+	outLink.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2, spacer4));
+	innerLink.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2, spacer4));
+	morningLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3, spacer5));
+	nightLink.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3, spacer5));
+	unfoldLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3, spacer5));
+	cycleLink.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3, spacer5));
 
-	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down',1));
-	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up',1));
-	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy',2));
-	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2));
-	chaosImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3));
-	gentleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3));
-	forestImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3));
-	meadowImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3));
-	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2));
-	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2));
-	morningImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3));
-	nightImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3));
-	unfoldImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3));
-	cycleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3));
+	upImg.addEventListener('click', makeLinkHandler(upLvl, 'upOrDown', 'up', 'down',1, spacer3));
+	downImg.addEventListener('click', makeLinkHandler(downLvl, 'upOrDown', 'down', 'up',1, spacer3));
+	darkImg.addEventListener('click', makeLinkHandler(darkLvl, 'darkOrJoy', 'dark', 'joy',2, spacer4));
+	joyImg.addEventListener('click', makeLinkHandler(joyLvl, 'darkOrJoy', 'joy', 'dark',2, spacer4));
+	chaosImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'chaos', 'gentle',3, spacer5));
+	gentleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'chaosOrGentle', 'gentle', 'chaos',3, spacer5));
+	forestImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'forest', 'meadow',3, spacer5));
+	meadowImg.addEventListener('click', makeLinkHandler(findSongLvl, 'forestOrMeadow', 'meadow', 'forest',3, spacer5));
+	outImg.addEventListener('click', makeLinkHandler(outLvl, 'outOrInner', 'out', 'inner',2, spacer4));
+	innerImg.addEventListener('click', makeLinkHandler(innerLvl, 'outOrInner', 'inner', 'out',2, spacer4));
+	morningImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'morning', 'night',3, spacer5));
+	nightImg.addEventListener('click', makeLinkHandler(findSongLvl, 'morningOrNight', 'night', 'morning',3, spacer5));
+	unfoldImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'unfold', 'cycle',3, spacer5));
+	cycleImg.addEventListener('click', makeLinkHandler(findSongLvl, 'unfoldOrCycle', 'cycle', 'unfold',3, spacer5));
 }
 
 window.addEventListener('load', windowOnLoad);
