@@ -22,7 +22,7 @@ function init() {
         // pin: "#seekBtn"
       },
     })
-    .from("#climber", { y: innerHeight * 1 });
+    // .from("#climber", { y: innerHeight * 1 });
 
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
@@ -40,7 +40,7 @@ function init() {
   })
   // .from("#whatDoYouSeek", { y: innerHeight * 1 })
   // .from("#seekText", { y: innerHeight * 1 })
-  .from("#swimmer", { y: innerHeight * 1 });
+  // .from("#swimmer", { y: innerHeight * 1 });
 }
 
 window.addEventListener("load", function () {
