@@ -12,10 +12,9 @@ ScrollTrigger.defaults({
 });
 
 function init() {
-  gsap
-    .timeline({
+  gsap.timeline({
       scrollTrigger: {
-        trigger: "#playerQuestionLvl",
+        trigger: "#beginLvl",
         start: "10", //animation starts at this point  - 20 px above the top of the trigger element
         end: "+=30",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
@@ -23,12 +22,25 @@ function init() {
         // pin: "#seekBtn"
       },
     })
-    .from("#seekBtn", { y: innerHeight * 1 });
-
+    .from("#climber", { y: innerHeight * 1 });
 
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
   // **options: play pause restart reverse resume reset complete reverse none
+
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: "#titling",
+      start: "10", //animation starts at this point  - 20 px above the top of the trigger element
+      end: "+=50",
+      scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
+      pinSpacing: false,
+      // pin: "#seekBtn"
+    },
+  })
+  // .from("#whatDoYouSeek", { y: innerHeight * 1 })
+  // .from("#seekText", { y: innerHeight * 1 })
+  .from("#swimmer", { y: innerHeight * 1 });
 }
 
 window.addEventListener("load", function () {
