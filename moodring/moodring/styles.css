@@ -249,6 +249,21 @@ a:hover, a:active {
   z-index: 99;
 }
 
+@media (max-width: 680px), screen and (orientation: portrait) {
+.beginLvlRow3 {
+  grid-area: beginLvlRow3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+/* align-items: center; */
+  /* justify-items: center; */
+  /* align-content: center; */
+  align-self: inherit;
+  z-index: 99;
+}
+}
+
 .simpleColumn {
   grid-area: simpleColumn;
   display: flex;
@@ -523,6 +538,7 @@ textarea {
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
+
 #spacer6 {
   height: 50vh;
   width: 100vw;
@@ -531,7 +547,6 @@ textarea {
   background-size: auto 100%, auto 100%;
   background-repeat: no-repeat, no-repeat;
 }
-
 
 #dLogoRow {
   grid-area: dLogoRow;
@@ -572,52 +587,137 @@ textarea {
 
 @media (max-width: 680px), screen and (orientation: portrait) {
   #beginLvl {
-    background-position: top 0 left 0, top 0 right 0;
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/0lm.png), url(images/walls/0rm.png);
-    background-size: 35% 100%, 35% 100%;
+    background-position: top 0 left 0, top 0 right 0;
+
+    background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #playerQuestionLvl {
     background: url(images/walls/1lm.png), url(images/walls/1rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #questions3Lvl {
+    height: 100vh;
+    width: 100vw;
+    background-position: top 0 left 0, top 0 right 0;
     background: url(images/walls/2lm.png), url(images/walls/2rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   .choice1Lvl {
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/3lm.png), url(images/walls/3rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   .choice2Lvl {
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/4lm.png), url(images/walls/4rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   .choice3Lvl {
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/5lm.png), url(images/walls/5rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #findSongLvl {
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/6lm.png), url(images/walls/6rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #lastLvl {
+    height: 100vh;
+    width: 100vw;
     background: url(images/walls/7lm.png), url(images/walls/7rm.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
   #creditsLvl {
-    background: url(images/walls/8lm.png), url(images/walls/8rm.png);
+    height: 100vh;
+    width: 100vw;
+    background-color: #78a5e8;
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer0 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/0lmsp.png), url(images/walls/0rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer1 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/1lmsp.png), url(images/walls/1rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer2 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/2lmsp.png), url(images/walls/2rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer3 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/3lmsp.png), url(images/walls/3rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer4 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/4lmsp.png), url(images/walls/4rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer5 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/5lmsp.png), url(images/walls/5rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  #spacer6 {
+    height: 50vh;
+    width: 100vw;
+    background: url(images/walls/6lmsp.png), url(images/walls/6rmsp.png);
+    background-position: top 0 left 0, top 0 right 0;
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
 }
+
+
+
 
 #displayQuestionRow {
   grid-area: displayQuestionRow;
@@ -730,14 +830,13 @@ button:active {
   /* transform: translateY(4px); */
 }
 
-#muteBtn{
-  bottom:10px;
-  right:10px;
+#muteBtn {
+  bottom: 10px;
+  right: 10px;
   position: fixed;
   background-color none;
   background: #78a4e7;
   border: .5px solid black;
-
 }
 
 .creditsButton {
@@ -804,6 +903,20 @@ creditsButton:active {
   border-radius: 50%;
   background-image: url(images/gem-play.gif);
   background-size: cover;
+}
+
+@media (max-width: 680px), screen and (orientation: portrait) {
+  .musicbuttoncontainer {
+    width: 10rem;
+    height: 10rem;
+    margin: 1.5em auto;
+    border: 5px solid #fe827b;
+    opacity: .8;
+    /* border: 5px dotted #00e8c4 */
+    border-radius: 50%;
+    background-image: url(images/gem-play.gif);
+    background-size: cover;
+  }
 }
 
 .musicbutton {
