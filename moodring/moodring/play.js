@@ -18,44 +18,44 @@ var playerState = {
 
 const songMap = {
   chaos: {
-    artist: "Klapschmock",
+    artist: "Klapshmock!",
     title: "Attack Zone X",
-    file: "Klapshmock-AttackZoneX.mp3",
+    file: "AttackZoneX.mp3",
   },
   gentle: {
     artist: "Deidre",
     title: "Numb",
-    file: "Deidre-Numb.mp3",
+    file: "Numb.mp3",
   },
   forest: {
     artist: "Mas Aya",
-    title: "AGAKHAN",
-    file: "MasAya-AGAKHAN.mp3",
+    title: "Pasiva/Activa",
+    file: "PasivaActiva.mp3",
   },
   meadow: {
     artist: "Orchidae",
-    title: "Love Demo",
-    file: "Orchidae-LoveDemo.mp3",
+    title: "Love (bedroom version)",
+    file: "Love.mp3",
   },
   morning: {
     artist: "Century Egg",
-    title: "I Will Make Up A Method",
-    file: "CenturyEgg-IWillMakeUpAMethod.mp3",
+    title: "I Will Make Up a Method",
+    file: "IWillMakeUpaMethod.mp3",
   },
   night: {
-    artist: "Slow Pitch Sound",
+    artist: "SlowPitchSound",
     title: "You Betta Change ft. Distant Dust",
-    file: "SlowPitchSound-YouBettaChangeftDistantDust.mp3",
+    file: "YouBettaChangefeaturingDistantDust.mp3",
   },
   unfold: {
-    artist: "Melody McKiver, Thomas Goguelin",
+    artist: "Melody McKiver & Thomas Goguelin",
     title: "Berlinale Duet",
-    file: "MelodyMcKiver_ThomasGoguelin-BerlinaleDuet.mp3",
+    file: "BerlinaleDuet.mp3",
   },
   cycle: {
-    artist: "Bucko",
-    title: "Pro Testing",
-    file: "Bucko-ProTesting.mp3",
+    artist: "Bucko Art Machine",
+    title: "PRO TESTING (3AM edit)",
+    file: "Pro.mp3",
   },
 };
 
