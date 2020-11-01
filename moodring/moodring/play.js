@@ -185,10 +185,18 @@ function windowOnLoad() {
   function findSongBtnButtonHandler(event) {
     spacer6.style.display = "grid";
     lastLvl.style.display = "grid";
-    creditsLvl.style.display = "grid";
+    // creditsLvl.style.display = "grid";
     playSound(beginSound);
     findSongBtn.innerHTML = "scroll";
     fadeSound();
+  }
+
+  var moreInfoBtn = document.getElementById("moreInfoBtn"); // get the button
+  moreInfoBtn.addEventListener("click", moreInfoBtnButtonHandler); // add an eventlistener to the enter button
+  function moreInfoBtnButtonHandler(event) {
+    creditsLvl.style.display = "grid";
+    // spacer9.style.display = "grid";
+    playSound(beginSound);
   }
 
   function displayPlayerQuestion() {

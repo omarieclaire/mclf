@@ -146,6 +146,18 @@ a:hover, a:active {
   z-index: -10;
 }
 
+#moreInfoRow {
+  grid-area: moreInfoRow;
+  display:flex;
+  justify-content: center;
+  /* grid-row: 1/4; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* align-content: center; */
+  max-width: 100vw;
+  z-index: 1;
+}
+
 #waves {
   max-width: 100vw;
 }
@@ -462,9 +474,9 @@ textarea {
 #lastLvl {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2px;
-  grid-template-areas: ". . . . " ". displayQuestionRow displayQuestionRow ." ". musicRow musicRow ." ". musicCreditRow musicCreditRow ." ". finalImageRow finalImageRow ." ". friendsRow friendsRow ." ". glowRow glowRow ." "wavesRow wavesRow wavesRow wavesRow" ". . . . ";
+  grid-template-areas: ". . . . " ". displayQuestionRow displayQuestionRow ." ". musicRow musicRow ." ". musicCreditRow musicCreditRow ." ". finalImageRow finalImageRow ." ". friendsRow friendsRow ." ". glowRow glowRow ." "wavesRow wavesRow wavesRow wavesRow" ". moreInfoRow moreInfoRow ." ". . . . ";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/7l.png), url(images/walls/7r.png);
@@ -846,7 +858,11 @@ button:active {
   border: .5px solid black;
 }
 
-.creditsButton {
+#moreInfoBtn {
+  border: .5px solid black;
+}
+
+.creditsButtons {
   background-color: #78a5e8;
   background: 78a5e8;
   color: black;
