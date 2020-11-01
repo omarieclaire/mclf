@@ -191,6 +191,8 @@ a:hover, a:active {
   /* display: inline-block; */
   opacity: 1;
   filter: hue-rotate(90deg);
+  animation: pulse 8s ease-in-out 0s alternate infinite;
+  /* max-width: 12rem; */
   /* border-radius: 50%; */
 }
 
@@ -755,7 +757,7 @@ textarea {
   /* Level 3 */
 }
 
-#gentle {
+#echoes {
   /* Level 3 */
 }
 

@@ -4,7 +4,7 @@ var playerState = {
   question: "question",
   // upOrDown: undefined,
   // darkOrJoy: undefined,
-  // chaosOrGentle: undefined,
+  // chaosOrEchoes: undefined,
   // forestOrMeadow: undefined,
   // outOrIn: undefined,
   // morningOrNight: undefined,
@@ -22,7 +22,7 @@ const songMap = {
     title: "Attack Zone X",
     file: "AttackZoneX.mp3",
   },
-  gentle: {
+  echoes: {
     artist: "Deidre",
     title: "Numb",
     file: "Numb.mp3",
@@ -89,9 +89,9 @@ function pauseSound(audio) {
 }
 
 function fadeSound() {
-	console.log(backgroundMusic.volume);
+  console.log(backgroundMusic.volume);
   if (backgroundMusic.volume > 0.01) {
-	backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
+    backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
     setTimeout(fadeSound, 800);
   } else {
     backgroundMusic.pause();
@@ -200,7 +200,7 @@ function windowOnLoad() {
   const darkLink = document.getElementById("darkLink");
   const joyLink = document.getElementById("joyLink");
   const chaosLink = document.getElementById("chaosLink");
-  const gentleLink = document.getElementById("gentleLink");
+  const echoesLink = document.getElementById("echoesLink");
   const forestLink = document.getElementById("forestLink");
   const meadowLink = document.getElementById("meadowLink");
   const outLink = document.getElementById("outLink");
@@ -215,7 +215,7 @@ function windowOnLoad() {
   const darkImg = document.getElementById("darkImg");
   const joyImg = document.getElementById("joyImg");
   const chaosImg = document.getElementById("chaosImg");
-  const gentleImg = document.getElementById("gentleImg");
+  const echoesImg = document.getElementById("echoesImg");
   const forestImg = document.getElementById("forestImg");
   const meadowImg = document.getElementById("meadowImg");
   const outImg = document.getElementById("outImg");
@@ -354,11 +354,11 @@ function windowOnLoad() {
   );
   chaosLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrGentle", "chaos", "gentle", 3, spacer5)
+    makeLinkHandler(findSongLvl, "chaosOrechoes", "chaos", "echoes", 3, spacer5)
   );
-  gentleLink.addEventListener(
+  echoesLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrGentle", "gentle", "chaos", 3, spacer5)
+    makeLinkHandler(findSongLvl, "chaosOrEchoes", "echoes", "chaos", 3, spacer5)
   );
   forestLink.addEventListener(
     "click",
@@ -439,11 +439,11 @@ function windowOnLoad() {
   );
   chaosImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrGentle", "chaos", "gentle", 3, spacer5)
+    makeLinkHandler(findSongLvl, "chaosOrEchoes", "chaos", "echoes", 3, spacer5)
   );
-  gentleImg.addEventListener(
+  echoesImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrGentle", "gentle", "chaos", 3, spacer5)
+    makeLinkHandler(findSongLvl, "chaosOrEchoes", "echoes", "chaos", 3, spacer5)
   );
   forestImg.addEventListener(
     "click",
