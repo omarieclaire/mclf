@@ -18,11 +18,14 @@
        function() {
 
           if ( test === true ) {
+               musicbuttoncontainer1.classList.add("musicbuttoncontainerplaying");
                button.classList.add( 'pause' );
                test = false;
                audioPlayer.play();
           }
           else {
+              musicbuttoncontainer1.classList.remove("musicbuttoncontainerplaying");
+
                changeSVG();
                audioPlayer.pause();
           }

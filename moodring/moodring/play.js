@@ -79,11 +79,16 @@ function pauseSound(audio) {
   if (muted == true) {
     console.log("play audio");
     playSound(audio);
-    muteBtn.innerHTML = "&#128263;";
+    // muteBtn.innerHTML = "&#128263;";
+    // muteBtn.classList.add("mute");
+    muteBtn.style.background = "url('images/mute.png') no-repeat center center / contain";
+
   } else {
     console.log("pause audio");
     audio.pause();
-    muteBtn.innerHTML = "&#128266;";
+    // muteBtn.innerHTML = "&#128266;";
+    muteBtn.style.background = "url('images/unMute.png') no-repeat center center / contain";
+
   }
   muted = !muted;
 }

@@ -835,9 +835,14 @@ button:active {
 #muteBtn {
   bottom: 10px;
   right: 10px;
+  height: 1.5rem;
+  width: 1.5rem;
   position: fixed;
-  background-color none;
-  background: #78a4e7;
+  background-image: url(images/mute.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* background: #78a4e7; */
   border: .5px solid black;
 }
 
@@ -903,9 +908,22 @@ creditsButton:active {
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
+  background-image: url(images/gem-player.png);
+  background-size: cover;
+}
+
+.musicbuttoncontainerplaying {
+  width: 15rem;
+  height: 15rem;
+  margin: 1.5em auto;
+  border: 5px solid #fe827b;
+  opacity: .8;
+  /* border: 5px dotted #00e8c4 */
+  border-radius: 50%;
   background-image: url(images/gem-play.gif);
   background-size: cover;
 }
+
 
 @media (max-width: 680px), screen and (orientation: portrait) {
   .musicbuttoncontainer {
@@ -916,7 +934,7 @@ creditsButton:active {
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
-    background-image: url(images/gem-play.gif);
+    background-image: url(images/gem-play.png);
     background-size: cover;
   }
 }
