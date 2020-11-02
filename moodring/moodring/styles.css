@@ -861,7 +861,8 @@ button:active {
 #moreInfoBtn {
   border: .5px solid #cc6863;
   color: #cc6863;
-  width: 2rem;
+  width: 3.8rem;
+  background-color: black;
 }
 
 .creditsButtons {
