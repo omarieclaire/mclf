@@ -188,8 +188,10 @@ a:hover, a:active {
 }
 
 #greenGlow, #greenGlow2 {
-  z-index: 5;
-  max-width: 25vw;
+  /* z-index: 5; */
+  max-width: 35vw;
+  bottom: -10;
+  position: absolute;
 }
 
 .choiceImage {
@@ -257,10 +259,21 @@ a:hover, a:active {
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-items: center;
+  /* justify-items: center; */
   align-content: center;
-  align-self: flex-end;
+  align-self: center;
   z-index: 99;
+}
+
+.beginLvlRow4 {
+  grid-area: beginLvlRow3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  /* justify-items: center; */
+  align-content: center;
+  /* align-self: flex-end; */
+  z-index: -10;
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
@@ -386,9 +399,9 @@ textarea {
 #beginLvl {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas: "beginLvlRow1 beginLvlRow1 beginLvlRow1" "beginLvlRow2 beginLvlRow2 beginLvlRow2" ". beginLvlRow3 .";
+  grid-template-areas: "beginLvlRow1 beginLvlRow1 beginLvlRow1" "beginLvlRow2 beginLvlRow2 beginLvlRow2" "beginLvlRow3 beginLvlRow3 beginLvlRow3" "beginLvlRow4 beginLvlRow4 beginLvlRow4";
   /* ". highlight ."; */
   height: 100vh;
   width: 100vw;
