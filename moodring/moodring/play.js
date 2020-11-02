@@ -317,9 +317,12 @@ function windowOnLoad() {
       textDom.innerHTML = textPhrase;
       textDom.classList.add("glow");
 
+
+
       const unchosenImageId = unchosenValue + "Img";
       const unchosenImageDOM = document.getElementById(unchosenImageId);
       unchosenImageDOM.classList.add("fade");
+      unchosenImageDOM.classList.remove("styleChoiceImage");
 
       // const unchosenTextId = unchosenValue+"Link";
       // const unchosenTextDOM = document.getElementById(unchosenTextId);

@@ -108,7 +108,7 @@ a:hover, a:active {
   align-content: center;
   /* justify-content: space-evenly; */
   z-index: -10;
-  opacity: .8;
+  opacity: 0;
 }
 
 #friendsRow {
@@ -198,7 +198,7 @@ a:hover, a:active {
   opacity: 0.6;
 }
 
-.choiceImage:hover {
+.styleChoiceImage:hover {
   /* stroke: 1rem solid yellow; */
   /* display: inline-block; */
   opacity: 1;
@@ -859,7 +859,9 @@ button:active {
 }
 
 #moreInfoBtn {
-  border: .5px solid black;
+  border: .5px solid #cc6863;
+  color: #cc6863;
+  width: 2rem;
 }
 
 .creditsButtons {
