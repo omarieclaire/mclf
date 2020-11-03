@@ -20,6 +20,8 @@
           if ( test === true ) {
                musicbuttoncontainer1.classList.add("musicbuttoncontainerplaying");
                button.classList.add( 'pause' );
+               backgroundMusic.pause();
+
                test = false;
                audioPlayer.play();
           }
