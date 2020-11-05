@@ -394,8 +394,8 @@ textarea {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 10px;
-  width: 25vw;
-  height: 25vh;
+  width: 18vw;
+  height: 22vh;
   padding: 3rem;
   font-size: 1.2em;
   text-align: center;
@@ -861,6 +861,8 @@ h1 {
   transition: all 1s ease 0s;
   opacity: .75;
   border-radius: 2px;
+  font-family: 'PT Mono', monospace;
+
 }
 
 .btn:hover {
@@ -975,7 +977,7 @@ h1 {
   background-size: cover;
 }
 
-.musicBtnContainerplaying {
+.musicBtnContainerPlaying {
   width: 15rem;
   height: 15rem;
   margin: 1.5em auto;
@@ -1082,6 +1084,6 @@ h1 {
     opacity: .3;
   }
   100% {
-    opacity: 0;
+    opacity: .06;
   }
 }

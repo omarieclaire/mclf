@@ -76,6 +76,8 @@ function playSound(audio) {
 
 var muted = false;
 function pauseSound(audio) {
+  console.log('pauseSound is called');
+  console.log(`muteBtn: ${muteBtn}`);
   if (muted == true) {
     console.log("play audio");
     playSound(audio);
@@ -128,6 +130,8 @@ function windowOnLoad() {
   const spacer6 = document.getElementById("spacer6");
   // const spacer7 = document.getElementById('spacer7');
 
+  const muteBtn = document.getElementById('muteBtn');
+
   // set each level to be invisible
   playerQuestionLvl.style.display = "none";
   questions3Lvl.style.display = "none";
@@ -150,6 +154,9 @@ function windowOnLoad() {
   spacer5.style.display = "none";
   spacer6.style.display = "none";
   // spacer7.style.display = "none";
+  
+  muteBtn.style.display = "none";
+
 
   var beginBtn = document.getElementById("beginBtn"); // get the button
   beginBtn.addEventListener("click", beginBtnHandler); // add an eventlistener to the enter button
@@ -158,6 +165,8 @@ function windowOnLoad() {
     // window.location.hash='question'; // transport down the page
     playerQuestionLvl.style.display = "grid";
     spacer0.style.display = "grid";
+    muteBtn.style.display = "block";
+
     playSound(beginSound);
     playSound(backgroundMusic);
     beginBtn.innerHTML = "scroll";

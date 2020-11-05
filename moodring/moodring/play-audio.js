@@ -18,7 +18,7 @@
        function() {
 
           if ( test === true ) {
-               musicBtnContainer1.classList.add("musicBtncontainerplaying");
+               musicBtnContainer1.classList.add("musicBtnContainerPlaying");
                btn.classList.add( 'pause' );
                backgroundMusic.pause();
 
@@ -26,7 +26,7 @@
                audioPlayer.play();
           }
           else {
-              musicBtnContainer1.classList.remove("musicBtncontainerplaying");
+              musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
 
                changeSVG();
                audioPlayer.pause();
