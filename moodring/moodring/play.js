@@ -152,8 +152,8 @@ function windowOnLoad() {
   // spacer7.style.display = "none";
 
   var beginBtn = document.getElementById("beginBtn"); // get the button
-  beginBtn.addEventListener("click", beginBtnButtonHandler); // add an eventlistener to the enter button
-  function beginBtnButtonHandler(event) {
+  beginBtn.addEventListener("click", beginBtnHandler); // add an eventlistener to the enter button
+  function beginBtnHandler(event) {
     // set the begin to visible when you click on the enter button
     // window.location.hash='question'; // transport down the page
     playerQuestionLvl.style.display = "grid";
@@ -181,8 +181,8 @@ function windowOnLoad() {
 
   var findSongBtn = document.getElementById("findSongBtn");
 
-  findSongBtn.addEventListener("click", findSongBtnButtonHandler);
-  function findSongBtnButtonHandler(event) {
+  findSongBtn.addEventListener("click", findSongBtnHandler);
+  function findSongBtnHandler(event) {
     spacer6.style.display = "grid";
     lastLvl.style.display = "grid";
     // creditsLvl.style.display = "grid";
@@ -192,8 +192,8 @@ function windowOnLoad() {
   }
 
   var moreInfoBtn = document.getElementById("moreInfoBtn"); // get the button
-  moreInfoBtn.addEventListener("click", moreInfoBtnButtonHandler); // add an eventlistener to the enter button
-  function moreInfoBtnButtonHandler(event) {
+  moreInfoBtn.addEventListener("click", moreInfoBtnHandler); // add an eventlistener to the enter button
+  function moreInfoBtnHandler(event) {
     creditsLvl.style.display = "grid";
     // spacer9.style.display = "grid";
     playSound(beginSound);

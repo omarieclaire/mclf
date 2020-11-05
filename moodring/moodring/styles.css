@@ -68,6 +68,10 @@ body {
   font-size: 1.5rem;
 }
 
+.txt{
+  margin: 2rem;
+}
+
 a:link, a:visited {
   /* background-color: blue; */
   color: #799be2;
@@ -86,10 +90,25 @@ a:hover, a:active {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 }
 
-.image, .choiceImage {
+.image {
   align-self: center;
   max-width: 15vw;
   padding: .3rem;
+}
+
+.choiceImage {
+  align-self: center;
+  max-width: 17vw;
+  padding: .3rem;
+  margin:2rem;
+}
+
+div.imageRow > a:first-child {
+  margin-bottom:6rem;
+}
+
+div.imageRow > a:last-child {
+  margin-top:6rem;
 }
 
 .finalImage {
@@ -390,7 +409,7 @@ textarea {
   /* margin: 2rem; */
 }
 
-#questionButton {
+#questionBtn {
   margin: 0;
   font-size: 20px;
   color: #8073c7;
@@ -504,7 +523,7 @@ textarea {
   grid-template-columns: .25fr 1fr .25fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 2rem;
-  grid-template-areas: ". . . " ". dLogoRow ." ". buttonsRow ." ". creditsTextRow ." ". cLogoRow ." ". . .";
+  grid-template-areas: ". . . " ". dLogoRow ." ". btnsRow ." ". creditsTextRow ." ". cLogoRow ." ". . .";
   height: 100vh;
   width: 100vw;
   background-position: top 0 left 0, top 0 right 0;
@@ -585,8 +604,8 @@ textarea {
   text-align: center;
 }
 
-#buttonsRow {
-  grid-area: buttonsRow;
+#btnsRow {
+  grid-area: btnsRow;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -827,7 +846,7 @@ h1 {
   display: none;
 }
 
-.button {
+.btn {
   background-color: black;
   background: black;
   color: #c2f08e;
@@ -844,7 +863,7 @@ h1 {
   border-radius: 2px;
 }
 
-button:hover {
+.btn:hover {
   color: purple;
   /* background: #f6b93b; */
   border-color: purple;
@@ -853,7 +872,7 @@ button:hover {
   border-radius: 50px;
 }
 
-button:active {
+.btn:active {
   /* color: orange; */
   /* transform: translateY(4px); */
 }
@@ -877,9 +896,20 @@ button:active {
   color: #cc6863;
   width: 3.8rem;
   background-color: yellow;
+  opacity: .5;
+  padding: .5rem;
 }
 
-.creditsButtons {
+#moreInfoBtn:hover {
+  color: purple;
+  /* background: #f6b93b; */
+  border-color: purple;
+  /* padding: 1.5rem; */
+  transition: all 1s ease 0s;
+  border-radius: 50px;
+}
+
+.creditsBtns {
   background-color: #78a5e8;
   background: 78a5e8;
   color: black;
@@ -895,7 +925,7 @@ button:active {
   opacity: .75;
 }
 
-creditsButton:hover {
+.creditsBtn:hover {
   color: purple;
   /* background: #f6b93b; */
   border-color: purple;
@@ -904,7 +934,7 @@ creditsButton:hover {
   border-radius: 50px;
 }
 
-creditsButton:active {
+.creditsBtn:active {
   /* color: orange; */
   /* transform: translateY(4px); */
 }
@@ -933,7 +963,7 @@ creditsButton:active {
   flex-direction: column;
 }
 
-.musicbuttoncontainer {
+.musicBtnContainer {
   width: 15rem;
   height: 15rem;
   margin: 1.5em auto;
@@ -945,7 +975,7 @@ creditsButton:active {
   background-size: cover;
 }
 
-.musicbuttoncontainerplaying {
+.musicBtnContainerplaying {
   width: 15rem;
   height: 15rem;
   margin: 1.5em auto;
@@ -959,7 +989,7 @@ creditsButton:active {
 
 
 @media (max-width: 680px), screen and (orientation: portrait) {
-  .musicbuttoncontainer {
+  .musicBtnContainer {
     width: 10rem;
     height: 10rem;
     margin: 1.5em auto;
@@ -972,7 +1002,7 @@ creditsButton:active {
   }
 }
 
-.musicbutton {
+.musicBtn {
   display: flex;
   width: 24%;
   height: 24%;

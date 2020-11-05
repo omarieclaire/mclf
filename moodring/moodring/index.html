@@ -12,7 +12,7 @@
 
 <body>
   <div id="beginLvl" class="beginLvl">
-    <button id="muteBtn" class="button" value="mute" onclick="pauseSound(backgroundMusic)"></button>
+    <button id="muteBtn" class="btn" value="mute" onclick="pauseSound(backgroundMusic)"></button>
 
     <h1>Mood Ring</h1>
     <div class="beginLvlRow1">
@@ -26,7 +26,7 @@
       <img id="creaturesR" class="image" alt="creatures" src="images/beginLvl/creaturesR.png">
     </div>
     <div class="beginLvlRow3">
-      <button type="button" id="beginBtn" class="button">begin</button>
+      <button type="btn" id="beginBtn" class="btn">begin</button>
     </div>
     <div class="beginLvlRow4">
       <img id="greenGlow" class="image" alt="greenGlow" src="images/beginLvl/greenGlow.png">
@@ -40,11 +40,11 @@
     <div class="simpleColumn">
       <img id="plantLady" class="image" alt="plantLady" src="images/lastLvl/plantlady.png">
 
-      <p id="whatDoYouSeek">What do you seek?</p>
+      <p id="whatDoYouSeek" class="txt">What do you seek?</p>
       <form>
         <textarea name="text" class="choice" maxlength = "70" id="seekText" placeholder=""></textarea>
       </form>
-      <button type="button" id="seekBtn" class="button">ask</button>
+      <button type="btn" id="seekBtn" class="btn">ask</button>
       <!-- <img id="creaturesSpin" class="image" alt="creatures" src="images/beginLvl/creaturesR.png"> -->
     </div>
   </div>
@@ -56,7 +56,7 @@
     <div class="simpleColumn">
       <img id="greenSwimmer" class="image" alt="greenSwimmer" src="images/lastLvl/swimmer02.png">
 
-      <p id="questionstxt">To find your song<br><br>3 questions<br>for you<br>seeker<br></p>
+      <p id="questionstxt" class="txt">To find your song<br><br>3 questions<br>for you<br>seeker<br></p>
     </div>
   </div>
 
@@ -159,7 +159,7 @@
     <div class="simpleColumn">
       <img id="blueSwimmer" class="image" alt="blueSwimmer" src="images/lastLvl/swimmer03.png">
       <p id="questionstxt">Find your song,<br>seeker?<br></p>
-      <button type="button" id="findSongBtn" class="button">yes</button>
+      <button type="btn" id="findSongBtn" class="btn">yes</button>
     </div>
   </div>
 
@@ -174,11 +174,11 @@
     </div>
     <div id="finalImageRow"></div>
     <div id="musicRow">
-      <div id="musicbuttoncontainer1" class="musicbuttoncontainer hide">
-        <div id="musicbutton1" class="musicbutton"></div>
+      <div id="musicBtnContainer1" class="musicBtnContainer hide">
+        <div id="musicBtn1" class="musicBtn"></div>
       </div>
       <audio id="player1" controls preload>
-        <source id='audioSource' src='sounds/Bucko-ProTesting.mp3' type="audio/mpeg">
+        <source id='audioSource' src='sounds/Pro.mp3' type="audio/mpeg">
       </audio>
     </div>
     <div id="friendsRow">
@@ -199,7 +199,7 @@
       <img id="waves" class="image" alt="waves" src="images/lastLvl/waves.png">
     </div>
     <div id="moreInfoRow">
-      <button type="button" id="moreInfoBtn" class="button creditsButtons">?</button>
+      <button type="btn" id="moreInfoBtn" class="button creditsBtns">?</button>
     </div>
   </div>
 
@@ -207,10 +207,10 @@
     <div id="dLogoRow">
       <img id="debaserLogo" class="image" alt="debaser Logo" src="images/debaserLogo.png">
     </div>
-    <div id="buttonsRow">
-      <button type="button" id="learnMore" class="button creditsButtons">Learn More</button>
+    <div id="btnsRow">
+      <button type="btn" id="learnMore" class="button creditsBtns">Learn More</button>
       <!-- www.debaser.ca/mood-ring -->
-      <button type="button" id="startOver" class="button creditsButtons" onClick="window.location.reload();">Start Again</button>
+      <button type="btn" id="startOver" class="button creditsBtns" onClick="window.location.reload();">Start Again</button>
 
     </div>
     <div id="creditsTextRow">
