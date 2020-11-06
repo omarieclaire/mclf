@@ -320,7 +320,7 @@ function windowOnLoad() {
       const chosenImageDOM = document.getElementById(chosenImageId);
       chosenImageDOM.classList.add("glow");
 
-      console.log(stateKey);
+      // console.log(stateKey);
 
       const chosenTextId = stateKey + "Text";
       const textDom = document.getElementById(chosenTextId);
@@ -330,8 +330,6 @@ function windowOnLoad() {
       // console.log(textDom);
       textDom.innerHTML = textPhrase;
       textDom.classList.add("glow");
-
-
 
       const unchosenImageId = unchosenValue + "Img";
       const unchosenImageDOM = document.getElementById(unchosenImageId);
@@ -344,6 +342,10 @@ function windowOnLoad() {
 
       link.style.display = "grid";
       spacer.style.display = "grid";
+
+      if(spacer == spacer5){
+        blueSwimmerAnimation();
+      }
 
       playerState[stateKey] = chosenValue;
       console.log(JSON.stringify(playerState));

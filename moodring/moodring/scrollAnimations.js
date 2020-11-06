@@ -1,12 +1,10 @@
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.defaults({
   toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
-  // markers: true,
+  markers: true,
 });
 
 function init() {
-
-
   gsap.timeline({
     scrollTrigger: {
       trigger: "#beginLvl",
@@ -20,7 +18,7 @@ function init() {
   .to(".beginLvlRow1", { y: -20})
   .to("#beginLvlRow2", { y: +20})
   .to("#beginBtn", { y: 20})
-  .to("#greenGlow", { y: 200});
+  .to("#greenGlow", { y: 350, scale: 1.2});
 
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
@@ -110,14 +108,16 @@ function questions3LvlAnimation() {
     gsap
     .timeline({
       scrollTrigger: {
-        trigger: "#findSongLvl",
+        trigger: "#blueSwimmer",
         // pin: true,
-        start: "5", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=550",
+        start: "top center", //animation starts at this point  - 20 px above the top of the trigger element
+        end: "+=100",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
         // pinSpacing: false,
         // pin: "#seekBtn"
       },
     })
-    .from("#blueSwimmer", { scale: 0.8, autoAlpha: 0, y: -60, rotate: 360 });
+    .from("#blueSwimmer", { scale: 0.8, autoAlpha: 0, y: -60, rotate: 360 })
+    .from("#questionstxt", { y: 200, scale: 0.2, autoAlpha: 0 });
+
   }

@@ -224,10 +224,10 @@ div.imageRow>a:last-child {
 
 #greenGlow, #greenGlow2 {
   /* z-index: 5; */
-  max-width: 35vw;
+  max-width: 16vw;
   bottom: 0;
   position: absolute;
-  margin-bottom: -6rem;
+  margin-bottom: 0rem;
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
@@ -241,7 +241,7 @@ div.imageRow>a:last-child {
   }
 }
 
-#greenSwimmer {
+#plantLady, #blueSwimmer, #greenSwimmer {
   animation: colourShift 6s ease-in-out 0s alternate infinite;
 }
 
@@ -1173,16 +1173,11 @@ h1 {
 @keyframes colourShift {
   0% {
     filter: hue-rotate(30deg);
-    transform: scale(1);
-    /* transform:rotate(0deg);; */
   }
   50% {
     filter: hue-rotate(90deg);
-    /* transform:rotate(5deg);; */
   }
   100% {
     filter: hue-rotate(120deg);
-    transform: scale(.9);
-    /* transform:rotate(-5deg);; */
   }
 }
