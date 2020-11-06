@@ -119,6 +119,7 @@ function windowOnLoad() {
   const innerLvl = document.getElementById("innerLvl");
   const findSongLvl = document.getElementById("findSongLvl");
   const lastLvl = document.getElementById("lastLvl");
+  const bottomLvl = document.getElementById("bottomLvl");
   const creditsLvl = document.getElementById("creditsLvl");
 
   const spacer0 = document.getElementById("spacer0");
@@ -128,7 +129,7 @@ function windowOnLoad() {
   const spacer4 = document.getElementById("spacer4");
   const spacer5 = document.getElementById("spacer5");
   const spacer6 = document.getElementById("spacer6");
-  // const spacer7 = document.getElementById('spacer7');
+  const spacer7 = document.getElementById('spacer7');
 
   const muteBtn = document.getElementById('muteBtn');
 
@@ -144,6 +145,7 @@ function windowOnLoad() {
   innerLvl.style.display = "none";
   findSongLvl.style.display = "none";
   lastLvl.style.display = "none";
+  bottomLvl.style.display = "none";
   creditsLvl.style.display = "none";
 
   spacer0.style.display = "none";
@@ -153,7 +155,7 @@ function windowOnLoad() {
   spacer4.style.display = "none";
   spacer5.style.display = "none";
   spacer6.style.display = "none";
-  // spacer7.style.display = "none";
+  spacer7.style.display = "none";
   
   muteBtn.style.display = "none";
 
@@ -194,19 +196,22 @@ function windowOnLoad() {
   function findSongBtnHandler(event) {
     spacer6.style.display = "grid";
     lastLvl.style.display = "grid";
-    // creditsLvl.style.display = "grid";
+    spacer7.style.display = "grid";
+    bottomLvl.style.display = "grid";
+
+    creditsLvl.style.display = "grid";
     playSound(beginSound);
     findSongBtn.innerHTML = "scroll";
     fadeSound();
   }
 
-  var moreInfoBtn = document.getElementById("moreInfoBtn"); // get the button
-  moreInfoBtn.addEventListener("click", moreInfoBtnHandler); // add an eventlistener to the enter button
-  function moreInfoBtnHandler(event) {
-    creditsLvl.style.display = "grid";
-    // spacer9.style.display = "grid";
-    playSound(beginSound);
-  }
+  // var moreInfoBtn = document.getElementById("moreInfoBtn"); // get the button
+  // moreInfoBtn.addEventListener("click", moreInfoBtnHandler); // add an eventlistener to the enter button
+  // function moreInfoBtnHandler(event) {
+  //   creditsLvl.style.display = "grid";
+  //   // spacer9.style.display = "grid";
+  //   playSound(beginSound);
+  // }
 
   function displayPlayerQuestion() {
     var x = document.getElementsByClassName("playerQuestion");
