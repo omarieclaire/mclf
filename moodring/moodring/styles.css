@@ -968,6 +968,7 @@ h1 {
   background-position: center;
   /* background: #78a4e7; */
   border: .5px solid black;
+  /* visibility: hidden; */
 }
 
 #moreInfoBtn {

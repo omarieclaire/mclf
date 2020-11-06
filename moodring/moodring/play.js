@@ -76,19 +76,17 @@ function playSound(audio) {
 
 var muted = false;
 function pauseSound(audio) {
-  console.log('pauseSound is called');
-  console.log(`muteBtn: ${muteBtn}`);
+  // console.log('pauseSound is called');
+  // console.log(`muteBtn: ${muteBtn}`);
   if (muted == true) {
     console.log("play audio");
     playSound(audio);
-    // muteBtn.innerHTML = "&#128263;";
     // muteBtn.classList.add("mute");
     muteBtn.style.background = "url('images/mute.png') no-repeat center center / contain";
 
   } else {
     console.log("pause audio");
     audio.pause();
-    // muteBtn.innerHTML = "&#128266;";
     muteBtn.style.background = "url('images/unMute.png') no-repeat center center / contain";
 
   }
