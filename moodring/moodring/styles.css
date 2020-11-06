@@ -60,6 +60,13 @@ body {
   /* cursor: url('images/char/swimLady.png') 12 18, auto; */
 }
 
+@media (max-width: 680px), screen and (orientation: portrait) {
+  p{
+    /* font-size:.85rem; */
+
+  }
+}
+
 #artist {
   font-size: 1rem;
 }
@@ -294,7 +301,21 @@ div.imageRow>a:last-child {
 	filter: hue-rotate(180deg);
 } */
 
-#climber {}
+#climber, #swimmer {
+}
+
+#creaturesL, #creaturesR {
+}
+
+@media (max-width: 680px), screen and (orientation: portrait) {
+  #climber, #swimmer {
+    max-width: 30vw;
+  }
+
+  #creaturesL, #creaturesR {
+    max-width: 23vw;
+  }
+}
 
 .beginLvlRow1 {
   grid-area: beginLvlRow1;
@@ -708,6 +729,13 @@ textarea {
   font-size: 1rem;
   letter-spacing: normal;
 }
+@media (max-width: 680px), screen and (orientation: portrait) {
+#creditsTextRow {
+  width: 80vw;
+}
+}
+
+
 
 #cLogoRow {
   grid-area: cLogoRow;
@@ -957,6 +985,13 @@ h1 {
   font-family: 'PT Mono', monospace;
 }
 
+@media (max-width: 680px), screen and (orientation: portrait) {
+.btn{
+  font-size: .95rem;
+
+}
+}
+
 .finalBtn {
   background-color: black;
   padding: 1rem;
@@ -1071,7 +1106,7 @@ h1 {
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
-  background-image: url(images/gem-player.png);
+  background-image: url(images/gem-play.png);
   background-size: cover;
 }
 
@@ -1089,6 +1124,7 @@ h1 {
 
 @media (max-width: 680px), screen and (orientation: portrait) {
   .musicBtnContainer {
+    background-image: url(images/gem-play.png);
     width: 9rem;
     height: 9rem;
     margin: 1.5em auto;
@@ -1096,10 +1132,11 @@ h1 {
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
-    background-image: url(images/gem-play.png);
     background-size: cover;
   }
   .musicBtnContainerPlaying {
+    background-image: url(images/gem-play.gif);
+
     width: 9rem;
     height: 9rem;
     margin: 1.5em auto;
@@ -1107,7 +1144,6 @@ h1 {
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
-    background-image: url(images/gem-play.gif);
     background-size: cover;
   }
 }

@@ -82,7 +82,7 @@ function questions3LvlAnimation() {
         // pin: "#seekBtn"
       },
     })
-    .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
+    // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
     .from("#greenSwimmer", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
     .from("#questionstxt2", { y: innerHeight, scale: 0.2, autoAlpha: 0 });
 
@@ -113,7 +113,7 @@ function questions3LvlAnimation() {
         start: "top center", //animation starts at this point  - 20 px above the top of the trigger element
         end: "+=100",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
-        // pinSpacing: false,
+        pinSpacing: false,
         // pin: "#seekBtn"
       },
     })
