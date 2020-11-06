@@ -394,7 +394,7 @@ div.imageRow>a:last-child {
 #musicRow {
   grid-area: musicRow;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
 }
 
 .imageRow {
@@ -940,6 +940,11 @@ h1 {
   opacity: .75;
   border-radius: 2px;
   font-family: 'PT Mono', monospace;
+}
+
+.finalBtn {
+  background-color: black;
+  padding: 1rem;
 }
 
 .btn:hover {

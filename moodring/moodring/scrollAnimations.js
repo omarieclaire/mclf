@@ -78,7 +78,7 @@ function questions3LvlAnimation() {
       scrollTrigger: {
         trigger: "#spacer1",
         start: "10", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=300",
+        end: "+=450",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
         // pinSpacing: false,
         // pin: "#seekBtn"
@@ -99,7 +99,7 @@ function questions3LvlAnimation() {
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
         toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
         // toggleClass: "glow"
-        // pinSpacing: false,
+        pinSpacing: false,
         // pin: "#seekBtn"
       },
     })
