@@ -131,6 +131,11 @@ div.imageRow>a:last-child {
     padding: .3rem;
     margin: 2rem;
   }
+
+  #finalPlantLady, #finalGreenSwimmer {
+    max-width: 15vw;
+  }
+
   div.imageRow>a:first-child {
     margin: 0;
   }
@@ -241,7 +246,7 @@ div.imageRow>a:last-child {
   }
 }
 
-#plantLady, #blueSwimmer, #greenSwimmer {
+#plantLady, #blueSwimmer, #greenSwimmer, #finalPlantLady, #finalGreenSwimmer {
   animation: colourShift 6s ease-in-out 0s alternate infinite;
 }
 
@@ -436,11 +441,21 @@ textarea {
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
+
+  #seekText {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #8073c7;
+    margin: 2rem;
+    width: 10rem;
+
+  }
+
   textarea {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 10px;
-    width: 6rem;
+    width: 10rem;
     height: 10rem;
     padding: 1rem;
     font-size: 1.2em;
@@ -768,7 +783,7 @@ textarea {
     background-repeat: no-repeat, no-repeat;
   }
   #bottomLvl {
-    height: 100vh;
+    height: 30vh;
     width: 100vw;
     /* background: url(images/walls/7lm.png), url(images/walls/7rm.png); */
     /* background-position: top 0 left 0, top 0 right 0; */
@@ -840,7 +855,7 @@ textarea {
     background-repeat: no-repeat, no-repeat;
   }
   #spacer7 {
-    height: 50vh;
+    height: 10vh;
     width: 100vw;
     /* background: url(images/walls/6lmsp.png), url(images/walls/6rmsp.png); */
     /* background-position: top 0 left 0, top 0 right 0; */
@@ -1074,14 +1089,25 @@ h1 {
 
 @media (max-width: 680px), screen and (orientation: portrait) {
   .musicBtnContainer {
-    width: 10rem;
-    height: 10rem;
+    width: 9rem;
+    height: 9rem;
     margin: 1.5em auto;
     border: 5px solid #fe827b;
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
     background-image: url(images/gem-play.png);
+    background-size: cover;
+  }
+  .musicBtnContainerPlaying {
+    width: 9rem;
+    height: 9rem;
+    margin: 1.5em auto;
+    border: 5px solid #fe827b;
+    opacity: .8;
+    /* border: 5px dotted #00e8c4 */
+    border-radius: 50%;
+    background-image: url(images/gem-play.gif);
     background-size: cover;
   }
 }
