@@ -1,7 +1,7 @@
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.defaults({
   toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
-  markers: true,
+  // markers: true,
 });
 
 function init() {
