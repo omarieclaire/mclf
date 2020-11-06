@@ -98,7 +98,7 @@ function questions3LvlAnimation() {
         end: "+=500",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
         toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
-        toggleClass: "glow"
+        // toggleClass: "glow"
         // pinSpacing: false,
         // pin: "#seekBtn"
       },
