@@ -393,6 +393,11 @@ div.imageRow>a:last-child {
   animation: glow 10s ease-out 0s alternate infinite;
 }
 
+#arrow{
+  position: absolute;
+  bottom: 10px;
+}
+
 #questionstxt1, #questionstxt2 {
   animation: fadeOut 3s ease-in-out 0s alternate infinite;
   font-size: 1.1em;
