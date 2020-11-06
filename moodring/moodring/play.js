@@ -184,6 +184,8 @@ function windowOnLoad() {
     seekBtn.innerHTML = "received";
     seekText.classList.add("fade");
     questions3Lvl.style.display = "grid";
+    questions3LvlAnimation();
+    greenGlowAnimation();
     spacer1.style.display = "grid";
     spacer2.style.display = "grid";
     choice1Lvl.style.display = "grid";

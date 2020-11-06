@@ -247,6 +247,10 @@ div.imageRow>a:last-child {
 
 }
 
+#greenSwimmer {
+  animation: colourShift 6s ease-in-out 0s alternate infinite;
+}
+
 .choiceImage {
   /* width: 10rem; */
   padding: .1rem;
@@ -369,7 +373,7 @@ div.imageRow>a:last-child {
   animation: glow 10s ease-out 0s alternate infinite;
 }
 
-#questionstxt {
+#questionstxt1, #questionstxt2 {
   animation: fadeOut 3s ease-in-out 0s alternate infinite;
   font-size: 1.1em;
   line-height: 1.5em;
@@ -1166,5 +1170,22 @@ h1 {
   }
   100% {
     opacity: .06;
+  }
+}
+
+@keyframes colourShift {
+  0% {
+    filter: hue-rotate(30deg);
+    transform: scale(1);
+    /* transform:rotate(0deg);; */
+  }
+  50% {
+    filter: hue-rotate(90deg);
+    /* transform:rotate(5deg);; */
+  }
+  100% {
+    filter: hue-rotate(120deg);
+    transform: scale(.9);
+    /* transform:rotate(-5deg);; */
   }
 }

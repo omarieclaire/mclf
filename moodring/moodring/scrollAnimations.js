@@ -6,20 +6,21 @@ ScrollTrigger.defaults({
 
 function init() {
 
+
   gsap.timeline({
     scrollTrigger: {
       trigger: "#beginLvl",
       start: "10", //animation starts at this point  - 20 px above the top of the trigger element
       end: "+=500",
-      scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
+      // scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
       // pinSpacing: false,
       // pin: "#seekBtn"
     },
   })
-  //.to(".beginLvlRow1", { y: -40});
-  // .to("#beginLvlRow2", { y: -40})
-  .to("#beginBtn", { y: 50});
-  //  .to("#spacer0", { opacity: 1})
+  .to(".beginLvlRow1", { y: -20})
+  .to("#beginLvlRow2", { y: +20})
+  .to("#beginBtn", { y: 20})
+  .to("#greenGlow", { y: 200});
 
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
@@ -65,23 +66,48 @@ function init() {
     .from("#whatDoYouSeek", { scale: 0.8, autoAlpha: 0 });
   // .from("#seekText", { scale: 0.7, autoAlpha: .2 })
   // .from("#seekBtn", { y: innerHeight * 1 })
+  }
 
+window.addEventListener("load", function () {
+  init();
+});
+
+function questions3LvlAnimation() {
   gsap
     .timeline({
       scrollTrigger: {
         trigger: "#spacer1",
         start: "10", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=400",
+        end: "+=300",
         scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
         // pinSpacing: false,
         // pin: "#seekBtn"
       },
     })
+    .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
     .from("#greenSwimmer", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
-    .from("#questionstxt", { y: innerHeight, scale: 0.2, autoAlpha: 0 });
+    .from("#questionstxt2", { y: innerHeight, scale: 0.2, autoAlpha: 0 });
 
-          /*
-  gsap
+  }
+
+  function greenGlowAnimation(){
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#beginLvl",
+        start: "10", //animation starts at this point  - 20 px above the top of the trigger element
+        end: "+=500",
+        scrub: true, // locks animation to scrollbar - can use 1, 2, 3 etc
+        toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
+        toggleClass: "glow"
+        // pinSpacing: false,
+        // pin: "#seekBtn"
+      },
+    })
+    .to("#greenGlow", { y: 200});
+  }
+
+  function blueSwimmerAnimation(){
+    gsap
     .timeline({
       scrollTrigger: {
         trigger: "#findSongLvl",
@@ -94,9 +120,4 @@ function init() {
       },
     })
     .from("#blueSwimmer", { scale: 0.8, autoAlpha: 0, y: -60, rotate: 360 });
-    */
-}
-
-window.addEventListener("load", function () {
-  init();
-});
+  }
