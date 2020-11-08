@@ -273,19 +273,19 @@ div.imageRow>a:last-child {
   /* border-radius: 50%; */
 }
 
-.choice {
+.choiceTxt, .choice {
   align-self: center;
   opacity: 0.6;
   line-height: 2rem;
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
-  .choice {
+  .choiceTxt, .choice {
     width: 61vw;
   }
 }
 
-.choice:hover {
+.choiceTxt:hover {
   opacity: 1;
 }
 
