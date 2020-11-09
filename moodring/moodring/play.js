@@ -1,20 +1,8 @@
-// stores what decision the player has made
-var playerState = {
-  level: "none",
-  question: "question",
-  // upOrDown: undefined,
-  // darkOrJoy: undefined,
-  // chaosOrEchoes: undefined,
-  // forestOrMeadow: undefined,
-  // outOrIn: undefined,
-  // morningOrNight: undefined,
-  // unfoldOrCyle: undefined,
-  // numQuestionsAnswered: 0,
-  q1: undefined,
-  q2: undefined,
-  q3: undefined,
-  song: undefined,
-};
+function windowOnLoad() {
+
+////////////////////////////
+////////// MUSIC ///////////
+////////////////////////////
 
 const songMap = {
   chaos: {
@@ -59,7 +47,6 @@ const songMap = {
   },
 };
 
-// MUSIC
 const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
 backgroundMusic.load();
 backgroundMusic.loop = true;
@@ -94,7 +81,7 @@ function pauseSound(audio) {
 }
 
 function fadeSound() {
-  console.log(backgroundMusic.volume);
+  // console.log(backgroundMusic.volume);
   if (backgroundMusic.volume > 0.01) {
     backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
     setTimeout(fadeSound, 800);
@@ -103,8 +90,135 @@ function fadeSound() {
   }
 }
 
-// get each "level"
-function windowOnLoad() {
+( function( d ) {
+  'use strict';
+
+  function makeAudioBtn(id, containerId, audioPlayerId) {
+    var test = true;
+    var btn = d.querySelector(id);
+    var btnContainer = d.querySelector(containerId);
+    btnContainer.classList.remove('hide');
+
+    var audioPlayer = d.querySelector(audioPlayerId);
+    audioPlayer.classList.add('remove');
+
+    function changeSVG() {
+       btn.classList.remove( 'pause' );
+       test = true;
+    }
+    btn.addEventListener('click',
+       function() {
+
+          if ( test === true ) {
+               musicBtnContainer1.classList.add("musicBtnContainerPlaying");
+               btn.classList.add( 'pause' );
+               backgroundMusic.pause();
+
+               test = false;
+               audioPlayer.play();
+          }
+          else {
+              musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
+
+               changeSVG();
+               audioPlayer.pause();
+          }
+       }, false );
+
+    audioPlayer.addEventListener( 'ended',
+          function() {
+             changeSVG();
+             audioPlayer.load();
+           }, false );
+  }
+
+  var btn1 = makeAudioBtn('#musicBtn1', '#musicBtnContainer1', '#player1');
+
+ }( document ));
+
+////////////////////////////
+////////// TRACERY /////////
+////////////////////////////
+
+  var result;
+  var story = {
+    sentence: [
+      "You are a #playerAdj# one, #playerDesc# #playerVerb# while the #natureNoun# is #natureDesc#. ",
+    ],
+    playerAdj: [
+      "watchful",
+      "thoughful",
+      "curious",
+      "unyielding",
+      "hopeful",
+      "triumphant",
+      "silent",
+    ],
+    natureNoun: [
+      "ocean",
+      "mountain",
+      "forest",
+      "cloud",
+      "river",
+      "tree",
+      "sky",
+      "sea",
+      "desert",
+    ],
+    playerDesc: [
+      "quietly",
+      "loudly",
+      "softly",
+      "gently",
+      "curiously",
+      "firmly",
+      "tentatively",
+    ],
+    playerVerb: [
+      "humming",
+      "watching",
+      "waiting",
+      "emerging",
+      "instigating",
+      "inviting",
+      "awaiting",
+    ],
+    natureDesc: [
+      "limitless",
+      "blooming",
+      "reaching",
+      "inviting",
+      "awaiting",
+      "still",
+      "infinite",
+      "eternal",
+    ],
+
+    // upOrDown: undefined,
+    // darkOrJoy: undefined,
+    // chaosOrEchoes: undefined,
+    // forestOrMeadow: undefined,
+    // outOrIn: undefined,
+    // morningOrNight: undefined,
+    // unfoldOrCyle: undefined,
+    // numQuestionsAnswered: 0,
+  };
+  var grammar = tracery.createGrammar(story);
+
+  function generateTracery() {
+    result = grammar.flatten("#sentence#");
+    document.getElementById("generatorTxt").innerHTML = result;
+  }
+
+  var playerState = {
+    level: "none",
+    question: "question",
+    q1: undefined,
+    q2: undefined,
+    q3: undefined,
+    song: undefined,
+  };
+
   const beginLvl = document.getElementById("beginLvl");
   const playerQuestionLvl = document.getElementById("playerQuestionLvl");
   const questions3Lvl = document.getElementById("questions3Lvl");
@@ -173,7 +287,6 @@ function windowOnLoad() {
     playerQuestionLvlAni();
   }
 
-
   const seekText = document.getElementById("seekText");
   const seekBtn = document.getElementById("seekBtn");
 
@@ -191,7 +304,6 @@ function windowOnLoad() {
     questions3LvlAni();
     choice1Ani();
     greenSwimmerFollowAni();
-
   }
 
   var findSongBtn = document.getElementById("findSongBtn");
@@ -202,9 +314,10 @@ function windowOnLoad() {
     lastLvl.style.display = "grid";
     spacer7.style.display = "grid";
     bottomLvl.style.display = "grid";
-
     creditsLvl.style.display = "grid";
+    generateTracery();
     playSound(beginSound);
+    blueSwimmerFallAni();
     findSongBtn.innerHTML = "scroll";
     fadeSound();
   }
@@ -306,7 +419,6 @@ function windowOnLoad() {
     console.log("render player state");
   }
 
-
   // called when the links are clicked
   function makeLinkHandler(
     link,
@@ -390,11 +502,27 @@ function windowOnLoad() {
   );
   chaosLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrechoes", "chaos", "echoes", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "chaosOrechoes",
+      "chaos",
+      "echoes",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   echoesLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrEchoes", "echoes", "chaos", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "chaosOrEchoes",
+      "echoes",
+      "chaos",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   forestLink.addEventListener(
     "click",
@@ -404,19 +532,21 @@ function windowOnLoad() {
       "forest",
       "meadow",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   meadowLink.addEventListener(
-    "click", 
+    "click",
     makeLinkHandler(
       findSongLvl,
       "forestOrMeadow",
       "meadow",
       "forest",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   outLink.addEventListener(
     "click",
@@ -424,7 +554,15 @@ function windowOnLoad() {
   );
   innerLink.addEventListener(
     "click",
-    makeLinkHandler(innerLvl, "outOrInner", "inner", "out", 2, spacer4, choiceAni)
+    makeLinkHandler(
+      innerLvl,
+      "outOrInner",
+      "inner",
+      "out",
+      2,
+      spacer4,
+      choiceAni
+    )
   );
   morningLink.addEventListener(
     "click",
@@ -434,8 +572,9 @@ function windowOnLoad() {
       "morning",
       "night",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   nightLink.addEventListener(
     "click",
@@ -445,16 +584,33 @@ function windowOnLoad() {
       "night",
       "morning",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   unfoldLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "unfoldOrCycle", "unfold", "cycle", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "unfoldOrCycle",
+      "unfold",
+      "cycle",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   cycleLink.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "unfoldOrCycle", "cycle", "unfold", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "unfoldOrCycle",
+      "cycle",
+      "unfold",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
 
   upImg.addEventListener(
@@ -475,11 +631,27 @@ function windowOnLoad() {
   );
   chaosImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrEchoes", "chaos", "echoes", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "chaosOrEchoes",
+      "chaos",
+      "echoes",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   echoesImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "chaosOrEchoes", "echoes", "chaos", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "chaosOrEchoes",
+      "echoes",
+      "chaos",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   forestImg.addEventListener(
     "click",
@@ -489,8 +661,9 @@ function windowOnLoad() {
       "forest",
       "meadow",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   meadowImg.addEventListener(
     "click",
@@ -500,8 +673,9 @@ function windowOnLoad() {
       "meadow",
       "forest",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   outImg.addEventListener(
     "click",
@@ -509,7 +683,15 @@ function windowOnLoad() {
   );
   innerImg.addEventListener(
     "click",
-    makeLinkHandler(innerLvl, "outOrInner", "inner", "out", 2, spacer4, choiceAni)
+    makeLinkHandler(
+      innerLvl,
+      "outOrInner",
+      "inner",
+      "out",
+      2,
+      spacer4,
+      choiceAni
+    )
   );
   morningImg.addEventListener(
     "click",
@@ -519,8 +701,9 @@ function windowOnLoad() {
       "morning",
       "night",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   nightImg.addEventListener(
     "click",
@@ -530,16 +713,33 @@ function windowOnLoad() {
       "night",
       "morning",
       3,
-      spacer5
-    , blueSwimmerAni)
+      spacer5,
+      blueSwimmerAni
+    )
   );
   unfoldImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "unfoldOrCycle", "unfold", "cycle", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "unfoldOrCycle",
+      "unfold",
+      "cycle",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
   cycleImg.addEventListener(
     "click",
-    makeLinkHandler(findSongLvl, "unfoldOrCycle", "cycle", "unfold", 3, spacer5, blueSwimmerAni)
+    makeLinkHandler(
+      findSongLvl,
+      "unfoldOrCycle",
+      "cycle",
+      "unfold",
+      3,
+      spacer5,
+      blueSwimmerAni
+    )
   );
 }
 

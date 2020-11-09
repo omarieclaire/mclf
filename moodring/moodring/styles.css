@@ -100,6 +100,11 @@ a:hover, a:active {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
 }
 
+#arrow{
+  opacity: .8;
+  filter: hue-rotate(160deg);
+}
+
 .image {
   align-self: center;
   max-width: 15vw;
@@ -902,6 +907,9 @@ textarea {
   margin: 2rem 0 2rem 0;
   text-align: center;
   color: #d5ff9f;
+  font-size: 1rem;
+  line-height: 1.3rem;
+  letter-spacing: .03rem;
 }
 
 .songRow {}

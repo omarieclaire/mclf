@@ -17,7 +17,7 @@ function init() {
       },
     })
     .to(".beginLvlRow1", { y: -20 })
-    .to("#beginLvlRow2", { y: +20 })
+    // .to(".beginLvlRow2", { y: +20 })
     .to("#beginBtn", { y: 20 })
     .to("#greenGlow", { y: 350, scale: 1.2 });
 
@@ -160,8 +160,27 @@ function blueSwimmerAni() {
       },
     })
     .from("#questionstxt", { scale: 0.4, autoAlpha: 0 })
-    .from("#blueSwimmer", { scale: 0.8, autoAlpha: 0, y: -30, rotate: 90 })
+    .from("#blueSwimmer", { scale: 0.4, autoAlpha: 0, rotate: 90 })
 }
+
+    function blueSwimmerFallAni() {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: "#spacer5",
+            // pin: true,
+            start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+            // endtrigger: "#plantLady",
+            // end: "bottom bottom",
+            end: "+=850",
+            scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+            pinSpacing: false,
+            // pin: "#seekBtn"
+          },
+        })
+        .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -180 } )
+  }
+
 
 function doNothing(){
   //nothing at all
