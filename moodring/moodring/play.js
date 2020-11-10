@@ -325,7 +325,7 @@ function windowOnLoad() {
     blueSwimmerFallAni();
     findSongBtn.innerHTML = "scroll";
     fadeSound();
-    mouseEffects();
+    // mouseEffects();
   }
 
   function displayPlayerQuestion() {
@@ -565,7 +565,7 @@ function windowOnLoad() {
     makeLinkHandler(
       innerLvl,
       "outOrInner",
-      "in",
+      "inner",
       "out",
       2,
       spacer4,
@@ -687,14 +687,14 @@ function windowOnLoad() {
   );
   outImg.addEventListener(
     "click",
-    makeLinkHandler(outLvl, "outOrInner", "out", "in", 2, spacer4, choiceAni)
+    makeLinkHandler(outLvl, "outOrInner", "out", "inner", 2, spacer4, choiceAni)
   );
   innerImg.addEventListener(
     "click",
     makeLinkHandler(
       innerLvl,
       "outOrInner",
-      "in",
+      "inner",
       "out",
       2,
       spacer4,
@@ -868,6 +868,8 @@ function mousePressed() {
 function mouseReleased() {
   mouseDown = false;
 }
+
+// }
 
 
 window.addEventListener("load", windowOnLoad);
