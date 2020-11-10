@@ -1,149 +1,153 @@
 function windowOnLoad() {
+  ////////////////////////////
+  ////////// MUSIC ///////////
+  ////////////////////////////
 
-////////////////////////////
-////////// MUSIC ///////////
-////////////////////////////
+  const songMap = {
+    chaos: {
+      artist: "Klapshmock!",
+      title: "Attack Zone X",
+      file: "AttackZoneX.mp3",
+    },
+    echoes: {
+      artist: "Deidre",
+      title: "Numb",
+      file: "Numb.mp3",
+    },
+    forest: {
+      artist: "Mas Aya",
+      title: "Pasiva/Activa",
+      file: "PasivaActiva.mp3",
+    },
+    meadow: {
+      artist: "Orchidae",
+      title: "Love (bedroom version)",
+      file: "Love.mp3",
+    },
+    morning: {
+      artist: "Century Egg",
+      title: "I Will Make Up a Method",
+      file: "IWillMakeUpaMethod.mp3",
+    },
+    night: {
+      artist: "SlowPitchSound",
+      title: "You Betta Change ft. Distant Dust",
+      file: "YouBettaChangefeaturingDistantDust.mp3",
+    },
+    unfold: {
+      artist: "Melody McKiver & Thomas Goguelin",
+      title: "Berlinale Duet",
+      file: "BerlinaleDuet.mp3",
+    },
+    cycle: {
+      artist: "Bucko Art Machine",
+      title: "PRO TESTING (3AM edit)",
+      file: "Pro.mp3",
+    },
+  };
 
-const songMap = {
-  chaos: {
-    artist: "Klapshmock!",
-    title: "Attack Zone X",
-    file: "AttackZoneX.mp3",
-  },
-  echoes: {
-    artist: "Deidre",
-    title: "Numb",
-    file: "Numb.mp3",
-  },
-  forest: {
-    artist: "Mas Aya",
-    title: "Pasiva/Activa",
-    file: "PasivaActiva.mp3",
-  },
-  meadow: {
-    artist: "Orchidae",
-    title: "Love (bedroom version)",
-    file: "Love.mp3",
-  },
-  morning: {
-    artist: "Century Egg",
-    title: "I Will Make Up a Method",
-    file: "IWillMakeUpaMethod.mp3",
-  },
-  night: {
-    artist: "SlowPitchSound",
-    title: "You Betta Change ft. Distant Dust",
-    file: "YouBettaChangefeaturingDistantDust.mp3",
-  },
-  unfold: {
-    artist: "Melody McKiver & Thomas Goguelin",
-    title: "Berlinale Duet",
-    file: "BerlinaleDuet.mp3",
-  },
-  cycle: {
-    artist: "Bucko Art Machine",
-    title: "PRO TESTING (3AM edit)",
-    file: "Pro.mp3",
-  },
-};
+  const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
+  backgroundMusic.load();
+  backgroundMusic.loop = true;
 
-const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
-backgroundMusic.load();
-backgroundMusic.loop = true;
+  const beginSound = new Audio("./sounds/beginSound.mp3");
+  beginSound.load();
+  const genSound = new Audio("./sounds/genSound.mp3");
+  genSound.load();
 
-const beginSound = new Audio("./sounds/beginSound.mp3");
-beginSound.load();
-const genSound = new Audio("./sounds/genSound.mp3");
-genSound.load();
-
-function playSound(audio) {
-  audio.play();
-  audio.volume = 0.08;
-}
-
-var muted = false;
-function pauseSound(audio) {
-  // console.log('pauseSound is called');
-  // console.log(`muteBtn: ${muteBtn}`);
-  if (muted == true) {
-    console.log("play audio");
-    playSound(audio);
-    // muteBtn.classList.add("mute");
-    muteBtn.style.background =
-      "url('images/mute.png') no-repeat center center / contain";
-  } else {
-    console.log("pause audio");
-    audio.pause();
-    muteBtn.style.background =
-      "url('images/unMute.png') no-repeat center center / contain";
+  function playSound(audio) {
+    audio.play();
+    audio.volume = 0.08;
   }
-  muted = !muted;
-}
 
-function fadeSound() {
-  // console.log(backgroundMusic.volume);
-  if (backgroundMusic.volume > 0.01) {
-    backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
-    setTimeout(fadeSound, 800);
-  } else {
-    backgroundMusic.pause();
-  }
-}
+  var muted = false;
 
-( function( d ) {
-  'use strict';
-
-  function makeAudioBtn(id, containerId, audioPlayerId) {
-    var test = true;
-    var btn = d.querySelector(id);
-    var btnContainer = d.querySelector(containerId);
-    btnContainer.classList.remove('hide');
-
-    var audioPlayer = d.querySelector(audioPlayerId);
-    audioPlayer.classList.add('remove');
-
-    function changeSVG() {
-       btn.classList.remove( 'pause' );
-       test = true;
+  var muteBtn = document.getElementById("muteBtn"); // get the button
+  muteBtn.addEventListener("click", muteBtnHandler); // add an eventlistener to the enter button
+  function muteBtnHandler(event) {
+    // console.log('pauseSound is called');
+    // console.log(`muteBtn: ${muteBtn}`);
+    if (muted == true) {
+      // console.log("play audio");
+      playSound(backgroundMusic);
+      // muteBtn.classList.add("mute");
+      muteBtn.style.background =
+        "url('images/mute.png') no-repeat center center / contain";
+    } else {
+      // console.log("pause audio");
+      backgroundMusic.pause();
+      muteBtn.style.background =
+        "url('images/unMute.png') no-repeat center center / contain";
     }
-    btn.addEventListener('click',
-       function() {
-
-          if ( test === true ) {
-               musicBtnContainer1.classList.add("musicBtnContainerPlaying");
-               btn.classList.add( 'pause' );
-               backgroundMusic.pause();
-
-               test = false;
-               audioPlayer.play();
-          }
-          else {
-              musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
-
-               changeSVG();
-               audioPlayer.pause();
-          }
-       }, false );
-
-    audioPlayer.addEventListener( 'ended',
-          function() {
-             changeSVG();
-             audioPlayer.load();
-           }, false );
+    muted = !muted;
   }
 
-  var btn1 = makeAudioBtn('#musicBtn1', '#musicBtnContainer1', '#player1');
+  function fadeSound() {
+    // console.log(backgroundMusic.volume);
+    if (backgroundMusic.volume > 0.01) {
+      backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
+      setTimeout(fadeSound, 800);
+    } else {
+      backgroundMusic.pause();
+    }
+  }
 
- }( document ));
+  (function (d) {
+    "use strict";
 
-////////////////////////////
-////////// TRACERY /////////
-////////////////////////////
+    function makeAudioBtn(id, containerId, audioPlayerId) {
+      var test = true;
+      var btn = d.querySelector(id);
+      var btnContainer = d.querySelector(containerId);
+      btnContainer.classList.remove("hide");
 
-  var result;
+      var audioPlayer = d.querySelector(audioPlayerId);
+      audioPlayer.classList.add("remove");
+
+      function changeSVG() {
+        btn.classList.remove("pause");
+        test = true;
+      }
+      btn.addEventListener(
+        "click",
+        function () {
+          if (test === true) {
+            musicBtnContainer1.classList.add("musicBtnContainerPlaying");
+            btn.classList.add("pause");
+            backgroundMusic.pause();
+
+            test = false;
+            audioPlayer.play();
+          } else {
+            musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
+
+            changeSVG();
+            audioPlayer.pause();
+          }
+        },
+        false
+      );
+
+      audioPlayer.addEventListener(
+        "ended",
+        function () {
+          changeSVG();
+          audioPlayer.load();
+        },
+        false
+      );
+    }
+
+    var btn1 = makeAudioBtn("#musicBtn1", "#musicBtnContainer1", "#player1");
+  })(document);
+
+  ////////////////////////////
+  ////////// TRACERY /////////
+  ////////////////////////////
+
   var story = {
     sentence: [
-      "You are a #playerAdj# one, #playerDesc# #playerVerb# while the #natureNoun# is #natureDesc#. ",
+      "You are a #playerAdj# one, #playerDesc# #playerVerb# while the #natureNoun# is #natureDesc#. And #q1# #q2# #q3#."
     ],
     playerAdj: [
       "watchful",
@@ -194,19 +198,18 @@ function fadeSound() {
       "eternal",
     ],
 
-    // upOrDown: undefined,
-    // darkOrJoy: undefined,
-    // chaosOrEchoes: undefined,
-    // forestOrMeadow: undefined,
-    // outOrIn: undefined,
-    // morningOrNight: undefined,
-    // unfoldOrCyle: undefined,
-    // numQuestionsAnswered: 0,
+    //up down
+    q1: [],
+
+    //dark joy out in
+    q2: [],
+    // forest Meadow out Inner morning Night unfold Cyle
+    q3: [],
   };
-  var grammar = tracery.createGrammar(story);
 
   function generateTracery() {
-    result = grammar.flatten("#sentence#");
+    var grammar = tracery.createGrammar(story);
+    var result = grammar.flatten("#sentence#");
     document.getElementById("generatorTxt").innerHTML = result;
   }
 
@@ -242,8 +245,6 @@ function fadeSound() {
   const spacer5 = document.getElementById("spacer5");
   const spacer6 = document.getElementById("spacer6");
   const spacer7 = document.getElementById("spacer7");
-
-  const muteBtn = document.getElementById("muteBtn");
 
   // set each level to be invisible
   playerQuestionLvl.style.display = "none";
@@ -321,14 +322,6 @@ function fadeSound() {
     findSongBtn.innerHTML = "scroll";
     fadeSound();
   }
-
-  // var moreInfoBtn = document.getElementById("moreInfoBtn"); // get the button
-  // moreInfoBtn.addEventListener("click", moreInfoBtnHandler); // add an eventlistener to the enter button
-  // function moreInfoBtnHandler(event) {
-  //   creditsLvl.style.display = "grid";
-  //   // spacer9.style.display = "grid";
-  //   playSound(beginSound);
-  // }
 
   function displayPlayerQuestion() {
     var x = document.getElementsByClassName("playerQuestion");
@@ -464,18 +457,27 @@ function fadeSound() {
       spacer.style.display = "grid";
 
       playerState[stateKey] = chosenValue;
-      console.log(JSON.stringify(playerState));
+      // story[stateKey] = chosenValue;
+
+      // console.log(story[stateKey]);
+
+      // console.log(JSON.stringify(playerState));
       if (level === 1) {
         playerState.q1 = chosenValue;
+        story.q1.push(chosenValue);
         // only re-render if they've answered all the questions
         renderplayerState(playerState);
         renderSong(playerState);
       } else if (level === 2) {
         playerState.q2 = chosenValue;
+        story.q2.push(chosenValue);
+
         renderplayerState(playerState);
         renderSong(playerState);
       } else if (level === 3) {
         playerState.q3 = chosenValue;
+        story.q3.push(chosenValue);
+
         renderplayerState(playerState);
         renderSong(playerState);
       }
@@ -484,6 +486,7 @@ function fadeSound() {
   }
 
   //creates and runs a function makeLinkHandler which returns a function
+  // link,stateKey,chosenValue,unchosenValue,level,spacer,scrollTriggerFun
   upLink.addEventListener(
     "click",
     makeLinkHandler(upLvl, "upOrDown", "up", "down", 1, spacer3, choiceAni)

@@ -159,8 +159,8 @@ function blueSwimmerAni() {
         // pin: "#seekBtn"
       },
     })
-    .from("#questionstxt", { scale: 0.4, autoAlpha: 0 })
-    .from("#blueSwimmer", { scale: 0.4, autoAlpha: 0, rotate: 90 })
+    .from("#questionstxt", {scale: 0.4, autoAlpha: 0 })
+    .from("#blueSwimmer", {y: 100, scale: 0.4, autoAlpha: 0, rotate: 90 })
 }
 
     function blueSwimmerFallAni() {
@@ -178,7 +178,9 @@ function blueSwimmerAni() {
             // pin: "#seekBtn"
           },
         })
-        .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -180 } )
+        .to("#blueSwimmer", { y: 350, rotate: -180 } )
+        .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -30 } )
+
   }
 
 
