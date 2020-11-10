@@ -147,7 +147,7 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      "You are a #playerAdj# one, #playerDesc# #playerVerb# while the #natureNoun# is #natureDesc#. And #q1# #q2# #q3#."
+      "Welcome, #playerAdj# seeker. #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
       "watchful",
@@ -171,7 +171,7 @@ function windowOnLoad() {
     ],
     playerDesc: [
       "quietly",
-      "loudly",
+      "thoughtfully",
       "softly",
       "gently",
       "curiously",
@@ -201,9 +201,9 @@ function windowOnLoad() {
     //up down
     q1: [],
 
-    //dark joy out in
+    //dark joy out inner
     q2: [],
-    // forest Meadow out Inner morning Night unfold Cyle
+    // forest Meadow morning Night unfold Cyle chaos echoes
     q3: [],
   };
 
@@ -215,7 +215,7 @@ function windowOnLoad() {
 
   var playerState = {
     level: "none",
-    question: "question",
+    question: "peace",
     q1: undefined,
     q2: undefined,
     q3: undefined,
@@ -293,7 +293,11 @@ function windowOnLoad() {
 
   seekBtn.addEventListener("click", questionBtnHandler); // add an eventlistener to the  button
   function questionBtnHandler(event) {
-    playerState.question = seekText.value;
+    if (seekText.value !== ""){
+      playerState.question = seekText.value;
+    } else {
+      playerState.question = "peace";
+    }
     playSound(beginSound);
     seekBtn.innerHTML = "received";
     seekText.classList.add("fade");
@@ -321,6 +325,7 @@ function windowOnLoad() {
     blueSwimmerFallAni();
     findSongBtn.innerHTML = "scroll";
     fadeSound();
+    mouseEffects();
   }
 
   function displayPlayerQuestion() {
@@ -745,5 +750,124 @@ function windowOnLoad() {
     )
   );
 }
+
+// https://codepen.io/Grilly86/pres/VKbLgP
+
+// function mouseEffects(){
+  // CONFIGURATION:
+var spawn_every_nth_frame = 0;    // when not click
+var spawn_on_clicked = 2;
+var spawn_on_mousemove = 1;
+
+// every frame 
+var particle_start_speed = .25;   // start with this random speed 
+var particle_wobble_speed = .1; // change speed in random 
+var particle_alpha_factor = .97;  // fade out factor for every frame 
+
+function Mover(loc,c) {
+  this.loc = createVector(width/2, height/2);
+  this.vel = createVector();
+  this.acc = createVector();
+  this.r = random(3,7);
+  this.c = c;
+  this.alpha = 1;
+  
+  if (typeof loc !== "undefined") {
+    this.loc = createVector(loc.x,loc.y);
+  }
+  this.applyForce = function(a) {
+    this.acc.add(a);
+  }
+  this.update = function() {
+    this.vel.add(this.acc);
+    this.acc.mult(0);
+    this.alpha *= particle_alpha_factor;
+    
+    if (this.loc.x < 0 || this.loc.x > width) {
+      this.vel.x *= -.8;
+      if (this.loc.x < 0) this.loc.x = 0;
+      if (this.loc.x > width) this.loc.x = width;
+    }
+    if (this.loc.y < 0 || this.loc.y > height) {
+      this.vel.y *= -.8;
+      if (this.loc.y < 0) this.loc.y = 0;
+      if (this.loc.y > height) this.loc.y = height;
+    }
+    
+    this.loc.add(this.vel);
+  }
+  this.display = function() {
+    fill(this.c, 255,255 , this.alpha);
+    noStroke();
+    ellipse(this.loc.x,this.loc.y, this.r + (1/this.alpha),this.r + (1/this.alpha));
+  }
+}
+
+var movers = [];
+
+function setup() {
+  colorMode(HSB);
+
+  var canvas = createCanvas(window.innerWidth,window.innerHeight * 2);   
+  // canvas.style('display', 'block');
+
+  // background(50);
+  canvas.parent('sketchHolder');
+
+}
+
+
+function draw() {
+  background(5);
+  
+  if (mouseDown || frameCount%spawn_every_nth_frame==0 ) {    
+    for (var x = 0; x < (mouseDown?spawn_on_clicked:spawn_on_mousemove); x++) {
+      
+      
+      var m = new Mover(createVector(mouseX, mouseY), ((frameCount+128)/ 1 % 360));
+     
+      var f = createVector(random(-1,1), random(-6,0)).mult(particle_start_speed)
+      
+            
+      if (mouseDown) {
+        f.mult(2);
+      }
+       m.applyForce(f);
+
+      movers.push(m);
+    }
+  }
+    
+  for(var x = movers.length -1; x >= 0; x--) {
+    var mov = movers[x];
+    
+    if (mov.alpha < .001) {
+      movers.shift(x);
+    } else {
+    
+      
+     // randomize movement a bit:
+     mov.applyForce(createVector(random(-1,1), random(1,-1)).mult(particle_wobble_speed));
+
+      // enables gravity:
+      mov.applyForce(createVector(0,.25));
+      
+      mov.update();
+      mov.display(); 
+    }
+  }
+  
+}
+
+var mouseDown = false;
+
+function mousePressed() {
+  mouseDown = true;
+}
+
+function mouseReleased() {
+  mouseDown = false;
+}
+
 
 window.addEventListener("load", windowOnLoad);

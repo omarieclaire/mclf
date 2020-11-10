@@ -80,6 +80,7 @@ body {
 .txt {
   margin: 2rem;
   opacity: 0.7;
+  
 }
 
 a:link, a:visited {
@@ -105,10 +106,25 @@ a:hover, a:active {
   filter: hue-rotate(160deg);
 }
 
+#sketchHolder {
+  z-index: -99;
+  position: absolute;
+}
+
 .image {
+  /* user-drag: none;  */
   align-self: center;
   max-width: 15vw;
   padding: .3rem;
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -ms-user-select: none;
+
 }
 
 .choiceImage {
@@ -910,6 +926,11 @@ textarea {
   font-size: 1rem;
   line-height: 1.3rem;
   letter-spacing: .03rem;
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .songRow {}
