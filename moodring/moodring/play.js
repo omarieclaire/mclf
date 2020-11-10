@@ -565,7 +565,7 @@ function windowOnLoad() {
     makeLinkHandler(
       innerLvl,
       "outOrInner",
-      "inner",
+      "in",
       "out",
       2,
       spacer4,
@@ -687,14 +687,14 @@ function windowOnLoad() {
   );
   outImg.addEventListener(
     "click",
-    makeLinkHandler(outLvl, "outOrInner", "out", "inner", 2, spacer4, choiceAni)
+    makeLinkHandler(outLvl, "outOrInner", "out", "in", 2, spacer4, choiceAni)
   );
   innerImg.addEventListener(
     "click",
     makeLinkHandler(
       innerLvl,
       "outOrInner",
-      "inner",
+      "in",
       "out",
       2,
       spacer4,
