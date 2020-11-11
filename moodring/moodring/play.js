@@ -145,6 +145,8 @@ function windowOnLoad() {
   ////////// TRACERY /////////
   ////////////////////////////
 
+  // http://www.crystalcodepalace.com/traceryTut.html
+
   var story = {
     sentence: [
       "Welcome, #playerAdj# seeker. #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
