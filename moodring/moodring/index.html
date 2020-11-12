@@ -11,6 +11,14 @@
 </head>
 
 <body>
+  <div id="loader-wrapper">
+    <div id="loader"></div>
+ 
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+ 
+</div>
+
   <div id="beginLvl" class="beginLvl">
     <button type="btn" id="muteBtn" class="btn" value="mute"></button>
 
@@ -87,7 +95,7 @@
 
   <div id="downLvl" class="choiceLvl choice2Lvl">
     <div class="textRow">
-      <p id="outOrInnerText" class="choiceTxt"> <span class="number">One:</span><br>will you <a class="choiceLink"
+      <p id="outOrInnerText" class="choiceTxt"> <span class="number">Two:</span><br>will you <a class="choiceLink"
           id="outLink" href=" #">flow out</a> or will you <a class="choiceLink" id="innerLink" href=" #">turn in</a>?</p>
     </div>
     <div class="imageRow">
@@ -191,7 +199,7 @@
 
   <div id='lastLvl' class="">
     <div id="displayQuestionRow">
-      <p><span id="generatorTxt"></span>May you find <span class="playerQuestion"></span>.</p>
+      <p class="typewriter"><span id="generatorTxt"></span>May you find <span class="playerQuestion"></span>.</p>
     </div>
     <div id="musicRow">
       <img id="finalPlantLady" draggable="false" class="image" loading="lazy" alt="plantLady" src="images/lastLvl/plantlady.png">
@@ -269,10 +277,10 @@
       </p>
     </div>
   </div>
-  <!-- <script
+  <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script> -->
+  crossorigin="anonymous"></script>
   <script src="tracery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
