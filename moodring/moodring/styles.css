@@ -1302,6 +1302,8 @@ h1 {
 }
 
 .loaded #loader-wrapper {
+  animation: fade 3s ease-in-out 0s;
+
   -webkit-transform:   translateY(-100%);
       -ms-transform: translateY(-100%);
           transform: translateY(-100%);
