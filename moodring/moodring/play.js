@@ -156,7 +156,9 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      "Welcome to the bottom, #playerAdj# seeker. #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
+      "What is at the bottom for you, #playerAdj# seeker? Are you #playerAdj#? Are you #natureDesc#? What would it mean to find "
+
+      // "What is at the bottom, #playerAdj# seeker? #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
       "watchful",
