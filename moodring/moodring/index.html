@@ -13,10 +13,10 @@
 <body>
   <div id="loader-wrapper">
     <div id="loader"></div>
- 
+
     <div class="loader-section section-left"></div>
     <div class="loader-section section-right"></div>
-</div>
+  </div>
 
   <div id="beginLvl" class="beginLvl">
     <button type="btn" id="muteBtn" class="btn" value="mute"></button>
@@ -32,16 +32,18 @@
 
     </div>
     <div class="beginLvlRow2">
-      <img id="creaturesL" draggable="false" class="image" loading="lazy" alt="creatures" src="images/beginLvl/creaturesL.png">
-      <img id="titling" draggable="false" class="image" loading="lazy" alt="Mood Ring Volume 2 - A Mixtape by Debaser" src="images/beginLvl/titling.png">
-      <img id="creaturesR" draggable="false" class="image" loading="lazy" alt="creatures" src="images/beginLvl/creaturesR.png">
+      <img id="creaturesL" draggable="false" class="image" loading="lazy" alt="creatures"
+        src="images/beginLvl/creaturesL.png">
+      <img id="titling" draggable="false" class="image" loading="lazy" alt="Mood Ring Volume 2 - A Mixtape by Debaser"
+        src="images/beginLvl/titling.png">
+      <img id="creaturesR" draggable="false" class="image" loading="lazy" alt="creatures"
+        src="images/beginLvl/creaturesR.png">
     </div>
     <div class="beginLvlRow3">
       <button type="btn" id="beginBtn" class="btn">begin</button>
     </div>
-    <div class="beginLvlRow4">
+    <div class="beginLvlRow4" id="beginLvlRow4">
       <img id="greenGlow" draggable="false" class="image" alt="greenGlow" src="images/beginLvl/greenGlow.png">
-      <!-- <img id="arrow" draggable="false" class="image" loading="lazy" alt="arrow" src="images/arrow.gif"> -->
     </div>
   </div>
 
@@ -50,7 +52,8 @@
 
   <div id="playerQuestionLvl" class="">
     <div class="simpleColumn">
-      <img id="plantLady" draggable="false" class="image" loading="lazy" alt="plantLady" src="images/lastLvl/plantlady.png">
+      <img id="plantLady" draggable="false" class="image" loading="lazy" alt="plantLady"
+        src="images/lastLvl/plantlady.png">
 
       <p id="whatDoYouSeek" class="txt">What do you seek?</p>
       <form>
@@ -67,7 +70,8 @@
   <div id="questions3Lvl" class="">
     <div class="simpleColumn">
       <!-- <p id="questionstxt1" class="txt">Find your song</p> -->
-      <img id="greenSwimmer" draggable="false" class="image" loading="lazy" alt="greenSwimmer" src="images/lastLvl/swimmer02.png">
+      <img id="greenSwimmer" draggable="false" class="image" loading="lazy" alt="greenSwimmer"
+        src="images/lastLvl/swimmer02.png">
       <p id="questionstxt2" class="txt">3 questions<br>for you<br>seeker<br></p>
     </div>
   </div>
@@ -78,14 +82,16 @@
   <div id="choice1Lvl" class="choiceLvl choice1Lvl">
     <div class="textRow">
       <p id="upOrDownText" class="choiceTxt"> <span class="number">One:</span><br>will you <a class="choiceLink"
-          id="upLink" href="#">float in the sky</a> or will you <a class="choiceLink" id="downLink" href="#">root in the earth</a>?</p>
+          id="upLink" href="#">face the sky</a> or will you <a class="choiceLink" id="downLink" href="#">root in the
+          earth</a>?</p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="upImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="up" src="images/choices/up.gif"></a>
+      <a href="#"><img id="upImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="up"
+          src="images/choices/up.gif"></a>
       <a href="#"><img id="downImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="down"
           src="images/choices/down.gif"></a>
     </div>
-    <div class="">
+    <div id="upOrDown" class="arrowRow">
     </div>
   </div>
 
@@ -95,13 +101,16 @@
   <div id="downLvl" class="choiceLvl choice2Lvl">
     <div class="textRow">
       <p id="outOrInnerText" class="choiceTxt"> <span class="number">Two:</span><br>will you <a class="choiceLink"
-          id="outLink" href=" #">flow out</a> or will you <a class="choiceLink" id="innerLink" href=" #">turn in</a>?</p>
+          id="outLink" href=" #">flow out</a> or will you <a class="choiceLink" id="innerLink" href=" #">turn in</a>?
+      </p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="outImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="out"
+      <a href="#"><img id="outImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="out"
           src="images/choices/out.gif"></a>
-      <a href="#"><img id="innerImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="inner"
+      <a href="#"><img id="innerImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="inner"
           src="images/choices/inner.gif"></a>
+    </div>
+    <div id="outOrInner" class="arrowRow">
     </div>
   </div>
 
@@ -113,13 +122,14 @@
       </p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="darkImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="dark"
+      <a href="#"><img id="darkImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="dark"
           src="images/choices/dark.gif"></a>
-      <a href="#"><img id="joyImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="joy"
+      <a href="#"><img id="joyImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="joy"
           src="images/choices/joy.gif"></a>
     </div>
+    <div id="darkOrJoy" class="arrowRow">
+    </div>
   </div>
-
 
   <div id="spacer4" class="spacer">
   </div>
@@ -131,24 +141,28 @@
           pulse of night</a>?</p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="morningImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="morning"
+      <a href="#"><img id="morningImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="morning"
           src="images/choices/morning.gif"></a>
-      <a href="#"><img id="nightImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="night"
+      <a href="#"><img id="nightImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="night"
           src="images/choices/night.gif"></a>
+    </div>
+    <div id="morningOrNight" class="arrowRow">
     </div>
   </div>
 
   <div id="innerLvl" class="choiceLvl choice3Lvl">
     <div class="textRow">
-      <p id="unfoldOrCycleText" class="choiceTxt"> <span class="number">Three:</span><br>does <a class="choiceLink"
-          id="unfoldLink" href=" #">the pattern unfold</a> or does <a class="choiceLink" id="cycleLink" href=" #">the
-          infinite cycle loop</a>?</p>
+      <p id="unfoldOrCycleText" class="choiceTxt"> <span class="number">Three:</span><br>does the <a class="choiceLink"
+          id="unfoldLink" href=" #">pattern unfold</a> or does the <a class="choiceLink" id="cycleLink"
+          href=" #">infinite cycle loop</a>?</p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="unfoldImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="unfold"
+      <a href="#"><img id="unfoldImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="unfold"
           src="images/choices/unfold.gif"></a>
-      <a href="#"><img id="cycleImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="cycle"
+      <a href="#"><img id="cycleImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="cycle"
           src="images/choices/cycle.gif"></a>
+    </div>
+    <div id="unfoldOrCycle" class="arrowRow">
     </div>
   </div>
 
@@ -159,10 +173,12 @@
           into the echoes</a>?</p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="chaosImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="chaos"
+      <a href="#"><img id="chaosImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="chaos"
           src="images/choices/chaos.gif"></a>
-      <a href="#"><img id="echoesImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="echoes"
+      <a href="#"><img id="echoesImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="echoes"
           src="images/choices/echoes.gif"></a>
+    </div>
+    <div id="ChaosOrEchoes" class="arrowRow">
     </div>
   </div>
 
@@ -173,10 +189,12 @@
           over an endless meadow</a>?</p>
     </div>
     <div class="imageRow">
-      <a href="#"><img id="forestImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="forest"
+      <a href="#"><img id="forestImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="forest"
           src="images/choices/forest.gif"></a>
-      <a href="#"><img id="meadowImg" class="image choiceImage styleChoiceImage" loading="lazy"  alt="meadow"
+      <a href="#"><img id="meadowImg" class="image choiceImage styleChoiceImage" loading="lazy" alt="meadow"
           src="images/choices/meadow.gif"></a>
+    </div>
+    <div id="forestOrMeadow" class="arrowRow">
     </div>
   </div>
 
@@ -185,11 +203,13 @@
 
   <div id="findSongLvl" class="">
     <div class="simpleColumn">
-      <img id="blueSwimmer" draggable="false" class="image" loading="lazy" alt="blueSwimmer" src="images/lastLvl/swimmer03.png">
+      <img id="blueSwimmer" draggable="false" class="image" loading="lazy" alt="blueSwimmer"
+        src="images/lastLvl/swimmer03.png">
       <p id="questionstxt">Find your song,<br>seeker?<br></p>
       <button type="btn" id="findSongBtn" class="btn">yes</button>
     </div>
   </div>
+
 
   <div id="spacer6" class="spacer">
   </div>
@@ -201,7 +221,8 @@
       <p class="typewriter"><span id="generatorTxt"></span>May you find <span class="playerQuestion"></span>.</p>
     </div>
     <div id="musicRow">
-      <img id="finalPlantLady" draggable="false" class="image" loading="lazy" alt="plantLady" src="images/lastLvl/plantlady.png">
+      <img id="finalPlantLady" draggable="false" class="image" loading="lazy" alt="plantLady"
+        src="images/lastLvl/plantlady.png">
 
       <div id="musicBtnContainer1" class="musicBtnContainer hide">
         <div id="musicBtn1" class="musicBtn"></div>
@@ -209,7 +230,8 @@
       <audio id="player1" controls preload>
         <source id='audioSource' src='' type="audio/mpeg">
       </audio>
-      <img id="finalGreenSwimmer" draggable="false" class="image" loading="lazy" alt="greenSwimmer" src="images/lastLvl/swimmer02.png">
+      <img id="finalGreenSwimmer" draggable="false" class="image" loading="lazy" alt="greenSwimmer"
+        src="images/lastLvl/swimmer02.png">
 
     </div>
     <div id="musicCreditRow">
@@ -234,7 +256,8 @@
       <!-- <img id="greenSwimmer" draggable="false" class="image" loading="lazy" alt="greenSwimmer" src="images/lastLvl/swimmer02.png"> -->
     </div>
     <div id="glowRow">
-      <img id="greenGlow2" draggable="false" class="image" loading="lazy" alt="greenGlow" src="images/beginLvl/greenGlow.png">
+      <img id="greenGlow2" draggable="false" class="image" loading="lazy" alt="greenGlow"
+        src="images/beginLvl/greenGlow.png">
     </div>
     <div id="wavesRow">
       <img id="waves" draggable="false" class="image" loading="lazy" alt="waves" src="images/lastLvl/waves.png">
@@ -246,15 +269,19 @@
 
   <div id="creditsLvl">
     <div id="dLogoRow">
-      <img id="debaserLogo" draggable="false" class="image" loading="lazy" alt="debaser Logo" src="images/debaserLogo.png">
+      <img id="debaserLogo" draggable="false" class="image" loading="lazy" alt="debaser Logo"
+        src="images/debaserLogo.png">
     </div>
     <div id="btnsRow">
-      <a type="btn" class="btn finalBtn" id="learnMore" target="_blank" class="button creditsBtns" href="https://www.debaser.ca/mood-ring">Learn More</a>
-      <a type="btn" class="btn finalBtn" id="startOver" class="button creditsBtns" href="https://marieflanagan.com/moodring/moodring/index.html" onClick="window.location.reload();">Start
+      <a type="btn" class="btn finalBtn" id="learnMore" target="_blank" class="button creditsBtns"
+        href="https://www.debaser.ca/mood-ring">Learn More</a>
+      <a type="btn" class="btn finalBtn" id="startOver" class="button creditsBtns"
+        href="https://marieflanagan.com/moodring/moodring/index.html" onClick="window.location.reload();">Start
         Again</a>
     </div>
     <div id="creditsTextRow">
-      <p>Mood Ring Vol. 2 is a project of <a id="debaserLink" target="_blank" href="https://www.debaser.ca">Debaser</a></p>
+      <p>Mood Ring Vol. 2 is a project of <a id="debaserLink" target="_blank" href="https://www.debaser.ca">Debaser</a>
+      </p>
       <br>
 
       <p>Design & Code by <a id="debaserLink" target="_blank" href="https://marieflanagan.com/">Marie Claire LeBlanc
@@ -272,14 +299,13 @@
         (Tiohtià:ke), and Mi’kmaq (K’jipuktuk) peoples.</p>
     </div>
     <div id="cLogoRow">
-      <img id="ccaLogo" draggable="false" class="image" loading="lazy" alt="Canada Council Logo" src="images/canadaCouncilLogo.png">
+      <img id="ccaLogo" draggable="false" class="image" loading="lazy" alt="Canada Council Logo"
+        src="images/canadaCouncilLogo.png">
       </p>
     </div>
   </div>
-  <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script src="tracery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>

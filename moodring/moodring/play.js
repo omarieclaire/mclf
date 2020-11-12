@@ -281,6 +281,25 @@ function windowOnLoad() {
 
   muteBtn.style.display = "none";
 
+  function displayScrollArrow(parent){
+    console.log("ugh");
+    const arrowDiv = document.createElement("div"); 
+    arrowDiv.classList.add("arrow");
+    arrowDiv.id ="arrow";
+    const currentDiv = document.getElementById(parent);
+    console.log(parent);
+    currentDiv.appendChild(arrowDiv);
+
+    const containerDiv = document.createElement("div");
+    containerDiv.classList.add("container");
+    for(var i =0;i < 3;i++) {
+      const chevron = document.createElement("div");
+      chevron.classList.add("chevron");
+      containerDiv.appendChild(chevron);
+    }
+    arrowDiv.appendChild(containerDiv);
+  }
+
   var beginBtn = document.getElementById("beginBtn"); // get the button
   beginBtn.addEventListener("click", beginBtnHandler); // add an eventlistener to the enter button
   function beginBtnHandler(event) {
@@ -291,7 +310,10 @@ function windowOnLoad() {
     muteBtn.style.display = "block";
     playSound(beginSound);
     playSound(backgroundMusic);
-    beginBtn.innerHTML = "scroll";
+    // beginBtn.innerHTML = "scroll";
+    beginBtn.classList.add("fade");
+    setTimeout(displayScrollArrow("beginLvlRow4"), 6000);
+    moveArrow();
     greenGlowAni();
     spacer0Ani();
     playerQuestionLvlAni();
@@ -309,6 +331,8 @@ function windowOnLoad() {
     }
     playSound(beginSound);
     seekBtn.innerHTML = "received";
+    document.getElementById("whatDoYouSeek").innerHTML = "dive deeper, <br> seeker";
+    seekBtn.classList.add("fade");
     seekText.classList.add("fade");
     questions3Lvl.style.display = "grid";
     spacer1.style.display = "grid";
@@ -472,6 +496,7 @@ function windowOnLoad() {
       playerState[stateKey] = chosenValue;
       // story[stateKey] = chosenValue;
 
+      window.setTimeout(displayScrollArrow(stateKey), 60000);
       // console.log(story[stateKey]);
 
       // console.log(JSON.stringify(playerState));

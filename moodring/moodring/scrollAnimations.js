@@ -19,16 +19,33 @@ function init() {
     .to(".beginLvlRow1", { y: -20 })
     // .to(".beginLvlRow2", { y: +20 })
     .to("#beginBtn", { y: 20 })
-    .to("#greenGlow", { y: 350, scale: 1.2 });
+    .to("#greenGlow", { y: 350, scale: 1.2 })
+    .to("#arrow", { y: 350, scale: 1.2 });
 
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
   // **options: play pause restart reverse resume reset complete reverse none
 }
 
+
 window.addEventListener("load", function () {
   init();
 });
+
+function moveArrow (){
+gsap
+.timeline({
+  scrollTrigger: {
+    trigger: "#beginLvl",
+    start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
+    end: "+=500",
+    scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+    pinSpacing: false,
+    pin: "#arrow",
+  },
+})
+.to("#arrow", { y: 350, scale: 0, opacity: 0});
+}
 
 function spacer0Ani() {
   gsap
