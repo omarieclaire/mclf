@@ -314,9 +314,11 @@ function windowOnLoad() {
     playSound(backgroundMusic);
     // beginBtn.innerHTML = "scroll";
     beginBtn.classList.add("fade");
+    document.getElementById("beginLvlRow2").classList.remove("pulse");
     setTimeout(function(){
       displayScrollArrow("beginLvlRow3");
     }, 500);
+    pushStartLvlAway();
     moveArrow();
     greenGlowAni();
     spacer0Ani();

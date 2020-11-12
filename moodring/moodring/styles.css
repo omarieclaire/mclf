@@ -356,6 +356,9 @@ div.imageRow>a:last-child {
   align-items: center;
   align-content: center;
   justify-content: center;
+}
+
+.pulse {
   animation: pulse 30s ease-in-out 0s alternate infinite;
 }
 

@@ -16,35 +16,35 @@ function init() {
         pin: "#greenGlow",
       },
     })
-    .to(".beginLvlRow1", { y: -20 })
-    // .to(".beginLvlRow2", { y: +20 })
     .to("#beginBtn", { y: 20 })
-    .to("#greenGlow", { y: 350, scale: 1.2 })
-    .to("#arrow", { y: 350, scale: 1.2 });
-
+    .to("#greenGlow", { y: 350, scale: 1.2 });
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
   // **options: play pause restart reverse resume reset complete reverse none
 }
 
-
 window.addEventListener("load", function () {
   init();
 });
 
-function moveArrow (){
-gsap
-.timeline({
-  scrollTrigger: {
-    trigger: "#beginLvl",
-    start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
-    end: "+=500",
-    scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
-    pinSpacing: false,
-    pin: "#arrow",
-  },
-})
-.to("#arrow", { y: 350, scale: 0, opacity: 0});
+function moveArrow() {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: "#beginLvl",
+        start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
+        end: "+=20",
+        scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+        pinSpacing: false,
+        pin: "#arrow",
+      },
+    })
+    .to("#arrow", { y: 350, scale: 0, opacity: 0 });
+}
+
+function pushStartLvlAway() {
+  gsap.to(".beginLvlRow1", { scale: .5, opacity: 0, duration:10 })
+  gsap.to("#beginLvlRow2", { scale: .5, opacity: 0, duration:10});
 }
 
 function spacer0Ani() {
@@ -56,7 +56,7 @@ function spacer0Ani() {
         end: "+=300", // bottom of the trigger element hits the top of the viewport
         scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
         pinSpacing: false,
-      }
+      },
     })
     .from("#spacer0", { opacity: 0 });
 }
@@ -111,7 +111,7 @@ function questions3LvlAni() {
     })
     // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
     .from("#greenSwimmer", { y: 200, scale: 0.2, autoAlpha: 0, rotate: 90 })
-    .from("#questionstxt2", { scale: 0.2, autoAlpha: 0 })
+    .from("#questionstxt2", { scale: 0.2, autoAlpha: 0 });
 }
 
 function greenSwimmerFollowAni() {
@@ -127,7 +127,7 @@ function greenSwimmerFollowAni() {
       },
     })
     // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
-    .to("#greenSwimmer", { y: 650, rotate: -90 })
+    .to("#greenSwimmer", { y: 650, rotate: -90 });
 }
 
 function choice1Ani() {
@@ -138,12 +138,12 @@ function choice1Ani() {
         start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
         end: "+=200", // bottom of the trigger element hits the top of the viewport
         scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
-        pinSpacing: false
+        pinSpacing: false,
       },
     })
-    .from(".choiceTxt", { y: 100, scale: 0.8 })
-    // .from("#upImg", { y: 70, scale: 0.6 })
-    // .from("#downImg", { y: 70, scale: 0.6 })
+    .from(".choiceTxt", { y: 100, scale: 0.8 });
+  // .from("#upImg", { y: 70, scale: 0.6 })
+  // .from("#downImg", { y: 70, scale: 0.6 })
 }
 
 function choiceAni() {
@@ -154,11 +154,11 @@ function choiceAni() {
         start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
         end: "+=200", // bottom of the trigger element hits the top of the viewport
         scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
-        pinSpacing: false
+        pinSpacing: false,
       },
     })
-    .from(".choiceTxt", { y: 100, scale: 0.8 })
-    // .from(".imageRow", { y: 70, scale: 0.6 })
+    .from(".choiceTxt", { y: 100, scale: 0.8 });
+  // .from(".imageRow", { y: 70, scale: 0.6 })
 }
 
 function blueSwimmerAni() {
@@ -176,31 +176,29 @@ function blueSwimmerAni() {
         // pin: "#seekBtn"
       },
     })
-    .from("#questionstxt", {scale: 0.4, autoAlpha: 0 })
-    .from("#blueSwimmer", {y: 100, scale: 0.4, autoAlpha: 0, rotate: 90 })
+    .from("#questionstxt", { scale: 0.4, autoAlpha: 0 })
+    .from("#blueSwimmer", { y: 100, scale: 0.4, autoAlpha: 0, rotate: 90 });
 }
 
-    function blueSwimmerFallAni() {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: "#spacer5",
-            // pin: true,
-            start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
-            // endtrigger: "#plantLady",
-            // end: "bottom bottom",
-            end: "+=850",
-            scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
-            pinSpacing: false,
-            // pin: "#seekBtn"
-          },
-        })
-        .to("#blueSwimmer", { y: 350, rotate: -180 } )
-        .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -30 } )
+function blueSwimmerFallAni() {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: "#spacer5",
+        // pin: true,
+        start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+        // endtrigger: "#plantLady",
+        // end: "bottom bottom",
+        end: "+=850",
+        scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+        pinSpacing: false,
+        // pin: "#seekBtn"
+      },
+    })
+    .to("#blueSwimmer", { y: 350, rotate: -180 })
+    .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -30 });
+}
 
-  }
-
-
-function doNothing(){
+function doNothing() {
   //nothing at all
 }
