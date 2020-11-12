@@ -62,8 +62,8 @@ function windowOnLoad() {
   genSound.load();
 
   function playSound(audio) {
+    audio.volume = 0.07;
     audio.play();
-    audio.volume = 0.08;
   }
 
   var muted = false;
@@ -123,6 +123,7 @@ function windowOnLoad() {
             backgroundMusic.pause();
 
             test = false;
+            audioPlayer.volume = 0.07;
             audioPlayer.play();
           } else {
             musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
@@ -155,7 +156,7 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      "Welcome, #playerAdj# seeker. #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
+      "Welcome to the bottom, #playerAdj# seeker. #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
       "watchful",

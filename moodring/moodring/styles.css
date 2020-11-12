@@ -476,7 +476,7 @@ div.imageRow>a:last-child {
   margin: 2rem;
 }
 
-textarea {
+input {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 10px;
@@ -486,6 +486,7 @@ textarea {
   font-size: 1.2em;
   text-align: center;
   background-color: #cfceff;
+  font-family: 'PT Mono', monospace;
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
@@ -499,12 +500,12 @@ textarea {
 
   }
 
-  textarea {
+  input {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 10px;
     width: 10rem;
-    height: 10rem;
+    height: 8rem;
     padding: 1rem;
     font-size: 1.2em;
     text-align: center;
