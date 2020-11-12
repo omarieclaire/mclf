@@ -315,8 +315,8 @@ function windowOnLoad() {
     // beginBtn.innerHTML = "scroll";
     beginBtn.classList.add("fade");
     setTimeout(function(){
-      displayScrollArrow("beginLvlRow4");
-    }, 1000);
+      displayScrollArrow("beginLvlRow3");
+    }, 500);
     moveArrow();
     greenGlowAni();
     spacer0Ani();
