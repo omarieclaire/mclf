@@ -539,7 +539,7 @@ input {
 #beginLvl {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: .5fr .5fr .5fr .5fr;
   grid-gap: 0px;
   grid-template-areas: "beginLvlRow1 beginLvlRow1 beginLvlRow1" "beginLvlRow2 beginLvlRow2 beginLvlRow2" "beginLvlRow3 beginLvlRow3 beginLvlRow3" "beginLvlRow4 beginLvlRow4 beginLvlRow4";
   /* ". highlight ."; */

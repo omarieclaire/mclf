@@ -63,7 +63,7 @@ function greenGlowAni() {
         // pin: "#seekBtn"
       },
     })
-    // .to("#arrow", { y: 350, scale: 0, opacity: 0})
+    // .to("#arrow", {hh y: 350, scale: 0, opacity: 0})
     .to("#greenGlow", { y: 450 });
 }
 
@@ -178,7 +178,7 @@ function blueSwimmerFallAni() {
         start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
         // endtrigger: "#plantLady",
         // end: "bottom bottom",
-        end: "+=850",
+        end: "+=950",
         scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
         pinSpacing: false,
         // pin: "#seekBtn"

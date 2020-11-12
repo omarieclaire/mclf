@@ -337,7 +337,7 @@ function windowOnLoad() {
     }
     playSound(beginSound);
     seekBtn.innerHTML = "received";
-    document.getElementById("whatDoYouSeek").innerHTML = "dive deeper, <br> seeker";
+    document.getElementById("whatDoYouSeek").innerHTML = "dive deeper";
     seekBtn.classList.add("fade");
     seekText.classList.add("fade");
     setTimeout(function(){
