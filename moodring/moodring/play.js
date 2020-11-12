@@ -340,6 +340,9 @@ function windowOnLoad() {
     document.getElementById("whatDoYouSeek").innerHTML = "dive deeper, <br> seeker";
     seekBtn.classList.add("fade");
     seekText.classList.add("fade");
+    setTimeout(function(){
+      displayScrollArrow("whatDoYouSeek");
+    }, 500);
     questions3Lvl.style.display = "grid";
     spacer1.style.display = "grid";
     spacer2.style.display = "grid";

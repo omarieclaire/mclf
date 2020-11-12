@@ -28,18 +28,6 @@ window.addEventListener("load", function () {
 });
 
 function moveArrow() {
-  gsap
-    .timeline({
-      scrollTrigger: {
-        trigger: "#beginLvl",
-        start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=20",
-        scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
-        pinSpacing: false,
-        pin: "#arrow",
-      },
-    })
-    .to("#arrow", { y: 350, scale: 0, opacity: 0 });
 }
 
 function pushStartLvlAway() {
@@ -75,6 +63,7 @@ function greenGlowAni() {
         // pin: "#seekBtn"
       },
     })
+    // .to("#arrow", { y: 350, scale: 0, opacity: 0})
     .to("#greenGlow", { y: 450 });
 }
 

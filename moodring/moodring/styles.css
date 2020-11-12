@@ -1365,8 +1365,8 @@ h1 {
   border-radius: 50%;
   border: 3px solid transparent;
   border-top-color:#f46925;
-  -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-    animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+  -webkit-animation: spin 6s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 6s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
 }
 
 #loader:after {
@@ -1379,8 +1379,8 @@ h1 {
   border-radius: 50%;
   border: 3px solid transparent;
   border-top-color: #8462be;
-  -webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-    animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+  -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
 }
 
 #loader-wrapper .loader-section {
@@ -1424,11 +1424,14 @@ h1 {
 
 @-webkit-keyframes spin {
   0%   {
+    opacity: .5;
       -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
       -ms-transform: rotate(0deg);  /* IE 9 */
       transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
   }
   100% {
+    opacity: .8;
+
       -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
       -ms-transform: rotate(360deg);  /* IE 9 */
       transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
@@ -1436,11 +1439,13 @@ h1 {
 }
 @keyframes spin {
   0%   {
+    opacity: .5;
       -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
       -ms-transform: rotate(0deg);  /* IE 9 */
       transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
   }
   100% {
+    opacity: .8;
       -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
       -ms-transform: rotate(360deg);  /* IE 9 */
       transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
