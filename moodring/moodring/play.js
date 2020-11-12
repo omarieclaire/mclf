@@ -3,7 +3,7 @@ function windowOnLoad() {
   setTimeout(function(){
     document.body.classList.add('loaded');
     //$('h1').css('color','#222222');
-}, 3000);
+}, 1000);
 
   ////////////////////////////
   ////////// MUSIC ///////////
@@ -312,7 +312,9 @@ function windowOnLoad() {
     playSound(backgroundMusic);
     // beginBtn.innerHTML = "scroll";
     beginBtn.classList.add("fade");
-    setTimeout(displayScrollArrow("beginLvlRow4"), 6000);
+    setTimeout(function(){
+      displayScrollArrow("beginLvlRow4");
+    }, 1000);
     moveArrow();
     greenGlowAni();
     spacer0Ani();
@@ -496,7 +498,9 @@ function windowOnLoad() {
       playerState[stateKey] = chosenValue;
       // story[stateKey] = chosenValue;
 
-      window.setTimeout(displayScrollArrow(stateKey), 60000);
+      setTimeout(function(){
+        displayScrollArrow(stateKey);
+      }, 3000);
       // console.log(story[stateKey]);
 
       // console.log(JSON.stringify(playerState));
