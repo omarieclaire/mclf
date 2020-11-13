@@ -17,7 +17,6 @@ function init() {
       },
     })
     .to("#beginBtn", { y: 20 })
-    .to("#greenGlow", { y: 350, scale: 1.2 });
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
   // **options: play pause restart reverse resume reset complete reverse none
@@ -33,6 +32,7 @@ function moveArrow() {
 function pushStartLvlAway() {
   gsap.to(".beginLvlRow1", { scale: .5, opacity: 0, duration:10 })
   gsap.to("#beginLvlRow2", { scale: .5, opacity: 0, duration:10});
+  gsap.to("#greenGlow", { y: 90});
 }
 
 function spacer0Ani() {
@@ -55,16 +55,18 @@ function greenGlowAni() {
         // markers: true,
         trigger: "#beginLvl",
         start: "1%", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=800",
-        scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+        endTrigger: "#plantLady",
+        end: "bottom bottom",
+        scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
         toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
         // toggleClass: "glow"
         pinSpacing: false,
-        // pin: "#seekBtn"
+        // from: “center”,
+        // pin: "#greenGlow"
       },
     })
     // .to("#arrow", {hh y: 350, scale: 0, opacity: 0})
-    .to("#greenGlow", { y: 450 });
+    .to("#greenGlow", { y: 450, rotate: 180});
 }
 
 function playerQuestionLvlAni() {
@@ -81,9 +83,26 @@ function playerQuestionLvlAni() {
       },
     })
     .from("#plantLady", { scale: 0.3, autoAlpha: 0, y: -60 })
-    .from("#whatDoYouSeek", { scale: 0.8, autoAlpha: 0 });
-  // .from("#seekText", { scale: 0.7, autoAlpha: .2 })
-  // .from("#seekBtn", { y: innerHeight * 1 })
+    .from("#whatDoYouSeek", { scale: 0.8, autoAlpha: 0 })
+  // .to("#seekText", { y: -60 })
+  // .to("#seekBtn", { y: -60})
+}
+
+function seekBtnAni() {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: "#beginBtn",
+        // pin: true,
+        start: "1px", //animation starts at this point  - 20 px above the top of the trigger element
+        end: "+=550",
+        scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+        pinSpacing: false,
+        // pin: "#seekBtn"
+      },
+    })
+  // .to("#seekText", { y: -60 })
+  .from("#seekBtn", { y: -60})
 }
 
 function questions3LvlAni() {

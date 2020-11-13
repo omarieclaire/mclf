@@ -80,6 +80,7 @@ body {
 .txt {
   margin: 2rem;
   opacity: 0.7;
+  line-height: 1.7rem;
   
 }
 
@@ -156,7 +157,7 @@ div.imageRow>a:last-child {
   }
   .choiceImage {
     align-self: center;
-    max-width: 37vw;
+    max-width: 35vw;
     padding: .3rem;
     margin: 2rem;
   }
@@ -285,7 +286,7 @@ div.imageRow>a:last-child {
   opacity: 0.6;
 }
 
-.styleChoiceImage:hover {
+.styleChoiceImage:hover, .choiceImageHover {
   /* stroke: 1rem solid yellow; */
   /* display: inline-block; */
   opacity: 1;
@@ -434,6 +435,7 @@ div.imageRow>a:last-child {
   font-size: 2rem;
   font-weight: bolder;
   color: rgb(129 103 192 / .64);
+  line-height: 4rem;
 }
 
 .textRow {
@@ -478,35 +480,33 @@ div.imageRow>a:last-child {
 }
 
 #seekText {
-  margin: 0;
+  color: #ff5c56;
   font-size: 1.5rem;
-  color: #8073c7;
   margin: 2rem;
+  width: 12rem;
+  height: 3rem;
+  font: inherit;
+  font-size: inherit;
 }
 
 input {
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 10px;
-  width: 14rem;
-  height: 5rem;
-  padding: 2rem;
-  font-size: 1.2em;
-  text-align: center;
-  background-color: #cfceff;
-  font-family: 'PT Mono', monospace;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #abcb81;
+  color:black;
+  box-sizing: border-box;
+  height: 50px;
+  top: 50%;
+  width: 200px;
+text-align: center;
 }
 
 @media (max-width: 680px), screen and (orientation: portrait) {
 
   #seekText {
-    margin: 0;
     font-size: 1.5rem;
-    color: #8073c7;
-    margin: 2rem;
     width: 12rem;
     height: 3rem;
-
   }
 
   input {
@@ -554,9 +554,9 @@ input {
 #playerQuestionLvl {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 0px;
-  grid-template-areas: ". . ." ". simpleColumn ." ". . .";
+  grid-template-areas: ". . ." ". simpleColumn ." ". arrowDiv ." ". . .";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/1l.png), url(images/walls/1r.png);
@@ -1026,7 +1026,7 @@ h1 {
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
   transition: all 1s ease 0s;
   opacity: .75;
-  border-radius: 2px;
+  border-radius: 7px;
   font-family: 'PT Mono', monospace;
 }
 
@@ -1043,9 +1043,9 @@ h1 {
 }
 
 .btn:hover {
-  color: purple;
+  color:#cf635f;
   /* background: #f6b93b; */
-  border-color: purple;
+  border-color:#cf635f;
   /* padding: 1.5rem; */
   transition: all 1s ease 0s;
   border-radius: 50px;
@@ -1315,11 +1315,11 @@ h1 {
   animation: pulse 8s linear alternate infinite;
 }
 
-@keyframes pulse {
+/* @keyframes pulse {
   to {
     opacity: 1;
   }
-}
+} */
 
 #loader-wrapper {
   position: fixed;
