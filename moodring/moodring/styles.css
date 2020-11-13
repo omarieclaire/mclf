@@ -1044,6 +1044,11 @@ h1 {
   font-family: 'PT Mono', monospace;
 }
 
+.beginBtnToScroll{
+  border: .0px solid black;
+  opacity: 0.7;
+}
+
 @media (max-width: 680px), screen and (orientation: portrait) {
 .btn{
   font-size: .95rem;

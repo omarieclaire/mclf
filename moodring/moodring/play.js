@@ -315,7 +315,8 @@ function windowOnLoad() {
     playSound(backgroundMusic);
     beginBtn.classList.add("fade");
     setTimeout(function(){
-      beginBtn.innerHTML = "scroll";
+      beginBtn.innerHTML = "scroll down";
+      beginBtn.classList.add("beginBtnToScroll");
       beginBtn.classList.remove("fade");
     }, 10000);
     document.getElementById("beginLvlRow2").classList.remove("pulse");
