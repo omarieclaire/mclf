@@ -160,7 +160,7 @@ function windowOnLoad() {
       // "What is at the bottom, #playerAdj# seeker? #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
-      "watchful",
+      // "watchful",
       "thoughful",
       "curious",
       "resolute",
@@ -313,8 +313,11 @@ function windowOnLoad() {
     muteBtn.style.display = "block";
     playSound(beginSound);
     playSound(backgroundMusic);
-    // beginBtn.innerHTML = "scroll";
     beginBtn.classList.add("fade");
+    setTimeout(function(){
+      beginBtn.innerHTML = "scroll";
+      beginBtn.classList.remove("fade");
+    }, 10000);
     document.getElementById("beginLvlRow2").classList.remove("pulse");
     setTimeout(function(){
       displayScrollArrow("beginLvlRow4");
