@@ -294,7 +294,11 @@ div.imageRow>a:last-child {
   animation: pulse 8s ease-in-out 0s alternate infinite;
   /* max-width: 12rem; */
   /* border-radius: 50%; */
+  cursor: -webkit-grabbing; cursor: grab;
+  
 }
+
+
 
 .choiceTxt, .choice {
   align-self: center;

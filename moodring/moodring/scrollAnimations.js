@@ -30,9 +30,10 @@ function moveArrow() {
 }
 
 function pushStartLvlAway() {
-  gsap.to(".beginLvlRow1", { scale: .5, opacity: 0, duration:10 })
-  gsap.to("#beginLvlRow2", { scale: .5, opacity: 0, duration:10});
-  gsap.to("#greenGlow", { y: 90});
+  gsap.timeline()
+  .to(".beginLvlRow1", { scale: .1, opacity: 0, duration:12, y: 100, ease: "slow"},0.2,"Start")
+  .to("#beginLvlRow2", { scale: .1, opacity: 0, duration:12, y: -100, ease: "slow"},0.2,"Start")
+  .to("#greenGlow", { y: 90, duration:7, ease: "slow"}, 2);
 }
 
 function spacer0Ani() {

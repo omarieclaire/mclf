@@ -316,8 +316,8 @@ function windowOnLoad() {
     beginBtn.classList.add("fade");
     document.getElementById("beginLvlRow2").classList.remove("pulse");
     setTimeout(function(){
-      displayScrollArrow("beginLvlRow3");
-    }, 500);
+      displayScrollArrow("beginLvlRow4");
+    }, 1000);
     pushStartLvlAway();
     moveArrow();
     greenGlowAni();
