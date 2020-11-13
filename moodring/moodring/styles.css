@@ -952,6 +952,16 @@ text-align: center;
 
 .infoRow {}
 
+#poemLine1, #poemLine2, #poemLine3 {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin: 1.5rem;
+  opacity: 0.8;
+  /* line-height: 1.7rem; */
+  color: #a9c983;
+
+}
+
 #up {
   /* Level 1 */
 }

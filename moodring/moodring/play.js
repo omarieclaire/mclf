@@ -156,17 +156,16 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      "What is at the bottom for you, #playerAdj# seeker?<br>Are you #playerAdj#?<br>What would it mean to find "
-
+      '<span id="poemLine1">What is at the bottom for you, #playerAdj# seeker?</span><br><span id="poemLine2">Are you #playerVerb#?</span><br><span id="poemLine3">What would it mean to find #itemSought#?</span>'
       // "What is at the bottom, #playerAdj# seeker? #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
       "watchful",
       "thoughful",
       "curious",
-      "unyielding",
+      "resolute",
       "hopeful",
-      "triumphant",
+      "gentle",
       "silent",
     ],
     natureNoun: [
@@ -190,17 +189,18 @@ function windowOnLoad() {
       "tentatively",
     ],
     playerVerb: [
-      "humming",
       "watching",
       "waiting",
       "emerging",
-      "instigating",
       "inviting",
+      "blooming",
+      "limitless",
+      "reaching",
       "awaiting",
+      "eternal",
     ],
     natureDesc: [
       "limitless",
-      "blooming",
       "reaching",
       "inviting",
       "awaiting",
@@ -216,6 +216,7 @@ function windowOnLoad() {
     q2: [],
     // forest Meadow morning Night unfold Cyle chaos calm
     q3: [],
+    itemSought: [],
   };
 
   function generateTracery() {
@@ -226,7 +227,7 @@ function windowOnLoad() {
 
   var playerState = {
     level: "none",
-    question: "peace",
+    itemSought: "peace",
     q1: undefined,
     q2: undefined,
     q3: undefined,
@@ -333,9 +334,12 @@ function windowOnLoad() {
   seekBtn.addEventListener("click", questionBtnHandler); // add an eventlistener to the  button
   function questionBtnHandler(event) {
     if (seekText.value !== ""){
-      playerState.question = seekText.value;
+      playerState.itemSought = seekText.value;
+      story.itemSought.push(seekText.value);
     } else {
-      playerState.question = "peace";
+      playerState.itemSought = "peace";
+      story.itemSought.push("peace");
+
     }
     playSound(beginSound);
     seekBtn.innerHTML = "received";
@@ -349,7 +353,7 @@ function windowOnLoad() {
     spacer1.style.display = "grid";
     spacer2.style.display = "grid";
     choice1Lvl.style.display = "grid";
-    displayPlayerQuestion();
+    // displayPlayerQuestion();
     questions3LvlAni();
     choice1Ani();
     greenSwimmerFollowAni();
@@ -367,6 +371,7 @@ function windowOnLoad() {
     generateTracery();
     playSound(beginSound);
     blueSwimmerFallAni();
+    displayEndPoem();
     findSongBtn.innerHTML = "scroll";
     fadeSound();
   }
@@ -375,7 +380,7 @@ function windowOnLoad() {
     var x = document.getElementsByClassName("playerQuestion");
     var i;
     for (i = 0; i < x.length; i++) {
-      x[i].innerHTML = playerState.question;
+      x[i].innerHTML = playerState.itemSought;
     }
   }
 

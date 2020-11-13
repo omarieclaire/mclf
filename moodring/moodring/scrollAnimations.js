@@ -205,7 +205,28 @@ function blueSwimmerFallAni() {
       },
     })
     .to("#blueSwimmer", { y: 350, rotate: -180 })
-    .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -30 });
+    .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -10 });
+}
+
+function displayEndPoem() {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: "#spacer6",
+        // pin: true,
+        start: "top top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+        // endtrigger: "#plantLady",
+        // end: "bottom bottom",
+        end: "+=350",
+        scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+        pinSpacing: false,
+        // pin: "#seekBtn"
+      },
+    })
+    .from("#poemLine1", { y:400, autoAlpha: 0, scale: 0.8 })
+    .from("#poemLine2", { y:400, autoAlpha: 0, scale: 0.8 })
+    .from("#poemLine3", { y:400, autoAlpha: 0, scale: 0.8 });
+
 }
 
 function doNothing() {
