@@ -15,7 +15,7 @@ function windowOnLoad() {
       title: "Attack Zone X",
       file: "AttackZoneX.mp3",
     },
-    echoes: {
+    calm: {
       artist: "Deidre",
       title: "Numb",
       file: "Numb.mp3",
@@ -156,7 +156,7 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      "What is at the bottom for you, #playerAdj# seeker? Are you #playerAdj#? Are you #natureDesc#? What would it mean to find "
+      "What is at the bottom for you, #playerAdj# seeker?<br>Are you #playerAdj#?<br>What would it mean to find "
 
       // "What is at the bottom, #playerAdj# seeker? #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
@@ -214,7 +214,7 @@ function windowOnLoad() {
 
     //dark joy out inner
     q2: [],
-    // forest Meadow morning Night unfold Cyle chaos echoes
+    // forest Meadow morning Night unfold Cyle chaos calm
     q3: [],
   };
 
@@ -383,7 +383,7 @@ function windowOnLoad() {
   const darkLink = document.getElementById("darkLink");
   const joyLink = document.getElementById("joyLink");
   const chaosLink = document.getElementById("chaosLink");
-  const echoesLink = document.getElementById("echoesLink");
+  const calmLink = document.getElementById("calmLink");
   const forestLink = document.getElementById("forestLink");
   const meadowLink = document.getElementById("meadowLink");
   const outLink = document.getElementById("outLink");
@@ -398,7 +398,7 @@ function windowOnLoad() {
   const darkImg = document.getElementById("darkImg");
   const joyImg = document.getElementById("joyImg");
   const chaosImg = document.getElementById("chaosImg");
-  const echoesImg = document.getElementById("echoesImg");
+  const calmImg = document.getElementById("calmImg");
   const forestImg = document.getElementById("forestImg");
   const meadowImg = document.getElementById("meadowImg");
   const outImg = document.getElementById("outImg");
@@ -556,20 +556,20 @@ function windowOnLoad() {
     "click",
     makeLinkHandler(
       findSongLvl,
-      "chaosOrechoes",
+      "chaosOrCalm",
       "chaos",
-      "echoes",
+      "calm",
       3,
       spacer5,
       blueSwimmerAni
     )
   );
-  echoesLink.addEventListener(
+  calmLink.addEventListener(
     "click",
     makeLinkHandler(
       findSongLvl,
-      "chaosOrEchoes",
-      "echoes",
+      "chaosOrCalm",
+      "calm",
       "chaos",
       3,
       spacer5,
@@ -687,18 +687,18 @@ function windowOnLoad() {
       findSongLvl,
       "chaosOrEchoes",
       "chaos",
-      "echoes",
+      "calm",
       3,
       spacer5,
       blueSwimmerAni
     )
   );
-  echoesImg.addEventListener(
+  calmImg.addEventListener(
     "click",
     makeLinkHandler(
       findSongLvl,
-      "chaosOrEchoes",
-      "echoes",
+      "chaosOrCalm",
+      "calm",
       "chaos",
       3,
       spacer5,

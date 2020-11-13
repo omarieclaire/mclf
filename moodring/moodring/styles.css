@@ -276,7 +276,7 @@ div.imageRow>a:last-child {
 }
 
 #plantLady, #blueSwimmer, #greenSwimmer, #finalPlantLady, #finalGreenSwimmer {
-  animation: colourShift 6s ease-in-out 0s alternate infinite;
+  animation: colourShift 3s ease-in-out 0s alternate infinite;
 }
 
 .choiceImage {
@@ -459,8 +459,8 @@ div.imageRow>a:last-child {
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
-  padding: 1rem;
-  margin: 2rem;
+  /* padding: 1rem; */
+  /* margin: 1rem; */
 }
 
 .arrowRow {
@@ -568,7 +568,7 @@ input {
 .choiceLvl {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr .5fr 1fr ;
+  grid-template-rows: .5fr 1fr 1fr 1fr .5fr .5fr ;
   grid-gap: 2px;
   grid-template-areas: ". . . " ". questionRow ." ". textRow ." ". imageRow ." ". arrowRow ." ". . . ";
   height: 100vh;
@@ -968,7 +968,7 @@ input {
   /* Level 3 */
 }
 
-#echoes {
+#calm {
   /* Level 3 */
 }
 
