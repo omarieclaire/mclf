@@ -284,7 +284,6 @@ function windowOnLoad() {
   muteBtn.style.display = "none";
 
   function displayScrollArrow(parent){
-    console.log("ugh");
     const arrowDiv = document.createElement("div"); 
     arrowDiv.classList.add("arrow");
     arrowDiv.id ="arrow";
@@ -320,7 +319,7 @@ function windowOnLoad() {
     // }, 10000);
     document.getElementById("beginLvlRow2").classList.remove("pulse");
     setTimeout(function(){
-      displayScrollArrow("beginLvlRow4");
+      displayScrollArrow("beginLvlRow3");
     }, 1000);
     pushStartLvlAway();
     moveArrow();
