@@ -1,9 +1,254 @@
 function windowOnLoad() {
-
-  setTimeout(function(){
-    document.body.classList.add('loaded');
+  setTimeout(function () {
+    document.body.classList.add("loaded");
     //$('h1').css('color','#222222');
-}, 1000);
+  }, 1000);
+
+  ////////////////////////////
+  ////// scrolltrigger ///////
+  ////////////////////////////
+
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.defaults({
+    toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry onLeaveBack
+    // markers: false
+  });
+
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: "#beginLvl",
+      start: "bottom top", //animation starts at this point  - 20 px above the top of the trigger element
+      // end: "+=500",
+      // scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+      // pinSpacing: false,
+      // pin: "#greenGlow",
+    },
+  });
+  // .to("#beginBtn", { y: 200 })
+  // toggleActions:"restart pause reverse reset"
+  // **options: play pause restart reverse resume reset complete reverse none
+
+  function moveArrow() {}
+
+  function pushStartLvlAway() {
+    var tl = gsap.timeline({ repeat: 0, repeatDelay: 1 });
+
+    tl.to(
+      ".beginLvlRow1",
+      { scale: 0.4, opacity: 0, duration: 12, y: 200, ease: "slow" },
+      0.4,
+      "Start"
+    );
+    tl.to(
+      "#beginLvlRow2",
+      { scale: 0.4, opacity: 0, duration: 12, y: 100, ease: "slow" },
+      0.4,
+      "Start"
+    );
+    tl.to("#greenGlow", { y: 90, duration: 7, ease: "slow" }, "+=0.5");
+  }
+
+  function spacer0Ani() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#beginLvl",
+          start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          end: "+=300", //"bottom center" means "when the bottom of the endTrigger hits the center of the scroller". "center 100px" means "when the center of the endTrigger hits 80% down from the top of the scroller"
+          scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+        },
+      })
+      .from("#spacer0", { opacity: 0 });
+  }
+  function greenGlowAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          // markers: true,
+          trigger: "#beginLvl",
+          immediateRender: false,
+          start: "1%", //animation starts at this point  - 20 px above the top of the trigger element
+          endTrigger: "#plantLady",
+          end: "bottom bottom",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
+          // toggleClass: "glow"
+          pinSpacing: false,
+          // from: “center”,
+          // pin: "#greenGlow"
+        },
+      })
+      // .to("#arrow", {hh y: 350, scale: 0, opacity: 0})
+      .to("#greenGlow", { y: innerHeight * 0.7, rotate: 180 });
+  }
+
+  function playerQuestionLvlAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#beginBtn",
+          // pin: true,
+          start: "1px", //animation starts at this point  - 20 px above the top of the trigger element
+          end: "+=550",
+          scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      .from("#plantLady", { scale: 0.3, autoAlpha: 0, y: innerHeight * -0.1 })
+      .from("#whatDoYouSeek", { scale: 0.8, autoAlpha: 0 });
+    // .to("#seekText", { y: -60 })
+    // .to("#seekBtn", { y: -60})
+  }
+
+  function seekBtnAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#beginBtn",
+          // pin: true,
+          start: "1px", //animation starts at this point  - 20 px above the top of the trigger element
+          end: "+=550",
+          scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      // .to("#seekText", { y: -60 })
+      .from("#seekBtn", { y: -60 });
+  }
+
+  function questions3LvlAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#spacer1",
+          start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
+          end: "+=150",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
+      .from("#greenSwimmer", {
+        y: innerHeight * 0.275,
+        scale: 0.2,
+        autoAlpha: 0,
+        rotate: 90,
+      })
+      .from("#questionstxt2", { scale: 0.2, autoAlpha: 0 });
+  }
+
+  function greenSwimmerFollowAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#questions3Lvl",
+          start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
+          end: "+=850",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
+      .to("#greenSwimmer", { y: 650, rotate: -90 });
+  }
+
+  function choice1Ani() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#spacer2",
+          start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          end: "+=200", // bottom of the trigger element hits the top of the viewport
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+        },
+      })
+      .from(".choiceTxt", { y: 100, scale: 0.8 });
+    // .from("#upImg", { y: 70, scale: 0.6 })
+    // .from("#downImg", { y: 70, scale: 0.6 })
+  }
+
+  function choiceAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".choiceLvl",
+          start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          end: "+=200", // bottom of the trigger element hits the top of the viewport
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+        },
+      })
+      .from(".choiceTxt", { y: 100, scale: 0.8 });
+    // .from(".imageRow", { y: 70, scale: 0.6 })
+  }
+
+  function blueSwimmerAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#spacer5",
+          // pin: true,
+          start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          // endtrigger: "#plantLady",
+          end: "top bottom",
+          // end: "+=50",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      .from("#questionstxt", { scale: 0.4, autoAlpha: 0 })
+      .from("#blueSwimmer", { y: 100, scale: 0.4, autoAlpha: 0, rotate: 90 });
+  }
+
+  function blueSwimmerFallAni() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#spacer5",
+          // pin: true,
+          start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          // endtrigger: "#plantLady",
+          // end: "bottom bottom",
+          end: "+=950",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      .to("#blueSwimmer", { y: 350, rotate: -180 })
+      .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -10 });
+  }
+
+  function displayEndPoem() {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#spacer6",
+          // pin: true,
+          start: "top top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          // endtrigger: "#plantLady",
+          // end: "bottom bottom",
+          end: "+=350",
+          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          pinSpacing: false,
+          // pin: "#seekBtn"
+        },
+      })
+      .from("#poemLine1", { y: 400, autoAlpha: 0, scale: 0.8 })
+      .from("#poemLine2", { y: 400, autoAlpha: 0, scale: 0.8 })
+      .from("#poemLine3", { y: 400, autoAlpha: 0, scale: 0.8 });
+  }
+
+  function doNothing() {
+    //nothing at all
+  }
 
   ////////////////////////////
   ////////// MUSIC ///////////
@@ -155,7 +400,7 @@ function windowOnLoad() {
 
   var story = {
     sentence: [
-      '<span id="poemLine1">What is at the bottom for you, #playerAdj# seeker?</span><br><span id="poemLine2">Are you #playerVerb#?</span><br><span id="poemLine3">What would it mean to find #itemSought#?</span>'
+      '<span id="poemLine1">What is at the bottom for you, #playerAdj# seeker?</span><br><span id="poemLine2">Are you #playerVerb#?</span><br><span id="poemLine3">What would it mean to find #itemSought#?</span>',
       // "What is at the bottom, #playerAdj# seeker? #playerDesc.capitalize# #playerVerb# in #natureDesc# #natureNoun.s#. Reaching #q2#, forever #q1#wards. "
     ],
     playerAdj: [
@@ -283,17 +528,17 @@ function windowOnLoad() {
 
   muteBtn.style.display = "none";
 
-  function displayScrollArrow(parent){
-    const arrowDiv = document.createElement("div"); 
+  function displayScrollArrow(parent) {
+    const arrowDiv = document.createElement("div");
     arrowDiv.classList.add("arrow");
-    arrowDiv.id ="arrow";
+    arrowDiv.id = "arrow";
     const currentDiv = document.getElementById(parent);
     console.log(parent);
     currentDiv.appendChild(arrowDiv);
 
     const containerDiv = document.createElement("div");
     containerDiv.classList.add("container");
-    for(var i =0;i < 3;i++) {
+    for (var i = 0; i < 3; i++) {
       const chevron = document.createElement("div");
       chevron.classList.add("chevron");
       containerDiv.appendChild(chevron);
@@ -305,7 +550,7 @@ function windowOnLoad() {
   beginBtn.addEventListener("click", beginBtnHandler); // add an eventlistener to the enter button
   function beginBtnHandler(event) {
     // set the begin to visible when you click on the enter button
-    window.location.hash='question'; // transport down the page
+    window.location.hash = "question"; // transport down the page
     playerQuestionLvl.style.display = "grid";
     spacer0.style.display = "grid";
     muteBtn.style.display = "block";
@@ -318,9 +563,9 @@ function windowOnLoad() {
     //   beginBtn.classList.remove("fade");
     // }, 10000);
     document.getElementById("beginLvlRow2").classList.remove("pulse");
-    setTimeout(function(){
-      displayScrollArrow("beginLvlRow3");
-    }, 1000);
+    // setTimeout(function(){
+    //   displayScrollArrow("beginLvlRow3");
+    // }, 1000);
     pushStartLvlAway();
     moveArrow();
     greenGlowAni();
@@ -335,20 +580,20 @@ function windowOnLoad() {
 
   seekBtn.addEventListener("click", questionBtnHandler); // add an eventlistener to the  button
   function questionBtnHandler(event) {
-    if (seekText.value !== ""){
+    if (seekText.value !== "") {
       playerState.itemSought = seekText.value;
       story.itemSought.push(seekText.value);
     } else {
       playerState.itemSought = "peace";
       story.itemSought.push("peace");
-
     }
     playSound(beginSound);
     seekBtn.innerHTML = "received";
-    document.getElementById("whatDoYouSeek").innerHTML = "dive deeper,<br>seeker";
+    document.getElementById("whatDoYouSeek").innerHTML =
+      "dive deeper,<br>seeker";
     seekBtn.classList.add("fade");
     seekText.classList.add("fade");
-    setTimeout(function(){
+    setTimeout(function () {
       displayScrollArrow("arrowDiv");
     }, 1000);
     questions3Lvl.style.display = "grid";
@@ -378,13 +623,41 @@ function windowOnLoad() {
     fadeSound();
   }
 
-  function displayPlayerQuestion() {
-    var x = document.getElementsByClassName("playerQuestion");
-    var i;
-    for (i = 0; i < x.length; i++) {
-      x[i].innerHTML = playerState.itemSought;
-    }
+  // function displayPlayerQuestion() {
+  //   var x = document.getElementsByClassName("playerQuestion");
+  //   var i;
+  //   for (i = 0; i < x.length; i++) {
+  //     x[i].innerHTML = playerState.itemSought;
+  //   }
+  // }
+
+  // gsap.utils.toArray("choiceImage").forEach(choiceImage => {
+  //   let hover = gsap.to(choiceImage, {scale: 3, color: "blue", duration: 1.5, paused: true, ease: "power1.inOut"});
+  //   h1.addEventListener("mouseenter", () => hover.play());
+  //   h1.addEventListener("mouseleave", () => hover.reverse());
+  // });
+
+  // function hoverOnChoiceImage() {
+  
+  var ci = document.getElementsByClassName("choiceImage");
+  var counter;
+  for (counter = 0; counter < ci.length; counter++) {
+    const hover = gsap.to(ci[counter], {
+      scale: 1.3,
+      duration: 10,
+      paused: true,
+      ease: "Expo.easeOut",
+    });
+    ci[counter].addEventListener("mouseover", () => hover.play());
+    ci[counter].addEventListener("mouseleave", () => hover.reverse());
+      // function (event) {
+      //   event.target.style.color = "purple";
+      //   console.log("In");
+      // },
+    //   false
+    // );
   }
+  // }
 
   // get all the links
   const upLink = document.getElementById("upLink");
@@ -490,7 +763,6 @@ function windowOnLoad() {
       chosenImageDOM.classList.add("choiceImageHover");
       chosenImageDOM.classList.add("glow");
 
-
       // console.log(stateKey);
 
       const chosenTextId = stateKey + "Text";
@@ -520,7 +792,7 @@ function windowOnLoad() {
       playerState[stateKey] = chosenValue;
       // story[stateKey] = chosenValue;
 
-      setTimeout(function(){
+      setTimeout(function () {
         displayScrollArrow(stateKey);
       }, 3000);
       // console.log(story[stateKey]);
@@ -811,4 +1083,3 @@ function windowOnLoad() {
 }
 
 window.addEventListener("load", windowOnLoad);
-

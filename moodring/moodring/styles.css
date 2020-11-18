@@ -81,6 +81,7 @@ body {
   margin: 2rem;
   opacity: 0.7;
   line-height: 1.7rem;
+  color: #f0ffdb;
 }
 
 a:link, a:visited {
@@ -276,15 +277,11 @@ div.imageRow>a:last-child {
   opacity: 0.6;
 }
 
-.styleChoiceImage:hover, .choiceImageHover {
-  /* stroke: 1rem solid yellow; */
-  /* display: inline-block; */
+/* .styleChoiceImage:hover, .choiceImageHover {
   opacity: 1;
   filter: hue-rotate(90deg);
   animation: pulse 8s ease-in-out 0s alternate infinite;
-  /* max-width: 12rem; */
-  /* border-radius: 50%; */
-}
+} */
 
 .cursorHand:hover {
   cursor: -webkit-grabbing;
@@ -499,15 +496,11 @@ input {
     height: 3rem;
   }
   input {
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 10px;
     width: 10rem;
     height: 8rem;
     padding: 1rem;
     font-size: 1.2em;
     text-align: center;
-    background-color: #cfceff;
   }
 }
 
@@ -1021,7 +1014,7 @@ h1 {
   padding: 7px 20px;
   margin: 4px 2px;
   /* cursor: url('images/char/plantLady.png') 12 18, auto; */
-  transition: all 1s ease 0s;
+  transition: all 1s ease 2s;
   opacity: .75;
   border-radius: 7px;
   font-family: 'PT Mono', monospace;
@@ -1421,7 +1414,6 @@ h1 {
   0% {
     opacity: .5;
     /* transform: scale(1); */
-
     -webkit-transform: rotate(0deg);
     /* Chrome, Opera 15+, Safari 3.1+ */
     -ms-transform: rotate(0deg);
@@ -1432,7 +1424,6 @@ h1 {
   100% {
     opacity: .8;
     /* transform: scale(1.5); */
-
     -webkit-transform: rotate(360deg);
     /* Chrome, Opera 15+, Safari 3.1+ */
     -ms-transform: rotate(360deg);
