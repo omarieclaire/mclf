@@ -67,7 +67,6 @@ function windowOnLoad() {
   }
 
   var muted = false;
-
   var muteBtn = document.getElementById("muteBtn"); // get the button
   muteBtn.addEventListener("click", muteBtnHandler); // add an eventlistener to the enter button
   function muteBtnHandler(event) {
@@ -307,18 +306,18 @@ function windowOnLoad() {
   beginBtn.addEventListener("click", beginBtnHandler); // add an eventlistener to the enter button
   function beginBtnHandler(event) {
     // set the begin to visible when you click on the enter button
-    // window.location.hash='question'; // transport down the page
+    window.location.hash='question'; // transport down the page
     playerQuestionLvl.style.display = "grid";
     spacer0.style.display = "grid";
     muteBtn.style.display = "block";
     playSound(beginSound);
     playSound(backgroundMusic);
     beginBtn.classList.add("fade");
-    setTimeout(function(){
-      beginBtn.innerHTML = "scroll down";
-      beginBtn.classList.add("beginBtnToScroll");
-      beginBtn.classList.remove("fade");
-    }, 10000);
+    // setTimeout(function(){
+    //   beginBtn.innerHTML = "scroll down";
+    //   beginBtn.classList.add("beginBtnToScroll");
+    //   beginBtn.classList.remove("fade");
+    // }, 10000);
     document.getElementById("beginLvlRow2").classList.remove("pulse");
     setTimeout(function(){
       displayScrollArrow("beginLvlRow4");
@@ -487,6 +486,8 @@ function windowOnLoad() {
       const chosenImageId = chosenValue + "Img";
       const chosenImageDOM = document.getElementById(chosenImageId);
       chosenImageDOM.classList.remove("pulse");
+      chosenImageDOM.classList.remove("cursorHand");
+
       chosenImageDOM.classList.add("choiceImageHover");
       chosenImageDOM.classList.add("glow");
 
@@ -505,6 +506,7 @@ function windowOnLoad() {
       const unchosenImageId = unchosenValue + "Img";
       const unchosenImageDOM = document.getElementById(unchosenImageId);
       unchosenImageDOM.classList.remove("styleChoiceImage");
+      unchosenImageDOM.classList.remove("cursorHand");
       unchosenImageDOM.classList.add("fade");
 
       // const unchosenTextId = unchosenValue+"Link";

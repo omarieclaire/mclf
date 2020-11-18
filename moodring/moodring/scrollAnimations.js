@@ -9,14 +9,14 @@ function init() {
     .timeline({
       scrollTrigger: {
         trigger: "#beginLvl",
-        start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
-        end: "+=500",
+        start: "bottom top", //animation starts at this point  - 20 px above the top of the trigger element
+        // end: "+=500",
         // scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
-        pinSpacing: false,
+        // pinSpacing: false,
         // pin: "#greenGlow",
       },
     })
-    .to("#beginBtn", { y: 20 })
+    // .to("#beginBtn", { y: 200 })
   // **elements: onenter onleave onEnterBack onLeaveBack
   // toggleActions:"restart pause reverse reset"
   // **options: play pause restart reverse resume reset complete reverse none
@@ -30,10 +30,11 @@ function moveArrow() {
 }
 
 function pushStartLvlAway() {
-  gsap.timeline()
-  .to(".beginLvlRow1", { scale: .1, opacity: 0, duration:12, y: 100, ease: "slow"},0.2,"Start")
-  .to("#beginLvlRow2", { scale: .1, opacity: 0, duration:12, y: -100, ease: "slow"},0.2,"Start")
-  .to("#greenGlow", { y: 90, duration:7, ease: "slow"}, 2);
+  var tl = gsap.timeline({repeat: 0, repeatDelay: 1});
+
+  tl.to(".beginLvlRow1", { scale: .4, opacity: 0, duration:12, y: 200, ease: "slow"},0.4,"Start")
+  tl.to("#beginLvlRow2", { scale: .4, opacity: 0, duration:12, y: 100, ease: "slow"},0.4,"Start")
+  tl.to("#greenGlow", { y: 90, duration:7, ease: "slow"}, "+=0.5");
 }
 
 function spacer0Ani() {
@@ -42,7 +43,7 @@ function spacer0Ani() {
       scrollTrigger: {
         trigger: "#beginLvl",
         start: "center center", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
-        end: "+=300", // bottom of the trigger element hits the top of the viewport
+        end: "+=300", //"bottom center" means "when the bottom of the endTrigger hits the center of the scroller". "center 100px" means "when the center of the endTrigger hits 80% down from the top of the scroller"
         scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
         pinSpacing: false,
       },
@@ -64,10 +65,11 @@ function greenGlowAni() {
         pinSpacing: false,
         // from: “center”,
         // pin: "#greenGlow"
+
       },
     })
     // .to("#arrow", {hh y: 350, scale: 0, opacity: 0})
-    .to("#greenGlow", { y: 450, rotate: 180});
+    .to("#greenGlow", { y: innerHeight * .7, rotate: 180});
 }
 
 function playerQuestionLvlAni() {
@@ -83,7 +85,7 @@ function playerQuestionLvlAni() {
         // pin: "#seekBtn"
       },
     })
-    .from("#plantLady", { scale: 0.3, autoAlpha: 0, y: -60 })
+    .from("#plantLady", { scale: 0.3, autoAlpha: 0, y: innerHeight * -0.1 })
     .from("#whatDoYouSeek", { scale: 0.8, autoAlpha: 0 })
   // .to("#seekText", { y: -60 })
   // .to("#seekBtn", { y: -60})
@@ -119,7 +121,7 @@ function questions3LvlAni() {
       },
     })
     // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
-    .from("#greenSwimmer", { y: 200, scale: 0.2, autoAlpha: 0, rotate: 90 })
+    .from("#greenSwimmer", { y: innerHeight * 0.275, scale: 0.2, autoAlpha: 0, rotate: 90 })
     .from("#questionstxt2", { scale: 0.2, autoAlpha: 0 });
 }
 
