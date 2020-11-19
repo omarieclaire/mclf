@@ -63,7 +63,7 @@ body {
 
 @media (max-width: 680px), screen and (orientation: portrait) {
   p {
-    /* font-size:.85rem; */
+    font-size: 1rem;
   }
 }
 
@@ -439,8 +439,8 @@ z-index: -10;
 
 #questionstxt1, #questionstxt2 {
   animation: fadeOut 3s ease-in-out 0s alternate infinite;
-  font-size: 1.1em;
-  line-height: 1.5em;
+  /* font-size: 1.1em; */
+  /* line-height: 1.5em; */
 }
 
 .number {
@@ -450,6 +450,14 @@ z-index: -10;
   color: rgb(129 103 192 / .64);
   line-height: 4rem;
 }
+
+@media (max-width: 680px), screen and (orientation: portrait) {
+.number {
+  letter-spacing: .55rem;
+  font-size: 1.5rem;
+}
+}
+
 
 .textRow {
   grid-area: textRow;

@@ -563,6 +563,9 @@ function windowOnLoad() {
     playSound(beginSound);
     playSound(backgroundMusic);
     beginBtn.classList.add("fade");
+    setTimeout(function () {
+      displayScrollArrow("beginBtnArrowDiv");
+    }, 1000);
     // setTimeout(function(){
     //   beginBtn.innerHTML = "scroll down";
     //   beginBtn.classList.add("beginBtnToScroll");
@@ -600,7 +603,7 @@ function windowOnLoad() {
     seekBtn.classList.add("fade");
     seekText.classList.add("fade");
     setTimeout(function () {
-      displayScrollArrow("arrowDiv");
+      displayScrollArrow("seekBtnArrowDiv");
     }, 1000);
     questions3Lvl.style.display = "grid";
     spacer1.style.display = "grid";
@@ -627,7 +630,13 @@ function windowOnLoad() {
     playSound(beginSound);
     blueSwimmerFallAni();
     displayEndPoem();
-    findSongBtn.innerHTML = "scroll";
+
+    findSongBtn.classList.add("fade");
+    setTimeout(function () {
+      displayScrollArrow("findSongBtnArrowDiv");
+    }, 1000);
+
+    // findSongBtn.innerHTML = "scroll";
     fadeSound();
   }
 
