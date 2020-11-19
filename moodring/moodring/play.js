@@ -31,7 +31,7 @@ function windowOnLoad() {
   function moveArrow() {}
 
   function pushStartLvlAway() {
-    var tl = gsap.timeline({ repeat: 0, repeatDelay: 1 });
+    let tl = gsap.timeline({ repeat: 0, repeatDelay: 1 });
 
     tl.to(
       ".beginLvlRow1",
@@ -232,12 +232,12 @@ function windowOnLoad() {
     gsap
       .timeline({
         scrollTrigger: {
-          trigger: "#spacer6",
+          trigger: "#findSongLvl",
           // pin: true,
           start: "top top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
           // endtrigger: "#plantLady",
           // end: "bottom bottom",
-          end: "+=350",
+          end: "+=650",
           scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
           pinSpacing: false,
           // pin: "#seekBtn"
@@ -246,6 +246,11 @@ function windowOnLoad() {
       .from("#poemLine1", { y: 400, autoAlpha: 0, scale: 0.8 })
       .from("#poemLine2", { y: 400, autoAlpha: 0, scale: 0.8 })
       .from("#poemLine3", { y: 400, autoAlpha: 0, scale: 0.8 });
+  }
+
+function changeFriendAni(staticFriend, hoverFriend) {
+    gsap.to(staticFriend, { opacity: 0, duration: 1, ease: "none" });
+    gsap.to(hoverFriend, { opacity: 1, duration: 1, ease: "none" });
   }
 
   function doNothing() {
@@ -496,7 +501,7 @@ function windowOnLoad() {
   const poemLvl = document.getElementById("poemLvl");
   const lastLvl = document.getElementById("lastLvl");
   const bottomLvl = document.getElementById("bottomLvl");
-  // const creditsLvl = document.getElementById("creditsLvl");
+  const creditsLvl = document.getElementById("creditsLvl");
 
   const spacer0 = document.getElementById("spacer0");
   const spacer1 = document.getElementById("spacer1");
@@ -521,7 +526,7 @@ function windowOnLoad() {
   poemLvl.style.display = "none";
   lastLvl.style.display = "none";
   bottomLvl.style.display = "none";
-  // creditsLvl.style.display = "none";
+  creditsLvl.style.display = "none";
 
   spacer0.style.display = "none";
   spacer1.style.display = "none";
@@ -565,7 +570,7 @@ function windowOnLoad() {
     beginBtn.classList.add("fade");
     setTimeout(function () {
       displayScrollArrow("beginBtnArrowDiv");
-    }, 1000);
+    }, 6000);
     // setTimeout(function(){
     //   beginBtn.innerHTML = "scroll down";
     //   beginBtn.classList.add("beginBtnToScroll");
@@ -616,28 +621,82 @@ function windowOnLoad() {
   }
 
   var findSongBtn = document.getElementById("findSongBtn");
-
   findSongBtn.addEventListener("click", findSongBtnHandler);
   function findSongBtnHandler(event) {
     spacer6.style.display = "grid";
     poemLvl.style.display = "grid";
-
     lastLvl.style.display = "grid";
     spacer7.style.display = "grid";
     bottomLvl.style.display = "grid";
-    // creditsLvl.style.display = "grid";
     generateTracery();
     playSound(beginSound);
     blueSwimmerFallAni();
     displayEndPoem();
-
     findSongBtn.classList.add("fade");
     setTimeout(function () {
       displayScrollArrow("findSongBtnArrowDiv");
     }, 1000);
-
     // findSongBtn.innerHTML = "scroll";
     fadeSound();
+  }
+
+// is this an easier way to handle it?
+// https://codepen.io/GreenSock/pen/gPgVbN?editors=001
+  // ci[counter].addEventListener("mouseover", () => hover.play());
+  // ci[counter].addEventListener("mouseleave", () => hover.reverse());
+
+  var learnMoreBtn = document.getElementById("learnMoreBtn");
+  var seatedLadyL = document.getElementById("seatedLadyL");
+  var seatedLadyLHvr = document.getElementById("seatedLadyLHvr");
+  learnMoreBtn.addEventListener("mouseover", learnMoreBtnHover);
+  learnMoreBtn.addEventListener("mouseleave", learnMoreBtnLeave);
+  learnMoreBtn.addEventListener("click", learnMoreBtnHandler);
+
+  function learnMoreBtnHover(event) {
+    changeFriendAni(seatedLadyL, seatedLadyLHvr);
+  }
+
+  function learnMoreBtnLeave(event) {
+    changeFriendAni(seatedLadyLHvr, seatedLadyL);
+  }
+
+  function learnMoreBtnHandler(event) {
+    creditsLvl.style.display = "grid";
+    playSound(beginSound);
+  }
+
+  var startOverBtn = document.getElementById("startOverBtn");
+  var seatedLadyC = document.getElementById("seatedLadyC");
+  var seatedLadyCHvr = document.getElementById("seatedLadyCHvr");
+  startOverBtn.addEventListener("mouseover", startOverBtnHover);
+  startOverBtn.addEventListener("mouseleave", startOverBtnLeave);
+  startOverBtn.addEventListener("click", startOverBtnHandler);
+
+  function startOverBtnHover(event) {
+    changeFriendAni(seatedLadyC, seatedLadyCHvr);
+  }
+  function startOverBtnLeave(event) {
+    changeFriendAni(seatedLadyCHvr, seatedLadyC);
+  }
+  function startOverBtnHandler(event) {
+    playSound(beginSound);
+  }
+
+  var buyBtn = document.getElementById("buyBtn");
+  var seatedLadyR = document.getElementById("seatedLadyR");
+  var seatedLadyRHvr = document.getElementById("seatedLadyRHvr");
+  buyBtn.addEventListener("mouseover", buyBtnHover);
+  buyBtn.addEventListener("mouseleave", buyBtnLeave);
+  buyBtn.addEventListener("click", buyBtnHandler);
+
+  function buyBtnHover(event) {
+    changeFriendAni(seatedLadyR, seatedLadyRHvr);
+  }
+  function buyBtnLeave(event) {
+    changeFriendAni(seatedLadyRHvr, seatedLadyR);
+  }
+  function buyBtnHandler(event) {
+    playSound(beginSound);
   }
 
   // function displayPlayerQuestion() {
@@ -655,7 +714,7 @@ function windowOnLoad() {
   // });
 
   // function hoverOnChoiceImage() {
-  
+
   var ci = document.getElementsByClassName("choiceImage");
   var counter;
   for (counter = 0; counter < ci.length; counter++) {
@@ -667,14 +726,7 @@ function windowOnLoad() {
     });
     ci[counter].addEventListener("mouseover", () => hover.play());
     ci[counter].addEventListener("mouseleave", () => hover.reverse());
-      // function (event) {
-      //   event.target.style.color = "purple";
-      //   console.log("In");
-      // },
-    //   false
-    // );
   }
-  // }
 
   // get all the links
   const upLink = document.getElementById("upLink");
