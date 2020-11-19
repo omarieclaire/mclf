@@ -491,9 +491,10 @@ function windowOnLoad() {
   const outLvl = document.getElementById("outLvl");
   const innerLvl = document.getElementById("innerLvl");
   const findSongLvl = document.getElementById("findSongLvl");
+  const poemLvl = document.getElementById("poemLvl");
   const lastLvl = document.getElementById("lastLvl");
   const bottomLvl = document.getElementById("bottomLvl");
-  const creditsLvl = document.getElementById("creditsLvl");
+  // const creditsLvl = document.getElementById("creditsLvl");
 
   const spacer0 = document.getElementById("spacer0");
   const spacer1 = document.getElementById("spacer1");
@@ -515,9 +516,10 @@ function windowOnLoad() {
   outLvl.style.display = "none";
   innerLvl.style.display = "none";
   findSongLvl.style.display = "none";
+  poemLvl.style.display = "none";
   lastLvl.style.display = "none";
   bottomLvl.style.display = "none";
-  creditsLvl.style.display = "none";
+  // creditsLvl.style.display = "none";
 
   spacer0.style.display = "none";
   spacer1.style.display = "none";
@@ -613,10 +615,12 @@ function windowOnLoad() {
   findSongBtn.addEventListener("click", findSongBtnHandler);
   function findSongBtnHandler(event) {
     spacer6.style.display = "grid";
+    poemLvl.style.display = "grid";
+
     lastLvl.style.display = "grid";
     spacer7.style.display = "grid";
     bottomLvl.style.display = "grid";
-    creditsLvl.style.display = "grid";
+    // creditsLvl.style.display = "grid";
     generateTracery();
     playSound(beginSound);
     blueSwimmerFallAni();

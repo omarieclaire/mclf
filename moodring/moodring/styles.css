@@ -198,8 +198,20 @@ div.imageRow>a:last-child {
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
-  z-index: -10;
-  opacity: .5;
+  /* z-index: -10; */
+  /* opacity: .5; */
+}
+
+#finalBtnRow {
+  grid-area: finalBtnRow;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+  z-index: 10;
+  /* opacity: .5; */
 }
 
 #glowRow {
@@ -215,19 +227,21 @@ div.imageRow>a:last-child {
   opacity: .5;
 }
 
-#wavesRow {
-  grid-area: wavesRow;
+/* #rockBottomRow {
+  grid-area: rockBottomRow; */
   /* grid-row: 1/4; */
   /* flex-direction: column; */
   /* align-items: center; */
   /* align-content: center; */
-  max-width: 100vw;
+  /* max-width: 100vw;
   z-index: -10;
-}
+  padding: 0;
+} */
 
-#waves {
+/* #rockBottom {
   max-width: 100vw;
-}
+  padding: 0;
+} */
 
 #musicCreditRow {
   grid-area: musicCreditRow;
@@ -259,11 +273,21 @@ div.imageRow>a:last-child {
   margin-top: -1rem;
 }
 
+#tower {
+  max-width: 80vw;
+  margin-top: -40rem;
+}
+
 @media (max-width: 680px), screen and (orientation: portrait) {
   #greenGlow, #greenGlow2 {
     /* z-index: 5; */
     max-width: 50vw;
     /* bottom: 50px; */
+  }
+
+  #tower {
+    max-width: 100vw;
+    margin-top: -30rem;
   }
 }
 
@@ -441,7 +465,12 @@ z-index: -10;
 #musicRow {
   grid-area: musicRow;
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+  align-self: flex-end;
 }
 
 .imageRow {
@@ -606,12 +635,12 @@ input {
   background-repeat: no-repeat, no-repeat;
 }
 
-#lastLvl {
+#poemLvl {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 3fr 1fr 1fr 1fr;
-  grid-gap: 2px;
-  grid-template-areas: ". . . . " ". displayQuestionRow displayQuestionRow ." "musicRow musicRow musicRow musicRow" ". musicCreditRow musicCreditRow .";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 0px;
+  grid-template-areas: ". . ." ". displayQuestionRow ." ". . .";
   height: 100vh;
   width: 100vw;
   background: url(images/walls/7l.png), url(images/walls/7r.png);
@@ -620,19 +649,33 @@ input {
   background-repeat: no-repeat, no-repeat;
 }
 
+#lastLvl {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-gap: 1px;
+  grid-template-areas: ". musicRow .";
+  height: 140vh;
+  width: 100vw;
+  /* background: url(images/walls/7l.png), url(images/walls/7r.png); */
+  /* background-position: top 0 left 0, top 0 right 0; */
+  /* background-size: auto 100%, auto 100%; */
+  /* background-repeat: no-repeat, no-repeat; */
+}
+
 #bottomLvl {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   grid-gap: 2px;
-  grid-template-areas: ". finalImageRow finalImageRow ." ". friendsRow friendsRow ." ". glowRow glowRow ." "wavesRow wavesRow wavesRow wavesRow";
+  grid-template-areas: ". finalBtnRow finalBtnRow finalBtnRow ." ". friendsRow friendsRow friendsRow .";
   height: 50vh;
   width: 100vw;
   margin: 0;
-  /* background: url(images/walls/7l.png), url(images/walls/7r.png); */
-  /* background-position: top 0 left 0, top 0 right 0; */
-  background-size: auto 100%, auto 100%;
-  /* background-repeat: no-repeat, no-repeat; */
+  background: url(images/lastLvl/rockBottom.png);
+  background-position: bottom 0 left 0;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
 }
 
 #creditsLvl {
@@ -713,7 +756,7 @@ input {
 }
 
 #spacer7 {
-  height: 20vh;
+  height: 50vh;
   width: 100vw;
   /* background: url(images/walls/6lsp.png), url(images/walls/6rsp.png); */
   /* background-position: top 0 left 0, top 0 right 0; */
@@ -820,7 +863,8 @@ input {
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
-  #lastLvl {
+
+  #poemLvl {
     height: 100vh;
     width: 100vw;
     background: url(images/walls/7lm.png), url(images/walls/7rm.png);
@@ -828,13 +872,22 @@ input {
     background-size: auto 100%, auto 100%;
     background-repeat: no-repeat, no-repeat;
   }
+
+  #lastLvl {
+    height: 100vh;
+    width: 100vw;
+    /* background: url(images/walls/7lm.png), url(images/walls/7rm.png);
+    background-position: top 0 left 0, top 0 right 0;
+    background-size: auto 100%, auto 100%;
+    background-repeat: no-repeat, no-repeat; */
+  }
   #bottomLvl {
     height: 30vh;
     width: 100vw;
-    /* background: url(images/walls/7lm.png), url(images/walls/7rm.png); */
-    /* background-position: top 0 left 0, top 0 right 0; */
-    /* background-size: auto 100%, auto 100%; */
-    /* background-repeat: no-repeat, no-repeat; */
+    background: url(imageslastLvl/rockBottom.png);
+    background-position: bottom 0 left 0;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
   }
   #creditsLvl {
     height: 100vh;
@@ -918,11 +971,6 @@ input {
   font-size: 1rem;
   line-height: 1.3rem;
   letter-spacing: .03rem;
-  -khtml-user-select: none;
-  -o-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 .songRow {}
@@ -1032,8 +1080,8 @@ h1 {
 }
 
 .finalBtn {
-  background-color: black;
-  padding: 1rem;
+  /* background-color: black;
+  padding: 1rem; */
 }
 
 .btn:hover {
@@ -1084,28 +1132,22 @@ h1 {
 }
 
 .creditsBtns {
-  background-color: #78a5e8;
-  background: 78a5e8;
-  color: black;
-  /* text-transform: uppercase; */
-  text-decoration: none;
+  width: 10rem;
+  /* text-decoration: none;
   font-size: 1rem;
   text-align: center;
   border: .5px solid black;
   padding: 7px 20px;
   margin: 4px 2px;
-  /* cursor: url('images/char/plantLady.png') 12 18, auto; */
   transition: all 1s ease 0s;
-  opacity: .75;
+  opacity: .75;  */
 }
 
 .creditsBtn:hover {
-  color: purple;
-  /* background: #f6b93b; */
+  /* color: purple;
   border-color: purple;
-  /* padding: 1.5rem; */
   transition: all 1s ease 0s;
-  border-radius: 50px;
+  border-radius: 50px; */
 }
 
 .creditsBtn:active {
@@ -1159,7 +1201,7 @@ h1 {
   width: 15rem;
   height: 15rem;
   margin: 1.5em auto;
-  border: 5px solid #fe827b;
+  border: 0px solid #fe827b;
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
@@ -1170,10 +1212,10 @@ h1 {
 @media (max-width: 680px), screen and (orientation: portrait) {
   .musicBtnContainer {
     background-image: url(images/gem-play.png);
-    width: 9rem;
-    height: 9rem;
+    width: 13rem;
+    height: 13rem;
     margin: 1.5em auto;
-    border: 5px solid #fe827b;
+    border: 0px solid #fe827b;
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
@@ -1181,10 +1223,10 @@ h1 {
   }
   .musicBtnContainerPlaying {
     background-image: url(images/gem-play.gif);
-    width: 9rem;
-    height: 9rem;
+    width: 13rem;
+    height: 13rem;
     margin: 1.5em auto;
-    border: 5px solid #fe827b;
+    border: 0px solid #fe827b;
     opacity: .8;
     /* border: 5px dotted #00e8c4 */
     border-radius: 50%;
@@ -1197,7 +1239,7 @@ h1 {
   width: 24%;
   height: 24%;
   margin: 38% auto;
-  border: 5px solid #fe827b;
+  border: 0px solid #fe827b;
   border-radius: 50%;
   background-color: rgba(0, 0, 0, 0.5);
   background-image: url(images/play-pause-button.png);
