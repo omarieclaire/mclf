@@ -314,7 +314,7 @@ function changeFriendAni(staticFriend, hoverFriend) {
   genSound.load();
 
   function playSound(audio) {
-    audio.volume = 0.07;
+    // audio.volume = 0.07;
     audio.play();
   }
 
@@ -375,7 +375,7 @@ function changeFriendAni(staticFriend, hoverFriend) {
             backgroundMusic.pause();
 
             test = false;
-            audioPlayer.volume = 0.07;
+            // audioPlayer.volume = 0.07;
             audioPlayer.play();
           } else {
             musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
