@@ -147,14 +147,16 @@ function windowOnLoad() {
         scrollTrigger: {
           trigger: "#questions3Lvl",
           start: "top top", //animation starts at this point  - 20 px above the top of the trigger element
-          end: "+=850",
+          // end: "+=950",
+          endTrigger: "#spacer2",
+          end: "top top",
           scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
           pinSpacing: false,
           // pin: "#seekBtn"
         },
       })
       // .from("#questionstxt1", { y: innerHeight, scale: 0.2, autoAlpha: 0 })
-      .to("#greenSwimmer", { y: 650, rotate: -90 });
+      .to("#greenSwimmer", { y: 750, rotate: -90 });
   }
 
   function choice1Ani() {
@@ -757,10 +759,10 @@ function windowOnLoad() {
 
       const chosenImageId = chosenValue + "Img";
       const chosenImageDOM = document.getElementById(chosenImageId);
-      chosenImageDOM.classList.remove("pulse");
+      // chosenImageDOM.classList.remove("pulse");
       chosenImageDOM.classList.remove("cursorHand");
 
-      chosenImageDOM.classList.add("choiceImageHover");
+      // chosenImageDOM.classList.add("choiceImageHover");
       chosenImageDOM.classList.add("glow");
 
       // console.log(stateKey);
