@@ -1183,7 +1183,7 @@ h1 {
   width: 15rem;
   height: 15rem;
   margin: 1.5em auto;
-  border: 5px solid #fe827b;
+  border: 0px solid #fe827b;
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
@@ -1205,7 +1205,7 @@ h1 {
   opacity: .8;
   /* border: 5px dotted #00e8c4 */
   border-radius: 50%;
-  background-image: url(images/gem-play.gif);
+  background-image: url(images/gem-play.png);
   background-size: cover;
 }
 

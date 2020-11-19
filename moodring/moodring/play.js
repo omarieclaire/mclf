@@ -365,6 +365,7 @@ function windowOnLoad() {
         function () {
           if (test === true) {
             musicBtnContainer1.classList.add("musicBtnContainerPlaying");
+            musicBtnContainer1.classList.add("spin");
             btn.classList.add("pause");
             backgroundMusic.pause();
 
@@ -373,6 +374,7 @@ function windowOnLoad() {
             audioPlayer.play();
           } else {
             musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
+            musicBtnContainer1.classList.remove("spin");
 
             changeSVG();
             audioPlayer.pause();
