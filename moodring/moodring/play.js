@@ -200,7 +200,7 @@ function windowOnLoad() {
           // endtrigger: "#plantLady",
           end: "top bottom",
           // end: "+=50",
-          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
           pinSpacing: false,
           // pin: "#seekBtn"
         },
@@ -218,34 +218,41 @@ function windowOnLoad() {
           start: "center top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
           // endtrigger: "#plantLady",
           // end: "bottom bottom",
-          end: "+=950",
-          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          // end: "+=950",
+          endTrigger: "#displayQuestionRow",
+          end: "top center",
+          scrub: 2, // locks animation to scrollbar - can use 1, 2, 3 etc
+
           pinSpacing: false,
           // pin: "#seekBtn"
         },
       })
-      .to("#blueSwimmer", { y: 350, rotate: -180 })
-      .to("#blueSwimmer", { y: 350, autoAlpha: 0, rotate: -10 });
+      .to("#blueSwimmer", { y: 750, rotate: -360, scale: .75})
+      // .to("#blueSwimmer", { y: 750, rotate: -90 });
   }
 
   function displayEndPoem() {
     gsap
       .timeline({
         scrollTrigger: {
-          trigger: "#findSongLvl",
+          trigger: "#spacer6",
           // pin: true,
-          start: "top top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+          start: "top bottom", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
           // endtrigger: "#plantLady",
           // end: "bottom bottom",
-          end: "+=650",
-          scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
+          // endTrigger: "poemLvl",
+          // end: "bottom top",
+          end: "+=900",
+          scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
           pinSpacing: false,
           // pin: "#seekBtn"
         },
       })
-      .from("#poemLine1", { y: 400, autoAlpha: 0, scale: 0.8 })
-      .from("#poemLine2", { y: 400, autoAlpha: 0, scale: 0.8 })
-      .from("#poemLine3", { y: 400, autoAlpha: 0, scale: 0.8 });
+      .from("#poemLine1", { y: 100, autoAlpha: 0, scale: 0.8 })
+      .from("#poemLine2", { y: 100, autoAlpha: 0, scale: 0.8 })
+      .from("#poemLine3", { y: 100, autoAlpha: 0, scale: 0.8 })
+      .from("#finalplantLady", { y: 200, autoAlpha: 0, scale: 0.8 });
+
   }
 
 function changeFriendAni(staticFriend, hoverFriend) {
@@ -306,6 +313,8 @@ function changeFriendAni(staticFriend, hoverFriend) {
 
   const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
   backgroundMusic.load();
+      playSound(backgroundMusic);
+
   backgroundMusic.loop = true;
 
   const beginSound = new Audio("./sounds/beginSound.mp3");
@@ -566,7 +575,7 @@ function changeFriendAni(staticFriend, hoverFriend) {
     spacer0.style.display = "grid";
     muteBtn.style.display = "block";
     playSound(beginSound);
-    playSound(backgroundMusic);
+    // playSound(backgroundMusic);
     beginBtn.classList.add("fade");
     setTimeout(function () {
       displayScrollArrow("beginBtnArrowDiv");
