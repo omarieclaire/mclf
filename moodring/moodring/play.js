@@ -31,22 +31,36 @@ function windowOnLoad() {
   function moveArrow() {}
 
   function pushStartLvlAway() {
-    let tl = gsap.timeline({ repeat: 0, repeatDelay: 1 });
-
-    tl.to(
-      ".beginLvlRow1",
-      { scale: 0.4, opacity: 0, duration: 12, y: 200, ease: "slow" },
-      0.4,
-      "Start"
-    );
-    tl.to(
-      "#beginLvlRow2",
-      { scale: 0.4, opacity: 0, duration: 12, y: 100, ease: "slow" },
-      0.4,
-      "Start"
-    );
-    tl.to("#greenGlow", { y: 90, duration: 7, ease: "slow" }, "+=0.5");
+    return gsap
+      .timeline({ repeat: 0, repeatDelay: 1, paused: true })
+      .to(
+        ".beginLvlRow1",
+        { scale: 0.4, opacity: 0, duration: 12, y: 200, ease: "slow" },
+        0.4,
+        "Start"
+      )
+      .to(
+        "#beginLvlRow2",
+        { scale: 0.4, opacity: 0, duration: 12, y: 100, ease: "slow" },
+        0.4,
+        "Start"
+      )
+      .to("#greenGlow", { y: 90, duration: 7, ease: "slow" }, "+=0.5");
   }
+  const pushStartLvlAwayAni = pushStartLvlAway();
+
+  function bringBack() {
+    gsap.timeline({ scrollTrigger: {
+        trigger: "#beginLvl",
+        start: "bottom top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
+        //end: "-=300", //"bottom center" means "when the bottom of the endTrigger hits the center of the scroller". "center 100px" means "when the center of the endTrigger hits 80% down from the top of the scroller"
+        scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
+        pinSpacing: false,
+        onLeaveBack: function() { pushStartLvlAwayAni.reverse(); }
+      }
+    });
+  }
+  bringBack();
 
   function spacer0Ani() {
     gsap
@@ -585,7 +599,7 @@ function windowOnLoad() {
     // setTimeout(function(){
     //   displayScrollArrow("beginLvlRow3");
     // }, 1000);
-    pushStartLvlAway();
+    pushStartLvlAwayAni.play();
     moveArrow();
     greenGlowAni();
     spacer0Ani();
