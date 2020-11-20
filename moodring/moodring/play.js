@@ -359,9 +359,10 @@ function windowOnLoad() {
   }
 
   function fadeSound() {
+    console.log("facde");
     // console.log(backgroundMusic.volume);
     if (backgroundMusic.volume > 0.01) {
-      backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.01);
+      backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.07);
       setTimeout(fadeSound, 800);
     } else {
       backgroundMusic.pause();
@@ -394,7 +395,7 @@ function windowOnLoad() {
             backgroundMusic.pause();
 
             test = false;
-            // audioPlayer.volume = 0.07;
+            audioPlayer.volume = 0.9;
             audioPlayer.play();
           } else {
             musicBtnContainer1.classList.remove("musicBtnContainerPlaying");
