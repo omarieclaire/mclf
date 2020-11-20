@@ -692,27 +692,28 @@ function windowOnLoad() {
   var startOverBtn = document.getElementById("startOverBtn");
   var seatedLadyC = document.getElementById("seatedLadyC");
   var seatedLadyCHvr = document.getElementById("seatedLadyCHvr");
-  var buyBtn = document.getElementById("buyBtn");
+  var creditsBtn = document.getElementById("creditsBtn");
   var seatedLadyR = document.getElementById("seatedLadyR");
   var seatedLadyRHvr = document.getElementById("seatedLadyRHvr");
 
   setupLady(learnMoreBtn, seatedLadyL, seatedLadyLHvr);
   setupLady(startOverBtn, seatedLadyC, seatedLadyCHvr);
-  setupLady(buyBtn, seatedLadyR, seatedLadyRHvr);
+  setupLady(creditsBtn, seatedLadyR, seatedLadyRHvr);
 
   function learnMoreBtnHandler(event) {
-    creditsLvl.style.display = "grid";
     playSound(beginSound);
   }
   function startOverBtnHandler(event) {
     playSound(beginSound);
   }
-  function buyBtnHandler(event) {
+  function creditsBtnHandler(event) {
     playSound(beginSound);
+    creditsLvl.style.display = "grid";
+
   }
   learnMoreBtn.addEventListener("click", learnMoreBtnHandler);
   startOverBtn.addEventListener("click", startOverBtnHandler);
-  buyBtn.addEventListener("click", buyBtnHandler);
+  creditsBtn.addEventListener("click", creditsBtnHandler);
 
 
   // function displayPlayerQuestion() {
