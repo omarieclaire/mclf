@@ -611,8 +611,8 @@ function windowOnLoad() {
   const seekText = document.getElementById("seekText");
   const seekBtn = document.getElementById("seekBtn");
 
-  seekBtn.addEventListener("click", questionBtnHandler); // add an eventlistener to the  button
-  function questionBtnHandler(event) {
+  seekBtn.addEventListener("click", seekBtnHandler); // add an eventlistener to the  button
+  function seekBtnHandler(event) {
     if (seekText.value !== "") {
       playerState.itemSought = seekText.value;
       story.itemSought.push(seekText.value);
@@ -621,7 +621,7 @@ function windowOnLoad() {
       story.itemSought.push("peace");
     }
     playSound(beginSound);
-    seekBtn.innerHTML = "received";
+    // seekBtn.innerHTML = "received";
     document.getElementById("whatDoYouSeek").innerHTML =
       "dive deeper,<br>seeker";
     seekBtn.classList.add("fade");
@@ -641,7 +641,9 @@ function windowOnLoad() {
 
   var findSongBtn = document.getElementById("findSongBtn");
   findSongBtn.addEventListener("click", findSongBtnHandler);
-  function findSongBtnHandler(event) {
+  function findSongBtnHandler(event) {    
+    fadeSound();
+
     spacer6.style.display = "grid";
     poemLvl.style.display = "grid";
     lastLvl.style.display = "grid";
@@ -656,7 +658,6 @@ function windowOnLoad() {
       displayScrollArrow("findSongBtnArrowDiv");
     }, 1000);
     // findSongBtn.innerHTML = "scroll";
-    fadeSound();
   }
 
 // is this an easier way to handle it?

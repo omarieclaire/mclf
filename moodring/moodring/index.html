@@ -51,8 +51,9 @@
       <img id="plantLady" draggable="false" class="image" loading="lazy" alt="plantLady"
         src="images/lastLvl/plantLady.gif">
 
-      <p id="whatDoYouSeek" class="txt">What do you<br>seek?</p>
-      <form onSubmit="return false" autocomplete="off">
+        <p id="whatDoYouSeek" class="txt">What do you<br>seek?</p>
+        <!-- <form onSubmit="return false" autocomplete="off" onkeydown="return event.key != 'Enter';"> -->
+        <form autocomplete="off" onkeydown="return event.key != 'Enter';">
         <input name="text" class="choice" maxlength="11" id="seekText" placeholder=""></input>
       </form>
       <div id="seekBtnArrowDiv"></div>
