@@ -61,6 +61,7 @@ function windowOnLoad() {
       })
       .from("#spacer0", { opacity: 0 });
   }
+
   function greenGlowAni() {
     gsap
       .timeline({
@@ -253,11 +254,6 @@ function windowOnLoad() {
       .from("#poemLine3", { y: 100, autoAlpha: 0, scale: 0.8 })
       .from("#finalplantLady", { y: 200, autoAlpha: 0, scale: 0.8 });
 
-  }
-
-function changeFriendAni(staticFriend, hoverFriend) {
-    gsap.to(staticFriend, { opacity: 0, duration: 1, ease: "none" });
-    gsap.to(hoverFriend, { opacity: 1, duration: 1, ease: "none" });
   }
 
   function doNothing() {
@@ -654,59 +650,56 @@ function changeFriendAni(staticFriend, hoverFriend) {
   // ci[counter].addEventListener("mouseover", () => hover.play());
   // ci[counter].addEventListener("mouseleave", () => hover.reverse());
 
+  function setupLady(btn, lady, ladyHvr) {
+    const ladyAni = gsap.to(lady, { 
+      opacity: 0, duration: 1, ease: "none", paused:true
+    });
+    const ladyHvrAni = gsap.to(ladyHvr, { 
+      opacity: 1, duration: 1, ease: "none", paused: true
+    });
+
+    function btnHvr(event) {
+      ladyAni.play();
+      ladyHvrAni.play();
+    }
+
+    function btnLeave(event) {
+      ladyAni.reverse();
+      ladyHvrAni.reverse();
+    }
+
+    btn.addEventListener("mouseover", btnHvr);
+    btn.addEventListener("mouseleave", btnLeave);
+  }
+
   var learnMoreBtn = document.getElementById("learnMoreBtn");
   var seatedLadyL = document.getElementById("seatedLadyL");
   var seatedLadyLHvr = document.getElementById("seatedLadyLHvr");
-  learnMoreBtn.addEventListener("mouseover", learnMoreBtnHover);
-  learnMoreBtn.addEventListener("mouseleave", learnMoreBtnLeave);
-  learnMoreBtn.addEventListener("click", learnMoreBtnHandler);
+  var startOverBtn = document.getElementById("startOverBtn");
+  var seatedLadyC = document.getElementById("seatedLadyC");
+  var seatedLadyCHvr = document.getElementById("seatedLadyCHvr");
+  var buyBtn = document.getElementById("buyBtn");
+  var seatedLadyR = document.getElementById("seatedLadyR");
+  var seatedLadyRHvr = document.getElementById("seatedLadyRHvr");
 
-  function learnMoreBtnHover(event) {
-    changeFriendAni(seatedLadyL, seatedLadyLHvr);
-  }
-
-  function learnMoreBtnLeave(event) {
-    changeFriendAni(seatedLadyLHvr, seatedLadyL);
-  }
+  setupLady(learnMoreBtn, seatedLadyL, seatedLadyLHvr);
+  setupLady(startOverBtn, seatedLadyC, seatedLadyCHvr);
+  setupLady(buyBtn, seatedLadyR, seatedLadyRHvr);
 
   function learnMoreBtnHandler(event) {
     creditsLvl.style.display = "grid";
     playSound(beginSound);
   }
-
-  var startOverBtn = document.getElementById("startOverBtn");
-  var seatedLadyC = document.getElementById("seatedLadyC");
-  var seatedLadyCHvr = document.getElementById("seatedLadyCHvr");
-  startOverBtn.addEventListener("mouseover", startOverBtnHover);
-  startOverBtn.addEventListener("mouseleave", startOverBtnLeave);
-  startOverBtn.addEventListener("click", startOverBtnHandler);
-
-  function startOverBtnHover(event) {
-    changeFriendAni(seatedLadyC, seatedLadyCHvr);
-  }
-  function startOverBtnLeave(event) {
-    changeFriendAni(seatedLadyCHvr, seatedLadyC);
-  }
   function startOverBtnHandler(event) {
     playSound(beginSound);
-  }
-
-  var buyBtn = document.getElementById("buyBtn");
-  var seatedLadyR = document.getElementById("seatedLadyR");
-  var seatedLadyRHvr = document.getElementById("seatedLadyRHvr");
-  buyBtn.addEventListener("mouseover", buyBtnHover);
-  buyBtn.addEventListener("mouseleave", buyBtnLeave);
-  buyBtn.addEventListener("click", buyBtnHandler);
-
-  function buyBtnHover(event) {
-    changeFriendAni(seatedLadyR, seatedLadyRHvr);
-  }
-  function buyBtnLeave(event) {
-    changeFriendAni(seatedLadyRHvr, seatedLadyR);
   }
   function buyBtnHandler(event) {
     playSound(beginSound);
   }
+  learnMoreBtn.addEventListener("click", learnMoreBtnHandler);
+  startOverBtn.addEventListener("click", startOverBtnHandler);
+  buyBtn.addEventListener("click", buyBtnHandler);
+
 
   // function displayPlayerQuestion() {
   //   var x = document.getElementsByClassName("playerQuestion");
