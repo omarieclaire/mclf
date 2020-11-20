@@ -934,6 +934,7 @@ input {
   #bottomLvl {
     height: 30vh;
     width: 100vw;
+    margin-top: 5rem;
     background: url(images/lastLvl/rockBottom.png);
     background-position: bottom 0 left 0;
     background-size: auto 100%;
