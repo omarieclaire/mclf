@@ -934,7 +934,7 @@ input {
   #bottomLvl {
     height: 30vh;
     width: 100vw;
-    background: url(imageslastLvl/rockBottom.png);
+    background: url(images/lastLvl/rockBottom.png);
     background-position: bottom 0 left 0;
     background-size: auto 100%;
     background-repeat: no-repeat;
@@ -1272,7 +1272,7 @@ h1 {
     background-size: cover;
   }
   .musicBtnContainerPlaying {
-    background-image: url(images/gem-play.gif);
+    background-image: url(images/gem-play.png);
     width: 13rem;
     height: 13rem;
     margin: 1.5em auto;
