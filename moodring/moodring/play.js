@@ -909,6 +909,19 @@ function windowOnLoad() {
     return linkHandler;
   }
 
+  function singleHover(me, them) {
+    me.addEventListener("mouseenter", function() {
+      them.classList.add("highlight");
+    })
+    me.addEventListener("mouseleave", function() {
+      them.classList.remove("highlight");
+    })
+  }
+  function mutualHover(img, txt) {
+    singleHover(img, txt);
+    singleHover(txt, img);
+  }
+
   function setupLvlHandlers(
     chosenDest,
     unChosenDest,
@@ -965,6 +978,9 @@ function windowOnLoad() {
     unChosenImg.addEventListener("click", function () {
       chosenImg.removeEventListener("click", chosenHandler);
     });
+
+    mutualHover(chosenLink, chosenImg);
+    mutualHover(unChosenLink, unChosenImg);
   }
 
   //creates and runs a function makeLinkHandler which returns a function

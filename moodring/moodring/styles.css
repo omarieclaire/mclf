@@ -1398,6 +1398,10 @@ h1 {
   animation: pulse 8s linear alternate infinite;
 }
 
+.highlight {
+  filter: hue-rotate(220deg);
+}
+
 /* @keyframes pulse {
   to {
     opacity: 1;
