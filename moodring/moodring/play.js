@@ -1,6 +1,7 @@
 function windowOnLoad() {
   setTimeout(function () {
     document.body.classList.add("loaded");
+    document.getElementById("hidden-main").classList.remove("hidden");
     //$('h1').css('color','#222222');
   }, 1000);
 
@@ -97,7 +98,7 @@ function windowOnLoad() {
         },
       })
       // .to("#arrow", {hh y: 350, scale: 0, opacity: 0})
-      .to("#greenGlow", { y: innerHeight * 0.7, rotate: 180 });
+      .to("#greenGlow", { y: innerHeight * 0.7, rotate: 180, ease: "back(1)" });
   }
 
   function playerQuestionLvlAni() {
