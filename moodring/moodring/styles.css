@@ -924,8 +924,8 @@ h1 {
 }
 
 .btn:active {
-  color: green;
-  transform: translateY(4px);
+  /* color: green; */
+  /* transform: translateY(4px); */
 }
 
 #muteBtn {
@@ -938,9 +938,7 @@ h1 {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  /* background: #78a4e7; */
   border: .5px solid black;
-  /* visibility: hidden; */
 }
 
 #moreInfoBtn {
@@ -963,14 +961,6 @@ h1 {
 
 .creditsBtns {
   width: 10rem;
-  /* text-decoration: none;
-  font-size: 1rem;
-  text-align: center;
-  border: .5px solid black;
-  padding: 7px 20px;
-  margin: 4px 2px;
-  transition: all 1s ease 0s;
-  opacity: .75;  */
 }
 
 .creditsBtn:hover {
@@ -985,14 +975,6 @@ h1 {
   /* transform: translateY(4px); */
 }
 
-.content {
-  /* margin: 0 auto;
-    padding: 50px;
-    width: 50%;
-    color: white; */
-  /* background: #aaa; */
-}
-
 .visible, .invisible {
   opacity: 0.0;
   transition: opacity 0.5s ease;
@@ -1002,7 +984,7 @@ h1 {
   opacity: 1.0;
 }
 
-/*************** Button stuff ****************************/
+/*************** Music Button stuff ****************************/
 
 .musiccolumn {
   display: flex;
@@ -1180,12 +1162,6 @@ h1 {
 .highlight {
   filter: hue-rotate(220deg);
 }
-
-/* @keyframes pulse {
-  to {
-    opacity: 1;
-  }
-} */
 
 #loader-wrapper {
   position: fixed;
