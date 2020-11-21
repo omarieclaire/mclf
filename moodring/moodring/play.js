@@ -50,14 +50,17 @@ function windowOnLoad() {
   const pushStartLvlAwayAni = pushStartLvlAway();
 
   function bringBack() {
-    gsap.timeline({ scrollTrigger: {
+    gsap.timeline({
+      scrollTrigger: {
         trigger: "#beginLvl",
         start: "bottom top", //first value relates to the trigger element, the second to the scroller itsef (the viewport)
         //end: "-=300", //"bottom center" means "when the bottom of the endTrigger hits the center of the scroller". "center 100px" means "when the center of the endTrigger hits 80% down from the top of the scroller"
         scrub: 3, // locks animation to scrollbar - can use 1, 2, 3 etc
         pinSpacing: false,
-        onLeaveBack: function() { pushStartLvlAwayAni.reverse(); }
-      }
+        onLeaveBack: function () {
+          pushStartLvlAwayAni.reverse();
+        },
+      },
     });
   }
   bringBack();
@@ -242,8 +245,8 @@ function windowOnLoad() {
           // pin: "#seekBtn"
         },
       })
-      .to("#blueSwimmer", { y: 750, rotate: -360, scale: .75})
-      // .to("#blueSwimmer", { y: 750, rotate: -90 });
+      .to("#blueSwimmer", { y: 750, rotate: -360, scale: 0.75 });
+    // .to("#blueSwimmer", { y: 750, rotate: -90 });
   }
 
   function displayEndPoem() {
@@ -267,7 +270,6 @@ function windowOnLoad() {
       .from("#poemLine2", { y: 100, autoAlpha: 0, scale: 0.8 })
       .from("#poemLine3", { y: 100, autoAlpha: 0, scale: 0.8 })
       .from("#finalplantLady", { y: 200, autoAlpha: 0, scale: 0.8 });
-
   }
 
   function doNothing() {
@@ -323,7 +325,7 @@ function windowOnLoad() {
 
   const backgroundMusic = new Audio("./sounds/backgroundMusic.mp3");
   backgroundMusic.load();
-      playSound(backgroundMusic);
+  playSound(backgroundMusic);
 
   backgroundMusic.loop = true;
 
@@ -642,7 +644,7 @@ function windowOnLoad() {
 
   var findSongBtn = document.getElementById("findSongBtn");
   findSongBtn.addEventListener("click", findSongBtnHandler);
-  function findSongBtnHandler(event) {    
+  function findSongBtnHandler(event) {
     fadeSound();
 
     spacer6.style.display = "grid";
@@ -661,17 +663,23 @@ function windowOnLoad() {
     // findSongBtn.innerHTML = "scroll";
   }
 
-// is this an easier way to handle it?
-// https://codepen.io/GreenSock/pen/gPgVbN?editors=001
+  // is this an easier way to handle it?
+  // https://codepen.io/GreenSock/pen/gPgVbN?editors=001
   // ci[counter].addEventListener("mouseover", () => hover.play());
   // ci[counter].addEventListener("mouseleave", () => hover.reverse());
 
   function setupLady(btn, lady, ladyHvr) {
-    const ladyAni = gsap.to(lady, { 
-      opacity: 0, duration: 1, ease: "none", paused:true
+    const ladyAni = gsap.to(lady, {
+      opacity: 0,
+      duration: 1,
+      ease: "none",
+      paused: true,
     });
-    const ladyHvrAni = gsap.to(ladyHvr, { 
-      opacity: 1, duration: 1, ease: "none", paused: true
+    const ladyHvrAni = gsap.to(ladyHvr, {
+      opacity: 1,
+      duration: 1,
+      ease: "none",
+      paused: true,
     });
 
     function btnHvr(event) {
@@ -711,12 +719,10 @@ function windowOnLoad() {
   function creditsBtnHandler(event) {
     playSound(beginSound);
     creditsLvl.style.display = "grid";
-
   }
   learnMoreBtn.addEventListener("click", learnMoreBtnHandler);
   startOverBtn.addEventListener("click", startOverBtnHandler);
   creditsBtn.addEventListener("click", creditsBtnHandler);
-
 
   // function displayPlayerQuestion() {
   //   var x = document.getElementsByClassName("playerQuestion");
@@ -840,19 +846,12 @@ function windowOnLoad() {
   ) {
     function linkHandler(event) {
       event.preventDefault();
-
       playSound(genSound);
-
       const chosenImageId = chosenValue + "Img";
       const chosenImageDOM = document.getElementById(chosenImageId);
-      // chosenImageDOM.classList.remove("pulse");
       chosenImageDOM.classList.remove("cursorHand");
-
-      // chosenImageDOM.classList.add("choiceImageHover");
       chosenImageDOM.classList.add("glow");
-
       // console.log(stateKey);
-
       const chosenTextId = stateKey + "Text";
       const textDom = document.getElementById(chosenTextId);
 
@@ -867,6 +866,7 @@ function windowOnLoad() {
       unchosenImageDOM.classList.remove("styleChoiceImage");
       unchosenImageDOM.classList.remove("cursorHand");
       unchosenImageDOM.classList.add("fade");
+      // unchosenImageDOM.removeEventListener("click" );
 
       // const unchosenTextId = unchosenValue+"Link";
       // const unchosenTextDOM = document.getElementById(unchosenTextId);
@@ -909,264 +909,162 @@ function windowOnLoad() {
     return linkHandler;
   }
 
-  //creates and runs a function makeLinkHandler which returns a function
-  // link,stateKey,chosenValue,unchosenValue,level,spacer,scrollTriggerFun
-  upLink.addEventListener(
-    "click",
-    makeLinkHandler(upLvl, "upOrDown", "up", "down", 1, spacer3, choiceAni)
-  );
-  downLink.addEventListener(
-    "click",
-    makeLinkHandler(downLvl, "upOrDown", "down", "up", 1, spacer3, choiceAni)
-  );
-  darkLink.addEventListener(
-    "click",
-    makeLinkHandler(darkLvl, "darkOrJoy", "dark", "joy", 2, spacer4, choiceAni)
-  );
-  joyLink.addEventListener(
-    "click",
-    makeLinkHandler(joyLvl, "darkOrJoy", "joy", "dark", 2, spacer4, choiceAni)
-  );
-  chaosLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "chaosOrCalm",
-      "chaos",
-      "calm",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  calmLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "chaosOrCalm",
-      "calm",
-      "chaos",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  forestLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "forestOrMeadow",
-      "forest",
-      "meadow",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  meadowLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "forestOrMeadow",
-      "meadow",
-      "forest",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  outLink.addEventListener(
-    "click",
-    makeLinkHandler(outLvl, "outOrInner", "out", "inner", 2, spacer4, choiceAni)
-  );
-  innerLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      innerLvl,
-      "outOrInner",
-      "inner",
-      "out",
-      2,
-      spacer4,
-      choiceAni
-    )
-  );
-  morningLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "morningOrNight",
-      "morning",
-      "night",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  nightLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "morningOrNight",
-      "night",
-      "morning",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  unfoldLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "unfoldOrCycle",
-      "unfold",
-      "cycle",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  cycleLink.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "unfoldOrCycle",
-      "cycle",
-      "unfold",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
+  function setupLvlHandlers(
+    chosenDest,
+    unChosenDest,
+    stateKey,
+    chosenValue,
+    unChosenValue,
+    level,
+    spacer,
+    scrollTriggerFun,
+    chosenLink,
+    chosenImg,
+    unChosenLink,
+    unChosenImg
+  ) {
+    const chosenHandler = makeLinkHandler(
+      chosenDest,
+      stateKey,
+      chosenValue,
+      unChosenValue,
+      level,
+      spacer,
+      scrollTriggerFun
+    );
+    const unChosenHandler = makeLinkHandler(
+      unChosenDest,
+      stateKey,
+      unChosenValue,
+      chosenValue,
+      level,
+      spacer,
+      scrollTriggerFun
+    );
 
-  upImg.addEventListener(
-    "click",
-    makeLinkHandler(upLvl, "upOrDown", "up", "down", 1, spacer3, choiceAni)
+    chosenLink.addEventListener("click", chosenHandler);
+    chosenLink.addEventListener("click", function () {
+      unChosenLink.removeEventListener("click", unChosenHandler);
+      chosenImg.removeEventListener("click", chosenHandler);
+      unChosenImg.removeEventListener("click", unChosenHandler);
+    });
+
+    unChosenLink.addEventListener("click", unChosenHandler);
+    unChosenLink.addEventListener("click", function () {
+      chosenLink.removeEventListener("click", chosenHandler);
+      unChosenImg.removeEventListener("click", unChosenHandler);
+      chosenImg.removeEventListener("click", chosenHandler);
+    });
+
+    chosenImg.addEventListener("click", chosenHandler);
+    chosenImg.addEventListener("click", function () {
+      unChosenImg.removeEventListener("click", unChosenHandler);
+    });
+
+    unChosenImg.addEventListener("click", unChosenHandler);
+    unChosenImg.addEventListener("click", function () {
+      chosenImg.removeEventListener("click", chosenHandler);
+    });
+  }
+
+  //creates and runs a function makeLinkHandler which returns a function
+  setupLvlHandlers(
+    upLvl,
+    downLvl,
+    "upOrDown",
+    "up",
+    "down",
+    1,
+    spacer3,
+    choiceAni,
+    upLink,
+    upImg,
+    downLink,
+    downImg
   );
-  downImg.addEventListener(
-    "click",
-    makeLinkHandler(downLvl, "upOrDown", "down", "up", 1, spacer3, choiceAni)
+  setupLvlHandlers(
+    darkLvl,
+    joyLvl,
+    "darkOrJoy",
+    "dark",
+    "joy",
+    2,
+    spacer4,
+    choiceAni,
+    darkLink,
+    darkImg,
+    joyLink,
+    joyImg
   );
-  darkImg.addEventListener(
-    "click",
-    makeLinkHandler(darkLvl, "darkOrJoy", "dark", "joy", 2, spacer4, choiceAni)
+  setupLvlHandlers(
+    findSongLvl,
+    findSongLvl,
+    "chaosOrCalm",
+    "chaos",
+    "calm",
+    3,
+    spacer5,
+    blueSwimmerAni,
+    chaosLink,
+    chaosImg,
+    calmLink,
+    calmImg
   );
-  joyImg.addEventListener(
-    "click",
-    makeLinkHandler(joyLvl, "darkOrJoy", "joy", "dark", 2, spacer4, choiceAni)
+  setupLvlHandlers(
+    findSongLvl,
+    findSongLvl,
+    "forestOrMeadow",
+    "forest",
+    "meadow",
+    3,
+    spacer5,
+    blueSwimmerAni,
+    forestLink,
+    forestImg,
+    meadowLink,
+    meadowImg
   );
-  chaosImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "chaosOrEchoes",
-      "chaos",
-      "calm",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
+  setupLvlHandlers(
+    outLvl,
+    innerLvl,
+    "outOrInner",
+    "out",
+    "inner",
+    2,
+    spacer4,
+    choiceAni,
+    outLink,
+    outImg,
+    innerLink,
+    innerImg
   );
-  calmImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "chaosOrCalm",
-      "calm",
-      "chaos",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
+  setupLvlHandlers(
+    findSongLvl,
+    findSongLvl,
+    "morningOrNight",
+    "morning",
+    "night",
+    3,
+    spacer5,
+    blueSwimmerAni,
+    morningLink,
+    morningImg,
+    nightLink,
+    nightImg
   );
-  forestImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "forestOrMeadow",
-      "forest",
-      "meadow",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  meadowImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "forestOrMeadow",
-      "meadow",
-      "forest",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  outImg.addEventListener(
-    "click",
-    makeLinkHandler(outLvl, "outOrInner", "out", "inner", 2, spacer4, choiceAni)
-  );
-  innerImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      innerLvl,
-      "outOrInner",
-      "inner",
-      "out",
-      2,
-      spacer4,
-      choiceAni
-    )
-  );
-  morningImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "morningOrNight",
-      "morning",
-      "night",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  nightImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "morningOrNight",
-      "night",
-      "morning",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  unfoldImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "unfoldOrCycle",
-      "unfold",
-      "cycle",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
-  );
-  cycleImg.addEventListener(
-    "click",
-    makeLinkHandler(
-      findSongLvl,
-      "unfoldOrCycle",
-      "cycle",
-      "unfold",
-      3,
-      spacer5,
-      blueSwimmerAni
-    )
+  setupLvlHandlers(
+    findSongLvl,
+    findSongLvl,
+    "unfoldOrCycle",
+    "unfold",
+    "cycle",
+    3,
+    spacer5,
+    blueSwimmerAni,
+    unfoldLink,
+    unfoldImg,
+    cycleLink,
+    cycleImg
   );
 }
 
