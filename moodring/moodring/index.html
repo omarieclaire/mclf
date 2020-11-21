@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="styles.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet">
-
   <title>Mood Ring</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 
 <body>
@@ -19,7 +22,8 @@
   </div>
 
   <div id="beginLvl" class="beginLvl lvl">
-    <span class="background-image" role="img" aria-label="Rocky cavern walls on the left and right. A waterfall flows down them and an orange figure sits at the base of the waterfall amongst some plants"></span>
+    <span class="background-image" role="img"
+      aria-label="Rocky cavern walls on the left and right. A waterfall flows down them and an orange figure sits at the base of the waterfall amongst some plants"></span>
     <button type="btn" id="muteBtn" class="btn" value="mute"></button>
     <!-- <button id="muteBtn" class="btn" value="mute" onclick="pauseSound(backgroundMusic)"></button> -->
     <h1>Mood Ring</h1>
@@ -27,35 +31,40 @@
       <img id="climber" draggable="false" class="image"
         alt="A plump blue figure with orange hair climbs floating orange steps that ascend toward a orange archway"
         src="images/beginLvl/climber.gif">
-      <img id="swimmer" draggable="false" class="image" loading="lazy" alt="A plump purple figure with blue hair swims alongside two snakes towards the centre" src="images/beginLvl/swimmer.gif">
+      <img id="swimmer" draggable="false" class="image" loading="lazy"
+        alt="A plump purple figure with blue hair swims alongside two snakes towards the centre"
+        src="images/beginLvl/swimmer.gif">
     </div>
     <div id="beginLvlRow2" class="beginLvlRow2 pulse">
-      <img id="creaturesL" draggable="false" class="image" loading="lazy" alt="Three little creatures float in a cluster"
-        src="images/beginLvl/creaturesL.gif">
+      <img id="creaturesL" draggable="false" class="image" loading="lazy"
+        alt="Three little creatures float in a cluster" src="images/beginLvl/creaturesL.gif">
       <img id="titling" draggable="false" class="image" loading="lazy" alt="Mood Ring, Volume 2"
         src="images/beginLvl/titling.png">
-      <img id="creaturesR" draggable="false" class="image" loading="lazy" alt="Four little creatures float in a cluster with two small gems"
-        src="images/beginLvl/creaturesR.gif">
+      <img id="creaturesR" draggable="false" class="image" loading="lazy"
+        alt="Four little creatures float in a cluster with two small gems" src="images/beginLvl/creaturesR.gif">
     </div>
     <div id="beginLvlRow3" class="beginLvlRow3">
       <div id="beginBtnArrowDiv" alt="arrow"></div>
       <button type="btn" id="beginBtn" class="btn">begin</button>
-      <img id="greenGlow" draggable="false" class="image" alt="A green glow emanates upwards from a small ring" src="images/beginLvl/greenGlow.png">
+      <img id="greenGlow" draggable="false" class="image" alt="A green glow emanates upwards from a small ring"
+        src="images/beginLvl/greenGlow.png">
     </div>
   </div>
-  <span class="background-image" role="img" aria-label="Glowing blue and purple cave walls with stalactites growing from the overarch"></span>
+  <span class="background-image" role="img"
+    aria-label="Glowing blue and purple cave walls with stalactites growing from the overarch"></span>
   <div id="spacer0" class="spacer lvl">
   </div>
 
   <div id="playerQuestionLvl" class="lvl">
-    <span class="background-image" role="img" aria-label="Plants and a little tree grow from the rock wall; a purple skull is mysteriously nestled amongst the plants"></span>
+    <span class="background-image" role="img"
+      aria-label="Plants and a little tree grow from the rock wall; a purple skull is mysteriously nestled amongst the plants"></span>
     <div class="simpleColumn">
-      <img id="plantLady" draggable="false" class="image" loading="lazy" alt="A hovering figure whose shoulders are draped with a leafy vines"
-        src="images/lastLvl/plantLady.gif">
+      <img id="plantLady" draggable="false" class="image" loading="lazy"
+        alt="A hovering figure whose shoulders are draped with a leafy vines" src="images/lastLvl/plantLady.gif">
 
-        <p id="whatDoYouSeek" class="txt">What do you<br>seek?</p>
-        <!-- <form onSubmit="return false" autocomplete="off" onkeydown="return event.key != 'Enter';"> -->
-        <form autocomplete="off" onkeydown="return event.key != 'Enter';">
+      <p id="whatDoYouSeek" class="txt">What do you<br>seek?</p>
+      <!-- <form onSubmit="return false" autocomplete="off" onkeydown="return event.key != 'Enter';"> -->
+      <form autocomplete="off" onkeydown="return event.key != 'Enter';">
         <input name="text" class="choice" maxlength="11" id="seekText" placeholder=""></input>
       </form>
       <div id="seekBtnArrowDiv"></div>
@@ -269,22 +278,27 @@
     <span class="background-image" role="img" aria-label="Cavern"></span>
     <!-- <div id="finalImageRow"></div> -->
     <div id="finalBtnRow">
-      <a type="btn" class="btn finalBtn creditsBtns" id="learnMoreBtn" target="_blank" href="https://www.debaser.ca/mood-ring">learn more</a>
-      <a type="btn" class="btn finalBtn creditsBtns" id="startOverBtn" href="https://marieflanagan.com/moodring/moodring/index.html" onClick="window.location.reload();">start again</a>
+      <a type="btn" class="btn finalBtn creditsBtns" id="learnMoreBtn" target="_blank"
+        href="https://www.debaser.ca/mood-ring">learn more</a>
+      <a type="btn" class="btn finalBtn creditsBtns" id="startOverBtn"
+        href="https://marieflanagan.com/moodring/moodring/index.html" onClick="window.location.reload();">start
+        again</a>
       <a type="btn" class="btn finalBtn creditsBtns" id="creditsBtn" href="#creditsLvl">credits</a>
     </div>
 
     <div id="friendsRow">
       <img id="seatedLadyL" draggable="false" class="image" loading="lazy" alt="seatedLadyL"
         src="images/lastLvl/seatedLadyL.png">
-      <img id="seatedLadyC" draggable="false" class="image" loading="lazy" alt="seatedLadyC" src="images/lastLvl/seatedLadyC.png">
+      <img id="seatedLadyC" draggable="false" class="image" loading="lazy" alt="seatedLadyC"
+        src="images/lastLvl/seatedLadyC.png">
       <img id="seatedLadyR" draggable="false" class="image" loading="lazy" alt="seatedLadyR"
         src="images/lastLvl/seatedLadyR.png">
     </div>
     <div id="hoverFriendsRow">
       <img id="seatedLadyLHvr" draggable="false" class="image" loading="lazy" alt="seatedLadyL"
         src="images/lastLvl/seatedLadyL-hvr.png">
-      <img id="seatedLadyCHvr" draggable="false" class="image" loading="lazy" alt="seatedLadyC" src="images/lastLvl/seatedLadyC-hvr.png">
+      <img id="seatedLadyCHvr" draggable="false" class="image" loading="lazy" alt="seatedLadyC"
+        src="images/lastLvl/seatedLadyC-hvr.png">
       <img id="seatedLadyRHvr" draggable="false" class="image" loading="lazy" alt="seatedLadyR"
         src="images/lastLvl/seatedLadyR-hvr.png">
     </div>
@@ -302,8 +316,8 @@
       <br>
       <p>Design & Code: <a id="debaserLink" target="_blank" href="https://marieflanagan.com/">Marie Claire LeBlanc
           Flanagan</a></p>
-      <p>Artwork & Graphic Design: <a id="debaserLink" target="_blank"
-          href="https://www.richardsondupuis.studio/">Robin Richardson-Dupuis</a></p>
+      <p>Artwork & Graphic Design: <a id="debaserLink" target="_blank" href="https://www.richardsondupuis.studio/">Robin
+          Richardson-Dupuis</a></p>
       <p>Score: Emily McQuarrie</p>
       <p>Creative production: Rachel Weldon</p>
       <p>Mastering: Philip Shaw Bova</p>
@@ -318,7 +332,7 @@
       <img id="ccaLogo" draggable="false" class="image" loading="lazy" alt="Canada Council Logo"
         src="images/canadaCouncilLogo.png">
       </p>
-    </div> 
+    </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
