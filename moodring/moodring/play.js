@@ -91,7 +91,6 @@ function windowOnLoad() {
           end: "bottom bottom",
           scrub: 5, // locks animation to scrollbar - can use 1, 2, 3 etc
           toggleActions: "restart pause reverse pause", // onEntry onLeaving onReEntry
-          // toggleClass: "glow"
           pinSpacing: false,
           // from: “center”,
           // pin: "#greenGlow"
@@ -559,7 +558,7 @@ function windowOnLoad() {
   spacer6.style.display = "none";
   spacer7.style.display = "none";
 
-  muteBtn.style.display = "none";
+  muteBtn.style.display = "block";
 
   function displayScrollArrow(parent) {
     const arrowDiv = document.createElement("div");
@@ -586,7 +585,7 @@ function windowOnLoad() {
     window.location.hash = "question"; // transport down the page
     playerQuestionLvl.style.display = "grid";
     spacer0.style.display = "grid";
-    muteBtn.style.display = "block";
+    // muteBtn.style.display = "block";
     playSound(beginSound);
     // playSound(backgroundMusic);
     beginBtn.classList.add("fade");
