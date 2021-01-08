@@ -70,9 +70,7 @@ function updateBtnStyle(clickedBtn){
 		console.log("here");
 		currBtn.classList.remove("currBtn");
 	}
-	// update the "current" button to the most recently clicked button
-	currBtn = clickedBtn; 
-	// add the "currBtn" class to the clicked button
+	currBtn = clickedBtn; 	// update the "current" button to the most recently clicked button
 	clickedBtn.classList.add("currBtn");
 }
 
