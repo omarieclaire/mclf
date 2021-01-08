@@ -1,5 +1,4 @@
-var prevBtn;
-var newBtn;
+var currBtn;
 
 const song1 = new Audio("./audio/love.mp3");
 // song1.preload = "auto";
@@ -24,58 +23,57 @@ const btn5 = document.getElementById("btn5")
 const btn6 = document.getElementById("btn6")
 
 btn1.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn1; // now set the new butn in the new butn var
-	updateBtnStyle(prevBtn, btn1);
+	updateBtnStyle(btn1);
 	source.setAttribute('src', 'img/v1.mp4');
 	video.load();
     playSong(song1);
 }, false);
 btn2.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn2; // now set the new butn in the new butn var
-	updateBtnStyle(prevBtn, btn2);
+	updateBtnStyle(btn2);
 	source.setAttribute('src', 'img/v2.mp4');
 	video.load();
     playSong(song2);
 }, false);
 btn3.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn3; // now set the new butn in the new butn var
-	updateBtnStyle(prevBtn, btn3);
+	updateBtnStyle(btn3);
 	source.setAttribute('src', 'img/v3.mp4');
 	video.load();
     playSong(song3);
 }, false); 
 btn4.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn4; // now set the new butn in the new butn var
-	updateBtnStyle(prevBtn, btn4);
+	updateBtnStyle(btn4);
 	source.setAttribute('src', 'img/v4.mp4');
 	video.load();
     playSong(song4);
 }, false);
 btn5.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn5; // now set the new butn in the new butn var
+	updateBtnStyle(btn5);
 	source.setAttribute('src', 'img/v5.mp4');
 	video.load();
     playSong(song5);
 }, false);
 btn6.addEventListener("click", function(){
-	prevBtn = newBtn // move/store the last button value in the last button var
-	newBtn = btn6; // now set the new butn in the new butn var
+	updateBtnStyle(btn6);
 	source.setAttribute('src', 'img/v6.mp4');
 	video.load();
     playSong(song6);
 }, false); 
 
-function updateBtnStyle(prevBtn, newBtn){
-	if (prevBtn != undefined){
-		prevBtn.classList.remove("currBtn");
+// there are things that change: current button, previous button
+// there are things that are specific to the event or context: clicked button
+
+
+
+function updateBtnStyle(clickedBtn){
+	// remove the class from the old button (which is the "current" button)
+	if (currBtn !== undefined){
+		console.log("here");
+		currBtn.classList.remove("currBtn");
 	}
-	console.log(newBtn);
-	newBtn.classList.add("currBtn");
+	// update the "current" button to the most recently clicked button
+	currBtn = clickedBtn; 
+	// add the "currBtn" class to the clicked button
+	clickedBtn.classList.add("currBtn");
 }
 
 function playSong(song){
@@ -84,16 +82,5 @@ function playSong(song){
 	}
 	song.play();
 }
-
-
-// setTimeout(function() {  
-//     video.pause();
-
-//     source.setAttribute('src', 'http://www.tools4movies.com/trailers/1012/Despicable%20Me%202.mp4'); 
-
-//     video.load();
-//     video.play();
-// }, 3000);
-
 
 
