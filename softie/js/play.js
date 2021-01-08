@@ -1,13 +1,13 @@
 var currBtn;
 
-const song1 = new Audio("./audio/love.mp3");
+const song1 = new Audio("audio/love.mp3");
 // song1.preload = "auto";
 // song1.load();
-const song2 = new Audio("./audio/ask.mp3");
-const song3 = new Audio("./audio/face.mp3");
-const song4 = new Audio("./audio/hey.mp3");
-const song5 = new Audio("./audio/numb.mp3");
-const song6 = new Audio("./audio/why.mp3");
+const song2 = new Audio("audio/ask.mp3");
+const song3 = new Audio("audio/face.mp3");
+const song4 = new Audio("audio/hey.mp3");
+const song5 = new Audio("audio/numb.mp3");
+const song6 = new Audio("audio/why.mp3");
 
 const songs = [song1, song2, song3, song4, song5, song6];
 
