@@ -65,10 +65,17 @@ body {
     transition-property: background-color;
 }
 
+@media (max-width: 480px) {
+  .btn {
+    width: 6rem;
+    height: 6rem;
+    }
+}
+
 .btn:hover {
   /* background:yellow; */
   opacity: .8;
-  stroke: red 1px solid;
+  /* stroke: red 1px solid; */
   /* transition-duration: 2s; */
   /* border-radius: 50%; */
 }
