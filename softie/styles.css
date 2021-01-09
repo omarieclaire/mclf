@@ -59,7 +59,7 @@ body {
   height: 6rem;
   margin: 1rem;
   background:rgb(53, 205, 114);
-  opacity: .5;
+  opacity: .3;
   border-radius: 2px;
   transition-duration: 2s;
     transition-property: background-color;
@@ -91,7 +91,7 @@ body {
   position: fixed;
   right: 0;
   bottom: 0;
-  max-width: 100%;
+  /* max-width: 100%; */
   min-height: 100%;
   z-index: -99;
   animation: colourShift 10s ease-out 2s infinite alternate;

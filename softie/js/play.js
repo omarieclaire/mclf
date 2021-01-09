@@ -67,7 +67,6 @@ btn6.addEventListener("click", function(){
 function updateBtnStyle(clickedBtn){
 	// remove the class from the old button (which is the "current" button)
 	if (currBtn !== undefined){
-		console.log("here");
 		currBtn.classList.remove("currBtn");
 	}
 	currBtn = clickedBtn; 	// update the "current" button to the most recently clicked button
