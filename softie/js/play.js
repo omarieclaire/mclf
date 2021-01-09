@@ -1,8 +1,8 @@
 var currBtn;
 
 const song1 = new Audio("audio/love.mp3");
-// song1.preload = "auto";
-// song1.load();
+song1.preload = "auto";
+song1.load();
 const song2 = new Audio("audio/ask.mp3");
 const song3 = new Audio("audio/face.mp3");
 const song4 = new Audio("audio/hey.mp3");
