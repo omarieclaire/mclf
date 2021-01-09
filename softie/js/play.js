@@ -8,17 +8,11 @@ const song5 = new Audio("audio/numb.mp3");
 const song6 = new Audio("audio/why.mp3");
 
 song1.preload = "auto";
-song1.load();
 song2.preload = "auto";
-song2.load();
 song3.preload = "auto";
-song3.load();
 song4.preload = "auto";
-song4.load();
 song5.preload = "auto";
-song5.load();
 song6.preload = "auto";
-song6.load();
 
 const songs = [song1, song2, song3, song4, song5, song6];
 
