@@ -30,7 +30,7 @@ body {
   line-height: 1;
   letter-spacing: .25rem;
   margin: 0;
-  font-size: 3.3rem;
+  font-size: 2.3rem;
   color: #ffffff;
   height: 100vh;
   perspective: 1px;
@@ -74,7 +74,8 @@ body {
 }
 
 .currBtn {
-  color: red;
+  /* color: red; */
+  font-weight: 200;
   height: 20rem;
   /* stroke: red 2px solid; */
 }
