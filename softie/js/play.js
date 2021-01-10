@@ -1,3 +1,6 @@
+function windowOnLoad() {
+
+
 var currBtn;
 
 const song1 = new Audio("audio/love.mp3");
@@ -57,10 +60,6 @@ btn6.addEventListener("click", function(){
     playSong(song6);
 }, false); 
 
-// there are things that change: current button, previous button
-// there are things that are specific to the event or context: clicked button
-
-
 
 function updateBtnStyle(clickedBtn){
 	// remove the class from the old button (which is the "current" button)
@@ -77,5 +76,8 @@ function playSong(song){
 	}
 	song.play();
 }
+}
 
+
+window.addEventListener("load", windowOnLoad);
 
