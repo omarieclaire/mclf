@@ -30,7 +30,7 @@ body {
   line-height: 1;
   letter-spacing: .25rem;
   margin: 0;
-  font-size: 2.3rem;
+  font-size: .9rem;
   color: #ffffff;
   height: 100vh;
   perspective: 1px;
@@ -43,8 +43,7 @@ body {
 
 #wrapper {
   display: flex;
-  flex-flow: row wrap;
-  
+  flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
   align-content: center;
@@ -58,11 +57,11 @@ body {
   width: 6rem;
   height: 6rem;
   margin: 1rem;
-  background:rgb(53, 205, 114);
+  background:rgb(231, 110, 150);
   opacity: .3;
   border-radius: 2px;
   transition-duration: 2s;
-    transition-property: background-color;
+  transition-property: background-color;
 }
 
 @media (max-width: 480px) {
@@ -83,7 +82,7 @@ body {
 .currBtn {
   /* color: red; */
   font-weight: 200;
-  height: 20rem;
+  /* height: 20rem; */
   /* stroke: red 2px solid; */
 }
 
@@ -94,7 +93,8 @@ body {
   /* max-width: 100%; */
   min-height: 100%;
   z-index: -99;
-  animation: colourShift 10s ease-out 2s infinite alternate;
+  opacity: .5;
+  /* animation: colourShift 10s ease-out 2s infinite alternate; */
 
 }
 
