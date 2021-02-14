@@ -1,11 +1,11 @@
 function windowOnLoad() {
 
   var touchGen = [{
-    word: 'Hope',
+    word: 'Lid',
     video: 'img/jar.mp4',
     desc: 'I am touching you like a lid touches a jar.'
   }, {
-    word: 'Shake',
+    word: 'Twig',
     video: 'img/twig.mp4',
     desc: 'I am touching you like a flame touches a twig.'
   }, {
@@ -13,20 +13,18 @@ function windowOnLoad() {
     video: 'img/sandpaper.mp4',
     desc: 'I am touching you like sandpaper touches fingertips.'
   }, {
-    word: 'Grab',
+    word: 'Wall',
     video: 'img/touching0.mp4',
     desc: 'I am touching you like the sunlight touches the wall.'
   }, {
-    word: 'Know',
+    word: 'Wave',
     video: 'img/waves.mp4',
     desc: 'I am touching you like a wave touches the shoreline.'
   }, {
-    word: 'In',
+    word: 'Door',
     video: 'img/knocker.mp4',
     desc: 'I am touching you like a knocker touches a door.'
   }, ];
-
-  
 
   var usedTouches = [];
 
@@ -41,7 +39,6 @@ function windowOnLoad() {
 
   const button = document.getElementById("words");
 
-
   function randomSelector() {
     var dronegenLength = touchGen.length;
 
@@ -51,8 +48,8 @@ function windowOnLoad() {
     var newdesc = touchGen[randomNumber].desc;
     var newvideo = touchGen[randomNumber].video;
 
-    // source.setAttribute("src", newvideo);
-    source.setAttribute("src", "img/touching0.mp4");
+    source.setAttribute("src", newvideo);
+    // source.setAttribute("src", "img/touching0.mp4");
     video.load();
 
     // document.getElementById("vid").innerHTML = newword;
@@ -62,18 +59,14 @@ function windowOnLoad() {
     touchGen.splice(randomNumber, 1);
 
     if (dronegenLength === 1) {
-      // copy usedTouches into touchGen
-      touchGen = [...usedTouches];
-      //empty bucket - so next time we don't have doubles
-      usedTouches = [];
+      touchGen = [...usedTouches]; // copy usedTouches into touchGen
+      usedTouches = []; //empty bucket - so next time we don't have doubles
     }
   }
 
   button.addEventListener(
     "click",
     function () {
-      // source.setAttribute("src", "img/touching0.mp4");
-      // video.load();
       playSong(song1);
       randomSelector();
 
