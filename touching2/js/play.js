@@ -24,14 +24,7 @@ function windowOnLoad() {
     video: 'img/ot2.mp4',
     sound: sfacewindow,
     desc: 'I feel your touch like a face in a window.'
-  }, 
-  // {
-  //   word: 'Spoon',
-  //   video: 'img/ot3.mp4',
-  //   sound: sspoonbatter,
-  //   desc: 'I am touching you like a spoon stirs thick batter.'
-  // }, 
-  {
+  }, {
     word: 'Weight',
     video: 'img/ot4.mp4',
     sound: sweightscale,
