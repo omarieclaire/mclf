@@ -75,7 +75,6 @@ function windowOnLoad() {
     document.getElementById("words").innerHTML = newdesc;
     newsound.play();
 
-
     usedTouches.push(touchGen[randomNumber]);
     touchGen.splice(randomNumber, 1);
 
