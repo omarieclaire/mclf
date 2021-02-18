@@ -1,6 +1,6 @@
 function windowOnLoad() {
 
-  const song1 = new Audio("audio/waterfall.mp3");
+  const song1 = new Audio("audio/drone.mp3");
   const songs = [song1];
 
   var srockpond = new Audio('audio/rockpond.mp3');
@@ -95,7 +95,7 @@ function windowOnLoad() {
   button.addEventListener(
     "click",
     function () {
-      // playSong(song1);
+      playSong(song1);
       randomSelector();
 
     },
@@ -103,11 +103,30 @@ function windowOnLoad() {
   );
 
   function playSong(song) {
-    for (i = 0; i < songs.length; i++) {
-      songs[i].pause();
+    if (typeof song.loop == 'boolean')
+    {
+      song.loop = true;
+    }
+    else
+    {
+      song.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play();
+        }, false);
     }
     song.play();
   }
+
+
+
+
+  // function playSong(song) {
+  //   for (i = 0; i < songs.length; i++) {
+  //     songs[i].pause();
+  //   }
+  //   song.play();
+  // }
+
 }
 
 
