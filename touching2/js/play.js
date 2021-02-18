@@ -62,15 +62,19 @@ function windowOnLoad() {
 
     var newword = touchGen[randomNumber].word;
     var newdesc = touchGen[randomNumber].desc;
-    var newsound = touchGen[randomNumber].sound;
+
+    var newsound = new Audio('audio/handsilk.mp3');
+    // var newsound = touchGen[randomNumber].sound;
     var newvideo = touchGen[randomNumber].video;
 
     source.setAttribute("src", newvideo);
     // source.setAttribute("src", "img/touching0.mp4");
     video.load();
-    playSong(newsound);
+    // console.log(newsound);
     // document.getElementById("vid").innerHTML = newword;
     document.getElementById("words").innerHTML = newdesc;
+    newsound.play();
+
 
     usedTouches.push(touchGen[randomNumber]);
     touchGen.splice(randomNumber, 1);
@@ -84,7 +88,7 @@ function windowOnLoad() {
   button.addEventListener(
     "click",
     function () {
-      playSong(song1);
+      // playSong(song1);
       randomSelector();
 
     },
