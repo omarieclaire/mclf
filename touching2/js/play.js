@@ -65,7 +65,7 @@ function windowOnLoad() {
   var source = document.createElement("source");
   video.appendChild(source);
 
-  const button = document.getElementById("words");
+  const button = document.getElementById("wrapper");
 
   function randomSelector() {
     var touchGenLength = touchGen.length;
