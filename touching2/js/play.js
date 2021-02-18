@@ -14,7 +14,6 @@ function windowOnLoad() {
 
   const sounds = [srockpond, sfacewindow, sspoonbatter, sweightscale, sholehome, sdarkeye, shandsilk, sno]
 
-
   var touchGen = [{
     word: 'Rock',
     video: 'img/ot1.mp4',
@@ -75,16 +74,12 @@ function windowOnLoad() {
 
     var newword = touchGen[randomNumber].word;
     var newdesc = touchGen[randomNumber].desc;
-
     var newsound = touchGen[randomNumber].sound;
-    // var newsound = touchGen[randomNumber].sound;
     var newvideo = touchGen[randomNumber].video;
 
     source.setAttribute("src", newvideo);
     // source.setAttribute("src", "img/touching0.mp4");
     video.load();
-    // console.log(newsound);
-    // document.getElementById("vid").innerHTML = newword;
     document.getElementById("words").innerHTML = newdesc;
     newsound.play();
 
