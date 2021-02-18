@@ -96,7 +96,7 @@ figure video {
 }
 
 #video {
-  animation: glow 22s linear infinite;
+  /* animation: glow 22s linear infinite; */
 
   position: fixed;
   right: 0;
