@@ -234,7 +234,7 @@ function windowOnLoad() {
   }
 
   function playSong(song) {
-    for (i = 0; i < songs.length; i++) {
+    for (let i = 0; i < songs.length; i++) {
       songs[i].pause();
     }
     song.play();
