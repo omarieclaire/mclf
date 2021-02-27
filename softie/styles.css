@@ -81,7 +81,7 @@ body {
 
 .btn:hover {
   /* background:yellow; */
-  opacity: .8;
+  opacity: .5;
   /* stroke: red 1px solid; */
   /* transition-duration: 2s; */
   /* border-radius: 50%; */
@@ -90,7 +90,10 @@ body {
 .currBtn {
   /* color: red; */
   font-weight: 200;
+  opacity: .8;
   /* height: 20rem; */
+  background:rgb(22, 112, 237);
+
   stroke: rgb(255, 0, 212) 12px solid;
 }
 
