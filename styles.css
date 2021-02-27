@@ -773,7 +773,10 @@ nav a:hover {
 /* general text padding */
 @media (min-width: 37rem) {
   .home-about-textbox {
-    padding: 4.5em 24em 4.5em 10em;
+    padding: 4.5em 33% 4.5em 10%;
+}
+
+
   }
 }
 
