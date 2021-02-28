@@ -66,10 +66,45 @@ body {
   height: 5rem;
   margin: 1rem;
   background:rgb(53, 205, 114);
-  opacity: .3;
+  opacity: .6;
   border-radius: 2px;
   transition-duration: 2s;
-    transition-property: background-color;
+  transition-property: background-color;
+}
+
+#btn1 {
+  border-radius: 46% 54% 70% 30% / 45% 42% 58% 55%;
+  background: radial-gradient(rgb(0, 195, 255), rgb(0, 4, 255));
+
+}
+#btn2 {
+  border-radius: 30% 70% 43% 57% / 64% 42% 58% 36%;
+  background: radial-gradient(rgb(255, 0, 200), rgb(43, 0, 255));
+
+}
+#btn3 {
+  border-radius: 78% 22% 43% 57% / 64% 62% 38% 36% ;
+  background: radial-gradient(red, yellow);
+}
+#btn4 {
+  border-radius: 31% 69% 31% 69% / 66% 60% 40% 34%;
+  background: radial-gradient(blue, green);
+}
+#btn5 {
+  border-radius: 18% 82% 73% 27% / 84% 62% 38% 16% ;
+  background: radial-gradient(green, yellow);
+}
+#btn6 {
+  border-radius: 50% 50% 31% 69% / 50% 28% 72% 50%;
+  background: radial-gradient(purple, teal);
+}
+
+.morph {
+  background: radial-gradient(teal, yellow);
+  height: 300px;
+  width: 300px;
+  border-radius: 30% 30% 30% 30% / 30% 30% 30% 30%;
+  transition: all 1.5s ease;
 }
 
 @media (max-width: 480px) {
@@ -80,21 +115,15 @@ body {
 }
 
 .btn:hover {
-  /* background:yellow; */
-  opacity: .5;
-  /* stroke: red 1px solid; */
-  /* transition-duration: 2s; */
-  /* border-radius: 50%; */
+  opacity: .9;
 }
 
 .currBtn {
-  /* color: red; */
-  font-weight: 200;
   opacity: .8;
-  /* height: 20rem; */
-  background:rgb(22, 112, 237);
+  width: 20rem;
+  height: 20rem;
+  animation: pulse 20s alternate infinite;
 
-  stroke: rgb(255, 0, 212) 12px solid;
 }
 
 #video {
@@ -146,14 +175,7 @@ body {
   filter: hue-rotate(220deg);
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.5);
-  }
-}
+
 
 @keyframes fade {
   0% {
@@ -213,3 +235,15 @@ body {
     transform: rotate(360deg);
   }
 } 
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    /* transform: rotate(5deg);  */
+
+  }
+  100% {
+    transform: scale(.8);
+    /* transform: rotate(-5deg);  */
+  }
+}
