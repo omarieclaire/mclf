@@ -46,12 +46,12 @@ function main() {
     const groundColor = 0xB97A20;  // brownish orange
     const intensity = 1;
     const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-    scene.add(light);
+    // scene.add(light);
   }
 
   {
     const color = 0xFFFFFF;
-    const intensity = 1;
+    const intensity = .5;
     const light = new THREE.DirectionalLight(color, intensity);
     light.position.set(5, 10, 2);
     scene.add(light);
@@ -87,7 +87,7 @@ function main() {
 
   {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./img/vine.glb', (gltf) => {
+    gltfLoader.load('./img/face2.glb', (gltf) => {
 
       // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
       const root = gltf.scene;
@@ -140,10 +140,10 @@ function main() {
   scene.add(nlight);
 
 
-const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
-const gmaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-const sphere = new THREE.Mesh( ggeometry, gmaterial );
-scene.add( sphere );
+// const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
+// const gmaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+// const sphere = new THREE.Mesh( ggeometry, gmaterial );
+// scene.add( sphere );
 
 const ygeometry = new THREE.TorusKnotGeometry( 6, .03, 151, 60, 3, 2 );
 const ymaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
