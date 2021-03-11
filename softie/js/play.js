@@ -115,7 +115,9 @@ function main() {
   const boxDepth = 1;
   const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
   
-  const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
+
+  const nmaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
+  // const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
   const cube = new THREE.Mesh(geometry, nmaterial);
   scene.add(cube);
 
@@ -138,6 +140,11 @@ function main() {
   const nlight = new THREE.DirectionalLight(ncolor, nintensity);
   nlight.position.set(-1, 2, 4);
   scene.add(nlight);
+
+    const color = 0xFFFFFF;
+  const intensity = 3;
+  const light = new THREE.PointLight(color, intensity);
+  scene.add(light);
 
 
 // const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
@@ -173,6 +180,8 @@ scene.add( torusKnot );
 
     cube.rotation.x = time/4;
     cube.rotation.y = time/4;
+    torusKnot.rotation.x = time/40;
+    torusKnot.rotation.y = time/40;
 
     renderer.render(scene, camera); //pass scene and camera to the renderer, SHOW the scene
 

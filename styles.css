@@ -153,7 +153,7 @@ table {
 =================== */
 /* links */
 a {
-  color: purple;
+  color: #2f08ff;
   text-decoration: none;
   background-color: inherit;
 }
@@ -229,7 +229,7 @@ h1 {
   text-align: center;
   /* text-transform: uppercase; */
   background-color: inherit;
-  color: rgba(100, 0, 130, 0.81);
+  color: rgba(71, 20, 86, 0.81);
   font-size: 1.5rem;
   letter-spacing: 0.08em;
   font-weight: 200;
@@ -506,9 +506,9 @@ hr.blog-preview-divider {
   /* salmon */
 }
 
-strong {
-  font-weight: 600;
-  /* color: rgb(47, 8, 255); */
+.strong {
+  font-weight: 400;
+  color:#9710fd;
 }
 
 .slightBold {
