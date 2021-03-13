@@ -2,201 +2,379 @@ import * as THREE from './node_modules/three/build/three.module.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
-function main() {
-  const canvas = document.querySelector('#c'); //grab the canvas
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true }); //make a renderer
+import Stats from './node_modules/three/examples/jsm/libs/stats.module.js';
+import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
+import { Water } from './node_modules/three/examples/jsm/objects/Water.js';
+import { Sky } from './node_modules/three/examples/jsm/objects/Sky.js';
 
-  const fov = 45; //field of view - 75 degrees in the vertical dimension
-  const aspect = 2;  // display aspect of the canvas. by default a canvas is 300x150 pixels which makes the aspect 300/150 or 2. 
-  const near = 0.1; // the space in front of the camera that will be rendered
-  const far = 1000; //the space in front of the camera that will be rendered
-  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(0, 10, 10);
+			let container, stats;
+			let camera, scene, renderer;
+			let controls, water, sun, mesh;
 
-  const controls = new OrbitControls(camera, canvas);
-  controls.target.set(0, 5, 0);
-  controls.update();
+			init();
+			animate();
 
-  const scene = new THREE.Scene(); //make a new scene
-  // scene.background = new THREE.Color('black');
+			function init() {
 
-  {
-    const planeSize = 0; //the ground
+				container = document.getElementById( 'container' );
 
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load('https://threejsfundamentals.org/threejs/resources/images/checker.png');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.magFilter = THREE.NearestFilter;
-    const repeats = planeSize / 2;
-    texture.repeat.set(repeats, repeats);
+				//
 
-    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(planeGeo, planeMat);
-    mesh.rotation.x = Math.PI * -.5;
-    scene.add(mesh);
-  }
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
 
-  {
-    const skyColor = 0xB1E1FF;  // light blue
-    const groundColor = 0xB97A20;  // brownish orange
-    const intensity = 1;
-    const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-    // scene.add(light);
-  }
+				//
 
-  {
-    const color = 0xFFFFFF;
-    const intensity = .5;
-    const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(5, 10, 2);
-    scene.add(light);
-    scene.add(light.target);
-  }
+				scene = new THREE.Scene();
 
-  function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
-    const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
-    const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
-    const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
-    // compute a unit vector that points in the direction the camera is now
-    // in the xz plane from the center of the box
-    const direction = (new THREE.Vector3())
-      .subVectors(camera.position, boxCenter)
-      .multiply(new THREE.Vector3(1, 0, 1))
-      .normalize();
+				camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 20000 );
+				camera.position.set( 30, 30, 100 );
 
-    // move the camera to a position distance units way from the center
-    // in whatever direction the camera was from the center already
-    camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
+				//
 
-    // pick some near and far values for the frustum that
-    // will contain the box.
-    camera.near = boxSize / 100;
-    camera.far = boxSize * 100;
+				sun = new THREE.Vector3();
 
-    camera.updateProjectionMatrix();
+				// Water
 
-    // point the camera to look at the center of the box
-    camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+				const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
 
-  }
-  {
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./img/face2.glb', (gltf) => {
+				water = new Water(
+					waterGeometry,
+					{
+						textureWidth: 512,
+						textureHeight: 512,
+						waterNormals: new THREE.TextureLoader().load( 'textures/waternormals.jpg', function ( texture ) {
 
-      // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
-      const root = gltf.scene;
-      scene.add(root);
+							texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+						} ),
+						alpha: 1.0,
+						sunDirection: new THREE.Vector3(),
+						sunColor: 0xffffff,
+						waterColor: 0x001e0f,
+						distortionScale: 3.7,
+						fog: scene.fog !== undefined
+					}
+				);
+
+				water.rotation.x = - Math.PI / 2;
+
+				scene.add( water );
+
+				// Skybox
+
+				const sky = new Sky();
+				sky.scale.setScalar( 10000 );
+				scene.add( sky );
+
+				const skyUniforms = sky.material.uniforms;
+
+				skyUniforms[ 'turbidity' ].value = 10;
+				skyUniforms[ 'rayleigh' ].value = 2;
+				skyUniforms[ 'mieCoefficient' ].value = 0.005;
+				skyUniforms[ 'mieDirectionalG' ].value = 0.8;
+
+				const parameters = {
+					inclination: 0.49,
+					azimuth: 0.205
+				};
+
+				const pmremGenerator = new THREE.PMREMGenerator( renderer );
+
+				function updateSun() {
+
+					const theta = Math.PI * ( parameters.inclination - 0.5 );
+					const phi = 2 * Math.PI * ( parameters.azimuth - 0.5 );
+
+					sun.x = Math.cos( phi );
+					sun.y = Math.sin( phi ) * Math.sin( theta );
+					sun.z = Math.sin( phi ) * Math.cos( theta );
+
+					sky.material.uniforms[ 'sunPosition' ].value.copy( sun );
+					water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();
+
+					scene.environment = pmremGenerator.fromScene( sky ).texture;
+
+				}
+
+				updateSun();
+
+				//
+
+				const geometry = new THREE.BoxGeometry( 30, 30, 30 );
+				const material = new THREE.MeshStandardMaterial( { roughness: 0 } );
+
+				mesh = new THREE.Mesh( geometry, material );
+				scene.add( mesh );
+
+				//
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.maxPolarAngle = Math.PI * 0.495;
+				controls.target.set( 0, 10, 0 );
+				controls.minDistance = 40.0;
+				controls.maxDistance = 200.0;
+				controls.update();
+
+				//
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				// GUI
+
+				const gui = new GUI();
+
+				const folderSky = gui.addFolder( 'Sky' );
+				folderSky.add( parameters, 'inclination', 0, 0.5, 0.0001 ).onChange( updateSun );
+				folderSky.add( parameters, 'azimuth', 0, 1, 0.0001 ).onChange( updateSun );
+				folderSky.open();
+
+				const waterUniforms = water.material.uniforms;
+
+				const folderWater = gui.addFolder( 'Water' );
+				folderWater.add( waterUniforms.distortionScale, 'value', 0, 8, 0.1 ).name( 'distortionScale' );
+				folderWater.add( waterUniforms.size, 'value', 0.1, 10, 0.1 ).name( 'size' );
+				folderWater.add( waterUniforms.alpha, 'value', 0.9, 1, .001 ).name( 'alpha' );
+				folderWater.open();
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+
+				const time = performance.now() * 0.001;
+
+				mesh.position.y = Math.sin( time ) * 20 + 5;
+				mesh.rotation.x = time * 0.5;
+				mesh.rotation.z = time * 0.51;
+
+				water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+
+				renderer.render( scene, camera );
+
+			}
 
 
-      // compute the box that contains all the stuff
-      // from root and below
-      const box = new THREE.Box3().setFromObject(root);
-
-      const boxSize = box.getSize(new THREE.Vector3()).length();
-      const boxCenter = box.getCenter(new THREE.Vector3());
-
-      // set the camera to frame the box
-      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-      // update the Trackball controls to handle the new size
-      controls.maxDistance = boxSize * 10;
-      controls.target.copy(boxCenter);
-      controls.update();
-    });
-  }
-
-  const boxWidth = 1;
-  const boxHeight = 1;
-  const boxDepth = 1;
-  const boxGeom = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-  const centerSpGeom = new THREE.SphereGeometry(boxWidth, 300, 2, 30);
-  const tinySphereGeom = new THREE.SphereGeometry(.2, 30, 20, 30);
 
 
+// function main() {
+//   const canvas = document.querySelector('#c'); //grab the canvas
+//   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true }); //make a renderer
 
-  const nmaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
-  // const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
-  const cube = new THREE.Mesh(centerSpGeom, nmaterial);
-  scene.add(cube);
+//   const fov = 45; //field of view - 75 degrees in the vertical dimension
+//   const aspect = 2;  // display aspect of the canvas. by default a canvas is 300x150 pixels which makes the aspect 300/150 or 2. 
+//   const near = 0.1; // the space in front of the camera that will be rendered
+//   const far = 1000; //the space in front of the camera that will be rendered
+//   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+//   camera.position.set(0, 10, 10);
 
-  function makeInstance(geometry, color, x) {
-    const material = new THREE.MeshPhongMaterial({ color });
-    const cube = new THREE.Mesh(tinySphereGeom, material);
-    scene.add(cube);
-    cube.position.x = x;
-    return cube;
-  }
+//   const controls = new OrbitControls(camera, canvas);
+//   controls.target.set(0, 5, 0);
+//   controls.update();
 
-  const tinySph = [
-    // makeInstance(geometry, 0x44aa88, 0),
-    makeInstance(boxGeom, 0x8844aa, -4),
-    makeInstance(boxGeom, 0xaa8844, 4),
-    makeInstance(boxGeom, 0x8844aa, -2),
-    makeInstance(boxGeom, 0xaa8844, 2),
-  ];
+//   const scene = new THREE.Scene(); //make a new scene
+//   // scene.background = new THREE.Color('black');
 
-  const ncolor = 0xFFFFFF;
-  const nintensity = 1;
-  const nlight = new THREE.DirectionalLight(ncolor, nintensity);
-  nlight.position.set(-1, 2, 4);
-  scene.add(nlight);
+//   {
+//     const planeSize = 0; //the ground
 
-    const color = 0xFFFFFF;
-  const intensity = 3;
-  const light = new THREE.PointLight(color, intensity);
-  scene.add(light);
+//     const loader = new THREE.TextureLoader();
+//     const texture = loader.load('https://threejsfundamentals.org/threejs/resources/images/checker.png');
+//     texture.wrapS = THREE.RepeatWrapping;
+//     texture.wrapT = THREE.RepeatWrapping;
+//     texture.magFilter = THREE.NearestFilter;
+//     const repeats = planeSize / 2;
+//     texture.repeat.set(repeats, repeats);
+
+//     const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
+//     const planeMat = new THREE.MeshPhongMaterial({
+//       map: texture,
+//       side: THREE.DoubleSide,
+//     });
+//     const mesh = new THREE.Mesh(planeGeo, planeMat);
+//     mesh.rotation.x = Math.PI * -.5;
+//     scene.add(mesh);
+//   }
+
+//   {
+//     const skyColor = 0xB1E1FF;  // light blue
+//     const groundColor = 0xB97A20;  // brownish orange
+//     const intensity = 1;
+//     const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+//     // scene.add(light);
+//   }
+
+//   {
+//     const color = 0xFFFFFF;
+//     const intensity = .5;
+//     const light = new THREE.DirectionalLight(color, intensity);
+//     light.position.set(5, 10, 2);
+//     scene.add(light);
+//     scene.add(light.target);
+//   }
+
+//   function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
+//     const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
+//     const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
+//     const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
+//     // compute a unit vector that points in the direction the camera is now
+//     // in the xz plane from the center of the box
+//     const direction = (new THREE.Vector3())
+//       .subVectors(camera.position, boxCenter)
+//       .multiply(new THREE.Vector3(1, 0, 1))
+//       .normalize();
+
+//     // move the camera to a position distance units way from the center
+//     // in whatever direction the camera was from the center already
+//     camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
+
+//     // pick some near and far values for the frustum that
+//     // will contain the box.
+//     camera.near = boxSize / 100;
+//     camera.far = boxSize * 100;
+
+//     camera.updateProjectionMatrix();
+
+//     // point the camera to look at the center of the box
+//     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+
+//   }
+//   {
+//     const gltfLoader = new GLTFLoader();
+//     gltfLoader.load('./img/face2.glb', (gltf) => {
+
+//       // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
+//       const root = gltf.scene;
+//       scene.add(root);
 
 
-// const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
-// const gmaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-// const sphere = new THREE.Mesh( ggeometry, gmaterial );
-// scene.add( sphere );
+//       // compute the box that contains all the stuff
+//       // from root and below
+//       const box = new THREE.Box3().setFromObject(root);
 
-const ygeometry = new THREE.TorusKnotGeometry( 4, .03, 351, 160, 3, 2 );
-const ymaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-const torusKnot = new THREE.Mesh( ygeometry, ymaterial );
-scene.add( torusKnot );
+//       const boxSize = box.getSize(new THREE.Vector3()).length();
+//       const boxCenter = box.getCenter(new THREE.Vector3());
+
+//       // set the camera to frame the box
+//       frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+
+//       // update the Trackball controls to handle the new size
+//       controls.maxDistance = boxSize * 10;
+//       controls.target.copy(boxCenter);
+//       controls.update();
+//     });
+//   }
+
+//   const boxWidth = 1;
+//   const boxHeight = 1;
+//   const boxDepth = 1;
+//   const boxGeom = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+//   const centerSpGeom = new THREE.SphereGeometry(boxWidth, 300, 2, 30);
+//   const tinySphereGeom = new THREE.SphereGeometry(.2, 30, 20, 30);
 
 
-  function resizeRendererToDisplaySize(renderer) { //no longer distorted when someone resizes the window
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) { // if the canvas has been resized
-      renderer.setSize(width, height, false); //use clientWidth and clientHeight to set the canvas's drawingbuffer size (resolution)
-    }
-    return needResize;
-  }
 
-  function render(time) {
-    if (resizeRendererToDisplaySize(renderer)) { //use the function above to render
-      const canvas = renderer.domElement;
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-    }
+//   const nmaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
+//   // const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
+//   const cube = new THREE.Mesh(centerSpGeom, nmaterial);
+//   scene.add(cube);
 
-    time *= 0.001;  // convert time to seconds
+//   function makeInstance(geometry, color, x) {
+//     const material = new THREE.MeshPhongMaterial({ color });
+//     const cube = new THREE.Mesh(tinySphereGeom, material);
+//     scene.add(cube);
+//     cube.position.x = x;
+//     return cube;
+//   }
 
-    cube.rotation.x = time/4;
-    cube.rotation.y = time/4;
-    torusKnot.rotation.x = time/40;
-    torusKnot.rotation.y = time/40;
+//   const tinySph = [
+//     // makeInstance(geometry, 0x44aa88, 0),
+//     makeInstance(boxGeom, 0x8844aa, -4),
+//     makeInstance(boxGeom, 0xaa8844, 4),
+//     makeInstance(boxGeom, 0x8844aa, -2),
+//     makeInstance(boxGeom, 0xaa8844, 2),
+//   ];
 
-    renderer.render(scene, camera); //pass scene and camera to the renderer, SHOW the scene
+//   const ncolor = 0xFFFFFF;
+//   const nintensity = 1;
+//   const nlight = new THREE.DirectionalLight(ncolor, nintensity);
+//   nlight.position.set(-1, 2, 4);
+//   scene.add(nlight);
 
-    requestAnimationFrame(render); // requestAnimationFrame is a request to the browser that you want to animate something. You pass it a function to be called. In our case that function is render
-  }
+//     const color = 0xFFFFFF;
+//   const intensity = 3;
+//   const light = new THREE.PointLight(color, intensity);
+//   scene.add(light);
 
-  requestAnimationFrame(render);
-}
 
-main();
+// // const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
+// // const gmaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+// // const sphere = new THREE.Mesh( ggeometry, gmaterial );
+// // scene.add( sphere );
+
+// const ygeometry = new THREE.TorusKnotGeometry( 4, .03, 351, 160, 3, 2 );
+// const ymaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+// const torusKnot = new THREE.Mesh( ygeometry, ymaterial );
+// scene.add( torusKnot );
+
+
+//   function resizeRendererToDisplaySize(renderer) { //no longer distorted when someone resizes the window
+//     const canvas = renderer.domElement;
+//     const width = canvas.clientWidth;
+//     const height = canvas.clientHeight;
+//     const needResize = canvas.width !== width || canvas.height !== height;
+//     if (needResize) { // if the canvas has been resized
+//       renderer.setSize(width, height, false); //use clientWidth and clientHeight to set the canvas's drawingbuffer size (resolution)
+//     }
+//     return needResize;
+//   }
+
+//   function render(time) {
+//     if (resizeRendererToDisplaySize(renderer)) { //use the function above to render
+//       const canvas = renderer.domElement;
+//       camera.aspect = canvas.clientWidth / canvas.clientHeight;
+//       camera.updateProjectionMatrix();
+//     }
+
+//     time *= 0.001;  // convert time to seconds
+
+//     cube.rotation.x = time/4;
+//     cube.rotation.y = time/4;
+//     torusKnot.rotation.x = time/40;
+//     torusKnot.rotation.y = time/40;
+
+//     renderer.render(scene, camera); //pass scene and camera to the renderer, SHOW the scene
+
+//     requestAnimationFrame(render); // requestAnimationFrame is a request to the browser that you want to animate something. You pass it a function to be called. In our case that function is render
+//   }
+
+//   requestAnimationFrame(render);
+// }
+
+// main();
 
 
 
