@@ -11,7 +11,7 @@ function main() {
   const near = 0.1; // the space in front of the camera that will be rendered
   const far = 1000; //the space in front of the camera that will be rendered
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(0, 10, 20);
+  camera.position.set(0, 10, 10);
 
   const controls = new OrbitControls(camera, canvas);
   controls.target.set(0, 5, 0);
@@ -84,7 +84,6 @@ function main() {
     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
 
   }
-
   {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./img/face2.glb', (gltf) => {
@@ -92,6 +91,7 @@ function main() {
       // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
+
 
       // compute the box that contains all the stuff
       // from root and below
@@ -113,26 +113,31 @@ function main() {
   const boxWidth = 1;
   const boxHeight = 1;
   const boxDepth = 1;
-  const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-  
+  const boxGeom = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+  const centerSpGeom = new THREE.SphereGeometry(boxWidth, 300, 2, 30);
+  const tinySphereGeom = new THREE.SphereGeometry(.2, 30, 20, 30);
+
+
 
   const nmaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
   // const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
-  const cube = new THREE.Mesh(geometry, nmaterial);
+  const cube = new THREE.Mesh(centerSpGeom, nmaterial);
   scene.add(cube);
 
   function makeInstance(geometry, color, x) {
     const material = new THREE.MeshPhongMaterial({ color });
-    const cube = new THREE.Mesh(geometry, material);
+    const cube = new THREE.Mesh(tinySphereGeom, material);
     scene.add(cube);
     cube.position.x = x;
     return cube;
   }
 
-  const cubes = [
-    makeInstance(geometry, 0x44aa88, 0),
-    makeInstance(geometry, 0x8844aa, -2),
-    makeInstance(geometry, 0xaa8844, 2),
+  const tinySph = [
+    // makeInstance(geometry, 0x44aa88, 0),
+    makeInstance(boxGeom, 0x8844aa, -4),
+    makeInstance(boxGeom, 0xaa8844, 4),
+    makeInstance(boxGeom, 0x8844aa, -2),
+    makeInstance(boxGeom, 0xaa8844, 2),
   ];
 
   const ncolor = 0xFFFFFF;
@@ -152,7 +157,7 @@ function main() {
 // const sphere = new THREE.Mesh( ggeometry, gmaterial );
 // scene.add( sphere );
 
-const ygeometry = new THREE.TorusKnotGeometry( 6, .03, 151, 60, 3, 2 );
+const ygeometry = new THREE.TorusKnotGeometry( 4, .03, 351, 160, 3, 2 );
 const ymaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 const torusKnot = new THREE.Mesh( ygeometry, ymaterial );
 scene.add( torusKnot );
