@@ -49,13 +49,17 @@ body {
 }
 
 #wrapper {
+  z-index: 1;
+  position: fixed;
   display: flex;
-  flex-flow: row wrap;
-  
+  flex-flow: column wrap;
   justify-content: center;
   align-items: center;
   align-content: center;
   margin: auto;
+  background-color:rgba(0, 0, 0, 0.5);
+  /* opacity: .5; */
+  height: max-content;
 }
 
 .btn {

@@ -7,29 +7,22 @@ import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Water } from './node_modules/three/examples/jsm/objects/Water.js';
 import { Sky } from './node_modules/three/examples/jsm/objects/Sky.js';
 
-import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from './node_modules/three/examples/jsm/postprocessing/ShaderPass.js';
-import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+// import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
+// import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
+// import { ShaderPass } from './node_modules/three/examples/jsm/postprocessing/ShaderPass.js';
+// import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 let container, stats;
-let camera, scene, renderer;
+let camera, scene, raycaster, renderer;
 let controls, water, sun, cenmesh;
 
-const ENTIRE_SCENE = 0, BLOOM_SCENE = 1;
-const bloomLayer = new THREE.Layers();
-bloomLayer.set(BLOOM_SCENE);
+let INTERSECTED;
+let theta = 0;
 
-const params = {
-  exposure: 1,
-  bloomStrength: 5,
-  bloomThreshold: 0,
-  bloomRadius: 0,
-  scene: "Scene with Glow"
-};
-
-const darkMaterial = new THREE.MeshBasicMaterial({ color: "black" });
-const materials = {};
+const mouse = new THREE.Vector2();
+let boxGroup;
+const radius = 100;
 
 init();
 animate();
@@ -37,8 +30,6 @@ animate();
 function init() {
 
   container = document.getElementById('container');
-
-  //
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -183,7 +174,7 @@ function init() {
 
   //
 
-  stats = new Stats();
+  // stats = new Stats();
   // container.appendChild(stats.dom);
 
   // GUI
@@ -204,6 +195,34 @@ function init() {
   // folderWater.open();
 
   //
+  const geometry = new THREE.BoxGeometry(20, 20, 20);
+  boxGroup = new THREE.Group();
+
+  for (let i = 0; i < 200; i++) {
+
+    const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+
+    object.position.x = Math.random() * 800 - 400;
+    object.position.y = Math.random() * 800 - 400;
+    object.position.z = Math.random() * 800 - 400;
+
+    object.rotation.x = Math.random() * 2 * Math.PI;
+    object.rotation.y = Math.random() * 2 * Math.PI;
+    object.rotation.z = Math.random() * 2 * Math.PI;
+
+    object.scale.x = Math.random() + 0.5;
+    object.scale.y = Math.random() + 0.5;
+    object.scale.z = Math.random() + 0.5;
+
+    boxGroup.add(object);
+
+  }
+  scene.add(boxGroup);
+
+
+  raycaster = new THREE.Raycaster();
+  document.addEventListener('mousemove', onDocumentMouseMove);
+
 
   window.addEventListener('resize', onWindowResize);
 
@@ -227,7 +246,6 @@ function animate() {
 }
 
 function render() {
-
   const time = performance.now() * 0.0007;
 
   cenmesh.position.y = Math.sin(time) * 20 + 5;
@@ -240,152 +258,43 @@ function render() {
 
   water.material.uniforms['time'].value += 1.0 / 60.0;
 
-  renderer.render(scene, camera);
 
+  camera.updateMatrixWorld();
+
+  //mouse stuff
+  // find intersections
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(boxGroup.children);
+
+  if ( intersects.length > 0 ) {
+    if ( INTERSECTED != intersects[ 0 ].object ) {
+      if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+      INTERSECTED = intersects[ 0 ].object;
+      INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+      INTERSECTED.material.emissive.setHex( 0xff0000 );
+    }
+  } else {
+    if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+    INTERSECTED = null;
+  }
+  renderer.render(scene, camera);
 }
 
-// import * as THREE from './node_modules/three/build/three.module.js';
-// import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-// import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
-// function main() {
-//   const canvas = document.querySelector('#c'); //grab the canvas
-//   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true }); //make a renderer
+function onDocumentMouseMove(event) {
+  event.preventDefault();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+}
 
-//   const fov = 45; //field of view - 75 degrees in the vertical dimension
-//   const aspect = 2;  // display aspect of the canvas. by default a canvas is 300x150 pixels which makes the aspect 300/150 or 2. 
-//   const near = 0.1; // the space in front of the camera that will be rendered
-//   const far = 1000; //the space in front of the camera that will be rendered
-//   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-//   camera.position.set(0, 10, 10);
 
-//   const controls = new OrbitControls(camera, canvas);
-//   controls.target.set(0, 5, 0);
-//   controls.update();
-
-//   const scene = new THREE.Scene(); //make a new scene
-//   // scene.background = new THREE.Color('black');
-
-//   {
-//     const planeSize = 0; //the ground
-
-//     const loader = new THREE.TextureLoader();
-//     const texture = loader.load('https://threejsfundamentals.org/threejs/resources/images/checker.png');
-//     texture.wrapS = THREE.RepeatWrapping;
-//     texture.wrapT = THREE.RepeatWrapping;
-//     texture.magFilter = THREE.NearestFilter;
-//     const repeats = planeSize / 2;
-//     texture.repeat.set(repeats, repeats);
-
-//     const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-//     const planeMat = new THREE.MeshPhongMaterial({
-//       map: texture,
-//       side: THREE.DoubleSide,
-//     });
-//     const mesh = new THREE.Mesh(planeGeo, planeMat);
-//     mesh.rotation.x = Math.PI * -.5;
-//     scene.add(mesh);
-//   }
-
-//   {
-// const skyColor = 0xB1E1FF;  // light blue
-// const groundColor = 0xB97A20;  // brownish orange
-// const intensity = 1;
-// const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-// // scene.add(light);
-//   }
-
-//   {
 const color = 0xFFFFFF;
 const intensity = .5;
 const light = new THREE.DirectionalLight(color, intensity);
 light.position.set(5, 10, 2);
 scene.add(light);
 scene.add(light.target);
-//   }
-
-//   function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
-//     const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
-//     const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
-//     const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
-//     // compute a unit vector that points in the direction the camera is now
-//     // in the xz plane from the center of the box
-//     const direction = (new THREE.Vector3())
-//       .subVectors(camera.position, boxCenter)
-//       .multiply(new THREE.Vector3(1, 0, 1))
-//       .normalize();
-
-//     // move the camera to a position distance units way from the center
-//     // in whatever direction the camera was from the center already
-//     camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
-
-//     // pick some near and far values for the frustum that
-//     // will contain the box.
-//     camera.near = boxSize / 100;
-//     camera.far = boxSize * 100;
-
-//     camera.updateProjectionMatrix();
-
-//     // point the camera to look at the center of the box
-//     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
-
-//   }
-
-//   {
-//     const gltfLoader = new GLTFLoader();
-//     gltfLoader.load('./img/face2.glb', (gltf) => {
-
-//       // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
-//       const root = gltf.scene;
-//       scene.add(root);
-
-
-//       // compute the box that contains all the stuff
-//       // from root and below
-//       const box = new THREE.Box3().setFromObject(root);
-
-//       const boxSize = box.getSize(new THREE.Vector3()).length();
-//       const boxCenter = box.getCenter(new THREE.Vector3());
-
-//       // set the camera to frame the box
-//       frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-//       // update the Trackball controls to handle the new size
-//       controls.maxDistance = boxSize * 10;
-//       controls.target.copy(boxCenter);
-//       controls.update();
-//     });
-//   }
-
-//   const boxWidth = 1;
-//   const boxHeight = 1;
-//   const boxDepth = 1;
-//   const boxGeom = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-//   const centerSpGeom = new THREE.SphereGeometry(boxWidth, 300, 2, 30);
-//   const tinySphereGeom = new THREE.SphereGeometry(.2, 30, 20, 30);
-
-
-
-//   const nmaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
-//   // const nmaterial = new THREE.MeshPhongMaterial({ color: 0x44aa88 });  // greenish blue
-//   const cube = new THREE.Mesh(centerSpGeom, nmaterial);
-//   scene.add(cube);
-
-//   function makeInstance(geometry, color, x) {
-//     const material = new THREE.MeshPhongMaterial({ color });
-//     const cube = new THREE.Mesh(tinySphereGeom, material);
-//     scene.add(cube);
-//     cube.position.x = x;
-//     return cube;
-//   }
-
-//   const tinySph = [
-//     // makeInstance(geometry, 0x44aa88, 0),
-//     makeInstance(boxGeom, 0x8844aa, -4),
-//     makeInstance(boxGeom, 0xaa8844, 4),
-//     makeInstance(boxGeom, 0x8844aa, -2),
-//     makeInstance(boxGeom, 0xaa8844, 2),
-//   ];
+//  
 
 const ncolor = 0xFFFFFF;
 const nintensity = 1;
