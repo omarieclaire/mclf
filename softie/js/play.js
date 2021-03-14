@@ -115,7 +115,39 @@ function init() {
 
   updateSun();
 
+  let ambient = new THREE.AmbientLight(0x555555);
+  scene.add(ambient);
+
+  scene.fog = new THREE.FogExp2(0x0354e, 0.0002);
+  renderer.setClearColor(scene.fog.color);
   //
+
+  let loader = new THREE.TextureLoader();
+  loader.load("./img/smoke.png", function (texture) {
+    //texture is loaded
+    cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
+    cloudMaterial = new THREE.MeshLambertMaterial({
+      map: texture,
+      transparent: true
+    });
+
+    for (let p = 0; p < 50; p++) {
+      let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
+      cloud.position.set(
+        Math.random() * 800 - 400,
+        500,
+        Math.random() * 500 - 500
+      );
+      cloud.rotation.x = 1.16;
+      cloud.rotation.y = -0.12;
+      cloud.rotation.z = Math.random() * 2 * Math.PI;
+      cloud.material.opacity = 0.55;
+      cloudParticles.push(cloud);
+      scene.add(cloud);
+    }
+  });
+
+
 
   // const geometry = new THREE.BoxGeometry(30, 30, 30);
   const boxGeom = new THREE.BoxGeometry(1, 1, 1);
@@ -131,7 +163,7 @@ function init() {
   scene.add(cenmesh);
   // scene.add(centerShape);
 
-  
+
 
   function makeInstance(geometry, color, x, y, z) {
     const material = new THREE.MeshPhongMaterial({ emissive: color });
@@ -195,42 +227,42 @@ function init() {
   //
   // const geometry = new THREE.BoxGeometry(10, 10, 10);
 
-  const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4,2);
+  const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
   boxGroup = new THREE.Group();
 
   for (let i = 0; i < 70; i++) {
 
-  const gltfLoader = new GLTFLoader();
-  gltfLoader.load('./img/friend2.glb', (gltf) => {
-    const object = gltf.scene;
-    scene.add(object);
-    // root.position.set(0, 0, 3);
-    object.scale.multiplyScalar(20);
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./img/friend2.glb', (gltf) => {
+      const object = gltf.scene;
+      scene.add(object);
+      // root.position.set(0, 0, 3);
+      object.scale.multiplyScalar(20);
 
-    object.traverse((o) => {
-      if (o.isMesh) {
-        o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
-      }
+      object.traverse((o) => {
+        if (o.isMesh) {
+          o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
+        }
+      });
+
+      object.position.x = Math.random() * 800 - 200;
+      object.position.y = Math.random() * 150 - 5; // 100
+      object.position.z = Math.random() * 800 - 400; //-200
+
+      object.rotation.x = Math.random() * 2 * Math.PI;
+      object.rotation.y = Math.random() * 2 * Math.PI;
+      object.rotation.z = Math.random() * 2 * Math.PI;
+
+      // let scalerand = Math.random() + 0.1;
+      // object.scale.x = scalerand;
+      // object.scale.y = scalerand;
+      // object.scale.z = scalerand;
+
+      boxSpeeds.push(Math.random());
+
+
+      boxGroup.add(object);
     });
-
-    object.position.x = Math.random() * 800 - 200;
-    object.position.y = Math.random() * 150 - 5; // 100
-    object.position.z = Math.random() * 800 - 400; //-200
-
-    object.rotation.x = Math.random() * 2 * Math.PI;
-    object.rotation.y = Math.random() * 2 * Math.PI;
-    object.rotation.z = Math.random() * 2 * Math.PI;
-
-    // let scalerand = Math.random() + 0.1;
-    // object.scale.x = scalerand;
-    // object.scale.y = scalerand;
-    // object.scale.z = scalerand;
-
-    boxSpeeds.push(Math.random());
-
-
-    boxGroup.add(object);
-  });
 
     // const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.4,
     // transparent: true, }));
@@ -289,18 +321,17 @@ function render() {
   cenmesh.rotation.x = time * 0.5;
   cenmesh.rotation.z = time * 0.51;
 
-  for (var i = 0; i < boxGroup.children.length; i++) 
-    {
-      // let random = Math.random() * -.05 - .08; // 100
-      const randomSpeedForThisBox = boxSpeeds[i];
-      boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
+  for (var i = 0; i < boxGroup.children.length; i++) {
+    // let random = Math.random() * -.05 - .08; // 100
+    const randomSpeedForThisBox = boxSpeeds[i];
+    boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
 
-      // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
-      boxGroup.children[i].rotation.x = time * Math.sin(time) * 2  + 1;
-      boxGroup.children[i].rotation.z = time * 1 * Math.sin(time) * 5 + 1;
+    // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
+    boxGroup.children[i].rotation.x = time * Math.sin(time) * 2 + 1;
+    boxGroup.children[i].rotation.z = time * 1 * Math.sin(time) * 5 + 1;
 
-    }  
-      
+  }
+
 
   water.material.uniforms['time'].value += 1.0 / 60.0;
 
@@ -312,14 +343,14 @@ function render() {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(boxGroup.children, true);
 
-  if ( intersects.length > 0 ) {
-    if ( INTERSECTED != intersects[ 0 ].object ) {
+  if (intersects.length > 0) {
+    if (INTERSECTED != intersects[0].object) {
 
       // equivalent to:
       //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-      if( INTERSECTED ) {
+      if (INTERSECTED) {
         INTERSECTED.traverse((o) => {
-          if(o.isMesh) {
+          if (o.isMesh) {
             o.material.emissive.setHex(o.currentHex);
           }
         });
@@ -331,7 +362,7 @@ function render() {
       //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
       //INTERSECTED.material.emissive.setHex( 0xff0000 );
       INTERSECTED.traverse((o) => {
-        if(o.isMesh) {
+        if (o.isMesh) {
           o.currentHex = o.material.emissive.getHex();
           o.material.emissive.setHex(0xff0000);
         }
@@ -343,13 +374,13 @@ function render() {
       //INTERSECTED.material.emissive.setHex( 0xff0000 );
     }
   } else {
-    if ( INTERSECTED ) {
+    if (INTERSECTED) {
       // loop over intersected meshes and reset their
       // Hex to the "currentHex" (which is the old hex?)
       // equivalent to:
       //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
       INTERSECTED.traverse((o) => {
-        if(o.isMesh) {
+        if (o.isMesh) {
           o.material.emissive.setHex(o.currentHex);
         }
       });
