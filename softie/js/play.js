@@ -7,6 +7,8 @@ import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Water } from './node_modules/three/examples/jsm/objects/Water.js';
 import { Sky } from './node_modules/three/examples/jsm/objects/Sky.js';
 
+import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
+
 
 // import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
 // import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
@@ -22,6 +24,7 @@ let theta = 0;
 
 const mouse = new THREE.Vector2();
 let boxGroup;
+let boxSpeeds = [];
 const radius = 100;
 
 init();
@@ -128,6 +131,7 @@ function init() {
   scene.add(cenmesh);
   // scene.add(centerShape);
 
+  
 
   function makeInstance(geometry, color, x, y, z) {
     const material = new THREE.MeshPhongMaterial({ emissive: color });
@@ -142,8 +146,8 @@ function init() {
   const tinySph = [
     makeInstance(centerSpGeom, 0x8844aa, -10, 0, 10),
     makeInstance(centerSpGeom, 0xaa8844, 10, 0, 10),
-    makeInstance(centerSpGeom, 0x8844aa, -20, 0, 10),
-    makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
+    makeInstance(centerSpGeom, 0x8844aa, 0, 0, 0),
+    // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
   ];
 
 
@@ -153,13 +157,7 @@ function init() {
   // torusKnot.position.set(0, -10, 10);
 
 
-  // const gltfLoader = new GLTFLoader();
-  // gltfLoader.load('./img/face2.glb', (gltf) => {
-  //   const root = gltf.scene;
-  //   scene.add(root);
-  //   root.position.set(0, 0, 3);
-  //   root.scale.multiplyScalar(5);
-  // });
+
 
 
 
@@ -195,26 +193,65 @@ function init() {
   // folderWater.open();
 
   //
-  const geometry = new THREE.BoxGeometry(20, 20, 20);
+  // const geometry = new THREE.BoxGeometry(10, 10, 10);
+
+  const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4,2);
   boxGroup = new THREE.Group();
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 70; i++) {
 
-    const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.load('./img/friend2.glb', (gltf) => {
+    const object = gltf.scene;
+    scene.add(object);
+    // root.position.set(0, 0, 3);
+    object.scale.multiplyScalar(20);
 
-    object.position.x = Math.random() * 800 - 400;
-    object.position.y = Math.random() * 800 - 400;
-    object.position.z = Math.random() * 800 - 400;
+    object.traverse((o) => {
+      if (o.isMesh) {
+        o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
+      }
+    });
+
+    object.position.x = Math.random() * 800 - 200;
+    object.position.y = Math.random() * 150 - 5; // 100
+    object.position.z = Math.random() * 800 - 400; //-200
 
     object.rotation.x = Math.random() * 2 * Math.PI;
     object.rotation.y = Math.random() * 2 * Math.PI;
     object.rotation.z = Math.random() * 2 * Math.PI;
 
-    object.scale.x = Math.random() + 0.5;
-    object.scale.y = Math.random() + 0.5;
-    object.scale.z = Math.random() + 0.5;
+    // let scalerand = Math.random() + 0.1;
+    // object.scale.x = scalerand;
+    // object.scale.y = scalerand;
+    // object.scale.z = scalerand;
+
+    boxSpeeds.push(Math.random());
+
 
     boxGroup.add(object);
+  });
+
+    // const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.4,
+    // transparent: true, }));
+
+    // object.position.x = Math.random() * 800 - 400;
+    // object.position.y = Math.random() * 150 - 5; // 100
+    // object.position.z = Math.random() * 800 - 400; //-200
+
+    // object.rotation.x = Math.random() * 2 * Math.PI;
+    // object.rotation.y = Math.random() * 2 * Math.PI;
+    // object.rotation.z = Math.random() * 2 * Math.PI;
+
+    // let scalerand = Math.random() + 0.1;
+    // object.scale.x = scalerand;
+    // object.scale.y = scalerand;
+    // object.scale.z = scalerand;
+
+    // boxSpeeds.push(Math.random());
+
+
+    // boxGroup.add(object);
 
   }
   scene.add(boxGroup);
@@ -246,15 +283,24 @@ function animate() {
 }
 
 function render() {
-  const time = performance.now() * 0.0007;
+  const time = performance.now() * 0.0001;
 
   cenmesh.position.y = Math.sin(time) * 20 + 5;
   cenmesh.rotation.x = time * 0.5;
   cenmesh.rotation.z = time * 0.51;
 
-  // tinySph.position.y = Math.sin(time) * 20 + 5;
-  // tinySph.rotation.x = time * 0.5;
-  // tinySph.rotation.z = time * 0.51;
+  for (var i = 0; i < boxGroup.children.length; i++) 
+    {
+      // let random = Math.random() * -.05 - .08; // 100
+      const randomSpeedForThisBox = boxSpeeds[i];
+      boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
+
+      // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
+      boxGroup.children[i].rotation.x = time * Math.sin(time) * 2  + 1;
+      boxGroup.children[i].rotation.z = time * 1 * Math.sin(time) * 5 + 1;
+
+    }  
+      
 
   water.material.uniforms['time'].value += 1.0 / 60.0;
 
@@ -264,17 +310,51 @@ function render() {
   //mouse stuff
   // find intersections
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(boxGroup.children);
+  const intersects = raycaster.intersectObjects(boxGroup.children, true);
 
   if ( intersects.length > 0 ) {
     if ( INTERSECTED != intersects[ 0 ].object ) {
-      if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-      INTERSECTED = intersects[ 0 ].object;
-      INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-      INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+      // equivalent to:
+      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+      if( INTERSECTED ) {
+        INTERSECTED.traverse((o) => {
+          if(o.isMesh) {
+            o.material.emissive.setHex(o.currentHex);
+          }
+        });
+      }
+
+      INTERSECTED = intersects[0].object;
+
+      // equivalent to:
+      //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+      //INTERSECTED.material.emissive.setHex( 0xff0000 );
+      INTERSECTED.traverse((o) => {
+        if(o.isMesh) {
+          o.currentHex = o.material.emissive.getHex();
+          o.material.emissive.setHex(0xff0000);
+        }
+      });
+
+      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+      //INTERSECTED = intersects[ 0 ].object;
+      //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+      //INTERSECTED.material.emissive.setHex( 0xff0000 );
     }
   } else {
-    if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+    if ( INTERSECTED ) {
+      // loop over intersected meshes and reset their
+      // Hex to the "currentHex" (which is the old hex?)
+      // equivalent to:
+      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+      INTERSECTED.traverse((o) => {
+        if(o.isMesh) {
+          o.material.emissive.setHex(o.currentHex);
+        }
+      });
+
+    }
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
