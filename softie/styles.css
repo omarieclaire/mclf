@@ -60,7 +60,7 @@ body {
   margin: auto;
   bottom: 0;
   top: 0;
-  background-color:rgba(0, 0, 0, 0);
+  background-color:rgba(155, 153, 250, 0.1);
   border-radius: 96% 94% 0% 0% / 0% 82% 98% 95%;
 
   /* opacity: .5; */
@@ -160,7 +160,7 @@ body {
   }
 
   #wrapper {
-    max-width: 20%;
+    max-width: 15%;
   }
 
   .btn {

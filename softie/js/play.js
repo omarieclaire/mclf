@@ -139,11 +139,11 @@ function init() {
   // directionalLight.position.set(0,0,1);
   // scene.add(directionalLight);
 
-  scene.fog = new THREE.FogExp2(11657717, 0.0002);
+  scene.fog = new THREE.FogExp2(15655413, 0.0001);
   renderer.setClearColor(scene.fog.color);
   //
   let loader = new THREE.TextureLoader();
-  loader.load("./img/smoke.png", function (texture) {
+  loader.load("./img/psmoke.png", function (texture) {
     //texture is loaded
     let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
     let cloudMaterial = new THREE.MeshLambertMaterial({
@@ -151,7 +151,7 @@ function init() {
       transparent: true
     });
 
-    for (let p = 0; p < 5; p++) {
+    for (let p = 0; p < 50; p++) {
       let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
       cloud.position.set(
         Math.random() * 800 - 400,
@@ -162,8 +162,7 @@ function init() {
       cloud.rotation.y = -0.12;
       cloud.rotation.z = Math.random() * 2 * Math.PI;
       cloud.scale.multiplyScalar(2.5);
-
-      cloud.material.opacity = 0.45;
+      cloud.material.opacity = 0.25;
       cloudParticles.push(cloud);
       scene.add(cloud);
     }
@@ -294,7 +293,7 @@ function render() {
   cenmesh.rotation.x = time * 0.5;
   cenmesh.rotation.z = time * 0.51;
 
-  for (var i = 0; i < boxGroup.children.length; i++) {
+  for (let i = 0; i < boxGroup.children.length; i++) {
     // let random = Math.random() * -.05 - .08; // 100
     const randomSpeedForThisBox = boxSpeeds[i];
     boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
@@ -354,7 +353,7 @@ function render() {
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
-  renderer.domElement.addEventListener('click', onClick, false);
+  renderer.domElement.addEventListener('touch', onClick, false);
 
 }
 
@@ -365,21 +364,21 @@ function onDocumentMouseMove(event) {
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
-function onClick() {
+function onClick(event) {
   event.preventDefault();
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
 
-  var intersects = raycaster.intersectObjects(boxGroup.children, true);
+  let intersects = raycaster.intersectObjects(boxGroup.children, true);
 
   if (intersects.length > 0) { //you know you have an intersection
 
     console.log(intersects); 
     // console.log(intersects[0].object.parent.friendID);
 
-    for (var i = 0; i < intersects.length; i++) {
+    for (let i = 0; i < intersects.length; i++) {
       let currObj = intersects[i].object;
       currObj.traverse((o) => {
         if (o.isMesh) {
@@ -393,7 +392,7 @@ function onClick() {
 
 
 function windowOnLoad() {
-  var currBtn;
+  let currBtn;
 
   const song1 = new Audio("audio/love.mp3");
   const song2 = new Audio("audio/ask.mp3");
@@ -404,8 +403,8 @@ function windowOnLoad() {
 
   const songs = [song1, song2, song3, song4, song5, song6];
 
-  var video = document.getElementById("video");
-  var source = document.createElement("source");
+  let video = document.getElementById("video");
+  let source = document.createElement("source");
   video.appendChild(source);
 
   const btn1 = document.getElementById("btn1");
