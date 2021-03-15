@@ -139,7 +139,7 @@ function init() {
   // directionalLight.position.set(0,0,1);
   // scene.add(directionalLight);
 
-  scene.fog = new THREE.FogExp2(15655413, 0.0001);
+  scene.fog = new THREE.FogExp2(15655413, 0.0002);
   renderer.setClearColor(scene.fog.color);
   //
   let loader = new THREE.TextureLoader();
@@ -258,7 +258,7 @@ function init() {
 
 
   raycaster = new THREE.Raycaster();
-  // document.addEventListener('mousemove', onDocumentMouseMove);
+  document.addEventListener('mousemove', onDocumentMouseMove);
 
 
   window.addEventListener('resize', onWindowResize);
@@ -353,7 +353,7 @@ function render() {
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
-  renderer.domElement.addEventListener('touch', onClick, false);
+  renderer.domElement.addEventListener('click', onClick, false);
 
 }
 
@@ -364,7 +364,7 @@ function onDocumentMouseMove(event) {
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
-function onClick(event) {
+function onClick() {
   event.preventDefault();
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
