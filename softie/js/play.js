@@ -6,6 +6,7 @@ import Stats from './node_modules/three/examples/jsm/libs/stats.module.js';
 import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Water } from './node_modules/three/examples/jsm/objects/Water.js';
 import { Sky } from './node_modules/three/examples/jsm/objects/Sky.js';
+import { BufferGeometryUtils } from "./node_modules/three/examples/jsm/utils/BufferGeometryUtils.js";
 
 import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
 
@@ -17,6 +18,8 @@ import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/Si
 
 let container, stats;
 let camera, scene, raycaster, renderer;
+let cloudParticles = [];
+
 let controls, water, sun, cenmesh;
 
 let INTERSECTED;
@@ -118,20 +121,37 @@ function init() {
   let ambient = new THREE.AmbientLight(0x555555);
   scene.add(ambient);
 
-  scene.fog = new THREE.FogExp2(0x0354e, 0.0002);
+  const color = 0xFFFFFF;
+  const intensity = .5;
+  const light = new THREE.DirectionalLight(color, intensity);
+  light.position.set(5, 10, 2);
+  scene.add(light);
+  scene.add(light.target);
+  //  
+
+  const ncolor = 0xFFFFFF;
+  const nintensity = 1;
+  const nlight = new THREE.DirectionalLight(ncolor, nintensity);
+  nlight.position.set(-1, 2, 4);
+  scene.add(nlight);
+
+  //   let directionalLight = new THREE.DirectionalLight(0xff8c19);
+  // directionalLight.position.set(0,0,1);
+  // scene.add(directionalLight);
+
+  scene.fog = new THREE.FogExp2(11657717, 0.0002);
   renderer.setClearColor(scene.fog.color);
   //
-
   let loader = new THREE.TextureLoader();
   loader.load("./img/smoke.png", function (texture) {
     //texture is loaded
-    cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
-    cloudMaterial = new THREE.MeshLambertMaterial({
+    let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
+    let cloudMaterial = new THREE.MeshLambertMaterial({
       map: texture,
       transparent: true
     });
 
-    for (let p = 0; p < 50; p++) {
+    for (let p = 0; p < 5; p++) {
       let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
       cloud.position.set(
         Math.random() * 800 - 400,
@@ -141,7 +161,9 @@ function init() {
       cloud.rotation.x = 1.16;
       cloud.rotation.y = -0.12;
       cloud.rotation.z = Math.random() * 2 * Math.PI;
-      cloud.material.opacity = 0.55;
+      cloud.scale.multiplyScalar(2.5);
+
+      cloud.material.opacity = 0.45;
       cloudParticles.push(cloud);
       scene.add(cloud);
     }
@@ -188,11 +210,6 @@ function init() {
   // scene.add( torusKnot );
   // torusKnot.position.set(0, -10, 10);
 
-
-
-
-
-
   //
 
   controls = new OrbitControls(camera, renderer.domElement);
@@ -202,31 +219,6 @@ function init() {
   controls.maxDistance = 200.0;
   controls.update();
 
-  //
-
-  // stats = new Stats();
-  // container.appendChild(stats.dom);
-
-  // GUI
-
-  // const gui = new GUI();
-
-  // const folderSky = gui.addFolder('Sky');
-  // folderSky.add(parameters, 'inclination', 0, 0.5, 0.0001).onChange(updateSun);
-  // folderSky.add(parameters, 'azimuth', 0, 1, 0.0001).onChange(updateSun);
-  // folderSky.open();
-
-  // const waterUniforms = water.material.uniforms;
-
-  // const folderWater = gui.addFolder('Water');
-  // folderWater.add(waterUniforms.distortionScale, 'value', 0, 8, 0.1).name('distortionScale');
-  // folderWater.add(waterUniforms.size, 'value', 0.1, 10, 0.1).name('size');
-  // folderWater.add(waterUniforms.alpha, 'value', 0.9, 1, .001).name('alpha');
-  // folderWater.open();
-
-  //
-  // const geometry = new THREE.BoxGeometry(10, 10, 10);
-
   const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
   boxGroup = new THREE.Group();
 
@@ -234,17 +226,19 @@ function init() {
 
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./img/friend2.glb', (gltf) => {
-      const object = gltf.scene;
+      let object = gltf.scene;
       scene.add(object);
       // root.position.set(0, 0, 3);
       object.scale.multiplyScalar(20);
 
       object.traverse((o) => {
         if (o.isMesh) {
+          o.friendID = i;
           o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
         }
       });
 
+      object.friendID = i;
       object.position.x = Math.random() * 800 - 200;
       object.position.y = Math.random() * 150 - 5; // 100
       object.position.z = Math.random() * 800 - 400; //-200
@@ -253,40 +247,15 @@ function init() {
       object.rotation.y = Math.random() * 2 * Math.PI;
       object.rotation.z = Math.random() * 2 * Math.PI;
 
-      // let scalerand = Math.random() + 0.1;
-      // object.scale.x = scalerand;
-      // object.scale.y = scalerand;
-      // object.scale.z = scalerand;
-
       boxSpeeds.push(Math.random());
-
 
       boxGroup.add(object);
     });
 
-    // const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.4,
-    // transparent: true, }));
-
-    // object.position.x = Math.random() * 800 - 400;
-    // object.position.y = Math.random() * 150 - 5; // 100
-    // object.position.z = Math.random() * 800 - 400; //-200
-
-    // object.rotation.x = Math.random() * 2 * Math.PI;
-    // object.rotation.y = Math.random() * 2 * Math.PI;
-    // object.rotation.z = Math.random() * 2 * Math.PI;
-
-    // let scalerand = Math.random() + 0.1;
-    // object.scale.x = scalerand;
-    // object.scale.y = scalerand;
-    // object.scale.z = scalerand;
-
-    // boxSpeeds.push(Math.random());
-
-
-    // boxGroup.add(object);
-
   }
   scene.add(boxGroup);
+
+
 
 
   raycaster = new THREE.Raycaster();
@@ -317,6 +286,10 @@ function animate() {
 function render() {
   const time = performance.now() * 0.0001;
 
+  cloudParticles.forEach(p => {
+    p.rotation.z -= 0.001;
+  });
+
   cenmesh.position.y = Math.sin(time) * 20 + 5;
   cenmesh.rotation.x = time * 0.5;
   cenmesh.rotation.z = time * 0.51;
@@ -345,9 +318,6 @@ function render() {
 
   if (intersects.length > 0) {
     if (INTERSECTED != intersects[0].object) {
-
-      // equivalent to:
-      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
       if (INTERSECTED) {
         INTERSECTED.traverse((o) => {
           if (o.isMesh) {
@@ -355,12 +325,7 @@ function render() {
           }
         });
       }
-
       INTERSECTED = intersects[0].object;
-
-      // equivalent to:
-      //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-      //INTERSECTED.material.emissive.setHex( 0xff0000 );
       INTERSECTED.traverse((o) => {
         if (o.isMesh) {
           o.currentHex = o.material.emissive.getHex();
@@ -389,6 +354,8 @@ function render() {
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
+  renderer.domElement.addEventListener('click', onClick, false);
+
 }
 
 
@@ -398,74 +365,31 @@ function onDocumentMouseMove(event) {
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
+function onClick() {
+  event.preventDefault();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-const color = 0xFFFFFF;
-const intensity = .5;
-const light = new THREE.DirectionalLight(color, intensity);
-light.position.set(5, 10, 2);
-scene.add(light);
-scene.add(light.target);
-//  
+  raycaster.setFromCamera(mouse, camera);
 
-const ncolor = 0xFFFFFF;
-const nintensity = 1;
-const nlight = new THREE.DirectionalLight(ncolor, nintensity);
-nlight.position.set(-1, 2, 4);
-scene.add(nlight);
+  var intersects = raycaster.intersectObjects(boxGroup.children, true);
 
-//     const color = 0xFFFFFF;
-//   const intensity = 3;
-//   const light = new THREE.PointLight(color, intensity);
-//   scene.add(light);
+  if (intersects.length > 0) { //you know you have an intersection
 
+    console.log(intersects); 
+    // console.log(intersects[0].object.parent.friendID);
 
-// // const ggeometry = new THREE.SphereGeometry( .8, 100, 16 );
-// // const gmaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-// // const sphere = new THREE.Mesh( ggeometry, gmaterial );
-// // scene.add( sphere );
+    for (var i = 0; i < intersects.length; i++) {
+      let currObj = intersects[i].object;
+      currObj.traverse((o) => {
+        if (o.isMesh) {
+          o.material.emissive.setHex(3135135);
+        }
+      });
+    }
+  }
 
-// const ygeometry = new THREE.TorusKnotGeometry( 4, .03, 351, 160, 3, 2 );
-// const ymaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-// const torusKnot = new THREE.Mesh( ygeometry, ymaterial );
-// scene.add( torusKnot );
-
-
-//   function resizeRendererToDisplaySize(renderer) { //no longer distorted when someone resizes the window
-//     const canvas = renderer.domElement;
-//     const width = canvas.clientWidth;
-//     const height = canvas.clientHeight;
-//     const needResize = canvas.width !== width || canvas.height !== height;
-//     if (needResize) { // if the canvas has been resized
-//       renderer.setSize(width, height, false); //use clientWidth and clientHeight to set the canvas's drawingbuffer size (resolution)
-//     }
-//     return needResize;
-//   }
-
-//   function render(time) {
-//     if (resizeRendererToDisplaySize(renderer)) { //use the function above to render
-//       const canvas = renderer.domElement;
-//       camera.aspect = canvas.clientWidth / canvas.clientHeight;
-//       camera.updateProjectionMatrix();
-//     }
-
-//     time *= 0.001;  // convert time to seconds
-
-//     cube.rotation.x = time/4;
-//     cube.rotation.y = time/4;
-//     torusKnot.rotation.x = time/40;
-//     torusKnot.rotation.y = time/40;
-
-//     renderer.render(scene, camera); //pass scene and camera to the renderer, SHOW the scene
-
-//     requestAnimationFrame(render); // requestAnimationFrame is a request to the browser that you want to animate something. You pass it a function to be called. In our case that function is render
-//   }
-
-//   requestAnimationFrame(render);
-// }
-
-// main();
-
-
+}
 
 
 function windowOnLoad() {
