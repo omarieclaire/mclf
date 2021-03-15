@@ -37,7 +37,7 @@ body {
   line-height: 1;
   letter-spacing: .25rem;
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #ffffff;
   height: 100vh;
   perspective: 1px;
@@ -53,14 +53,14 @@ body {
   position: fixed;
   display: flex;
   flex-flow: row wrap;
-  max-width: 20%;
+  max-width: 30%;
   justify-content: center;
   align-items: center;
   align-content: center;
   margin: auto;
   bottom: 0;
   top: 0;
-  background-color:rgba(0, 0, 0, 0.5);
+  background-color:rgba(0, 0, 0, 0);
   border-radius: 96% 94% 0% 0% / 0% 82% 98% 95%;
 
   /* opacity: .5; */
@@ -71,14 +71,25 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 4rem;
-  height: 4rem;
+  width: 2rem;
+  height: 2rem;
   margin: 1rem;
   background:rgb(53, 205, 114);
   opacity: .6;
   border-radius: 2px;
   transition-duration: 2s;
   transition-property: background-color;
+}
+
+.btn:hover {
+  opacity: .9;
+}
+
+.currBtn {
+  opacity: .8;
+  width: 6rem;
+  height: 6rem;
+  animation: pulse 20s alternate infinite;
 }
 
 #btn1 {
@@ -116,24 +127,6 @@ body {
   transition: all 1.5s ease;
 }
 
-@media (max-width: 480px) {
-  .btn {
-    width: 6rem;
-    height: 6rem;
-    }
-}
-
-.btn:hover {
-  opacity: .9;
-}
-
-.currBtn {
-  opacity: .8;
-  width: 12rem;
-  height: 12rem;
-  animation: pulse 20s alternate infinite;
-
-}
 
 #video {
   position: fixed;
@@ -157,7 +150,32 @@ body {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+@media (min-width:320px)  { /* smartphones, iPhone, portrait 480x320 phones */ }
+@media (min-width:481px)  { /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ }
+@media (min-width:641px)  { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ }
+@media (min-width:961px)  { /* tablet, landscape iPad, lo-res laptops ands desktops */ }
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */ 
+  body{
+    font-size: 1.5rem;
+  }
 
+  #wrapper {
+    max-width: 20%;
+  }
+
+  .btn {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .currBtn {
+    width: 8rem;
+    height: 8rem;
+  }
+  
+}
+@media (min-width:1281px) { /* hi-res laptops and desktops */ 
+}
 
 
 
