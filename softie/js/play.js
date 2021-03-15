@@ -258,7 +258,7 @@ function init() {
 
 
   raycaster = new THREE.Raycaster();
-  document.addEventListener('mousemove', onDocumentMouseMove);
+  // document.addEventListener('mousemove', onDocumentMouseMove);
 
 
   window.addEventListener('resize', onWindowResize);
@@ -353,7 +353,7 @@ function render() {
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
-  renderer.domElement.addEventListener('touch', onClick, false);
+  renderer.domElement.addEventListener('click', onClick, false);
 
 }
 
