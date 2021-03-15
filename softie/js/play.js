@@ -353,7 +353,7 @@ function render() {
     INTERSECTED = null;
   }
   renderer.render(scene, camera);
-  renderer.domElement.addEventListener('click', onClick, false);
+  renderer.domElement.addEventListener('touch', onClick, false);
 
 }
 
