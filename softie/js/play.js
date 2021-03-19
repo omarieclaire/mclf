@@ -21,10 +21,11 @@ let camera, scene, raycaster, renderer;
 let cloudParticles = [];
 
 let controls, water, sun, cenmesh;
-
+let newText;
 let INTERSECTED;
 let theta = 0;
-
+let currModal = undefined;
+let modalOpen = false;
 const mouse = new THREE.Vector2();
 let boxGroup;
 let boxSpeeds = [];
@@ -238,6 +239,25 @@ function init() {
       });
 
       object.friendID = i;
+
+
+      function makediv(friendID) {
+        // console.log("hello div");
+        let newDiv = document.createElement("div");
+        newDiv.id = "modalID" + friendID;
+        newDiv.classList.add("modal");
+        newText = document.createTextNode("This is a space where things may happen.");    // Create a text node
+        newDiv.appendChild(newText);
+        let container = document.getElementById("container");
+        container.insertBefore(newDiv, container.childNodes[0]);
+
+
+        document.addEventListener("click", function (event) {
+        });
+      }
+
+      makediv(object.friendID);
+
       object.position.x = Math.random() * 800 - 200;
       object.position.y = Math.random() * 150 - 5; // 100
       object.position.z = Math.random() * 800 - 400; //-200
@@ -255,14 +275,16 @@ function init() {
   scene.add(boxGroup);
 
 
-
-
   raycaster = new THREE.Raycaster();
   document.addEventListener('mousemove', onDocumentMouseMove);
 
 
   window.addEventListener('resize', onWindowResize);
 
+}
+
+function takeModalIDReturnMsg(modalID) {
+  return "why hello " + modalID;
 }
 
 function onWindowResize() {
@@ -364,19 +386,39 @@ function onDocumentMouseMove(event) {
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
-function onClick() {
+function onClick(event) {
   event.preventDefault();
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
 
+  // close modals when clicking outside them
+  var modal = document.getElementsByClassName('modal');
+  if (event.target.classList.contains('modal')) {
+  } else {
+    for (var i = 0; i < modal.length; i++) {
+      let currModal = modal[i];
+      currModal.classList.remove("openModal");
+    }
+  }
+
+
+
   let intersects = raycaster.intersectObjects(boxGroup.children, true);
 
   if (intersects.length > 0) { //you know you have an intersection
 
-    console.log(intersects); 
-    // console.log(intersects[0].object.parent.friendID);
+    let currFriendID = intersects[0].object.parent.friendID; //grab the id of the friend
+    let currModalID = "modalID" + currFriendID; //form the modal ID
+    currModal = document.getElementById(currModalID); //grad the current Modal
+    // console.log("modal is defined");
+    currModal.classList.add("openModal")
+    modalOpen = true;
+
+    let msg = takeModalIDReturnMsg(currModalID);
+    currModal.innerHTML = msg;
+// findme
 
     for (let i = 0; i < intersects.length; i++) {
       let currObj = intersects[i].object;

@@ -92,6 +92,51 @@ body {
   animation: pulse 20s alternate infinite;
 }
 
+#tempbtn {
+  position: fixed;
+  z-index: 5000;
+}
+
+.modal {
+  z-index: 200;
+  height: 90%;
+  margin: 2rem;
+	position:fixed;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	/* display:none; */
+  visibility: hidden;
+  transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
+	overflow:auto;
+	background-color:#000;
+	background-color:rgba(0, 0, 0, 0.4);
+	z-index:9999;
+}
+.modal > h3 {
+	background-color:#eee;
+	border-bottom:1px solid #bfbfbf;
+	font-size:24px;
+	font-weight:400;
+	margin:0;
+	padding:0.8em 56px .8em 27px; 
+}
+.modal > div {padding:23px 27px;}
+
+
+.openModal {
+	position:absolute;
+  padding: 15rem;
+  visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+	border-radius:50%;
+	-webkit-transition:all .3s ease-in-out;
+    transition:all .3s ease-in-out;
+}
+
+
 #btn1 {
   border-radius: 46% 54% 70% 30% / 45% 42% 58% 55%;
   background: radial-gradient(rgb(0, 195, 255), rgb(0, 4, 255));
