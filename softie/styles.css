@@ -9,6 +9,9 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 
 }
 
+input, select, textarea, button {font-family: inherit;}
+
+
 /* HTML5 display-role reset for older browsers */
 
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
@@ -67,6 +70,10 @@ body {
   /* height: max-content; */
 }
 
+.submitBtn {
+
+}
+
 .btn {
   display: flex;
   justify-content: center;
@@ -97,7 +104,7 @@ body {
   z-index: 5000;
 }
 
-.modal {
+.friendModalDiv {
   z-index: 200;
   height: 90%;
   width: 40%;
@@ -120,7 +127,7 @@ body {
 	background-color:rgba(0, 0, 0, 0.6);
 	z-index:9999;
 }
-.modal > h3 {
+.friendModalDiv > h3 {
 	background-color:#eee;
 	border-bottom:1px solid #bfbfbf;
 	font-size:24px;
@@ -129,10 +136,22 @@ body {
 	padding:0.8em 56px .8em 27px; 
 }
 
-/* .modal > div {padding:23px 27px;} */
+input {
+  /* visibility: inherit; */
+  margin-top: 2rem;
+  opacity: .85;
+  height: 2rem;
+  width: 12rem;
+}
+
+input.inherit {
+  font-family: inherit;
+}
+
+/* .FriendModalDiv > div {padding:23px 27px;} */
 
 
-.openModal {
+.openFriendModalDiv {
 	position:absolute;
   border-top-left-radius: 30%;
   border-top-right-radius: 30%;

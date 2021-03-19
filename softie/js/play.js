@@ -16,6 +16,21 @@ import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/Si
 // import { ShaderPass } from './node_modules/three/examples/jsm/postprocessing/ShaderPass.js';
 // import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+var firebaseConfig = {
+  apiKey: "AIzaSyDiCOSmTc5a0U0m4jY4D8s7ZXZ6ab5NTWo",
+  authDomain: "sanctuary-76c32.firebaseapp.com",
+  projectId: "sanctuary-76c32",
+  storageBucket: "sanctuary-76c32.appspot.com",
+  messagingSenderId: "656056199487",
+  appId: "1:656056199487:web:278a2511cfb83f7798cb8a",
+  measurementId: "G-TDGFN204SM"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+
 let container, stats;
 let camera, scene, raycaster, renderer;
 let cloudParticles = [];
@@ -24,12 +39,23 @@ let controls, water, sun, cenmesh;
 let newText;
 let INTERSECTED;
 let theta = 0;
-let currModal = undefined;
+let currFriendModalDiv = undefined;
 let modalOpen = false;
 const mouse = new THREE.Vector2();
 let boxGroup;
 let boxSpeeds = [];
 const radius = 100;
+
+let database = firebase.database();
+let ref = database.ref('msg');
+// let initialInput = createInput(initials);
+
+let data = {
+  ID: 'someid',
+  msg: 'somemsg'
+}
+
+// ref.push(data);
 
 init();
 animate();
@@ -241,22 +267,56 @@ function init() {
       object.friendID = i;
 
 
-      function makediv(friendID) {
+      function makeFriendModal(friendID) {
         // console.log("hello div");
-        let newDiv = document.createElement("div");
-        newDiv.id = "modalID" + friendID;
-        newDiv.classList.add("modal");
+        let friendModalDiv = document.createElement("div");
+        let textDiv = document.createElement("div");
+        let inputDiv = document.createElement("div");
+        
+        friendModalDiv.id = "friendModalDivID" + friendID;
+        // console.log(friendModalDiv.id);
+        textDiv.id = "textDivID" + friendID;
+        inputDiv.id = "inputDivID" + friendID;
+        // console.log(inputDiv.id);
+        friendModalDiv.classList.add("friendModalDiv");
+        // textDiv.classList.add("");
+        // inputDiv.classList.add("");
+
         newText = document.createTextNode("This is a space where things may happen.");    // Create a text node
-        newDiv.appendChild(newText);
-        let container = document.getElementById("container");
-        container.insertBefore(newDiv, container.childNodes[0]);
+        textDiv.appendChild(newText);
 
+        let msgInput = document.createElement("input");
+        msgInput.type = "text";
+        textDiv.appendChild(msgInput);
 
-        document.addEventListener("click", function (event) {
+        let submitBtn = document.createElement("button");
+        submitBtn.classList.add("submitBtn");
+        submitBtn.innerHTML = "submit";
+
+        submitBtn.addEventListener("click", function (event) {
+          console.log("pressed button");
+          let data = {
+            msg: msgInput,
+            id: friendID
+          }
+          ref.push(data);
+// findme
         });
+        
+        let container = document.getElementById("container");
+
+        container.insertBefore(friendModalDiv, container.childNodes[0]);
+        friendModalDiv.insertBefore(submitBtn, friendModalDiv.childNodes[0]);
+        friendModalDiv.insertBefore(textDiv, friendModalDiv.childNodes[0]);
+
+        friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
+
+
+        // document.addEventListener("click", function (event) {
+        // });
       }
 
-      makediv(object.friendID);
+      makeFriendModal(object.friendID);
 
       object.position.x = Math.random() * 800 - 200;
       object.position.y = Math.random() * 150 - 5; // 100
@@ -283,8 +343,9 @@ function init() {
 
 }
 
-function takeModalIDReturnMsg(modalID) {
-  return "why hello " + modalID;
+function takeModalIDReturnMsg(currModalID) {
+  console.log(currModalID);
+  return "why hello " + currModalID;
 }
 
 function onWindowResize() {
@@ -321,8 +382,8 @@ function render() {
     boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
 
     // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
-    boxGroup.children[i].rotation.x =  Math.sin(time) * 2 + 1;
-    boxGroup.children[i].rotation.z = time * 1 * Math.sin(time) * 5 + 1;
+    boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
+    boxGroup.children[i].rotation.z = time * Math.sin(time) * 5 + 1;
 
   }
 
@@ -394,12 +455,12 @@ function onClick(event) {
   raycaster.setFromCamera(mouse, camera);
 
   // close modals when clicking outside them
-  var modal = document.getElementsByClassName('modal');
-  if (event.target.classList.contains('modal')) {
+  var modal = document.getElementsByClassName('friendModalDiv'); 
+  if (event.target.classList.contains('friendModalDiv')) {
   } else {
     for (var i = 0; i < modal.length; i++) {
       let currModal = modal[i];
-      currModal.classList.remove("openModal");
+      currModal.classList.remove("openFriendModalDiv");
     }
   }
 
@@ -410,15 +471,16 @@ function onClick(event) {
   if (intersects.length > 0) { //you know you have an intersection
 
     let currFriendID = intersects[0].object.parent.friendID; //grab the id of the friend
-    let currModalID = "modalID" + currFriendID; //form the modal ID
-    currModal = document.getElementById(currModalID); //grad the current Modal
-    // console.log("modal is defined");
-    currModal.classList.add("openModal")
+    let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
+    currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+    // console.log(currFriendModalDiv);
+    // console.log(currFriendModalDiv);
+    currFriendModalDiv.classList.add("openFriendModalDiv")
     modalOpen = true;
 
     let msg = takeModalIDReturnMsg(currModalID);
-    currModal.innerHTML = msg;
-// findme
+    let currTextDiv = document.getElementById("textDivID" + currFriendID); 
+    currTextDiv.innerHTML = msg;
 
     for (let i = 0; i < intersects.length; i++) {
       let currObj = intersects[i].object;
