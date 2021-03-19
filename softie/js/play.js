@@ -321,7 +321,7 @@ function render() {
     boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
 
     // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
-    boxGroup.children[i].rotation.x = time * Math.sin(time) * 2 + 1;
+    boxGroup.children[i].rotation.x =  Math.sin(time) * 2 + 1;
     boxGroup.children[i].rotation.z = time * 1 * Math.sin(time) * 5 + 1;
 
   }
@@ -530,6 +530,8 @@ function windowOnLoad() {
     for (let i = 0; i < songs.length; i++) {
       songs[i].pause();
     }
+    song.volume = 0.1;
+
     song.play();
   }
 

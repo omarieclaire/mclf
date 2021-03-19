@@ -100,18 +100,24 @@ body {
 .modal {
   z-index: 200;
   height: 90%;
-  margin: 2rem;
+  width: 40%;
+  margin-top: 2rem;
 	position:fixed;
-	top:0;
+  margin: auto;
+  bottom:0;
+  left: 0;
+  right: 0;
+
+	/* top:0;
 	left:0;
 	bottom:0;
-	right:0;
+	right:0; */
 	/* display:none; */
   visibility: hidden;
   transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
 	overflow:auto;
 	background-color:#000;
-	background-color:rgba(0, 0, 0, 0.4);
+	background-color:rgba(0, 0, 0, 0.6);
 	z-index:9999;
 }
 .modal > h3 {
@@ -122,19 +128,24 @@ body {
 	margin:0;
 	padding:0.8em 56px .8em 27px; 
 }
-.modal > div {padding:23px 27px;}
+
+/* .modal > div {padding:23px 27px;} */
 
 
 .openModal {
 	position:absolute;
-  padding: 15rem;
+  border-top-left-radius: 30%;
+  border-top-right-radius: 30%;
+  padding: 2rem 12rem 0 12rem;
+  text-align: center;
   visibility: visible;
     opacity: 1;
     transition-delay: 0s;
-	border-radius:50%;
+	/* border-radius:50%; */
 	-webkit-transition:all .3s ease-in-out;
     transition:all .3s ease-in-out;
 }
+
 
 
 #btn1 {
