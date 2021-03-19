@@ -47,10 +47,41 @@ let boxSpeeds = [];
 const radius = 100;
 
 let database = firebase.database();
-let ref = database.ref('msg');
+let ref = database.ref();
+let msgsRef = ref.child('msg');
 
 init();
 animate();
+
+function gotData(data){
+  // right now you get the whole datase (msgs)
+  // what you can do:
+  // 1. is use this database to update
+  //    the text in all your modals.
+  //    hint: in loop below, grab element by id and update with msg.
+  // 2. right now you capture a single message. maybe you
+  //    want to capture multiple messages.
+
+  let msgs = data.val();
+  console.log(msgs);
+  let keys = Object.keys(msgs);
+  console.log(`keys: ${keys}`);
+  for (let i = 0; i < keys.length; i++){
+    let k = keys[i];
+    var msgg = msgs[k].msg;
+    let txtDivToUpdate = document.getElementById("textDivID" + k);
+    txtDivToUpdate.innerHTML = msgg;
+    console.log(msgg);
+  }
+}
+function errData(){
+  console.log("error");
+}
+
+msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
+
+
+
 
 function init() {
 
@@ -289,12 +320,21 @@ function init() {
           // console.log(friendID);
           // console.log("pressed button");
           // let enteredTxt = get
-          let data = {
-            msg: msgInput.value,
-            id: friendID
-          }
+
+          // this creates an object of the following shape.
+          // suppose the friendId was 25 and the message was
+          // "hello friend", then data will look like this:
+          // {
+          //    25: {
+          //      msg: "hello friend"
+          //    }
+          //}
+          var data = {};
+          data[friendID] = {
+            msg: msgInput.value
+          };
           console.log(msgInput.value);
-          ref.push(data);
+          msgsRef.update(data);
         });
         
         let container = document.getElementById("container");
@@ -338,7 +378,7 @@ function init() {
 }
 
 function takeModalIDReturnMsg(currModalID) {
-  console.log(currModalID);
+  // console.log(currModalID);
   return "why hello " + currModalID;
 }
 
