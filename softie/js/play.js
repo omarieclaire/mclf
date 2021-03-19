@@ -48,14 +48,6 @@ const radius = 100;
 
 let database = firebase.database();
 let ref = database.ref('msg');
-// let initialInput = createInput(initials);
-
-let data = {
-  ID: 'someid',
-  msg: 'somemsg'
-}
-
-// ref.push(data);
 
 init();
 animate();
@@ -274,42 +266,44 @@ function init() {
         let inputDiv = document.createElement("div");
         
         friendModalDiv.id = "friendModalDivID" + friendID;
-        // console.log(friendModalDiv.id);
+
         textDiv.id = "textDivID" + friendID;
         inputDiv.id = "inputDivID" + friendID;
-        // console.log(inputDiv.id);
+
         friendModalDiv.classList.add("friendModalDiv");
-        // textDiv.classList.add("");
-        // inputDiv.classList.add("");
+        textDiv.classList.add("textDiv");
+        inputDiv.classList.add("inputDiv");
 
         newText = document.createTextNode("This is a space where things may happen.");    // Create a text node
         textDiv.appendChild(newText);
 
         let msgInput = document.createElement("input");
         msgInput.type = "text";
-        textDiv.appendChild(msgInput);
+        inputDiv.appendChild(msgInput);
 
         let submitBtn = document.createElement("button");
         submitBtn.classList.add("submitBtn");
         submitBtn.innerHTML = "submit";
 
         submitBtn.addEventListener("click", function (event) {
-          console.log("pressed button");
+          // console.log(friendID);
+          // console.log("pressed button");
+          // let enteredTxt = get
           let data = {
-            msg: msgInput,
+            msg: msgInput.value,
             id: friendID
           }
+          console.log(msgInput.value);
           ref.push(data);
-// findme
         });
         
         let container = document.getElementById("container");
 
         container.insertBefore(friendModalDiv, container.childNodes[0]);
         friendModalDiv.insertBefore(submitBtn, friendModalDiv.childNodes[0]);
+        friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
         friendModalDiv.insertBefore(textDiv, friendModalDiv.childNodes[0]);
 
-        friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
 
 
         // document.addEventListener("click", function (event) {
@@ -473,8 +467,6 @@ function onClick(event) {
     let currFriendID = intersects[0].object.parent.friendID; //grab the id of the friend
     let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
     currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
-    // console.log(currFriendModalDiv);
-    // console.log(currFriendModalDiv);
     currFriendModalDiv.classList.add("openFriendModalDiv")
     modalOpen = true;
 

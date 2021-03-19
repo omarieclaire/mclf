@@ -71,6 +71,8 @@ body {
 }
 
 .submitBtn {
+margin: 2rem auto 2rem auto;
+width: 5rem;
 
 }
 
@@ -105,65 +107,77 @@ body {
 }
 
 .friendModalDiv {
-  z-index: 200;
-  height: 90%;
-  width: 40%;
-  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  height: 95vh;
+  width: 100vw;
+  border-top-left-radius: 100rem;
+  border-top-right-radius: 100rem;
 	position:fixed;
-  margin: auto;
+  text-align: center;
   bottom:0;
-  left: 0;
-  right: 0;
-
-	/* top:0;
-	left:0;
-	bottom:0;
-	right:0; */
-	/* display:none; */
   visibility: hidden;
   transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
-	overflow:auto;
-	background-color:#000;
+	/* overflow:auto; */
 	background-color:rgba(0, 0, 0, 0.6);
-	z-index:9999;
 }
-.friendModalDiv > h3 {
-	background-color:#eee;
-	border-bottom:1px solid #bfbfbf;
-	font-size:24px;
-	font-weight:400;
-	margin:0;
-	padding:0.8em 56px .8em 27px; 
-}
-
-input {
-  /* visibility: inherit; */
-  margin-top: 2rem;
-  opacity: .85;
-  height: 2rem;
-  width: 12rem;
-}
-
-input.inherit {
-  font-family: inherit;
-}
-
-/* .FriendModalDiv > div {padding:23px 27px;} */
 
 
 .openFriendModalDiv {
 	position:absolute;
-  border-top-left-radius: 30%;
-  border-top-right-radius: 30%;
-  padding: 2rem 12rem 0 12rem;
-  text-align: center;
   visibility: visible;
     opacity: 1;
     transition-delay: 0s;
-	/* border-radius:50%; */
 	-webkit-transition:all .3s ease-in-out;
     transition:all .3s ease-in-out;
 }
+
+.friendModalDiv > p {
+	background-color:#eee;
+	/* border-bottom:1px solid #bfbfbf; */
+	font-size:24px;
+	/* font-weight:400; */
+	padding:0.8em 56px .8em 27px; 
+  text-align: center;
+}
+
+.textDiv{
+  flex-direction: row;
+  max-height: 5rem;
+  margin: 10rem auto 2rem auto;
+}
+
+.inputDiv{
+  flex-direction: row;
+  margin: 0 auto;
+  /* background-color: red; */
+
+}
+
+input {
+  display: block;
+  font-family: inherit;
+
+  /* visibility: inherit; */
+  /* margin-top: 2rem; */
+  /* opacity: .85; */
+  /* margin: 3rem, 0 0 0; */
+  width: 20rem;  /* width: 2rem; */
+}
+
+submitBtn:active {
+background-color: red;
+}
+
+submitBtn:focus {
+background-color: blue;
+}
+
+/* .FriendModalDiv > div {padding:23px 27px;} */
+
 
 
 
