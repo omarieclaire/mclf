@@ -54,14 +54,6 @@ init();
 animate();
 
 function gotData(data){
-  // right now you get the whole datase (msgs)
-  // what you can do:
-  // 1. is use this database to update
-  //    the text in all your modals.
-  //    hint: in loop below, grab element by id and update with msg.
-  // 2. right now you capture a single message. maybe you
-  //    want to capture multiple messages.
-
   let msgs = data.val();
   console.log(msgs);
   let keys = Object.keys(msgs);
@@ -379,7 +371,7 @@ function init() {
 
 function takeModalIDReturnMsg(currModalID) {
   // console.log(currModalID);
-  return "why hello " + currModalID;
+  return "Welcome to orb " + currModalID;
 }
 
 function onWindowResize() {
@@ -510,7 +502,7 @@ function onClick(event) {
     currFriendModalDiv.classList.add("openFriendModalDiv")
     modalOpen = true;
 
-    let msg = takeModalIDReturnMsg(currModalID);
+    let msg = takeModalIDReturnMsg(currFriendID);
     let currTextDiv = document.getElementById("textDivID" + currFriendID); 
     currTextDiv.innerHTML = msg;
 
