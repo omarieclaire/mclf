@@ -75,6 +75,7 @@ body {
   background-color:rgba(55, 53, 50, 0.5);
   border-radius: 50% 20% / 10% 40%;
   max-width: 15%;
+  /* transition: all 350ms ease-in-out; */
 
   /* animation: fadeIn 0s rotate 1s forwards; */
 
@@ -88,15 +89,41 @@ body {
   transition: visibility 6s linear 2s, opacity 3.5s ease;
   visibility: visible;
   /* background-color: red; */
+  transition: all 350ms ease-in-out;
 
--webkit-transition:all .3s ease-in-out;
-  transition:all .3s ease-in-out;
+/* -webkit-transition:all .3s ease-in-out; */
+  /* transition:all .3s ease-in-out; */
 }
 
 .submitBtn {
 margin: 2rem auto 2rem auto;
-width: 5rem;
+/* width: 5rem; */
+  background-color: rgba(60, 41, 29, 0.5);
 
+  border: 2px solid black;
+  border-radius: 0.6em;
+  cursor: pointer;
+  padding: 1.2em 2.8em;
+  text-decoration: none;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .15rem;
+  border-color: rgb(20, 20, 33);
+  color: #fff;
+  transition: all 350ms ease-in-out;
+}
+
+
+.submitBtn:hover{
+  /* box-shadow: 0 0 10px 0 rgb(23, 23, 44) inset, 0 0 10px 4px  rgb(23, 23, 44); */
+  color: #fff;
+  outline: 0;
+  box-shadow: 0 0 40px 40px rgb(24, 20, 42) inset;
+}
+
+.submitBtn:focus{
+  color: #fff;
+    outline: 0;
 }
 
 .btn {
@@ -131,12 +158,13 @@ width: 5rem;
   width: 2.5rem;
   height: 2.5rem;
   /* rotate: 90deg; */
-  border-radius: 36% 54% 90% 30% / 45% 42% 58% 55%;
+  border-radius: 96% 94% 90% 90% / 95% 92% 88% 95%;
+  opacity: .25;
 }
 
 .wrapperBtnOpening{
   /* visibility: hidden; */
-  background: radial-gradient(yellow), orange);
+  background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
   /* opacity: .1; */
   animation: rotate 1s forwards;
 
@@ -144,13 +172,13 @@ width: 5rem;
 
 .wrapperBtnClosing{
   /* visibility: visible; */
-  background: radial-gradient(rgb(140, 0, 255), rgb(31, 63, 207));
+  background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
   animation: rotateReverse 1s forwards;
 }
 
 .wrapperBtnClosed{
   /* visibility: visible; */
-  background: radial-gradient(rgb(140, 0, 255), rgb(31, 63, 207));
+  background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
 }
 
 .friendModalDiv {
@@ -170,6 +198,8 @@ width: 5rem;
   transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
 	/* overflow:auto; */
 	background-color:rgba(0, 0, 0, 0.6);
+  transition: all 350ms ease-in-out;
+
 }
 
 
@@ -207,20 +237,13 @@ width: 5rem;
 input {
   display: block;
   font-family: inherit;
+  padding: 1rem .24rem 1rem .24rem;
 
   /* visibility: inherit; */
   /* margin-top: 2rem; */
   /* opacity: .85; */
   /* margin: 3rem, 0 0 0; */
   width: 20rem;  /* width: 2rem; */
-}
-
-submitBtn:active {
-background-color: red;
-}
-
-submitBtn:focus {
-background-color: blue;
 }
 
 /* .FriendModalDiv > div {padding:23px 27px;} */

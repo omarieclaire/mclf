@@ -185,31 +185,31 @@ function init() {
   renderer.setClearColor(scene.fog.color);
   //
 
-  let loader = new THREE.TextureLoader();
-  loader.load("./img/psmoke.png", function (texture) {
-    //texture is loaded
-    let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
-    let cloudMaterial = new THREE.MeshLambertMaterial({
-      map: texture,
-      transparent: true
-    });
+  // let loader = new THREE.TextureLoader();
+  // loader.load("./img/psmoke.png", function (texture) {
+  //   //texture is loaded
+  //   let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
+  //   let cloudMaterial = new THREE.MeshLambertMaterial({
+  //     map: texture,
+  //     transparent: true
+  //   });
 
-    for (let p = 0; p < 50; p++) {
-      let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
-      cloud.position.set(
-        Math.random() * 800 - 400,
-        500,
-        Math.random() * 500 - 500
-      );
-      cloud.rotation.x = 1.16;
-      cloud.rotation.y = -0.12;
-      cloud.rotation.z = Math.random() * 2 * Math.PI;
-      cloud.scale.multiplyScalar(2.5);
-      cloud.material.opacity = 0.25;
-      cloudParticles.push(cloud);
-      scene.add(cloud);
-    }
-  });
+  //   for (let p = 0; p < 50; p++) {
+  //     let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
+  //     cloud.position.set(
+  //       Math.random() * 800 - 400,
+  //       500,
+  //       Math.random() * 500 - 500
+  //     );
+  //     cloud.rotation.x = 1.16;
+  //     cloud.rotation.y = -0.12;
+  //     cloud.rotation.z = Math.random() * 2 * Math.PI;
+  //     cloud.scale.multiplyScalar(2.5);
+  //     cloud.material.opacity = 0.25;
+  //     cloudParticles.push(cloud);
+  //     scene.add(cloud);
+  //   }
+  // });
 
 
 
@@ -230,8 +230,8 @@ function init() {
 
 
   function makeInstance(geometry, color, x, y, z) {
-    const material = new THREE.MeshPhongMaterial({ emissive: color });
-    const cube = new THREE.Mesh(tinySphereGeom, material);
+    // const material = new THREE.MeshPhongMaterial({ emissive: color });
+    const cube = new THREE.Mesh(tinySphereGeom, brightMaterial);
     scene.add(cube);
     cube.position.x = x;
     cube.position.y = y;
@@ -545,6 +545,8 @@ function windowOnLoad() {
 
   const wrapper = document.getElementById("wrapper");
   const wrapperBtn = document.getElementById("wrapperBtn");
+  const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
+
   const btn1 = document.getElementById("btn1");
   const btn2 = document.getElementById("btn2");
   const btn3 = document.getElementById("btn3");
@@ -552,7 +554,30 @@ function windowOnLoad() {
   const btn5 = document.getElementById("btn5");
   const btn6 = document.getElementById("btn6");
 
-  const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (toggleOpen == false) {
+        console.log("toggle is closed - return");
+        return;
+      } else {
+        console.log("toggle is open");
+        // if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
+        //   console.log("clicking on wrapper or button - return");
+        //   return;
+        // } else {
+        //   console.log("clicking on world - run code");
+
+        //   if (wrapper.classList.contains("openWrapper")) {
+        //     wrapper.classList.remove("openWrapper");
+        //     wrapperBtn.classList.add("wrapperBtnClosing");
+        //     toggleOpen = false;
+        //   }
+        // }
+      }
+    },
+  );
+
   wrapperBtn.addEventListener(
     "click",
     function (event) {
@@ -567,7 +592,7 @@ function windowOnLoad() {
         wrapperBtn.classList.add("wrapperBtnOpening");
         wrapper.classList.add("openWrapper");
         toggleOpen = true;
-        console.log(`toggle should be open ${toggleOpen}`);
+        // console.log(`toggle should be open ${toggleOpen}`);
       } else {
         console.log("toggle is closing");
         if (wrapperBtn.classList.contains('wrapperBtnOpening')) {
@@ -576,7 +601,7 @@ function windowOnLoad() {
         wrapperBtn.classList.add("wrapperBtnClosing");
         wrapper.classList.remove("openWrapper");
         toggleOpen = false;
-        console.log(`toggle should be closed ${toggleOpen}`);
+        // console.log(`toggle should be closed ${toggleOpen}`);
 
 
       }
@@ -584,7 +609,7 @@ function windowOnLoad() {
       // console.log(toggleOpen);
       // toggleOpen
     },
-    );
+  );
 
   btn1.addEventListener(
     "click",
