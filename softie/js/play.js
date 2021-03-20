@@ -45,6 +45,7 @@ const mouse = new THREE.Vector2();
 let boxGroup;
 let boxSpeeds = [];
 const radius = 100;
+let toggleOpen = false;
 
 let database = firebase.database();
 let ref = database.ref();
@@ -53,20 +54,20 @@ let msgsRef = ref.child('msg');
 init();
 animate();
 
-function gotData(data){
+function gotData(data) {
   let msgs = data.val();
   console.log(msgs);
   let keys = Object.keys(msgs);
   console.log(`keys: ${keys}`);
-  for (let i = 0; i < keys.length; i++){
+  for (let i = 0; i < keys.length; i++) {
     let k = keys[i];
     var msgg = msgs[k].msg;
     let txtDivToUpdate = document.getElementById("textDivID" + k);
     txtDivToUpdate.innerHTML = msgg;
-    console.log(msgg);
+    // console.log(msgg);
   }
 }
-function errData(){
+function errData() {
   console.log("error");
 }
 
@@ -92,7 +93,6 @@ function init() {
   camera.position.set(30, 30, 200);
 
   //
-
   sun = new THREE.Vector3();
 
   // Water
@@ -184,6 +184,7 @@ function init() {
   scene.fog = new THREE.FogExp2(15655413, 0.0002);
   renderer.setClearColor(scene.fog.color);
   //
+
   let loader = new THREE.TextureLoader();
   loader.load("./img/psmoke.png", function (texture) {
     //texture is loaded
@@ -254,10 +255,10 @@ function init() {
   //
 
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.maxPolarAngle = Math.PI * 0.495;
+  controls.maxPolarAngle = Math.PI * 0.499;
   controls.target.set(0, 10, 0);
   controls.minDistance = 40.0;
-  controls.maxDistance = 200.0;
+  controls.maxDistance = 400.0;
   controls.update();
 
   const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
@@ -287,7 +288,7 @@ function init() {
         let friendModalDiv = document.createElement("div");
         let textDiv = document.createElement("div");
         let inputDiv = document.createElement("div");
-        
+
         friendModalDiv.id = "friendModalDivID" + friendID;
 
         textDiv.id = "textDivID" + friendID;
@@ -304,23 +305,21 @@ function init() {
         msgInput.type = "text";
         inputDiv.appendChild(msgInput);
 
-        let submitBtn = document.createElement("button");
+        let submitBtn = document.createElement("input");
+        submitBtn.setAttribute('type', 'submit');
+
         submitBtn.classList.add("submitBtn");
         submitBtn.innerHTML = "submit";
 
-        submitBtn.addEventListener("click", function (event) {
-          // console.log(friendID);
-          // console.log("pressed button");
-          // let enteredTxt = get
+        // msgInput.addEventListener("keyup", function(event) {
+        //   if (event.keyCode === 13) {
+        //    event.preventDefault();
+        //    document.getElementById("submitBtn").click();
+        //   }
+        // });
 
-          // this creates an object of the following shape.
-          // suppose the friendId was 25 and the message was
-          // "hello friend", then data will look like this:
-          // {
-          //    25: {
-          //      msg: "hello friend"
-          //    }
-          //}
+        submitBtn.addEventListener("click", function (event) {
+
           var data = {};
           data[friendID] = {
             msg: msgInput.value
@@ -328,7 +327,7 @@ function init() {
           console.log(msgInput.value);
           msgsRef.update(data);
         });
-        
+
         let container = document.getElementById("container");
 
         container.insertBefore(friendModalDiv, container.childNodes[0]);
@@ -405,11 +404,11 @@ function render() {
   for (let i = 0; i < boxGroup.children.length; i++) {
     // let random = Math.random() * -.05 - .08; // 100
     const randomSpeedForThisBox = boxSpeeds[i];
-    boxGroup.children[i].position.y = 1 * Math.sin(time) * 80 + 15;
+    boxGroup.children[i].position.y = 1 * Math.sin(time) * 40 + 15;
 
     // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
     boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
-    boxGroup.children[i].rotation.z = time * Math.sin(time) * 5 + 1;
+    boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
 
   }
 
@@ -481,12 +480,14 @@ function onClick(event) {
   raycaster.setFromCamera(mouse, camera);
 
   // close modals when clicking outside them
-  var modal = document.getElementsByClassName('friendModalDiv'); 
+  var modal = document.getElementsByClassName('friendModalDiv');
   if (event.target.classList.contains('friendModalDiv')) {
   } else {
     for (var i = 0; i < modal.length; i++) {
       let currModal = modal[i];
       currModal.classList.remove("openFriendModalDiv");
+
+      // document.getElementById("wrapper").classList.remove("openWrapper");
     }
   }
 
@@ -495,6 +496,13 @@ function onClick(event) {
   let intersects = raycaster.intersectObjects(boxGroup.children, true);
 
   if (intersects.length > 0) { //you know you have an intersection
+    // document.getElementById("wrapper").classList.add("openWrapper");
+
+    if (wrapper.classList.contains("openWrapper")) {
+      wrapper.classList.remove("openWrapper");
+      wrapperBtn.classList.add("wrapperBtnClosing");
+      toggleOpen = false;
+    }
 
     let currFriendID = intersects[0].object.parent.friendID; //grab the id of the friend
     let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
@@ -503,8 +511,8 @@ function onClick(event) {
     modalOpen = true;
 
     let msg = takeModalIDReturnMsg(currFriendID);
-    let currTextDiv = document.getElementById("textDivID" + currFriendID); 
-    currTextDiv.innerHTML = msg;
+    let currTextDiv = document.getElementById("textDivID" + currFriendID);
+    // currTextDiv.innerHTML = msg;
 
     for (let i = 0; i < intersects.length; i++) {
       let currObj = intersects[i].object;
@@ -531,10 +539,12 @@ function windowOnLoad() {
 
   const songs = [song1, song2, song3, song4, song5, song6];
 
-  let video = document.getElementById("video");
-  let source = document.createElement("source");
-  video.appendChild(source);
+  // let video = document.getElementById("video");
+  // let source = document.createElement("source");
+  // video.appendChild(source);
 
+  const wrapper = document.getElementById("wrapper");
+  const wrapperBtn = document.getElementById("wrapperBtn");
   const btn1 = document.getElementById("btn1");
   const btn2 = document.getElementById("btn2");
   const btn3 = document.getElementById("btn3");
@@ -542,12 +552,46 @@ function windowOnLoad() {
   const btn5 = document.getElementById("btn5");
   const btn6 = document.getElementById("btn6");
 
+  const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
+  wrapperBtn.addEventListener(
+    "click",
+    function (event) {
+      if (toggleOpen == false) {
+        // console.log("toggle is opening");
+        if (wrapperBtn.classList.contains('wrapperBtnClosed')) {
+          wrapperBtn.classList.remove("wrapperBtnClosed");
+        }
+        if (wrapperBtn.classList.contains('wrapperBtnClosing')) {
+          wrapperBtn.classList.remove("wrapperBtnClosing");
+        }
+        wrapperBtn.classList.add("wrapperBtnOpening");
+        wrapper.classList.add("openWrapper");
+        toggleOpen = true;
+        console.log(`toggle should be open ${toggleOpen}`);
+      } else {
+        console.log("toggle is closing");
+        if (wrapperBtn.classList.contains('wrapperBtnOpening')) {
+          wrapperBtn.classList.remove("wrapperBtnOpening");
+        }
+        wrapperBtn.classList.add("wrapperBtnClosing");
+        wrapper.classList.remove("openWrapper");
+        toggleOpen = false;
+        console.log(`toggle should be closed ${toggleOpen}`);
+
+
+      }
+      // toggleOpen != toggleOpen
+      // console.log(toggleOpen);
+      // toggleOpen
+    },
+    );
+
   btn1.addEventListener(
     "click",
     function () {
       updateBtnStyle(btn1);
-      source.setAttribute("src", "img/v1.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v1.mp4");
+      // video.load();
       playSong(song1);
     },
     false
@@ -556,8 +600,8 @@ function windowOnLoad() {
     "click",
     function () {
       updateBtnStyle(btn2);
-      source.setAttribute("src", "img/v2.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v2.mp4");
+      // video.load();
       playSong(song2);
     },
     false
@@ -566,8 +610,8 @@ function windowOnLoad() {
     "click",
     function () {
       updateBtnStyle(btn3);
-      source.setAttribute("src", "img/v3.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v3.mp4");
+      // video.load();
       playSong(song3);
     },
     false
@@ -576,8 +620,8 @@ function windowOnLoad() {
     "click",
     function () {
       updateBtnStyle(btn4);
-      source.setAttribute("src", "img/v4.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v4.mp4");
+      // video.load();
       playSong(song4);
     },
     false
@@ -586,8 +630,8 @@ function windowOnLoad() {
     "click",
     function () {
       updateBtnStyle(btn5);
-      source.setAttribute("src", "img/v5.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v5.mp4");
+      // video.load();
       playSong(song5);
     },
     false
@@ -596,8 +640,8 @@ function windowOnLoad() {
     "click",
     function () {
       updateBtnStyle(btn6);
-      source.setAttribute("src", "img/v6.mp4");
-      video.load();
+      // source.setAttribute("src", "img/v6.mp4");
+      // video.load();
       playSong(song6);
     },
     false

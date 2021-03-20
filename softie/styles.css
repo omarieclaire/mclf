@@ -51,7 +51,15 @@ body {
   display: flex;
 }
 
-#wrapper {
+#wrapperToggleDiv{
+  z-index: 1;
+  text-align: center;
+  position: fixed;
+  display: flex;
+  margin: 1rem;
+}
+
+.wrapper {
   z-index: 1;
   position: fixed;
   display: flex;
@@ -61,13 +69,28 @@ body {
   align-items: center;
   align-content: center;
   margin: auto;
-  bottom: 0;
-  top: 0;
-  background-color:rgba(155, 153, 250, 0.1);
-  border-radius: 96% 94% 0% 0% / 0% 82% 98% 95%;
+  bottom: 1rem;
+  top: 6rem;
+  visibility: hidden;
+  background-color:rgba(55, 53, 50, 0.5);
+  border-radius: 50% 20% / 10% 40%;
+  max-width: 15%;
 
+  /* animation: fadeIn 0s rotate 1s forwards; */
+
+  /* transition: visibility 6s linear 6s, opacity 3.5s ease; */
   /* opacity: .5; */
   /* height: max-content; */
+}
+
+.openWrapper {
+  opacity: 1;
+  transition: visibility 6s linear 2s, opacity 3.5s ease;
+  visibility: visible;
+  /* background-color: red; */
+
+-webkit-transition:all .3s ease-in-out;
+  transition:all .3s ease-in-out;
 }
 
 .submitBtn {
@@ -80,8 +103,8 @@ width: 5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   margin: 1rem;
   background:rgb(53, 205, 114);
   opacity: .6;
@@ -101,9 +124,33 @@ width: 5rem;
   animation: pulse 20s alternate infinite;
 }
 
-#tempbtn {
-  position: fixed;
-  z-index: 5000;
+.wrapperBtn {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  /* rotate: 90deg; */
+  border-radius: 36% 54% 90% 30% / 45% 42% 58% 55%;
+}
+
+.wrapperBtnOpening{
+  /* visibility: hidden; */
+  background: radial-gradient(yellow), orange);
+  /* opacity: .1; */
+  animation: rotate 1s forwards;
+
+}
+
+.wrapperBtnClosing{
+  /* visibility: visible; */
+  background: radial-gradient(rgb(140, 0, 255), rgb(31, 63, 207));
+  animation: rotateReverse 1s forwards;
+}
+
+.wrapperBtnClosed{
+  /* visibility: visible; */
+  background: radial-gradient(rgb(140, 0, 255), rgb(31, 63, 207));
 }
 
 .friendModalDiv {
@@ -178,9 +225,6 @@ background-color: blue;
 
 /* .FriendModalDiv > div {padding:23px 27px;} */
 
-
-
-
 #btn1 {
   border-radius: 46% 54% 70% 30% / 45% 42% 58% 55%;
   background: radial-gradient(rgb(0, 195, 255), rgb(0, 4, 255));
@@ -244,18 +288,12 @@ background-color: blue;
 @media (min-width:641px)  { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ }
 @media (min-width:961px)  { /* tablet, landscape iPad, lo-res laptops ands desktops */ }
 @media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */ 
+  
   body{
     font-size: 1.5rem;
   }
 
-  #wrapper {
-    max-width: 15%;
-  }
 
-  .btn {
-    width: 4rem;
-    height: 4rem;
-  }
 
   .currBtn {
     width: 8rem;
@@ -293,17 +331,7 @@ background-color: blue;
 
 
 
-@keyframes fade {
-  0% {
-    opacity: .6;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
+
 
 @keyframes glow {
   0% {
@@ -352,6 +380,21 @@ background-color: blue;
   }
 } 
 
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(40deg);
+    transform: rotate(40deg);
+  }
+} 
+
+@keyframes rotateReverse {
+  100% {
+    -webkit-transform: rotate(-40deg);
+    transform: rotate(-40deg);
+  }
+} 
+
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -361,5 +404,17 @@ background-color: blue;
   100% {
     transform: scale(.8);
     /* transform: rotate(-5deg);  */
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: .6;
+  }
+  100% {
+    opacity: 1;
   }
 }
