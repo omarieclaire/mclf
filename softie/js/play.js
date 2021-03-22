@@ -33,7 +33,7 @@ firebase.analytics();
 
 let container, stats;
 let camera, scene, raycaster, renderer;
-let cloudParticles = [];
+// let cloudParticles = [];
 
 let controls, water, sun, cenmesh;
 let newText;
@@ -228,7 +228,6 @@ function init() {
   // scene.add(centerShape);
 
 
-
   function makeInstance(geometry, color, x, y, z) {
     // const material = new THREE.MeshPhongMaterial({ emissive: color });
     const cube = new THREE.Mesh(tinySphereGeom, brightMaterial);
@@ -309,7 +308,7 @@ function init() {
         submitBtn.setAttribute('type', 'submit');
 
         submitBtn.classList.add("submitBtn");
-        submitBtn.innerHTML = "submit";
+        submitBtn.innerHTML = "post";
 
         // msgInput.addEventListener("keyup", function(event) {
         //   if (event.keyCode === 13) {
@@ -334,9 +333,6 @@ function init() {
         friendModalDiv.insertBefore(submitBtn, friendModalDiv.childNodes[0]);
         friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
         friendModalDiv.insertBefore(textDiv, friendModalDiv.childNodes[0]);
-
-
-
         // document.addEventListener("click", function (event) {
         // });
       }
@@ -362,8 +358,6 @@ function init() {
 
   raycaster = new THREE.Raycaster();
   document.addEventListener('mousemove', onDocumentMouseMove);
-
-
   window.addEventListener('resize', onWindowResize);
 
 }
@@ -393,9 +387,9 @@ function animate() {
 function render() {
   const time = performance.now() * 0.0001;
 
-  cloudParticles.forEach(p => {
-    p.rotation.z -= 0.001;
-  });
+  // cloudParticles.forEach(p => {
+  //   p.rotation.z -= 0.001;
+  // });
 
   cenmesh.position.y = Math.sin(time) * 20 + 5;
   cenmesh.rotation.x = time * 0.5;
@@ -404,7 +398,7 @@ function render() {
   for (let i = 0; i < boxGroup.children.length; i++) {
     // let random = Math.random() * -.05 - .08; // 100
     const randomSpeedForThisBox = boxSpeeds[i];
-    boxGroup.children[i].position.y = 1 * Math.sin(time) * 40 + 15;
+    boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
 
     // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
     boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
@@ -493,9 +487,9 @@ function onClick(event) {
 
 
 
-  let intersects = raycaster.intersectObjects(boxGroup.children, true);
+  let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
 
-  if (intersects.length > 0) { //you know you have an intersection
+  if (intersectsFriend.length > 0) { //you know you have an intersection
     // document.getElementById("wrapper").classList.add("openWrapper");
 
     if (wrapper.classList.contains("openWrapper")) {
@@ -504,7 +498,7 @@ function onClick(event) {
       toggleOpen = false;
     }
 
-    let currFriendID = intersects[0].object.parent.friendID; //grab the id of the friend
+    let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
     let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
     currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
     currFriendModalDiv.classList.add("openFriendModalDiv")
@@ -514,8 +508,8 @@ function onClick(event) {
     let currTextDiv = document.getElementById("textDivID" + currFriendID);
     // currTextDiv.innerHTML = msg;
 
-    for (let i = 0; i < intersects.length; i++) {
-      let currObj = intersects[i].object;
+    for (let i = 0; i < intersectsFriend.length; i++) {
+      let currObj = intersectsFriend[i].object;
       currObj.traverse((o) => {
         if (o.isMesh) {
           o.material.emissive.setHex(3135135);
@@ -559,21 +553,21 @@ function windowOnLoad() {
     function (event) {
       if (toggleOpen == false) {
         console.log("toggle is closed - return");
-        return;
+        // return;
       } else {
         console.log("toggle is open");
-        // if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
-        //   console.log("clicking on wrapper or button - return");
-        //   return;
-        // } else {
-        //   console.log("clicking on world - run code");
+        if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
+          console.log("clicking on wrapper or button - return");
+          // return;
+        } else {
+          console.log("clicking on world - run code");
 
-        //   if (wrapper.classList.contains("openWrapper")) {
-        //     wrapper.classList.remove("openWrapper");
-        //     wrapperBtn.classList.add("wrapperBtnClosing");
-        //     toggleOpen = false;
-        //   }
-        // }
+          // if (wrapper.classList.contains("openWrapper")) {
+          //   wrapper.classList.remove("openWrapper");
+          //   wrapperBtn.classList.add("wrapperBtnClosing");
+          //   toggleOpen = false;
+          // }
+        }
       }
     },
   );
