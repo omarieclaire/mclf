@@ -55,16 +55,31 @@ init();
 animate();
 
 function gotData(data) {
-  let msgs = data.val();
-  console.log(msgs);
-  let keys = Object.keys(msgs);
-  console.log(`keys: ${keys}`);
-  for (let i = 0; i < keys.length; i++) {
+  let msgDatabase = data.val();
+  // console.log(msgDatabase);
+  let keys = Object.keys(msgDatabase);
+  // console.log(`keys: ${keys}`);
+  for (let i = 0; i < keys.length; i++) { 
     let k = keys[i];
-    var msgg = msgs[k].msg;
+    var message = msgDatabase[k].msg;
+    var friendMsgs = msgDatabase[k].msgs;
+    
+    if(typeof(friendMsgs) === 'undefined'){ //deal with empty friends
+      friendMsgs = {};
+    }
+
+    let friendMsgsKeys = Object.keys(friendMsgs);
+
     let txtDivToUpdate = document.getElementById("textDivID" + k);
-    txtDivToUpdate.innerHTML = msgg;
-    // console.log(msgg);
+    txtDivToUpdate.innerHTML = '';
+    for(let j = 0; j < friendMsgsKeys.length; j++) {
+      let friendMsgKey = friendMsgsKeys[j];
+      let msg = friendMsgs[friendMsgKey];
+      txtDivToUpdate.appendChild(document.createTextNode(msg));
+
+      let br = document.createElement("br");
+      txtDivToUpdate.appendChild(br);
+    }
   }
 }
 function errData() {
@@ -336,18 +351,29 @@ function init() {
         // postBtn.textContent = 'test value';
         postBtn.value = 'send';
 
-        console.log(postBtn.nintensity);
+        // console.log(postBtn.nintensity);
 
         postBtn.addEventListener("click", function (event) {
 
+          console.log(`clicking on ${friendID}`);
+
+          let ref2 = msgsRef.child(`${friendID}/msgs`);
+          ref2.push(msgInput.value);
+          console.log(`added msgs to ${friendID}`);
+          
+          
           var data = {};
+
           data[friendID] = {
-            msg: msgInput.value
+            msg: msgInput.value,
           };
           console.log(msgInput.value);
-          msgsRef.update(data);
+          //msgsRef.update(data);
           msgInput.value = "";
+          
         });
+
+        
 
         let container = document.getElementById("container");
 
@@ -531,7 +557,7 @@ function onClick(event) {
 
     let msg = takeModalIDReturnMsg(currFriendID);
     let currTextDiv = document.getElementById("textDivID" + currFriendID);
-    // currTextDiv.innerHTML = msg;
+    //currTextDiv.innerHTML = msg;
 
     for (let i = 0; i < intersectsFriend.length; i++) {
       let currObj = intersectsFriend[i].object;
@@ -577,12 +603,12 @@ function windowOnLoad() {
     "click",
     function (event) {
       if (toggleOpen == false) {
-        console.log("toggle is closed - return");
+        // console.log("toggle is closed - return");
         // return;
       } else {
-        console.log("toggle is open");
+        // console.log("toggle is open");
         if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
-          console.log("clicking on wrapper or button - return");
+          // console.log("clicking on wrapper or button - return");
           // return;
         } else {
           console.log("clicking on world - run code");
