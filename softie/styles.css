@@ -234,6 +234,10 @@ margin: 2rem auto 2rem auto;
 
 }
 
+ul {
+  list-style-type: none;
+}
+
 input {
   display: block;
   font-family: inherit;

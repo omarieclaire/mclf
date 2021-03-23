@@ -72,13 +72,19 @@ function gotData(data) {
 
     let txtDivToUpdate = document.getElementById("textDivID" + k);
     txtDivToUpdate.innerHTML = '';
+    let ulNode = document.createElement('UL');
+    txtDivToUpdate.appendChild(ulNode);
+
+
     for(let j = 0; j < friendMsgsKeys.length; j++) {
       let friendMsgKey = friendMsgsKeys[j];
       let msg = friendMsgs[friendMsgKey];
-      txtDivToUpdate.appendChild(document.createTextNode(msg));
 
-      let br = document.createElement("br");
-      txtDivToUpdate.appendChild(br);
+      let liNode = document.createElement('li');
+      ulNode.appendChild(liNode);
+
+      let msgText = document.createTextNode(msg);
+      liNode.appendChild(msgText);
     }
   }
 }
@@ -360,7 +366,6 @@ function init() {
           let ref2 = msgsRef.child(`${friendID}/msgs`);
           ref2.push(msgInput.value);
           console.log(`added msgs to ${friendID}`);
-          
           
           var data = {};
 
