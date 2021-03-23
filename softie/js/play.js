@@ -46,7 +46,7 @@ let boxGroup;
 let boxSpeeds = [];
 const radius = 100;
 let toggleOpen = false;
-
+let objects = [];
 let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
@@ -150,6 +150,7 @@ function init() {
     sun.x = Math.cos(phi);
     sun.y = Math.sin(phi) * Math.sin(theta);
     sun.z = Math.sin(phi) * Math.cos(theta);
+    // sun.scale.set(10, 10 10);
 
     sky.material.uniforms['sunPosition'].value.copy(sun);
     water.material.uniforms['sunDirection'].value.copy(sun).normalize();
@@ -214,7 +215,7 @@ function init() {
 
 
   // const geometry = new THREE.BoxGeometry(30, 30, 30);
-  const boxGeom = new THREE.BoxGeometry(1, 1, 1);
+  const boxGeom = new THREE.BoxGeometry(21, 21, 21);
   const centerSpGeom = new THREE.SphereGeometry(10, 300, 2, 30);
   const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
 
@@ -223,9 +224,31 @@ function init() {
 
   // mesh = new THREE.Mesh(geometry, material);
   cenmesh = new THREE.Mesh(centerSpGeom, brightMaterial);
-
   scene.add(cenmesh);
-  // scene.add(centerShape);
+
+
+  ///test area for sun
+
+  const friendWorld = new THREE.Object3D();
+  scene.add(friendWorld);
+  objects.push(friendWorld);
+
+  let tempSun = new THREE.Mesh(tinySphereGeom, brightMaterial);
+  tempSun.scale.set(2, 2, 2);
+  friendWorld.add(tempSun);
+  // scene.add(tempSun);
+  objects.push(tempSun);
+
+  const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1})
+  const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
+  earthMesh.position.x = 20;
+  earthMesh.position.y = 8;
+  earthMesh.scale.set(2, 2, 2);
+
+  friendWorld.add(earthMesh);
+  objects.push(earthMesh);
+
+
 
 
   function makeInstance(geometry, color, x, y, z) {
@@ -283,41 +306,39 @@ function init() {
 
 
       function makeFriendModal(friendID) {
-        // console.log("hello div");
         let friendModalDiv = document.createElement("div");
+        let infoTextDiv = document.createElement("div");
         let textDiv = document.createElement("div");
         let inputDiv = document.createElement("div");
 
         friendModalDiv.id = "friendModalDivID" + friendID;
-
         textDiv.id = "textDivID" + friendID;
         inputDiv.id = "inputDivID" + friendID;
 
         friendModalDiv.classList.add("friendModalDiv");
         textDiv.classList.add("textDiv");
         inputDiv.classList.add("inputDiv");
-
-        newText = document.createTextNode("This is a space where things may happen.");    // Create a text node
+        
+        let newText = document.createTextNode(" ");    // Create a text node
         textDiv.appendChild(newText);
+
+        let newInfoText = document.createTextNode("This is a space where things may happen.");    // Create a text node
+        infoTextDiv.appendChild(newInfoText);
 
         let msgInput = document.createElement("input");
         msgInput.type = "text";
         inputDiv.appendChild(msgInput);
 
-        let submitBtn = document.createElement("input");
-        submitBtn.setAttribute('type', 'submit');
+        let postBtn = document.createElement("input");
+        postBtn.setAttribute('type', 'button');
 
-        submitBtn.classList.add("submitBtn");
-        submitBtn.innerHTML = "post";
+        postBtn.classList.add("postBtn");
+        // postBtn.textContent = 'test value';
+        postBtn.value = 'send';
 
-        // msgInput.addEventListener("keyup", function(event) {
-        //   if (event.keyCode === 13) {
-        //    event.preventDefault();
-        //    document.getElementById("submitBtn").click();
-        //   }
-        // });
+        console.log(postBtn.nintensity);
 
-        submitBtn.addEventListener("click", function (event) {
+        postBtn.addEventListener("click", function (event) {
 
           var data = {};
           data[friendID] = {
@@ -325,16 +346,16 @@ function init() {
           };
           console.log(msgInput.value);
           msgsRef.update(data);
+          msgInput.value = "";
         });
 
         let container = document.getElementById("container");
 
         container.insertBefore(friendModalDiv, container.childNodes[0]);
-        friendModalDiv.insertBefore(submitBtn, friendModalDiv.childNodes[0]);
+        friendModalDiv.insertBefore(postBtn, friendModalDiv.childNodes[0]);
         friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
         friendModalDiv.insertBefore(textDiv, friendModalDiv.childNodes[0]);
-        // document.addEventListener("click", function (event) {
-        // });
+        friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
       }
 
       makeFriendModal(object.friendID);
@@ -405,6 +426,10 @@ function render() {
     boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
 
   }
+
+  objects.forEach((obj) => {
+    obj.rotation.y = time;
+  });
 
 
   water.material.uniforms['time'].value += 1.0 / 60.0;
