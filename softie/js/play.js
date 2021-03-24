@@ -54,29 +54,37 @@ let msgsRef = ref.child('msg');
 init();
 animate();
 
+function scrollToTopOfDiv(txtDivToUpdate){
+  // var objDiv = document.getElementById("your_div");
+  txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
+}
+
 function gotData(data) {
   let msgDatabase = data.val();
   // console.log(msgDatabase);
   let keys = Object.keys(msgDatabase);
   // console.log(`keys: ${keys}`);
-  for (let i = 0; i < keys.length; i++) { 
+  for (let i = 0; i < keys.length; i++) {
     let k = keys[i];
     var message = msgDatabase[k].msg;
     var friendMsgs = msgDatabase[k].msgs;
-    
-    if(typeof(friendMsgs) === 'undefined'){ //deal with empty friends
+
+    if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
       friendMsgs = {};
     }
 
     let friendMsgsKeys = Object.keys(friendMsgs);
 
-    let txtDivToUpdate = document.getElementById("textDivID" + k);
+    let txtDivToUpdate = document.getElementById("printTextDivID" + k);
+    // console.log(txtDivToUpdate);
     txtDivToUpdate.innerHTML = '';
     let ulNode = document.createElement('UL');
     txtDivToUpdate.appendChild(ulNode);
 
+    scrollToTopOfDiv(txtDivToUpdate);
 
-    for(let j = 0; j < friendMsgsKeys.length; j++) {
+
+    for (let j = 0; j < friendMsgsKeys.length; j++) {
       let friendMsgKey = friendMsgsKeys[j];
       let msg = friendMsgs[friendMsgKey];
 
@@ -85,6 +93,7 @@ function gotData(data) {
 
       let msgText = document.createTextNode(msg);
       liNode.appendChild(msgText);
+
     }
   }
 }
@@ -260,7 +269,7 @@ function init() {
   // scene.add(tempSun);
   objects.push(tempSun);
 
-  const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1})
+  const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
   const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
   earthMesh.position.x = 20;
   earthMesh.position.y = 8;
@@ -327,66 +336,67 @@ function init() {
 
 
       function makeFriendModal(friendID) {
+        let container = document.getElementById("container");
         let friendModalDiv = document.createElement("div");
         let infoTextDiv = document.createElement("div");
-        let textDiv = document.createElement("div");
-        let inputDiv = document.createElement("div");
+        let newInfoText = document.createTextNode("#" + friendID + ". A space where things may happen.");    // Create a text node
+        let printTextDiv = document.createElement("div");
+        let printText = document.createTextNode(" ");    // Create a text node
+        let formDiv = document.createElement("div");
+        let form = document.createElement("form");
+        let textInput = document.createElement("input");
+        let submitInput = document.createElement("input");
+
 
         friendModalDiv.id = "friendModalDivID" + friendID;
-        textDiv.id = "textDivID" + friendID;
-        inputDiv.id = "inputDivID" + friendID;
+        printTextDiv.id = "printTextDivID" + friendID;
+        textInput.id = "textInput" + friendID;
 
+        infoTextDiv.classList.add("infoTextDiv");
         friendModalDiv.classList.add("friendModalDiv");
-        textDiv.classList.add("textDiv");
-        inputDiv.classList.add("inputDiv");
-        
-        let newText = document.createTextNode(" ");    // Create a text node
-        textDiv.appendChild(newText);
+        printTextDiv.classList.add("printTextDiv");
+        formDiv.classList.add("formDiv");
+        form.classList.add("chat");
 
-        let newInfoText = document.createTextNode("This is a space where things may happen.");    // Create a text node
+        //  form.method = "post";
+        // form.action = "/my-backend-script";
+        textInput.type = "text";
+        textInput.placeholder = "";
+        submitInput.type = "submit";
+        submitInput.value = "send";
+
+        printTextDiv.appendChild(printText);
         infoTextDiv.appendChild(newInfoText);
+        formDiv.appendChild(form);
+        form.appendChild(textInput);
+        form.appendChild(submitInput);
 
-        let msgInput = document.createElement("input");
-        msgInput.type = "text";
-        inputDiv.appendChild(msgInput);
+        friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
+        container.insertBefore(friendModalDiv, container.childNodes[0]);
+        friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
+        friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
 
-        let postBtn = document.createElement("input");
-        postBtn.setAttribute('type', 'button');
-
-        postBtn.classList.add("postBtn");
-        // postBtn.textContent = 'test value';
-        postBtn.value = 'send';
-
-        // console.log(postBtn.nintensity);
-
-        postBtn.addEventListener("click", function (event) {
-
+        submitInput.addEventListener("click", function (event) {
+          event.preventDefault()
+          // event.stopPropagation()
           console.log(`clicking on ${friendID}`);
 
           let ref2 = msgsRef.child(`${friendID}/msgs`);
-          ref2.push(msgInput.value);
+          ref2.push(textInput.value);
           console.log(`added msgs to ${friendID}`);
-          
+
           var data = {};
 
           data[friendID] = {
-            msg: msgInput.value,
+            msg: textInput.value,
           };
-          console.log(msgInput.value);
+          console.log(textInput.value);
           //msgsRef.update(data);
-          msgInput.value = "";
-          
+            textInput.value = "";
+            textInput.focus();
+
         });
 
-        
-
-        let container = document.getElementById("container");
-
-        container.insertBefore(friendModalDiv, container.childNodes[0]);
-        friendModalDiv.insertBefore(postBtn, friendModalDiv.childNodes[0]);
-        friendModalDiv.insertBefore(inputDiv, friendModalDiv.childNodes[0]);
-        friendModalDiv.insertBefore(textDiv, friendModalDiv.childNodes[0]);
-        friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
       }
 
       makeFriendModal(object.friendID);
@@ -561,7 +571,7 @@ function onClick(event) {
     modalOpen = true;
 
     let msg = takeModalIDReturnMsg(currFriendID);
-    let currTextDiv = document.getElementById("textDivID" + currFriendID);
+    let currTextDiv = document.getElementById("textInputID" + currFriendID);
     //currTextDiv.innerHTML = msg;
 
     for (let i = 0; i < intersectsFriend.length; i++) {

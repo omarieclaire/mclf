@@ -95,6 +95,46 @@ body {
   /* transition:all .3s ease-in-out; */
 }
 
+.chat {
+  display: flex;
+}
+
+.chat input[type="text"],
+.chat input[type="submit"] {
+  padding: 5px 10px;
+  border: 1px solid #666;
+  outline: none;
+}
+
+.chat input[type="text"] {
+  flex: 1;
+  flex-grow: 3;
+}
+
+.chat input[type="text"]:focus {
+  border-color: #369;
+}
+
+.chat input[type="submit"] {
+  flex: .25;
+  text-transform: uppercase;
+  display: block;
+  /* width: 30%; */
+
+}
+
+.chat input[type="submit"]:active {
+  border-color: #369;
+  background-color: #369;
+  color: #fff;
+}
+
+
+.chat input[type="text"] {
+  margin-right: 10px;
+}
+
+
 .postBtn {
 margin: 2rem auto 2rem auto;
 /* width: 5rem; */
@@ -204,6 +244,7 @@ margin: 2rem auto 2rem auto;
 
 
 .openFriendModalDiv {
+  display:flex;
 	position:absolute;
   visibility: visible;
     opacity: 1;
@@ -221,28 +262,44 @@ margin: 2rem auto 2rem auto;
   text-align: center;
 }
 
-.textDiv{
-  flex-direction: row;
-  max-height: 5rem;
-  margin: 10rem auto 2rem auto;
+.printTextDiv{
+  flex-direction: column;
+  max-height: 40vh;
+  min-width: 50vw;
+  overflow-y:scroll;
+  /* margin: 10rem auto 2rem auto; */
 }
 
-.inputDiv{
-  flex-direction: row;
-  margin: 0 auto;
-  /* background-color: red; */
+.infoTextDiv{
+  color: coral;
+  font-weight: 500;
+  padding: 0rem 0rem .5rem 0rem;
+  margin: 2rem;
+}
 
+
+.formDiv {
+  margin-top: 2rem;
 }
 
 ul {
   list-style-type: none;
 }
 
+li {
+  padding-bottom: .4rem;
+
+}
+
 input {
   display: block;
   font-family: inherit;
-  padding: 1rem .24rem 1rem .24rem;
-
+  padding: 1rem .4rem 1rem .4rem;
+  border: 0;
+  outline: 0;
+  background-color: rgba(22, 20, 32, 0.3);
+  color: white;
+  border-bottom: 1px solid white;
   /* visibility: inherit; */
   /* margin-top: 2rem; */
   /* opacity: .85; */
