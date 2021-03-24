@@ -50,560 +50,581 @@ let objects = [];
 let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
-let username;
+
+let username = "mysterious stranger";
 
 function windowOnLoad() {
-init();
-animate();
+  init();
+  animate();
 
-function scrollToTopOfDiv(txtDivToUpdate){
-  // var objDiv = document.getElementById("your_div");
-  txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
-}
-
-let usernameDiv = document.getElementById("usernameDiv");
-let submitUsername = document.getElementById("submitUsername");
-
-submitUsername.addEventListener(
-  "click",
-  function (event) {
-    event.preventDefault();
-    username = document.getElementById("username").value;
-    usernameDiv.classList.add("fade");
-    setTimeout(function(){ usernameDiv.style.display = "none"; }, 3000);
-  },
-  false
-);
-
-
-function gotData(data) {
-  let msgDatabase = data.val();
-  // console.log(msgDatabase);
-  let keys = Object.keys(msgDatabase);
-  // console.log(`keys: ${keys}`);
-  for (let i = 0; i < keys.length; i++) {
-    let k = keys[i];
-    var message = msgDatabase[k].msg;
-    var friendMsgs = msgDatabase[k].msgs;
-
-    if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
-      friendMsgs = {};
-    }
-
-    let friendMsgsKeys = Object.keys(friendMsgs);
-
-    let txtDivToUpdate = document.getElementById("printTextDivID" + k);
-    // console.log(txtDivToUpdate);
-    txtDivToUpdate.innerHTML = '';
-    let ulNode = document.createElement('UL');
-    txtDivToUpdate.appendChild(ulNode);
-
-    scrollToTopOfDiv(txtDivToUpdate);
-
-
-    for (let j = 0; j < friendMsgsKeys.length; j++) {
-      let friendMsgKey = friendMsgsKeys[j];
-      let msg = friendMsgs[friendMsgKey];
-
-      let liNode = document.createElement('li');
-      ulNode.appendChild(liNode);
-
-      let msgText = document.createTextNode(msg);
-      liNode.appendChild(msgText);
-
-    }
+  function scrollToTopOfDiv(txtDivToUpdate) {
+    // var objDiv = document.getElementById("your_div");
+    txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
   }
-}
-function errData() {
-  console.log("error");
-}
 
-msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
+  let usernameDiv = document.getElementById("usernameDiv");
+  let submitUsername = document.getElementById("submitUsername");
 
-
-
-
-function init() {
-
-  container = document.getElementById('container');
-
-  renderer = new THREE.WebGLRenderer();
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  container.appendChild(renderer.domElement);
-
-  //
-
-  scene = new THREE.Scene();
-
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
-  camera.position.set(30, 30, 200);
-
-  //
-  sun = new THREE.Vector3();
-
-  // Water
-
-  const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
-
-  water = new Water(
-    waterGeometry,
-    {
-      textureWidth: 512,
-      textureHeight: 512,
-      waterNormals: new THREE.TextureLoader().load('img/waternormals.jpeg', function (texture) {
-
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-
-      }),
-      alpha: 1.0,
-      sunDirection: new THREE.Vector3(),
-      sunColor: 0xffffff,
-      waterColor: 0x001e0f,
-      distortionScale: 3.7,
-      fog: scene.fog !== undefined
-    }
+  submitUsername.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      let currUsername = document.getElementById("username").value;
+      localStorage.setItem('name', currUsername);
+      username = nameDisplayCheck();
+      
+      usernameDiv.classList.add("fade");
+      setTimeout(function () { usernameDiv.style.display = "none"; }, 3000);
+    },
+    false
   );
 
-  water.rotation.x = - Math.PI / 2;
+// const h1 = document.querySelector('h1');
+function nameDisplayCheck() {
+  if(localStorage.getItem('name')) {
+    let name = localStorage.getItem('name');
+    return name;
+    // h1.textContent = 'Welcome, ' + name;
+  } else {
+    // h1.textContent = 'Welcome to our website ';
+  }
+}
 
-  scene.add(water);
 
-  // Skybox
+  function gotData(data) {
+    let msgDatabase = data.val();
+    // console.log(msgDatabase);
+    let keys = Object.keys(msgDatabase);
+    // console.log(`keys: ${keys}`);
+    for (let i = 0; i < keys.length; i++) {
+      let k = keys[i];
+      var message = msgDatabase[k].msg;
+      var friendMsgs = msgDatabase[k].msgs;
 
-  const sky = new Sky();
-  sky.scale.setScalar(10000);
-  scene.add(sky);
+      if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
+        friendMsgs = {};
+      }
 
-  const skyUniforms = sky.material.uniforms;
+      let friendMsgsKeys = Object.keys(friendMsgs);
 
-  skyUniforms['turbidity'].value = 10;
-  skyUniforms['rayleigh'].value = 10;
-  skyUniforms['mieCoefficient'].value = 0.009;
-  skyUniforms['mieDirectionalG'].value = 0.8;
+      let txtDivToUpdate = document.getElementById("printTextDivID" + k);
+      // console.log(txtDivToUpdate);
+      txtDivToUpdate.innerHTML = '';
+      let ulNode = document.createElement('UL');
+      txtDivToUpdate.appendChild(ulNode);
 
-  const parameters = {
-    inclination: 0.49,
-    azimuth: 0.205
-  };
+      scrollToTopOfDiv(txtDivToUpdate);
 
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
 
-  function updateSun() {
+      for (let j = 0; j < friendMsgsKeys.length; j++) {
+        let friendMsgKey = friendMsgsKeys[j];
+        let msg = friendMsgs[friendMsgKey];
 
-    const theta = Math.PI * (parameters.inclination - 0.5);
-    const phi = 2 * Math.PI * (parameters.azimuth - 0.5);
+        let liNode = document.createElement('li');
+        ulNode.appendChild(liNode);
 
-    sun.x = Math.cos(phi);
-    sun.y = Math.sin(phi) * Math.sin(theta);
-    sun.z = Math.sin(phi) * Math.cos(theta);
-    // sun.scale.set(10, 10 10);
+        let msgText = document.createTextNode(msg);
+        liNode.appendChild(msgText);
 
-    sky.material.uniforms['sunPosition'].value.copy(sun);
-    water.material.uniforms['sunDirection'].value.copy(sun).normalize();
-
-    scene.environment = pmremGenerator.fromScene(sky).texture;
-
+      }
+    }
+  }
+  function errData() {
+    console.log("error");
   }
 
-  updateSun();
-
-  let ambient = new THREE.AmbientLight(0x555555);
-  scene.add(ambient);
-
-  const color = 0xFFFFFF;
-  const intensity = .5;
-  const light = new THREE.DirectionalLight(color, intensity);
-  light.position.set(5, 10, 2);
-  scene.add(light);
-  scene.add(light.target);
-  //  
-
-  const ncolor = 0xFFFFFF;
-  const nintensity = 1;
-  const nlight = new THREE.DirectionalLight(ncolor, nintensity);
-  nlight.position.set(-1, 2, 4);
-  scene.add(nlight);
-
-  //   let directionalLight = new THREE.DirectionalLight(0xff8c19);
-  // directionalLight.position.set(0,0,1);
-  // scene.add(directionalLight);
-
-  scene.fog = new THREE.FogExp2(15655413, 0.0002);
-  renderer.setClearColor(scene.fog.color);
-  //
-
-  // let loader = new THREE.TextureLoader();
-  // loader.load("./img/psmoke.png", function (texture) {
-  //   //texture is loaded
-  //   let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
-  //   let cloudMaterial = new THREE.MeshLambertMaterial({
-  //     map: texture,
-  //     transparent: true
-  //   });
-
-  //   for (let p = 0; p < 50; p++) {
-  //     let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
-  //     cloud.position.set(
-  //       Math.random() * 800 - 400,
-  //       500,
-  //       Math.random() * 500 - 500
-  //     );
-  //     cloud.rotation.x = 1.16;
-  //     cloud.rotation.y = -0.12;
-  //     cloud.rotation.z = Math.random() * 2 * Math.PI;
-  //     cloud.scale.multiplyScalar(2.5);
-  //     cloud.material.opacity = 0.25;
-  //     cloudParticles.push(cloud);
-  //     scene.add(cloud);
-  //   }
-  // });
-
-
-
-  // const geometry = new THREE.BoxGeometry(30, 30, 30);
-  const boxGeom = new THREE.BoxGeometry(21, 21, 21);
-  const centerSpGeom = new THREE.SphereGeometry(10, 300, 2, 30);
-  const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
-
-  // const material = new THREE.MeshStandardMaterial({ roughness: 0 });
-  const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
-
-  // mesh = new THREE.Mesh(geometry, material);
-  cenmesh = new THREE.Mesh(centerSpGeom, brightMaterial);
-  scene.add(cenmesh);
-
-
-  ///test area for sun
-
-  const friendWorld = new THREE.Object3D();
-  scene.add(friendWorld);
-  objects.push(friendWorld);
-
-  let tempSun = new THREE.Mesh(tinySphereGeom, brightMaterial);
-  tempSun.scale.set(2, 2, 2);
-  friendWorld.add(tempSun);
-  // scene.add(tempSun);
-  objects.push(tempSun);
-
-  const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
-  const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
-  earthMesh.position.x = 20;
-  earthMesh.position.y = 8;
-  earthMesh.scale.set(2, 2, 2);
-
-  friendWorld.add(earthMesh);
-  objects.push(earthMesh);
+  msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
 
 
 
 
-  function makeInstance(geometry, color, x, y, z) {
-    // const material = new THREE.MeshPhongMaterial({ emissive: color });
-    const cube = new THREE.Mesh(tinySphereGeom, brightMaterial);
-    scene.add(cube);
-    cube.position.x = x;
-    cube.position.y = y;
-    cube.position.z = z;
-    return cube;
-  }
+  function init() {
 
-  const tinySph = [
-    makeInstance(centerSpGeom, 0x8844aa, -10, 0, 10),
-    makeInstance(centerSpGeom, 0xaa8844, 10, 0, 10),
-    makeInstance(centerSpGeom, 0x8844aa, 0, 0, 0),
-    // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
-  ];
+    container = document.getElementById('container');
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    //
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
+    camera.position.set(30, 30, 200);
+
+    //
+    sun = new THREE.Vector3();
+
+    // Water
+
+    const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
+
+    water = new Water(
+      waterGeometry,
+      {
+        textureWidth: 512,
+        textureHeight: 512,
+        waterNormals: new THREE.TextureLoader().load('img/waternormals.jpeg', function (texture) {
+
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+        }),
+        alpha: 1.0,
+        sunDirection: new THREE.Vector3(),
+        sunColor: 0xffffff,
+        waterColor: 0x001e0f,
+        distortionScale: 3.7,
+        fog: scene.fog !== undefined
+      }
+    );
+
+    water.rotation.x = - Math.PI / 2;
+
+    scene.add(water);
+
+    // Skybox
+
+    const sky = new Sky();
+    sky.scale.setScalar(10000);
+    scene.add(sky);
+
+    const skyUniforms = sky.material.uniforms;
+
+    skyUniforms['turbidity'].value = 10;
+    skyUniforms['rayleigh'].value = 10;
+    skyUniforms['mieCoefficient'].value = 0.009;
+    skyUniforms['mieDirectionalG'].value = 0.8;
+
+    const parameters = {
+      inclination: 0.49,
+      azimuth: 0.205
+    };
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+    function updateSun() {
+
+      const theta = Math.PI * (parameters.inclination - 0.5);
+      const phi = 2 * Math.PI * (parameters.azimuth - 0.5);
+
+      sun.x = Math.cos(phi);
+      sun.y = Math.sin(phi) * Math.sin(theta);
+      sun.z = Math.sin(phi) * Math.cos(theta);
+      // sun.scale.set(10, 10 10);
+
+      sky.material.uniforms['sunPosition'].value.copy(sun);
+      water.material.uniforms['sunDirection'].value.copy(sun).normalize();
+
+      scene.environment = pmremGenerator.fromScene(sky).texture;
+
+    }
+
+    updateSun();
+
+    let ambient = new THREE.AmbientLight(0x555555);
+    scene.add(ambient);
+
+    const color = 0xFFFFFF;
+    const intensity = .5;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(5, 10, 2);
+    scene.add(light);
+    scene.add(light.target);
+    //  
+
+    const ncolor = 0xFFFFFF;
+    const nintensity = 1;
+    const nlight = new THREE.DirectionalLight(ncolor, nintensity);
+    nlight.position.set(-1, 2, 4);
+    scene.add(nlight);
+
+    //   let directionalLight = new THREE.DirectionalLight(0xff8c19);
+    // directionalLight.position.set(0,0,1);
+    // scene.add(directionalLight);
+
+    scene.fog = new THREE.FogExp2(15655413, 0.0002);
+    renderer.setClearColor(scene.fog.color);
+    //
+
+    // let loader = new THREE.TextureLoader();
+    // loader.load("./img/psmoke.png", function (texture) {
+    //   //texture is loaded
+    //   let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
+    //   let cloudMaterial = new THREE.MeshLambertMaterial({
+    //     map: texture,
+    //     transparent: true
+    //   });
+
+    //   for (let p = 0; p < 50; p++) {
+    //     let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
+    //     cloud.position.set(
+    //       Math.random() * 800 - 400,
+    //       500,
+    //       Math.random() * 500 - 500
+    //     );
+    //     cloud.rotation.x = 1.16;
+    //     cloud.rotation.y = -0.12;
+    //     cloud.rotation.z = Math.random() * 2 * Math.PI;
+    //     cloud.scale.multiplyScalar(2.5);
+    //     cloud.material.opacity = 0.25;
+    //     cloudParticles.push(cloud);
+    //     scene.add(cloud);
+    //   }
+    // });
 
 
-  // const torusGeo = new THREE.TorusKnotGeometry( 80, .3, 10000, 60, 3, 2);
-  // const torusKnot = new THREE.Mesh( torusGeo, brightMaterial );
-  // scene.add( torusKnot );
-  // torusKnot.position.set(0, -10, 10);
 
-  //
+    // const geometry = new THREE.BoxGeometry(30, 30, 30);
+    const boxGeom = new THREE.BoxGeometry(21, 21, 21);
+    const centerSpGeom = new THREE.SphereGeometry(10, 300, 2, 30);
+    const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
 
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.maxPolarAngle = Math.PI * 0.499;
-  controls.target.set(0, 10, 0);
-  controls.minDistance = 40.0;
-  controls.maxDistance = 400.0;
-  controls.update();
+    // const material = new THREE.MeshStandardMaterial({ roughness: 0 });
+    const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
 
-  const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
-  boxGroup = new THREE.Group();
-
-  for (let i = 0; i < 70; i++) {
-
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./img/friend2.glb', (gltf) => {
-      let object = gltf.scene;
-      scene.add(object);
-      // root.position.set(0, 0, 3);
-      object.scale.multiplyScalar(20);
-
-      object.traverse((o) => {
-        if (o.isMesh) {
-          o.friendID = i;
-          o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
-        }
-      });
-
-      object.friendID = i;
+    // mesh = new THREE.Mesh(geometry, material);
+    cenmesh = new THREE.Mesh(centerSpGeom, brightMaterial);
+    scene.add(cenmesh);
 
 
-      function makeFriendModal(friendID) {
-        let container = document.getElementById("container");
-        let friendModalDiv = document.createElement("div");
-        // let innerFriendWrapper = document.createElement("div");
-        let infoTextDiv = document.createElement("div");
-        let newInfoText = document.createTextNode("#" + friendID + ". A space where things may happen.");    // Create a text node
-        let printTextDiv = document.createElement("div");
-        let printText = document.createTextNode(" ");    // Create a text node
-        let formDiv = document.createElement("div");
-        let form = document.createElement("form");
-        let textInput = document.createElement("input");
-        let submitInput = document.createElement("input");
+    ///test area for sun
+
+    const friendWorld = new THREE.Object3D();
+    scene.add(friendWorld);
+    objects.push(friendWorld);
+
+    let tempSun = new THREE.Mesh(tinySphereGeom, brightMaterial);
+    tempSun.scale.set(2, 2, 2);
+    friendWorld.add(tempSun);
+    // scene.add(tempSun);
+    objects.push(tempSun);
+
+    const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
+    const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
+    earthMesh.position.x = 20;
+    earthMesh.position.y = 8;
+    earthMesh.scale.set(2, 2, 2);
+
+    friendWorld.add(earthMesh);
+    objects.push(earthMesh);
 
 
-        friendModalDiv.id = "friendModalDivID" + friendID;
-        printTextDiv.id = "printTextDivID" + friendID;
-        textInput.id = "textInput" + friendID;
 
-        // innerFriendWrapper.classList.add("innerFriendWrapper")
-        infoTextDiv.classList.add("infoTextDiv");
-        friendModalDiv.classList.add("friendModalDiv");
-        printTextDiv.classList.add("printTextDiv");
-        formDiv.classList.add("formDiv");
-        form.classList.add("chat");
 
-        //  form.method = "post";
-        // form.action = "/my-backend-script";
-        textInput.type = "text";
-        textInput.placeholder = "";
-        submitInput.type = "submit";
-        submitInput.value = "send";
+    function makeInstance(geometry, color, x, y, z) {
+      // const material = new THREE.MeshPhongMaterial({ emissive: color });
+      const cube = new THREE.Mesh(tinySphereGeom, brightMaterial);
+      scene.add(cube);
+      cube.position.x = x;
+      cube.position.y = y;
+      cube.position.z = z;
+      return cube;
+    }
 
-        printTextDiv.appendChild(printText);
-        infoTextDiv.appendChild(newInfoText);
-        formDiv.appendChild(form);
-        form.appendChild(textInput);
-        form.appendChild(submitInput);
+    const tinySph = [
+      makeInstance(centerSpGeom, 0x8844aa, -10, 0, 10),
+      makeInstance(centerSpGeom, 0xaa8844, 10, 0, 10),
+      makeInstance(centerSpGeom, 0x8844aa, 0, 0, 0),
+      // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
+    ];
 
-        friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
-        container.insertBefore(friendModalDiv, container.childNodes[0]);
-        friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
-        friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
 
-        submitInput.addEventListener("click", function (event) {
-          event.preventDefault()
-          // event.stopPropagation()
-          // console.log(`clicking on ${friendID}`);
+    // const torusGeo = new THREE.TorusKnotGeometry( 80, .3, 10000, 60, 3, 2);
+    // const torusKnot = new THREE.Mesh( torusGeo, brightMaterial );
+    // scene.add( torusKnot );
+    // torusKnot.position.set(0, -10, 10);
 
-          let ref2 = msgsRef.child(`${friendID}/msgs`);
-          ref2.push(textInput.value);
-          console.log(`added msgs to ${friendID}`);
+    //
 
-          var data = {};
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.maxPolarAngle = Math.PI * 0.499;
+    controls.target.set(0, 10, 0);
+    controls.minDistance = 40.0;
+    controls.maxDistance = 400.0;
+    controls.update();
 
-          data[friendID] = {
-            msg: textInput.value,
-          };
-          console.log(textInput.value);
-          //msgsRef.update(data);
+    const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
+    boxGroup = new THREE.Group();
+
+    for (let i = 0; i < 70; i++) {
+
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.load('./img/friend2.glb', (gltf) => {
+        let object = gltf.scene;
+        scene.add(object);
+        // root.position.set(0, 0, 3);
+        object.scale.multiplyScalar(20);
+
+        object.traverse((o) => {
+          if (o.isMesh) {
+            o.friendID = i;
+            o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
+          }
+        });
+
+        object.friendID = i;
+
+
+        function makeFriendModal(friendID) {
+          let container = document.getElementById("container");
+          let friendModalDiv = document.createElement("div");
+          // let innerFriendWrapper = document.createElement("div");
+          let printFriendNumberDiv = document.createElement("div");
+          let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
+          let infoTextDiv = document.createElement("div");
+          let newInfoText = document.createTextNode("A space where things may happen.");    // Create a text node
+          let printTextDiv = document.createElement("div");
+          let printText = document.createTextNode(" ");    // Create a text node
+          let formDiv = document.createElement("div");
+          let form = document.createElement("form");
+          let textInput = document.createElement("input");
+          let submitInput = document.createElement("input");
+
+
+          friendModalDiv.id = "friendModalDivID" + friendID;
+          printTextDiv.id = "printTextDivID" + friendID;
+          textInput.id = "textInput" + friendID;
+
+          // innerFriendWrapper.classList.add("innerFriendWrapper")
+          printFriendNumberDiv.classList.add("printFriendNumberDiv");
+          infoTextDiv.classList.add("infoTextDiv");
+          friendModalDiv.classList.add("friendModalDiv");
+          printTextDiv.classList.add("printTextDiv");
+          formDiv.classList.add("formDiv");
+          form.classList.add("chat");
+
+          //  form.method = "post";
+          // form.action = "/my-backend-script";
+          textInput.type = "text";
+          textInput.placeholder = "";
+          submitInput.type = "submit";
+          submitInput.value = "send";
+
+          printFriendNumberDiv.appendChild(friendNumber);
+          printTextDiv.appendChild(printText);
+          infoTextDiv.appendChild(newInfoText);
+          formDiv.appendChild(form);
+          form.appendChild(textInput);
+          form.appendChild(submitInput);
+
+          friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
+          container.insertBefore(friendModalDiv, container.childNodes[0]);
+          friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
+          friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
+          friendModalDiv.insertBefore(printFriendNumberDiv, friendModalDiv.childNodes[0]);
+
+          submitInput.addEventListener("click", function (event) {
+            event.preventDefault()
+            // event.stopPropagation()
+            // console.log(`clicking on ${friendID}`);
+
+            let ref2 = msgsRef.child(`${friendID}/msgs`);
+            ref2.push(textInput.value);
+            // console.log(`added msgs to ${friendID}`);
+
+            var data = {};
+
+            data[friendID] = {
+              msg: textInput.value,
+              // usr: username
+            };
+            // console.log(textInput.value);
+            //msgsRef.update(data);
             textInput.value = "";
             textInput.focus();
 
-        });
+          });
 
-      }
+        }
 
-      makeFriendModal(object.friendID);
+        makeFriendModal(object.friendID);
 
-      object.position.x = Math.random() * 800 - 200;
-      object.position.y = Math.random() * 150 - 5; // 100
-      object.position.z = Math.random() * 800 - 400; //-200
+        object.position.x = Math.random() * 800 - 200;
+        object.position.y = Math.random() * 150 - 5; // 100
+        object.position.z = Math.random() * 800 - 400; //-200
 
-      object.rotation.x = Math.random() * 2 * Math.PI;
-      object.rotation.y = Math.random() * 2 * Math.PI;
-      object.rotation.z = Math.random() * 2 * Math.PI;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
 
-      boxSpeeds.push(Math.random());
+        boxSpeeds.push(Math.random());
 
-      boxGroup.add(object);
+        boxGroup.add(object);
+      });
+
+    }
+    scene.add(boxGroup);
+
+
+    raycaster = new THREE.Raycaster();
+    document.addEventListener('mousemove', onDocumentMouseMove);
+    window.addEventListener('resize', onWindowResize);
+
+  }
+
+  function takeModalIDReturnMsg(currModalID) {
+    // console.log(currModalID);
+    return "Welcome to orb " + currModalID;
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+  }
+
+  function animate() {
+
+    requestAnimationFrame(animate);
+    render();
+    // stats.update();
+
+  }
+
+  function render() {
+    const time = performance.now() * 0.0001;
+
+    // cloudParticles.forEach(p => {
+    //   p.rotation.z -= 0.001;
+    // });
+
+    cenmesh.position.y = Math.sin(time) * 20 + 5;
+    cenmesh.rotation.x = time * 0.5;
+    cenmesh.rotation.z = time * 0.51;
+
+    for (let i = 0; i < boxGroup.children.length; i++) {
+      // let random = Math.random() * -.05 - .08; // 100
+      const randomSpeedForThisBox = boxSpeeds[i];
+      boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
+
+      // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
+      boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
+      boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
+
+    }
+
+    objects.forEach((obj) => {
+      obj.rotation.y = time;
     });
 
-  }
-  scene.add(boxGroup);
+
+    water.material.uniforms['time'].value += 1.0 / 60.0;
 
 
-  raycaster = new THREE.Raycaster();
-  document.addEventListener('mousemove', onDocumentMouseMove);
-  window.addEventListener('resize', onWindowResize);
+    camera.updateMatrixWorld();
 
-}
+    //mouse stuff
+    // find intersections
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(boxGroup.children, true);
 
-function takeModalIDReturnMsg(currModalID) {
-  // console.log(currModalID);
-  return "Welcome to orb " + currModalID;
-}
+    if (intersects.length > 0) {
+      if (INTERSECTED != intersects[0].object) {
+        if (INTERSECTED) {
+          INTERSECTED.traverse((o) => {
+            if (o.isMesh) {
+              o.material.emissive.setHex(o.currentHex);
+            }
+          });
+        }
+        INTERSECTED = intersects[0].object;
+        INTERSECTED.traverse((o) => {
+          if (o.isMesh) {
+            o.currentHex = o.material.emissive.getHex();
+            o.material.emissive.setHex(0xff0000);
+          }
+        });
 
-function onWindowResize() {
-
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-}
-
-function animate() {
-
-  requestAnimationFrame(animate);
-  render();
-  // stats.update();
-
-}
-
-function render() {
-  const time = performance.now() * 0.0001;
-
-  // cloudParticles.forEach(p => {
-  //   p.rotation.z -= 0.001;
-  // });
-
-  cenmesh.position.y = Math.sin(time) * 20 + 5;
-  cenmesh.rotation.x = time * 0.5;
-  cenmesh.rotation.z = time * 0.51;
-
-  for (let i = 0; i < boxGroup.children.length; i++) {
-    // let random = Math.random() * -.05 - .08; // 100
-    const randomSpeedForThisBox = boxSpeeds[i];
-    boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
-
-    // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
-    boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
-    boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
-
-  }
-
-  objects.forEach((obj) => {
-    obj.rotation.y = time;
-  });
-
-
-  water.material.uniforms['time'].value += 1.0 / 60.0;
-
-
-  camera.updateMatrixWorld();
-
-  //mouse stuff
-  // find intersections
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(boxGroup.children, true);
-
-  if (intersects.length > 0) {
-    if (INTERSECTED != intersects[0].object) {
+        //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+        //INTERSECTED = intersects[ 0 ].object;
+        //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+        //INTERSECTED.material.emissive.setHex( 0xff0000 );
+      }
+    } else {
       if (INTERSECTED) {
+        // loop over intersected meshes and reset their
+        // Hex to the "currentHex" (which is the old hex?)
+        // equivalent to:
+        //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
         INTERSECTED.traverse((o) => {
           if (o.isMesh) {
             o.material.emissive.setHex(o.currentHex);
           }
         });
+
       }
-      INTERSECTED = intersects[0].object;
-      INTERSECTED.traverse((o) => {
-        if (o.isMesh) {
-          o.currentHex = o.material.emissive.getHex();
-          o.material.emissive.setHex(0xff0000);
-        }
-      });
-
-      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-      //INTERSECTED = intersects[ 0 ].object;
-      //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-      //INTERSECTED.material.emissive.setHex( 0xff0000 );
+      INTERSECTED = null;
     }
-  } else {
-    if (INTERSECTED) {
-      // loop over intersected meshes and reset their
-      // Hex to the "currentHex" (which is the old hex?)
-      // equivalent to:
-      //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-      INTERSECTED.traverse((o) => {
-        if (o.isMesh) {
-          o.material.emissive.setHex(o.currentHex);
-        }
-      });
+    renderer.render(scene, camera);
+    renderer.domElement.addEventListener('click', onClick, false);
 
-    }
-    INTERSECTED = null;
-  }
-  renderer.render(scene, camera);
-  renderer.domElement.addEventListener('click', onClick, false);
-
-}
-
-
-function onDocumentMouseMove(event) {
-  event.preventDefault();
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-}
-
-function onClick(event) {
-  event.preventDefault();
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  // close modals when clicking outside them
-  var modal = document.getElementsByClassName('friendModalDiv');
-  if (event.target.classList.contains('friendModalDiv')) {
-  } else {
-    for (var i = 0; i < modal.length; i++) {
-      let currModal = modal[i];
-      currModal.classList.remove("openFriendModalDiv");
-
-      // document.getElementById("wrapper").classList.remove("openWrapper");
-    }
   }
 
 
-
-  let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
-
-  if (intersectsFriend.length > 0) { //you know you have an intersection
-    // document.getElementById("wrapper").classList.add("openWrapper");
-
-    if (wrapper.classList.contains("openWrapper")) {
-      wrapper.classList.remove("openWrapper");
-      wrapperBtn.classList.add("wrapperBtnClosing");
-      toggleOpen = false;
-    }
-
-    let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
-    let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
-    currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
-    currFriendModalDiv.classList.add("openFriendModalDiv")
-    modalOpen = true;
-
-    let msg = takeModalIDReturnMsg(currFriendID);
-    let currTextDiv = document.getElementById("textInputID" + currFriendID);
-    //currTextDiv.innerHTML = msg;
-
-    for (let i = 0; i < intersectsFriend.length; i++) {
-      let currObj = intersectsFriend[i].object;
-      currObj.traverse((o) => {
-        if (o.isMesh) {
-          o.material.emissive.setHex(3135135);
-        }
-      });
-    }
+  function onDocumentMouseMove(event) {
+    event.preventDefault();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
   }
 
-}
+  function onClick(event) {
+    event.preventDefault();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    // close modals when clicking outside them
+    var modal = document.getElementsByClassName('friendModalDiv');
+    if (event.target.classList.contains('friendModalDiv')) {
+    } else {
+      for (var i = 0; i < modal.length; i++) {
+        let currModal = modal[i];
+        currModal.classList.remove("openFriendModalDiv");
+
+        // document.getElementById("wrapper").classList.remove("openWrapper");
+      }
+    }
+
+
+
+    let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
+
+    if (intersectsFriend.length > 0) { //you know you have an intersection
+      // document.getElementById("wrapper").classList.add("openWrapper");
+
+      if (wrapper.classList.contains("openWrapper")) {
+        wrapper.classList.remove("openWrapper");
+        wrapperBtn.classList.add("wrapperBtnClosing");
+        toggleOpen = false;
+      }
+
+      let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
+      let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
+      currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+      currFriendModalDiv.classList.add("openFriendModalDiv")
+      modalOpen = true;
+
+      let msg = takeModalIDReturnMsg(currFriendID);
+      let currTextDiv = document.getElementById("textInputID" + currFriendID);
+      //currTextDiv.innerHTML = msg;
+
+      for (let i = 0; i < intersectsFriend.length; i++) {
+        let currObj = intersectsFriend[i].object;
+        currObj.traverse((o) => {
+          if (o.isMesh) {
+            o.material.emissive.setHex(3135135);
+          }
+        });
+      }
+    }
+
+  }
 
 
   let currBtn;
@@ -767,6 +788,8 @@ function onClick(event) {
 
     song.play();
   }
+
+  document.body.onload = nameDisplayCheck;
 
 
 }
