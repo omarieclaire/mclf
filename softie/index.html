@@ -13,7 +13,7 @@
 <body>
 
   <!-- <video autoplay muted loop playsinline id="video"> -->
-    <!-- <source src="img/v1.mp4" type="video/mp4"> -->
+  <!-- <source src="img/v1.mp4" type="video/mp4"> -->
   <!-- </video> -->
 
   <div id="wrapperToggleDiv">
@@ -44,8 +44,16 @@
   </div>
 
 
+
   <div id="container"></div>
   <canvas id="c"></canvas>
+
+  <div id=usernameDiv class="usernameDiv">
+    <form id="usernameForm" class="usernameForm">
+      <input name="name" autocomplete="off" id="username" type="text" placeholder="What name will others know you by?">
+      <input type="submit" id="submitUsername" onsubmit="return false">
+    </form>
+  </div>
 
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->

@@ -50,7 +50,9 @@ let objects = [];
 let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
+let username;
 
+function windowOnLoad() {
 init();
 animate();
 
@@ -58,6 +60,21 @@ function scrollToTopOfDiv(txtDivToUpdate){
   // var objDiv = document.getElementById("your_div");
   txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
 }
+
+let usernameDiv = document.getElementById("usernameDiv");
+let submitUsername = document.getElementById("submitUsername");
+
+submitUsername.addEventListener(
+  "click",
+  function (event) {
+    event.preventDefault();
+    username = document.getElementById("username").value;
+    usernameDiv.classList.add("fade");
+    setTimeout(function(){ usernameDiv.style.display = "none"; }, 3000);
+  },
+  false
+);
+
 
 function gotData(data) {
   let msgDatabase = data.val();
@@ -338,6 +355,7 @@ function init() {
       function makeFriendModal(friendID) {
         let container = document.getElementById("container");
         let friendModalDiv = document.createElement("div");
+        // let innerFriendWrapper = document.createElement("div");
         let infoTextDiv = document.createElement("div");
         let newInfoText = document.createTextNode("#" + friendID + ". A space where things may happen.");    // Create a text node
         let printTextDiv = document.createElement("div");
@@ -352,6 +370,7 @@ function init() {
         printTextDiv.id = "printTextDivID" + friendID;
         textInput.id = "textInput" + friendID;
 
+        // innerFriendWrapper.classList.add("innerFriendWrapper")
         infoTextDiv.classList.add("infoTextDiv");
         friendModalDiv.classList.add("friendModalDiv");
         printTextDiv.classList.add("printTextDiv");
@@ -379,7 +398,7 @@ function init() {
         submitInput.addEventListener("click", function (event) {
           event.preventDefault()
           // event.stopPropagation()
-          console.log(`clicking on ${friendID}`);
+          // console.log(`clicking on ${friendID}`);
 
           let ref2 = msgsRef.child(`${friendID}/msgs`);
           ref2.push(textInput.value);
@@ -587,7 +606,6 @@ function onClick(event) {
 }
 
 
-function windowOnLoad() {
   let currBtn;
 
   const song1 = new Audio("audio/love.mp3");
