@@ -126,11 +126,6 @@ function windowOnLoad() {
   init();
   animate();
 
-  function scrollToTopOfDiv(txtDivToUpdate) {
-    // var objDiv = document.getElementById("your_div");
-    txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
-  }
-
   let usernameDiv = document.getElementById("usernameDiv");
   let submitUsername = document.getElementById("submitUsername");
 
@@ -190,9 +185,6 @@ function nameDisplayCheck() {
       let ulNode = document.createElement('UL');
       txtDivToUpdate.appendChild(ulNode);
 
-      scrollToTopOfDiv(txtDivToUpdate);
-
-
       for (let j = 0; j < friendMsgsKeys.length; j++) {
         let friendMsgKey = friendMsgsKeys[j];
         let msg = friendMsgs[friendMsgKey];
@@ -211,6 +203,12 @@ function nameDisplayCheck() {
         liNode.appendChild(msgTextNode);
         liNode.appendChild(span);
       }
+      function scrollToTopOfDiv(txtDivToUpdate) {
+        // var objDiv = document.getElementById("your_div");
+        txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
+      }
+      scrollToTopOfDiv(txtDivToUpdate);
+
     }
   }
   function errData() {
