@@ -126,6 +126,11 @@ body {
   display: flex;
 }
 
+.usernameForm input[type="text"] {
+  background-color: rgba(53, 34, 154, .8);
+  /* font-style: italic; */
+}
+
 .chat input[type="text"],
 .chat input[type="submit"], .usernameForm input[type="text"],
 .usernameForm input[type="submit"] {
@@ -147,6 +152,7 @@ body {
   flex: .25;
   text-transform: uppercase;
   display: block;
+  font-size: .85rem;
   /* width: 30%; */
 
 }
@@ -154,7 +160,7 @@ body {
 .chat input[type="submit"]:active, .usernameForm input[type="submit"]:active{
   border-color: #369;
   background-color: #369;
-  color:coral;
+  color:rgb(149 127 255);
 }
 
 .chat input[type="text"] {
@@ -162,18 +168,18 @@ body {
 }
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color: coral;
+  color: rgb(149 127 255);
 }
 ::-moz-placeholder { /* Firefox 19+ */
-  color: coral;
+  color: rgb(149 127 255);
 
 }
 :-ms-input-placeholder { /* IE 10+ */
-  color: coral;
+  color: rgb(149 127 255);
 
 }
 :-moz-placeholder { /* Firefox 18- */
-  color: coral;
+  color: rgb(149 127 255);
 
 }
 
@@ -242,7 +248,7 @@ margin: 2rem auto 2rem auto;
   height: 2.5rem;
   /* rotate: 90deg; */
   border-radius: 96% 94% 90% 90% / 95% 92% 88% 95%;
-  opacity: .5;
+  opacity: .9;
 }
 
 .wrapperBtnOpening{

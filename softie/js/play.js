@@ -74,7 +74,7 @@ function windowOnLoad() {
       username = nameDisplayCheck();
       
       usernameDiv.classList.add("fade");
-      setTimeout(function () { usernameDiv.style.display = "none"; }, 3000);
+      setTimeout(function () { usernameDiv.style.display = "none"; }, 600);
     },
     false
   );
@@ -92,13 +92,13 @@ function nameDisplayCheck() {
 
 
   function gotData(data) {
+    // if we didn't use .val we'd get a bunch of other info
     let msgDatabase = data.val();
     // console.log(msgDatabase);
     let keys = Object.keys(msgDatabase);
     // console.log(`keys: ${keys}`);
     for (let i = 0; i < keys.length; i++) {
       let k = keys[i];
-      var message = msgDatabase[k].msg;
       var friendMsgs = msgDatabase[k].msgs;
 
       if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
@@ -123,8 +123,9 @@ function nameDisplayCheck() {
         let liNode = document.createElement('li');
         ulNode.appendChild(liNode);
 
-        let msgText = document.createTextNode(msg);
-        liNode.appendChild(msgText);
+        let msgText = `${msg.msg} -${msg.username}`;
+        let msgTextNode = document.createTextNode(msgText);
+        liNode.appendChild(msgTextNode);
 
       }
     }
@@ -132,7 +133,7 @@ function nameDisplayCheck() {
   function errData() {
     console.log("error");
   }
-
+// takes event (value), then callback, then error)
   msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
 
 
@@ -417,19 +418,23 @@ function nameDisplayCheck() {
 
           submitInput.addEventListener("click", function (event) {
             event.preventDefault()
-            // event.stopPropagation()
-            // console.log(`clicking on ${friendID}`);
 
-            let ref2 = msgsRef.child(`${friendID}/msgs`);
-            ref2.push(textInput.value);
+            let ref2 = msgsRef.child(`${friendID}`).child('msgs');
+            // console.log(ref2);
+            ref2.push({
+              username: username,
+              msg: textInput.value
+            });
+          
+            // ref2.push(username);
             // console.log(`added msgs to ${friendID}`);
 
-            var data = {};
+            // var data = {};
 
-            data[friendID] = {
-              msg: textInput.value,
-              // usr: username
-            };
+            // data[friendID] = {
+            //   msg: textInput.value,
+            //   // usr: username
+            // };
             // console.log(textInput.value);
             //msgsRef.update(data);
             textInput.value = "";
