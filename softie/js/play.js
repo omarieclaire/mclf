@@ -115,8 +115,12 @@ let friendQuestions = {
   58: "What soft surface can you touch right now",
   59: "What are you hoping for?",
   60: "What is behind you?"
-
 };
+
+const initialPositions = [];
+for(let i = 0; i<70; i++) {
+  initialPositions.push(Math.random());
+}
 
 function windowOnLoad() {
   init();
@@ -524,7 +528,7 @@ function nameDisplayCheck() {
 
         object.position.x = Math.random() * 800 - 200;
         object.position.y = Math.random() * 150 - 5; // 100
-        object.position.z = Math.random() * 800 - 400; //-200
+        object.position.z = Math.random() * 600 - 400; //-200
 
         object.rotation.x = Math.random() * 2 * Math.PI;
         object.rotation.y = Math.random() * 2 * Math.PI;
@@ -581,7 +585,11 @@ function nameDisplayCheck() {
     for (let i = 0; i < boxGroup.children.length; i++) {
       // let random = Math.random() * -.05 - .08; // 100
       const randomSpeedForThisBox = boxSpeeds[i];
-      boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
+      // boxGroup.children[i].position.y = Math.sin(time + initialPositions[i]*20) * 40 + 15;
+      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
+            boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+
+
 
       // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
       boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
