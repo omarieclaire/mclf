@@ -53,6 +53,71 @@ let msgsRef = ref.child('msg');
 
 let username = "mysterious stranger";
 
+let friendQuestions = {
+  0: "What did you learn today?",
+  1: "What does it mean?",
+  2: "Where does the time go?",
+  3: "Where are you from?",
+  4: "Who inspires you?",
+  5: "How do you learn?",
+  6: "Who do you love?",
+  7: "When did you last rest?",
+  8: "Do you wish you had more?",
+  9: "Can you imagine a better way?",
+  10: "What is a strange thing you know?",
+  11: "What is at the bottom?",
+  12: "Have you ever failed?",
+  13: "What is the perfect day?",
+  14: "Who do you wish you could speak to?",
+  15: "What are you grateful for?",
+  16: "If you had a secret hour every day how would you spend it?",
+  17: "What is your earliest memory of play?",
+  18: "What does friendship mean to you?",
+  19: "What song will you listen to right now?",
+  20: "How does your body feel?",
+  21: "What are you curious about?",
+  22: "Why do you get up in the morning?",
+  23: "What book changed your life?",
+  24: "Where do you wish you could go?",
+  25: "Would you choose peace, love, or joy?",
+  26: "What meal would you like to eat?",
+  27: "What is something you shared with someone?",
+  28: "Tell us about a dream?",
+  29: "Tell us a fact?",
+  30: "Tell us a story in 10 words?",
+  31: "What are you looking forward to?",
+  32: "Describe a peaceful place?",
+  33: "Describe a perfect day?",
+  34: "Describe a good question",
+  35: "Describe a good friend",
+  36: "Describe a peaceful evening",
+  37: "Where is home?",
+  38: "Where have you been?",
+  39: "Where have you never been?",
+  40: "Where is the good life?",
+  41: "Why are you happy?",
+  42: "What gift would you like to give?",
+  43: "How have you changed someone's life?",
+  44: "What is a beloved tree?",
+  45: "What is a beloved animal?",
+  46: "When did you last stretch?",
+  47: "What can you hear right now?",
+  48: "When you turn around, what do you see?",
+  49: "Where could you walk today?",
+  50: "Describe a beloved soft thing",
+  51: "Describe a beloved smell?",
+  52: "Where do you wish you were?",
+  53: "When did you last dance?",
+  54: "What do your hands want to do?",
+  55: "What does your face want to do?",
+  56: "How do you feel?",
+  57: "What are you thinking about?",
+  58: "What soft surface can you touch right now",
+  59: "What are you hoping for?",
+  60: "What is behind you?"
+
+};
+
 function windowOnLoad() {
   init();
   animate();
@@ -363,7 +428,7 @@ function nameDisplayCheck() {
     const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
 
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 33; i++) {
 
       const gltfLoader = new GLTFLoader();
       gltfLoader.load('./img/friend2.glb', (gltf) => {
@@ -390,7 +455,7 @@ function nameDisplayCheck() {
           let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
           let infoTextDiv = document.createElement("div");
           let hr = document.createElement("hr");
-          let newInfoText = document.createTextNode("What is something you learned today?");    // Create a text node
+          let newInfoText = document.createTextNode(`${friendQuestions[i]}`);    // Create a text node
           let printTextDiv = document.createElement("div");
           let printText = document.createTextNode(" ");    // Create a text node
           let formDiv = document.createElement("div");
