@@ -1,4 +1,8 @@
 <!-- https://codepen.io/shubniggurath/pen/EmMzpp -->
+
+<!-- - when no username errors https://codepen.io/marcopeg/pen/BaBqzjx -->
+<!-- - round edges of buttons -->
+
 <!DOCTYPE html>
 <html lang="">
 
@@ -44,14 +48,13 @@
   </div>
 
 
-
   <div id="container"></div>
   <canvas id="c"></canvas>
 
   <div id=usernameDiv class="usernameDiv">
     <!-- <h1 id="welcome">Welcome</h1> -->
     <form id="usernameForm" class="usernameForm">
-      <input name="name" autocomplete="off" id="username" type="text" placeholder="What name will others know you by?" required>
+      <input name="name" autocomplete="off" id="username" type="text" placeholder="What name will others know you by?" required autofocus>
       <input type="submit" id="submitUsername" onsubmit="return false">
     </form>
   </div>

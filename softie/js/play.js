@@ -70,6 +70,14 @@ function windowOnLoad() {
     function (event) {
       event.preventDefault();
       let currUsername = document.getElementById("username").value;
+// console.log(currUsername);
+      if (currUsername != "") {
+        console.log("good name");
+      } else {
+        console.log("no name");
+        currUsername = "anon"
+        return
+      }
       localStorage.setItem('name', currUsername);
       username = nameDisplayCheck();
       
@@ -123,10 +131,16 @@ function nameDisplayCheck() {
         let liNode = document.createElement('li');
         ulNode.appendChild(liNode);
 
-        let msgText = `${msg.msg} -${msg.username}`;
-        let msgTextNode = document.createTextNode(msgText);
-        liNode.appendChild(msgTextNode);
+        let span = document.createElement("span");
+        span.classList.add("username");
+        let msgTextNode = document.createTextNode(`${msg.msg}`);
+        let usernameTextNode = document.createTextNode(` -${msg.username}`);
 
+        // let msgText = `${msg.msg} -${msg.username}`;
+        // let msgTextNode = document.createTextNode(msgText);
+        span.appendChild(usernameTextNode)
+        liNode.appendChild(msgTextNode);
+        liNode.appendChild(span);
       }
     }
   }
@@ -375,7 +389,8 @@ function nameDisplayCheck() {
           let printFriendNumberDiv = document.createElement("div");
           let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
           let infoTextDiv = document.createElement("div");
-          let newInfoText = document.createTextNode("A space where things may happen.");    // Create a text node
+          let hr = document.createElement("hr");
+          let newInfoText = document.createTextNode("What is something you learned today?");    // Create a text node
           let printTextDiv = document.createElement("div");
           let printText = document.createTextNode(" ");    // Create a text node
           let formDiv = document.createElement("div");
@@ -390,6 +405,7 @@ function nameDisplayCheck() {
 
           // innerFriendWrapper.classList.add("innerFriendWrapper")
           printFriendNumberDiv.classList.add("printFriendNumberDiv");
+          hr.classList.add("hr");
           infoTextDiv.classList.add("infoTextDiv");
           friendModalDiv.classList.add("friendModalDiv");
           printTextDiv.classList.add("printTextDiv");
@@ -406,6 +422,8 @@ function nameDisplayCheck() {
           printFriendNumberDiv.appendChild(friendNumber);
           printTextDiv.appendChild(printText);
           infoTextDiv.appendChild(newInfoText);
+          infoTextDiv.appendChild(hr);
+
           formDiv.appendChild(form);
           form.appendChild(textInput);
           form.appendChild(submitInput);
@@ -419,27 +437,20 @@ function nameDisplayCheck() {
           submitInput.addEventListener("click", function (event) {
             event.preventDefault()
 
-            let ref2 = msgsRef.child(`${friendID}`).child('msgs');
+            if (textInput.value == "") {
+              textInput.focus();
+              return;
+            } else {
+              let ref2 = msgsRef.child(`${friendID}`).child('msgs');
             // console.log(ref2);
             ref2.push({
               username: username,
               msg: textInput.value
             });
-          
-            // ref2.push(username);
-            // console.log(`added msgs to ${friendID}`);
-
-            // var data = {};
-
-            // data[friendID] = {
-            //   msg: textInput.value,
-            //   // usr: username
-            // };
-            // console.log(textInput.value);
-            //msgsRef.update(data);
             textInput.value = "";
             textInput.focus();
 
+            }
           });
 
         }
