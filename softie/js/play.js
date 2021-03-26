@@ -117,9 +117,9 @@ let friendQuestions = {
   60: "What is behind you?"
 };
 
-const initialPositions = [];
+const initialFriendYPositions = [];
 for (let i = 0; i < 70; i++) {
-  initialPositions.push(Math.random());
+  initialFriendYPositions.push(Math.random());
 }
 
 function windowOnLoad() {
