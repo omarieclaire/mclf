@@ -118,7 +118,7 @@ let friendQuestions = {
 };
 
 const initialPositions = [];
-for(let i = 0; i<70; i++) {
+for (let i = 0; i < 70; i++) {
   initialPositions.push(Math.random());
 }
 
@@ -134,7 +134,7 @@ function windowOnLoad() {
     function (event) {
       event.preventDefault();
       let currUsername = document.getElementById("username").value;
-// console.log(currUsername);
+      // console.log(currUsername);
       if (currUsername != "") {
         // console.log("good name");
       } else {
@@ -144,23 +144,23 @@ function windowOnLoad() {
       }
       localStorage.setItem('name', currUsername);
       username = nameDisplayCheck();
-      
+
       loadingScreenDiv.classList.add("fade");
       setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
     false
   );
 
-// const h1 = document.querySelector('h1');
-function nameDisplayCheck() {
-  if(localStorage.getItem('name')) {
-    let name = localStorage.getItem('name');
-    return name;
-    // h1.textContent = 'Welcome, ' + name;
-  } else {
-    // h1.textContent = 'Welcome to our website ';
+  // const h1 = document.querySelector('h1');
+  function nameDisplayCheck() {
+    if (localStorage.getItem('name')) {
+      let name = localStorage.getItem('name');
+      return name;
+      // h1.textContent = 'Welcome, ' + name;
+    } else {
+      // h1.textContent = 'Welcome to our website ';
+    }
   }
-}
 
 
   function gotData(data) {
@@ -214,7 +214,7 @@ function nameDisplayCheck() {
   function errData() {
     console.log("error");
   }
-// takes event (value), then callback, then error)
+  // takes event (value), then callback, then error)
   msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
 
 
@@ -464,6 +464,8 @@ function nameDisplayCheck() {
           let form = document.createElement("form");
           let textInput = document.createElement("input");
           let submitInput = document.createElement("input");
+          let closeModalBtnDiv = document.createElement("div")
+          let closeModalBtn = document.createElement("div")
 
 
           friendModalDiv.id = "friendModalDivID" + friendID;
@@ -478,6 +480,8 @@ function nameDisplayCheck() {
           printTextDiv.classList.add("printTextDiv");
           formDiv.classList.add("formDiv");
           form.classList.add("chat");
+          closeModalBtnDiv.classList.add("closeModalBtnDiv");
+          closeModalBtn.classList.add("closeModalBtn");
 
           //  form.method = "post";
           // form.action = "/my-backend-script";
@@ -494,31 +498,36 @@ function nameDisplayCheck() {
           formDiv.appendChild(form);
           form.appendChild(textInput);
           form.appendChild(submitInput);
+          closeModalBtnDiv.appendChild(closeModalBtn);
 
           friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
           container.insertBefore(friendModalDiv, container.childNodes[0]);
           friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
           friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
           friendModalDiv.insertBefore(printFriendNumberDiv, friendModalDiv.childNodes[0]);
+          friendModalDiv.insertBefore(closeModalBtnDiv, friendModalDiv.childNodes[0]);
 
           submitInput.addEventListener("click", function (event) {
             event.preventDefault()
-
             if (textInput.value == "") {
               textInput.focus();
               return;
             } else {
               let ref2 = msgsRef.child(`${friendID}`).child('msgs');
-            // console.log(ref2);
-            ref2.push({
-              username: username,
-              msg: textInput.value
-            });
-            textInput.value = "";
-            textInput.focus();
-
+              // console.log(ref2);
+              ref2.push({
+                username: username,
+                msg: textInput.value
+              });
+              textInput.value = "";
+              textInput.focus();
             }
           });
+
+          closeModalBtn.addEventListener("click", function (event){
+            console.log("click");
+            friendModalDiv.classList.remove("openFriendModalDiv");
+          })
 
         }
 
@@ -539,6 +548,9 @@ function nameDisplayCheck() {
 
     }
     scene.add(boxGroup);
+
+    
+
 
 
     raycaster = new THREE.Raycaster();
@@ -585,7 +597,7 @@ function nameDisplayCheck() {
       const randomSpeedForThisBox = boxSpeeds[i];
       // boxGroup.children[i].position.y = Math.sin(time + initialPositions[i]*20) * 40 + 15;
       // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
-            boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+      boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
 
 
 
@@ -652,7 +664,6 @@ function nameDisplayCheck() {
 
   }
 
-
   function onDocumentMouseMove(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -666,19 +677,17 @@ function nameDisplayCheck() {
 
     raycaster.setFromCamera(mouse, camera);
 
-    // close modals when clicking outside them
+    // close modals when clicking outside them - this works but not as expected
     var modal = document.getElementsByClassName('friendModalDiv');
-    if (event.target.classList.contains('friendModalDiv')) {
+   if (event.target.classList.contains('friendModalDiv')) {
+      // console.log(`clicking inside modal: ${event}`);
     } else {
+      // console.log(`clicking outside modal: ${event}`);
       for (var i = 0; i < modal.length; i++) {
         let currModal = modal[i];
         currModal.classList.remove("openFriendModalDiv");
-
-        // document.getElementById("wrapper").classList.remove("openWrapper");
       }
     }
-
-
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
 
