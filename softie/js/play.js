@@ -126,7 +126,7 @@ function windowOnLoad() {
   init();
   animate();
 
-  let usernameDiv = document.getElementById("usernameDiv");
+  let loadingScreenDiv = document.getElementById("loadingScreenDiv");
   let submitUsername = document.getElementById("submitUsername");
 
   submitUsername.addEventListener(
@@ -136,17 +136,17 @@ function windowOnLoad() {
       let currUsername = document.getElementById("username").value;
 // console.log(currUsername);
       if (currUsername != "") {
-        console.log("good name");
+        // console.log("good name");
       } else {
-        console.log("no name");
+        // console.log("no name");
         currUsername = "anon"
         return
       }
       localStorage.setItem('name', currUsername);
       username = nameDisplayCheck();
       
-      usernameDiv.classList.add("fade");
-      setTimeout(function () { usernameDiv.style.display = "none"; }, 600);
+      loadingScreenDiv.classList.add("fade");
+      setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
     false
   );
@@ -195,13 +195,13 @@ function nameDisplayCheck() {
         let span = document.createElement("span");
         span.classList.add("username");
         let msgTextNode = document.createTextNode(`${msg.msg}`);
-        let usernameTextNode = document.createTextNode(` -${msg.username}`);
+        let usernameTextNode = document.createTextNode(`${msg.username}: `);
 
         // let msgText = `${msg.msg} -${msg.username}`;
         // let msgTextNode = document.createTextNode(msgText);
-        span.appendChild(usernameTextNode)
-        liNode.appendChild(msgTextNode);
+        span.appendChild(usernameTextNode);
         liNode.appendChild(span);
+        liNode.appendChild(msgTextNode);
       }
       function scrollToTopOfDiv(txtDivToUpdate) {
         // var objDiv = document.getElementById("your_div");

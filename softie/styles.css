@@ -28,11 +28,19 @@ html {
   margin: 0;
 }
 
-#c {
-  width: 100%;
-  height: 100%;
+#canvas {
+  width: 100vw;
+  height: 100vh;
   display: block;
   z-index: 100;
+  overflow: hidden;
+}
+
+#container {
+  width: 100vw;
+  height: 100vh;
+  /* display: block; */
+  /* z-index: 100; */
 }
 
 body {
@@ -50,27 +58,48 @@ body {
   scroll-behavior: smooth;
   display: flex;
 }
-
-.usernameDiv{
+ 
+.loadingScreenDiv{
   display: flex;
-  background-color:rgba(43, 0, 255, .5);
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
   z-index: 200;
+  text-align: center;
+  justify-content: center;
+  /* margin: 0; */
+  /* padding: 5rem; */
   position: fixed;
   transition: all 850ms ease-in-out;
+  background-color:rgba(43, 0, 255, .5);
+
 }
 
+#welcomeMsg{
+  padding: 0 20vw 10vh 20vw;
+  /* margin: auto; */
+}
+
+/* .usernameDiv{ */
+  /* display: flex; */
+  
+  /* max-width: 25vw; */
+  
+/* } */
+
 .welcome {
+  display: flex;
   margin: auto;
 }
 
 #usernameForm{
   display: flex;
+  /* width: 100vw; */
   /* height: 10vh; */
   align-self: center;
   justify-self: center;
-  margin: auto;
+  /* padding: 0 5vw  0 5vw; */
+  /* margin: auto; */
   /* font-size: 2rem; */
 }
 
@@ -87,7 +116,7 @@ body {
   position: fixed;
   display: flex;
   flex-flow: row wrap;
-  max-width: 30%;
+  /* max-width: 40%; */
   justify-content: center;
   align-items: center;
   align-content: center;
@@ -96,8 +125,11 @@ body {
   top: 6rem;
   visibility: hidden;
   background-color:rgba(55, 53, 50, 0.5);
-  border-radius: 50% 20% / 10% 40%;
-  max-width: 15%;
+  border-radius: 20%;
+  max-width: 30%; 
+  border-radius: 50px 50px;
+
+
   /* transition: all 350ms ease-in-out; */
 
   /* animation: fadeIn 0s rotate 1s forwards; */
@@ -106,6 +138,15 @@ body {
   /* opacity: .5; */
   /* height: max-content; */
 }
+
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  .wrapper {
+    max-width: 30%; 
+  }
+
+}
+
 
 .fade{
   opacity: 0;
@@ -123,9 +164,10 @@ body {
 }
 
 .username {
-  display: flex;
+  /* display: flex; */
   font-style: italic;
   color: rgb(255 194 117);
+  text-align: right;
 }
 
 .chat, .usernameForm {
@@ -144,6 +186,7 @@ body {
   padding: 1rem 3rem;
   border: .5px solid rgba(255, 127, 80, .5);
   outline: none;
+  min-width: 0;
   /* height: 3rem; */
 }
 
@@ -394,11 +437,13 @@ font-size: 2rem;
 
 ul {
   list-style-type: none;
+
 }
 
 li {
-  padding-bottom: 2 rem;
   letter-spacing: 1px;
+  padding-bottom: 2rem;
+
   line-height: 2rem;
 
 }

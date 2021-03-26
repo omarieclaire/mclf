@@ -1,9 +1,3 @@
-<!-- create a welcome message: welcome to sanctuary, a gentle and slow space for connecting with others -->
-<!-- make a close div X for frienddivs -->
-<!-- make sparkles on a friend that has new messages   -->
-<!-- create an accessibility menu with contrast, font size, sound-->
-
-
 <!DOCTYPE html>
 <html lang="">
 
@@ -50,15 +44,19 @@
 
 
   <div id="container"></div>
-  <canvas id="c"></canvas>
-
-  <div id=usernameDiv class="usernameDiv">
-    <!-- <h1 id="welcome">Welcome</h1> -->
+  <canvas id="canvas"></canvas>
+  <div id="loadingScreenDiv" class="loadingScreenDiv">
+    <p id="welcomeMsg">Welcome to <span id="sanctuary">sanctuary</span>, a space for taking a breath and gently
+      connecting.</p>
     <form id="usernameForm" class="usernameForm">
-      <input name="name" autocomplete="off" id="username" type="text" placeholder="what is your full name?" required autofocus>
+      <input name="name" autocomplete="off" id="username" type="text" placeholder="what is your full name?" required
+        autofocus>
       <input type="submit" value="begin" id="submitUsername" onsubmit="return false">
     </form>
   </div>
+
+  </div>
+
 
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
