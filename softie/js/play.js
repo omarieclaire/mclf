@@ -393,6 +393,25 @@ function windowOnLoad() {
     objects.push(earthMesh);
 
 
+    // const torusGeo = new THREE.TorusKnotGeometry( 80, .3, 10000, 60, 3, 2);
+
+
+    // function newNewsParticles(friend, friendWorld){
+    //   let newsMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.2, transparent: true, })
+    //   let newsPart = new THREE.Mesh(tinySphereGeom, newsMaterial);
+    //   newsPart.scale.set(.4, .4, .4);
+    //   friendWorld.add(newsPart)
+    // }
+
+    // function newNewsParticles(friend){
+    //   let newsMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.02, transparent: true, })
+    //   // let torusGeo = new THREE.TorusKnotGeometry(80, .3, 100, 60, 3, 2);
+    //   let newsPart = new THREE.Mesh(tinySphereGeom, newsMaterial);
+    //   newsPart.scale.set(.3, .1, .3);
+    //   friend.add(newsPart)
+    // }
+
+
 
 
     function makeInstance(geometry, color, x, y, z) {
@@ -432,10 +451,14 @@ function windowOnLoad() {
 
     for (let i = 0; i < 33; i++) {
 
+      // let friendWorld = new THREE.Object3D();
+
       const gltfLoader = new GLTFLoader();
       gltfLoader.load('./img/friend2.glb', (gltf) => {
         let object = gltf.scene;
         scene.add(object);
+        // newNewsParticles(object, friendWorld);
+
         // root.position.set(0, 0, 3);
         object.scale.multiplyScalar(20);
 
@@ -506,6 +529,7 @@ function windowOnLoad() {
           friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
           friendModalDiv.insertBefore(printFriendNumberDiv, friendModalDiv.childNodes[0]);
           friendModalDiv.insertBefore(closeModalBtnDiv, friendModalDiv.childNodes[0]);
+
 
           submitInput.addEventListener("click", function (event) {
             event.preventDefault()
