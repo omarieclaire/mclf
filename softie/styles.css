@@ -201,6 +201,8 @@ body {
   border: .5px solid rgba(255, 127, 80, .5);
   outline: none;
   min-width: 0;
+  background-color: rgba(53, 34, 154, .8);
+
   -webkit-appearance: none;
 }
 
