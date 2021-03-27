@@ -136,9 +136,9 @@ function windowOnLoad() {
       let currUsername = document.getElementById("username").value;
       // console.log(currUsername);
       if (currUsername != "") {
-        // console.log("good name");
+        console.log("good name");
       } else {
-        // console.log("no name");
+        console.log("no name");
         currUsername = "anon"
         return
       }
@@ -660,20 +660,27 @@ function windowOnLoad() {
       INTERSECTED = null;
     }
     renderer.render(scene, camera);
-    renderer.domElement.addEventListener('click', onClick, false);
-
   }
+
+  renderer.domElement.addEventListener('click', onClick, false);
+  renderer.domElement.addEventListener("touchend", onTouch, false);
+    document.body.appendChild(renderer.domElement); // does this even do anything?
+
 
   function onDocumentMouseMove(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
   }
-
+// findme 
   function onClick(event) {
+    console.log("clicked");
+    // console.log(`event.clientX = ${event.clientX}`);
+    // console.log(`event.clientY = ${event.clientY}`);
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    console.log(event.clientX, event.clientY);
 
     raycaster.setFromCamera(mouse, camera);
 
@@ -719,7 +726,61 @@ function windowOnLoad() {
         });
       }
     }
+  }
 
+  function onTouch(event) {
+    console.log(event);
+    // console.log(`event.clientX = ${event.clientX}`);
+    // console.log(`event.clientY = ${event.clientY}`);
+    event.preventDefault();
+    mouse.x = (event.pageX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.pageY / window.innerHeight) * 2 + 1;
+    // console.log(event.clientX, event.clientY);
+
+    raycaster.setFromCamera(mouse, camera);
+
+    // close modals when clicking outside them - this works but not as expected
+    var modal = document.getElementsByClassName('friendModalDiv');
+   if (event.target.classList.contains('friendModalDiv')) {
+      // console.log(`clicking inside modal: ${event}`);
+    } else {
+      // console.log(`clicking outside modal: ${event}`);
+      for (var i = 0; i < modal.length; i++) {
+        let currModal = modal[i];
+        currModal.classList.remove("openFriendModalDiv");
+      }
+    }
+
+    let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
+
+    if (intersectsFriend.length > 0) { //you know you have an intersection
+      // document.getElementById("wrapper").classList.add("openWrapper");
+
+      if (wrapper.classList.contains("openWrapper")) {
+        wrapper.classList.remove("openWrapper");
+        wrapperBtn.classList.add("wrapperBtnClosing");
+        toggleOpen = false;
+      }
+
+      let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
+      let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
+      currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+      currFriendModalDiv.classList.add("openFriendModalDiv")
+      modalOpen = true;
+
+      let msg = takeModalIDReturnMsg(currFriendID);
+      let currTextDiv = document.getElementById("textInputID" + currFriendID);
+      //currTextDiv.innerHTML = msg;
+
+      for (let i = 0; i < intersectsFriend.length; i++) {
+        let currObj = intersectsFriend[i].object;
+        currObj.traverse((o) => {
+          if (o.isMesh) {
+            o.material.emissive.setHex(3135135);
+          }
+        });
+      }
+    }
   }
 
 
