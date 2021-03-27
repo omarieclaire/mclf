@@ -5,14 +5,14 @@ function windowOnLoad() {
 
   var srockpond = new Audio('audio/rockpond.mp3');
   var sfacewindow = new Audio('audio/facewindow.mp3');
-  var sspoonbatter = new Audio('audio/spoonbatter.mp3');
+  // var sspoonbatter = new Audio('audio/spoonbatter.mp3');
   var sweightscale = new Audio('audio/weightscale.mp3');
   var sholehome = new Audio('audio/holehome.mp3');
   var sdarkeye = new Audio('audio/darkeye.mp3');
   var shandsilk = new Audio('audio/handsilk.mp3');
   var sno = new Audio('audio/no.mp3');
 
-  const sounds = [srockpond, sfacewindow, sspoonbatter, sweightscale, sholehome, sdarkeye, shandsilk, sno]
+  const sounds = [srockpond, sfacewindow, sweightscale, sholehome, sdarkeye, shandsilk, sno]
 
   var touchGen = [{
     word: 'Rock',
