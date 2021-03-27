@@ -644,7 +644,7 @@ function windowOnLoad() {
 
       // let orb = document.getElementById('');
       // add sparkles to the orb
-      makeSparkles(orb);
+      // makeSparkles(orb);
 
       // create a timer to fade the orb sparkles
 
