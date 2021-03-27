@@ -49,8 +49,8 @@ let toggleOpen = false;
 let objects = [];
 let numberOfFriends = 40;
 
-let particleSystem, uniforms, pGeometry;
-const particles = 100;
+let sparkleSystem, uniforms, sparkGeometry;
+const sparkles = 100;
 
 
 let database = firebase.database();
@@ -58,7 +58,7 @@ let ref = database.ref();
 let msgsRef = ref.child('msg');
 
 let username = "mysterious stranger";
-
+let friendOrbs = {};
 let friendQuestions = {
   0: "What did you learn today?",
   1: "What does it mean?",
@@ -132,133 +132,54 @@ function windowOnLoad() {
   init();
   animate();
 
-  let loadingScreenDiv = document.getElementById("loadingScreenDiv");
-  let submitUsername = document.getElementById("submitUsername");
+  function makeSparkles(orb){  
+    // particles 
+    uniforms = {
+      pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
+    };
+    const shaderMaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: document.getElementById('vertexshader').textContent,
+      fragmentShader: document.getElementById('fragmentshader').textContent,
 
-  submitUsername.addEventListener(
-    "click",
-    function (event) {
-      event.preventDefault();
-      let currUsername = document.getElementById("username").value;
-      // console.log(currUsername);
-      if (currUsername != "") {
-        console.log("good name");
-      } else {
-        console.log("no name");
-        currUsername = "anon"
-        return
-      }
-      localStorage.setItem('name', currUsername);
-      username = nameDisplayCheck();
-
-      loadingScreenDiv.classList.add("fade");
-      setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
-    },
-    false
-  );
-
-  // const h1 = document.querySelector('h1');
-  function nameDisplayCheck() {
-    if (localStorage.getItem('name')) {
-      let name = localStorage.getItem('name');
-      return name;
-      // h1.textContent = 'Welcome, ' + name;
-    } else {
-      // h1.textContent = 'Welcome to our website ';
-    }
-  }
-
-
-  function gotData(data) {
-    // if we didn't use .val we'd get a bunch of other info
-    let msgDatabase = data.val();
-    // console.log(msgDatabase);
-    let keys = Object.keys(msgDatabase);
-    // console.log(`keys: ${keys}`);
-    for (let i = 0; i < keys.length; i++) {
-      let k = keys[i];
-      var friendMsgs = msgDatabase[k].msgs;
-
-      if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
-        friendMsgs = {};
-      }
-
-      let friendMsgsKeys = Object.keys(friendMsgs);
-
-      let txtDivToUpdate = document.getElementById("printTextDivID" + k);
-      // console.log(txtDivToUpdate);
-      txtDivToUpdate.innerHTML = '';
-      let ulNode = document.createElement('UL');
-      txtDivToUpdate.appendChild(ulNode);
-
-      for (let j = 0; j < friendMsgsKeys.length; j++) {
-        let friendMsgKey = friendMsgsKeys[j];
-        let msg = friendMsgs[friendMsgKey];
-
-        let liNode = document.createElement('li');
-        ulNode.appendChild(liNode);
-
-        let span = document.createElement("span");
-        span.classList.add("username");
-        let msgTextNode = document.createTextNode(`${msg.msg}`);
-        let usernameTextNode = document.createTextNode(`${msg.username}: `);
-
-        // let msgText = `${msg.msg} -${msg.username}`;
-        // let msgTextNode = document.createTextNode(msgText);
-        span.appendChild(usernameTextNode);
-        liNode.appendChild(span);
-        liNode.appendChild(msgTextNode);
-      }
-      function scrollToTopOfDiv(txtDivToUpdate) {
-        // var objDiv = document.getElementById("your_div");
-        txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
-      }
-      scrollToTopOfDiv(txtDivToUpdate);
-
-    }
-  }
-  function errData() {
-    console.log("error");
-  }
-  // takes event (value), then callback, then error)
-  msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
-
-  let ORBS_WITH_SPARKLES = {};
-
-  for(let j = 0; j < numberOfFriends; j++) {
-    let newItems = false;
-    msgsRef.child(`${j}/msgs`).limitToLast(1).on('child_added', function(snapshot, prevKey) {
-      let msg = snapshot.val();
-
-      // get a reference to the orb
-      let orb = document.getElementById('');
-      // add sparkles to the orb
-
-      // create a timer to fade the orb sparkles
-
-      // keep track of the orbs with sparkles
-      ORBS_WITH_SPARKLES[j] = true;
-
-      if(newItems){
-        if(msg.username == username) {
-          console.log("don't display sparkles");
-        } else {
-          console.log(j, snapshot.val());
-        }
-      } else {
-        console.log(`${j}: not a new item`);
-      }
-
-
-      newItems = true;
-
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      transparent: true,
+      vertexColors: true
     });
-  }
+
+    const pRadius = 20; //how wide they spread out
+    sparkGeometry = new THREE.BufferGeometry();
+    const sparkPositions = [];
+    const sparkColors = [];
+    const sparkSizes = [];
+    const sparkColor = new THREE.Color();
+
+    for (let i = 0; i < sparkles; i++) {
+      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
+      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
+      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
+
+      sparkColor.setHSL(i / sparkles, 1.0, 0.5);
+      sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
+      sparkSizes.push(10);
+    }
+
+    sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
+    sparkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sparkColors, 3));
+    sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
+    sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
+    // console.log(particleSystem);
+
+    // orb.add(sparkleSystem);
+    }
+
+    // particles end
 
   function init() {
 
     container = document.getElementById('container');
-    
+
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -492,6 +413,8 @@ function windowOnLoad() {
       gltfLoader.load('./img/friend2.glb', (gltf) => {
         let object = gltf.scene;
         scene.add(object);
+
+        friendOrbs[i] = object;
         // newNewsParticles(object, friendWorld);
 
         // root.position.set(0, 0, 3);
@@ -504,8 +427,10 @@ function windowOnLoad() {
           }
         });
 
-        object.friendID = i;
+        // console.log(friendOrbs);
 
+
+        object.friendID = i;
 
         function makeFriendModal(friendID) {
           let container = document.getElementById("container");
@@ -583,7 +508,7 @@ function windowOnLoad() {
             }
           });
 
-          closeModalBtn.addEventListener("click", function (event){
+          closeModalBtn.addEventListener("click", function (event) {
             console.log("click");
             friendModalDiv.classList.remove("openFriendModalDiv");
           })
@@ -608,58 +533,138 @@ function windowOnLoad() {
     }
     scene.add(boxGroup);
 
-    // particles 
-    uniforms = {
-      pointTexture: { value: new THREE.TextureLoader().load( "img/spark1.png" ) }
-    };
-    const shaderMaterial = new THREE.ShaderMaterial( {
-      uniforms: uniforms,
-      vertexShader: document.getElementById( 'vertexshader' ).textContent,
-      fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      transparent: true,
-      vertexColors: true
-    } );
-
-    const pRadius = 200;
-    pGeometry = new THREE.BufferGeometry();
-    const pPositions = [];
-    const pColors = [];
-    const pSizes = [];
-    const pColor = new THREE.Color();
-
-    for ( let i = 0; i < particles; i ++ ) {
-      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
-      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
-      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
-
-      pColor.setHSL( i / particles, 1.0, 0.5 );
-      pColors.push( pColor.r, pColor.g, pColor.b );
-      pSizes.push( 20 );
-    }
-
-    pGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( pPositions, 3 ) );
-    pGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( pColors, 3 ) );
-    pGeometry.setAttribute( 'size', new THREE.Float32BufferAttribute( pSizes, 1 ).setUsage( THREE.DynamicDrawUsage ) );
-
-    particleSystem = new THREE.Points( pGeometry, shaderMaterial );
-    // boxGroup.add( particleSystem ); findme
-
-    // renderer = new THREE.WebGLRenderer();
-    // renderer.setPixelRatio( window.devicePixelRatio );
-    // renderer.setSize( window.innerWidth, window.innerHeight );
-
-    // const container = document.getElementById( 'container' );
-    // container.appendChild( renderer.domElement );
-
-// particles end
+    
 
     raycaster = new THREE.Raycaster();
     document.addEventListener('mousemove', onDocumentMouseMove);
     window.addEventListener('resize', onWindowResize);
 
+  }
+
+  let loadingScreenDiv = document.getElementById("loadingScreenDiv");
+  let submitUsername = document.getElementById("submitUsername");
+
+  submitUsername.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      let currUsername = document.getElementById("username").value;
+      // console.log(currUsername);
+      if (currUsername != "") {
+        console.log("good name");
+      } else {
+        console.log("no name");
+        currUsername = "anon"
+        return
+      }
+      localStorage.setItem('name', currUsername);
+      username = nameDisplayCheck();
+
+      loadingScreenDiv.classList.add("fade");
+      setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
+    },
+    false
+  );
+
+  // const h1 = document.querySelector('h1');
+  function nameDisplayCheck() {
+    if (localStorage.getItem('name')) {
+      let name = localStorage.getItem('name');
+      return name;
+      // h1.textContent = 'Welcome, ' + name;
+    } else {
+      // h1.textContent = 'Welcome to our website ';
+    }
+  }
+
+
+  function gotData(data) {
+    // if we didn't use .val we'd get a bunch of other info
+    let msgDatabase = data.val();
+    // console.log(msgDatabase);
+    let keys = Object.keys(msgDatabase);
+    // console.log(`keys: ${keys}`);
+    for (let i = 0; i < keys.length; i++) {
+      let k = keys[i];
+      var friendMsgs = msgDatabase[k].msgs;
+
+      if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
+        friendMsgs = {};
+      }
+
+      let friendMsgsKeys = Object.keys(friendMsgs);
+
+      let txtDivToUpdate = document.getElementById("printTextDivID" + k);
+      // console.log(txtDivToUpdate);
+      txtDivToUpdate.innerHTML = '';
+      let ulNode = document.createElement('UL');
+      txtDivToUpdate.appendChild(ulNode);
+
+      for (let j = 0; j < friendMsgsKeys.length; j++) {
+        let friendMsgKey = friendMsgsKeys[j];
+        let msg = friendMsgs[friendMsgKey];
+
+        let liNode = document.createElement('li');
+        ulNode.appendChild(liNode);
+
+        let span = document.createElement("span");
+        span.classList.add("username");
+        let msgTextNode = document.createTextNode(`${msg.msg}`);
+        let usernameTextNode = document.createTextNode(`${msg.username}: `);
+
+        // let msgText = `${msg.msg} -${msg.username}`;
+        // let msgTextNode = document.createTextNode(msgText);
+        span.appendChild(usernameTextNode);
+        liNode.appendChild(span);
+        liNode.appendChild(msgTextNode);
+      }
+      function scrollToTopOfDiv(txtDivToUpdate) {
+        // var objDiv = document.getElementById("your_div");
+        txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
+      }
+      scrollToTopOfDiv(txtDivToUpdate);
+
+    }
+  }
+  function errData() {
+    console.log("error");
+  }
+  // takes event (value), then callback, then error)
+  msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
+
+  let ORBS_WITH_SPARKLES = {};
+
+  for (let j = 0; j < numberOfFriends; j++) {
+    let newItems = false;
+    msgsRef.child(`${j}/msgs`).limitToLast(1).on('child_added', function (snapshot, prevKey) {
+      let msg = snapshot.val();
+
+      // get a reference to the orb
+      let orb = friendOrbs[j];
+
+      // let orb = document.getElementById('');
+      // add sparkles to the orb
+      makeSparkles(orb);
+
+      // create a timer to fade the orb sparkles
+
+      // keep track of the orbs with sparkles
+      ORBS_WITH_SPARKLES[j] = true;
+
+      if (newItems) {
+        if (msg.username == username) {
+          console.log("don't display sparkles");
+        } else {
+          console.log(j, snapshot.val());
+        }
+      } else {
+        // console.log(`${j}: not a new item`);
+      }
+
+
+      newItems = true;
+
+    });
   }
 
   function takeModalIDReturnMsg(currModalID) {
@@ -763,17 +768,16 @@ function windowOnLoad() {
       INTERSECTED = null;
     }
 
-// particles start 
+    // particles start 
 
-// const time = Date.now() * 0.005;
-particleSystem.rotation.z = 0.01 * time;
-const sizes = pGeometry.attributes.size.array;
-for ( let i = 0; i < particles; i ++ ) {
-  sizes[ i ] = 10 * ( 1 + Math.sin( 0.1 * i + time ) );
-}
-pGeometry.attributes.size.needsUpdate = true;
+    // particleSystem.rotation.z = 0.01 * time;
+    // const sizes = pGeometry.attributes.size.array;
+    // for (let i = 0; i < particles; i++) {
+    //   sizes[i] = 10 * (1 + Math.sin(0.1 * i + time));
+    // }
+    // pGeometry.attributes.size.needsUpdate = true;
 
-// particles end 
+    // particles end 
 
 
 
@@ -790,7 +794,7 @@ pGeometry.attributes.size.needsUpdate = true;
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
   }
-// findme 
+  // findme 
   function onClick(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -806,12 +810,12 @@ pGeometry.attributes.size.needsUpdate = true;
     clickOrTouchFriendOrbs(event);
   }
 
-  function clickOrTouchFriendOrbs(event){
+  function clickOrTouchFriendOrbs(event) {
     raycaster.setFromCamera(mouse, camera);
 
     // close modals when clicking outside them - this works but not as expected
     var modal = document.getElementsByClassName('friendModalDiv');
-   if (event.target.classList.contains('friendModalDiv')) {
+    if (event.target.classList.contains('friendModalDiv')) {
       // console.log(`clicking inside modal: ${event}`);
     } else {
       // console.log(`clicking outside modal: ${event}`);
@@ -876,9 +880,9 @@ pGeometry.attributes.size.needsUpdate = true;
   const btn1 = document.getElementById("btn1");
   const btn2 = document.getElementById("btn2");
   const btn3 = document.getElementById("btn3");
-  const btn4 = document.getElementById("btn4");
-  const btn5 = document.getElementById("btn5");
-  const btn6 = document.getElementById("btn6");
+  // const btn4 = document.getElementById("btn4");
+  // const btn5 = document.getElementById("btn5");
+  // const btn6 = document.getElementById("btn6");
 
   document.addEventListener(
     "click",
@@ -967,36 +971,36 @@ pGeometry.attributes.size.needsUpdate = true;
     },
     false
   );
-  btn4.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn4);
-      // source.setAttribute("src", "img/v4.mp4");
-      // video.load();
-      playSong(song4);
-    },
-    false
-  );
-  btn5.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn5);
-      // source.setAttribute("src", "img/v5.mp4");
-      // video.load();
-      playSong(song5);
-    },
-    false
-  );
-  btn6.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn6);
-      // source.setAttribute("src", "img/v6.mp4");
-      // video.load();
-      playSong(song6);
-    },
-    false
-  );
+  // btn4.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn4);
+  //     // source.setAttribute("src", "img/v4.mp4");
+  //     // video.load();
+  //     playSong(song4);
+  //   },
+  //   false
+  // );
+  // btn5.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn5);
+  //     // source.setAttribute("src", "img/v5.mp4");
+  //     // video.load();
+  //     playSong(song5);
+  //   },
+  //   false
+  // );
+  // btn6.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn6);
+  //     // source.setAttribute("src", "img/v6.mp4");
+  //     // video.load();
+  //     playSong(song6);
+  //   },
+  //   false
+  // );
 
   function updateBtnStyle(clickedBtn) {
     // remove the class from the old button (which is the "current" button)
