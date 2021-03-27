@@ -47,6 +47,12 @@ let boxSpeeds = [];
 const radius = 100;
 let toggleOpen = false;
 let objects = [];
+let numberOfFriends = 40;
+
+let particleSystem, uniforms, pGeometry;
+const particles = 100;
+
+
 let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
@@ -118,7 +124,7 @@ let friendQuestions = {
 };
 
 const initialFriendYPositions = [];
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < numberOfFriends; i++) {
   initialFriendYPositions.push(Math.random());
 }
 
@@ -217,13 +223,42 @@ function windowOnLoad() {
   // takes event (value), then callback, then error)
   msgsRef.on('value', gotData, errData); //callback for receive data, then for err data
 
+  let ORBS_WITH_SPARKLES = {};
+
+  for(let j = 0; j < numberOfFriends; j++) {
+    let newItems = false;
+    msgsRef.child(`${j}/msgs`).limitToLast(1).on('child_added', function(snapshot, prevKey) {
+      let msg = snapshot.val();
+
+      // get a reference to the orb
+      let orb = document.getElementById('');
+      // add sparkles to the orb
+
+      // create a timer to fade the orb sparkles
+
+      // keep track of the orbs with sparkles
+      ORBS_WITH_SPARKLES[j] = true;
+
+      if(newItems){
+        if(msg.username == username) {
+          console.log("don't display sparkles");
+        } else {
+          console.log(j, snapshot.val());
+        }
+      } else {
+        console.log(`${j}: not a new item`);
+      }
 
 
+      newItems = true;
+
+    });
+  }
 
   function init() {
 
     container = document.getElementById('container');
-
+    
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -449,7 +484,7 @@ function windowOnLoad() {
     const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
 
-    for (let i = 0; i < 33; i++) {
+    for (let i = 0; i < numberOfFriends; i++) {
 
       // let friendWorld = new THREE.Object3D();
 
@@ -573,9 +608,53 @@ function windowOnLoad() {
     }
     scene.add(boxGroup);
 
-    
+    // particles 
+    uniforms = {
+      pointTexture: { value: new THREE.TextureLoader().load( "img/spark1.png" ) }
+    };
+    const shaderMaterial = new THREE.ShaderMaterial( {
+      uniforms: uniforms,
+      vertexShader: document.getElementById( 'vertexshader' ).textContent,
+      fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
 
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      transparent: true,
+      vertexColors: true
+    } );
 
+    const pRadius = 200;
+    pGeometry = new THREE.BufferGeometry();
+    const pPositions = [];
+    const pColors = [];
+    const pSizes = [];
+    const pColor = new THREE.Color();
+
+    for ( let i = 0; i < particles; i ++ ) {
+      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
+      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
+      pPositions.push( ( Math.random() * 2 - 1 ) * pRadius );
+
+      pColor.setHSL( i / particles, 1.0, 0.5 );
+      pColors.push( pColor.r, pColor.g, pColor.b );
+      pSizes.push( 20 );
+    }
+
+    pGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( pPositions, 3 ) );
+    pGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( pColors, 3 ) );
+    pGeometry.setAttribute( 'size', new THREE.Float32BufferAttribute( pSizes, 1 ).setUsage( THREE.DynamicDrawUsage ) );
+
+    particleSystem = new THREE.Points( pGeometry, shaderMaterial );
+    // boxGroup.add( particleSystem ); findme
+
+    // renderer = new THREE.WebGLRenderer();
+    // renderer.setPixelRatio( window.devicePixelRatio );
+    // renderer.setSize( window.innerWidth, window.innerHeight );
+
+    // const container = document.getElementById( 'container' );
+    // container.appendChild( renderer.domElement );
+
+// particles end
 
     raycaster = new THREE.Raycaster();
     document.addEventListener('mousemove', onDocumentMouseMove);
@@ -683,12 +762,27 @@ function windowOnLoad() {
       }
       INTERSECTED = null;
     }
+
+// particles start 
+
+// const time = Date.now() * 0.005;
+particleSystem.rotation.z = 0.01 * time;
+const sizes = pGeometry.attributes.size.array;
+for ( let i = 0; i < particles; i ++ ) {
+  sizes[ i ] = 10 * ( 1 + Math.sin( 0.1 * i + time ) );
+}
+pGeometry.attributes.size.needsUpdate = true;
+
+// particles end 
+
+
+
     renderer.render(scene, camera);
   }
 
   renderer.domElement.addEventListener('click', onClick, false);
   renderer.domElement.addEventListener("touchend", onTouch, false);
-    document.body.appendChild(renderer.domElement); // does this even do anything?
+  document.body.appendChild(renderer.domElement); // does this even do anything?
 
 
   function onDocumentMouseMove(event) {

@@ -222,8 +222,8 @@ body {
   min-width: 0;
   align-self: center;
   justify-self: center;
- text-align: center;
- padding: 2rem;
+  text-align: center;
+  padding: 2rem;
 }
 
 .chat input[type="text"],
@@ -472,7 +472,7 @@ width: 2rem; */
   font-weight: 500;
   /* background-color:rgba(0, 0, 0, 0.4); */
   /* border-radius: 20px; */
-  margin: 2rem 0 2rem 0;
+  margin: 2.5rem 0 2rem 0;
   max-width: 60vw;
   line-height: 2rem;
 }
