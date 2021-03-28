@@ -125,7 +125,7 @@ function windowOnLoad() {
   init();
   animate();
 
-  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant){   
+  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant) {
     // particles 
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
@@ -138,7 +138,7 @@ function windowOnLoad() {
       blending: THREE.AdditiveBlending,
       depthTest: false,
       transparent: true,
-      opacity: 0.2,  
+      opacity: 0.2,
       vertexColors: true
     });
 
@@ -173,17 +173,17 @@ function windowOnLoad() {
     spSource.add(sparkleSystem);
     // orb.attach(sparkleSystem);
 
-    }
+  }
 
-    function removeSparkles(orb){
-      // console.log(sparkleSystem);
-      // console.log(`orb is ${orb}`);
-      orb.remove(sparkleFriendMap[orb.friendID]);
-      // console.log("bye");
-    }
+  function removeSparkles(orb) {
+    // console.log(sparkleSystem);
+    // console.log(`orb is ${orb}`);
+    orb.remove(sparkleFriendMap[orb.friendID]);
+    // console.log("bye");
+  }
 
 
-    // particles end
+  // particles end
 
   function init() {
 
@@ -321,27 +321,22 @@ function windowOnLoad() {
     //   }
     // });
 
-
     const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
     const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
     const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
 
     // mesh = new THREE.Mesh(geometry, material);
-    
-
 
     ///test area for sun
-
-    const friendWorld = new THREE.Object3D();
-    scene.add(friendWorld);
-    objects.push(friendWorld);
+    const friendWorldd = new THREE.Object3D();
+    scene.add(friendWorldd);
+    objects.push(friendWorldd);
 
     centerObj = new THREE.Mesh(centerObjGeom, brightMaterial);
     centerObj.scale.set(1, 1, 1);
-    friendWorld.add(centerObj);
+    friendWorldd.add(centerObj);
     objects.push(centerObj);
 
-  
 
     const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
     // const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
@@ -353,7 +348,7 @@ function windowOnLoad() {
     // objects.push(earthMesh);
 
     function makeTinyRotatorInstance(geometry, color, x, y, z) {
-      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true,  emissive: 1})
+      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
       const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
       tinyRotator.position.x = x;
       tinyRotator.position.y = y;
@@ -364,12 +359,12 @@ function windowOnLoad() {
 
     const tinyRotat = [];
 
-    for (let i = -10; i < 10; i++) { 
+    for (let i = -10; i < 10; i++) {
       let x = Math.random() * 40 - 25;
       let y = Math.random() * 15 - 5; // 100
       let z = Math.random() * 30 - 10; //-200
-      let rotat = makeTinyRotatorInstance(centerObjGeom, 0x8844aa, x, y, z);      
-      friendWorld.add(rotat);
+      let rotat = makeTinyRotatorInstance(centerObjGeom, 0x8844aa, x, y, z);
+      friendWorldd.add(rotat);
       objects.push(rotat);
     }
 
@@ -401,135 +396,142 @@ function windowOnLoad() {
     const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
 
+    function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ) {
+      console.log(`setup id ${id}`);
+      obj.scale.multiplyScalar(20);
+      obj.traverse((o) => {
+        if (o.isMesh) {
+          o.friendID = id;
+          o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
+        }
+      });
+
+      obj.friendID = id;
+
+      obj.position.x = positionX;
+      obj.position.y = positionY;
+      obj.position.z = positionZ; 
+      
+      obj.rotation.x = rotationX;
+      obj.rotation.y = rotationY;
+      obj.rotation.z = rotationZ;
+
+      group.add(obj);
+      speeds.push(Math.random());
+      console.log('===');
+    }
+
+    function makeFriendModal(friendID, id) {
+      let container = document.getElementById("container");
+      let friendModalDiv = document.createElement("div");
+      // let innerFriendWrapper = document.createElement("div");
+      let printFriendNumberDiv = document.createElement("div");
+      let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
+      let infoTextDiv = document.createElement("div");
+      let hr = document.createElement("hr");
+      let newInfoText = document.createTextNode(`${friendQuestions[id]}`);    // Create a text node
+      let printTextDiv = document.createElement("div");
+      let printText = document.createTextNode(" ");    // Create a text node
+      let formDiv = document.createElement("div");
+      let form = document.createElement("form");
+      let textInput = document.createElement("input");
+      let submitInput = document.createElement("input");
+      let closeModalBtnDiv = document.createElement("div")
+      let closeModalBtn = document.createElement("div")
+
+
+      friendModalDiv.id = "friendModalDivID" + friendID;
+      printTextDiv.id = "printTextDivID" + friendID;
+      textInput.id = "textInput" + friendID;
+
+      printFriendNumberDiv.classList.add("printFriendNumberDiv");
+      hr.classList.add("hr");
+      infoTextDiv.classList.add("infoTextDiv");
+      friendModalDiv.classList.add("friendModalDiv");
+      printTextDiv.classList.add("printTextDiv");
+      formDiv.classList.add("formDiv");
+      form.classList.add("chat");
+      closeModalBtnDiv.classList.add("closeModalBtnDiv");
+      closeModalBtn.classList.add("closeModalBtn");
+
+      textInput.type = "text";
+      textInput.placeholder = "";
+      submitInput.type = "submit";
+      submitInput.value = "send";
+
+      printFriendNumberDiv.appendChild(friendNumber);
+      printTextDiv.appendChild(printText);
+      infoTextDiv.appendChild(newInfoText);
+      infoTextDiv.appendChild(hr);
+
+      formDiv.appendChild(form);
+      form.appendChild(textInput);
+      form.appendChild(submitInput);
+      closeModalBtnDiv.appendChild(closeModalBtn);
+
+      friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
+      container.insertBefore(friendModalDiv, container.childNodes[0]);
+      friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
+      friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
+      friendModalDiv.insertBefore(printFriendNumberDiv, friendModalDiv.childNodes[0]);
+      friendModalDiv.insertBefore(closeModalBtnDiv, friendModalDiv.childNodes[0]);
+
+      submitInput.addEventListener("click", function (event) {
+        event.preventDefault()
+        if (textInput.value == "") {
+          textInput.focus();
+          return;
+        } else {
+          let ref2 = msgsRef.child(`${friendID}`).child('msgs');
+          // console.log(ref2);
+          ref2.push({
+            username: username,
+            msg: textInput.value
+          });
+          textInput.value = "";
+          textInput.focus();
+        }
+      });
+
+      closeModalBtn.addEventListener("click", function (event) {
+        console.log("click");
+        friendModalDiv.classList.remove("openFriendModalDiv");
+      })
+
+    }
+
+    // makefriendorbs
     for (let i = 0; i < numberOfFriends; i++) {
 
-      // let friendWorld = new THREE.Object3D();
+      const positionX = Math.random() * 800 - 500;
+      const positionY = Math.random() * 150 - 5; // 100
+      const positionZ = Math.random() * 600 - 400; //-200
+
+      const rotationX = Math.random() * 2 * Math.PI;
+      const rotationY = Math.random() * 2 * Math.PI;
+      const rotationZ = Math.random() * 2 * Math.PI;
+
+
+      let object = new THREE.Mesh(tinySphereGeom, brightMaterial);
+      object.scale.set(.03, .03, .03);
+      scene.add(object);
 
       const gltfLoader = new GLTFLoader();
       gltfLoader.load('./img/friend2.glb', (gltf) => {
-        let object = gltf.scene;
-        scene.add(object);
-
-        friendOrbs[i] = object;
-        // newNewsParticles(object, friendWorld);
-
-        // root.position.set(0, 0, 3);
-        object.scale.multiplyScalar(20);
-
-        object.traverse((o) => {
-          if (o.isMesh) {
-            o.friendID = i;
-            o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
-          }
-        });
-
-        // console.log(friendOrbs);
-
-
-        object.friendID = i;
-
-        function makeFriendModal(friendID) {
-          let container = document.getElementById("container");
-          let friendModalDiv = document.createElement("div");
-          // let innerFriendWrapper = document.createElement("div");
-          let printFriendNumberDiv = document.createElement("div");
-          let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
-          let infoTextDiv = document.createElement("div");
-          let hr = document.createElement("hr");
-          let newInfoText = document.createTextNode(`${friendQuestions[i]}`);    // Create a text node
-          let printTextDiv = document.createElement("div");
-          let printText = document.createTextNode(" ");    // Create a text node
-          let formDiv = document.createElement("div");
-          let form = document.createElement("form");
-          let textInput = document.createElement("input");
-          let submitInput = document.createElement("input");
-          let closeModalBtnDiv = document.createElement("div")
-          let closeModalBtn = document.createElement("div")
-
-
-          friendModalDiv.id = "friendModalDivID" + friendID;
-          printTextDiv.id = "printTextDivID" + friendID;
-          textInput.id = "textInput" + friendID;
-
-          // innerFriendWrapper.classList.add("innerFriendWrapper")
-          printFriendNumberDiv.classList.add("printFriendNumberDiv");
-          hr.classList.add("hr");
-          infoTextDiv.classList.add("infoTextDiv");
-          friendModalDiv.classList.add("friendModalDiv");
-          printTextDiv.classList.add("printTextDiv");
-          formDiv.classList.add("formDiv");
-          form.classList.add("chat");
-          closeModalBtnDiv.classList.add("closeModalBtnDiv");
-          closeModalBtn.classList.add("closeModalBtn");
-
-          //  form.method = "post";
-          // form.action = "/my-backend-script";
-          textInput.type = "text";
-          textInput.placeholder = "";
-          submitInput.type = "submit";
-          submitInput.value = "send";
-
-          printFriendNumberDiv.appendChild(friendNumber);
-          printTextDiv.appendChild(printText);
-          infoTextDiv.appendChild(newInfoText);
-          infoTextDiv.appendChild(hr);
-
-          formDiv.appendChild(form);
-          form.appendChild(textInput);
-          form.appendChild(submitInput);
-          closeModalBtnDiv.appendChild(closeModalBtn);
-
-          friendModalDiv.insertBefore(formDiv, friendModalDiv.childNodes[0]);
-          container.insertBefore(friendModalDiv, container.childNodes[0]);
-          friendModalDiv.insertBefore(printTextDiv, friendModalDiv.childNodes[0]);
-          friendModalDiv.insertBefore(infoTextDiv, friendModalDiv.childNodes[0]);
-          friendModalDiv.insertBefore(printFriendNumberDiv, friendModalDiv.childNodes[0]);
-          friendModalDiv.insertBefore(closeModalBtnDiv, friendModalDiv.childNodes[0]);
-
-
-          submitInput.addEventListener("click", function (event) {
-            event.preventDefault()
-            if (textInput.value == "") {
-              textInput.focus();
-              return;
-            } else {
-              let ref2 = msgsRef.child(`${friendID}`).child('msgs');
-              // console.log(ref2);
-              ref2.push({
-                username: username,
-                msg: textInput.value
-              });
-              textInput.value = "";
-              textInput.focus();
-            }
-          });
-
-          closeModalBtn.addEventListener("click", function (event) {
-            console.log("click");
-            friendModalDiv.classList.remove("openFriendModalDiv");
-          })
-
-        }
-
-        makeFriendModal(object.friendID);
-
-        object.position.x = Math.random() * 800 - 500;
-        object.position.y = Math.random() * 150 - 5; // 100
-        object.position.z = Math.random() * 600 - 400; //-200
-
-        object.rotation.x = Math.random() * 2 * Math.PI;
-        object.rotation.y = Math.random() * 2 * Math.PI;
-        object.rotation.z = Math.random() * 2 * Math.PI;
-
-        boxSpeeds.push(Math.random());
-
-        boxGroup.add(object);
+        let friendShape = gltf.scene;
+        setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ);
+        //scene.add(friendShape);
       });
 
-    }
-    scene.add(boxGroup);
+      friendOrbs[i] = object;
 
-    
+      setupObject(object, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ);
+      makeFriendModal(object.friendID, i);
+
+    }
+    //all friends created 
+
+    scene.add(boxGroup);
 
     raycaster = new THREE.Raycaster();
     document.addEventListener('mousemove', onDocumentMouseMove);
@@ -823,16 +825,14 @@ function windowOnLoad() {
     }
 
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
-    if(intersectsCenterObj.length > 0) {
+    if (intersectsCenterObj.length > 0) {
       // spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(centerObj, 200, .2, 16, 3000);   
-      setTimeout(function(){ removeSparkles(centerObj); }, 3000);
+      makeSparkles(centerObj, 200, .2, 16, 3000);
+      setTimeout(function () { removeSparkles(centerObj); }, 3000);
 
     }
 
-
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
-
     if (intersectsFriend.length > 0) { //you know you have an intersection
       // document.getElementById("wrapper").classList.add("openWrapper");
 
@@ -842,7 +842,9 @@ function windowOnLoad() {
         toggleOpen = false;
       }
 
-      let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
+      //let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
+      let currFriendID = intersectsFriend[0].object.friendID; //grab the id of the friend
+
       let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
       currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
       currFriendModalDiv.classList.add("openFriendModalDiv")
@@ -861,8 +863,8 @@ function windowOnLoad() {
         });
       }
       console.log(`currfriendid = ${currFriendID}`);
-      let currentOrb = friendOrbs[currFriendID]; 
-      removeSparkles(currentOrb); 
+      let currentOrb = friendOrbs[currFriendID];
+      removeSparkles(currentOrb);
     }
   }
 
