@@ -27,7 +27,7 @@ let container, stats;
 let camera, scene, raycaster, renderer;
 // let cloudParticles = [];
 
-let controls, water, sun, cenmesh;
+let controls, water, sun, centerObj;
 let newText;
 let INTERSECTED;
 let theta = 0;
@@ -125,7 +125,7 @@ function windowOnLoad() {
   init();
   animate();
 
-  function makeSparkles(orb){  
+  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant){   
     // particles 
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
@@ -142,23 +142,24 @@ function windowOnLoad() {
       vertexColors: true
     });
 
-    const sparkRadius = .1; //how wide they spread out
+    const sparkRadius = spSpread; //how wide they spread out
     sparkGeometry = new THREE.BufferGeometry();
     const sparkPositions = [];
     const sparkColors = [];
     const sparkSizes = [];
     const sparkColor = new THREE.Color();
 
-    for (let i = 0; i < sparkles; i++) {
+    for (let i = 0; i < spQuant; i++) {
       sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
       sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
       sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
 
-      sparkColor.setHSL(i / sparkles, 1.0, .8);
+      let tempHue = Math.random() * 0xffffff
+      sparkColor.setHSL(tempHue, 1.0, spLight);
       sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
 
       // sparkSizes.push((Math.random() * 15 - 1));
-      sparkSizes.push(35);
+      sparkSizes.push(spSize);
     }
 
     sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
@@ -166,10 +167,10 @@ function windowOnLoad() {
     sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
     let sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
     // console.log(particleSystem);
-    sparkleFriendMap[orb.friendID] = sparkleSystem;
+    sparkleFriendMap[spSource.friendID] = sparkleSystem;
 
 
-    orb.add(sparkleSystem);
+    spSource.add(sparkleSystem);
     // orb.attach(sparkleSystem);
 
     }
@@ -321,18 +322,12 @@ function windowOnLoad() {
     // });
 
 
-
-    // const geometry = new THREE.BoxGeometry(30, 30, 30);
-    const boxGeom = new THREE.BoxGeometry(21, 21, 21);
-    const centerSpGeom = new THREE.SphereGeometry(10, 300, 2, 30);
+    const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
     const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
-
-    // const material = new THREE.MeshStandardMaterial({ roughness: 0 });
     const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
 
     // mesh = new THREE.Mesh(geometry, material);
-    cenmesh = new THREE.Mesh(centerSpGeom, brightMaterial);
-    scene.add(cenmesh);
+    
 
 
     ///test area for sun
@@ -341,67 +336,60 @@ function windowOnLoad() {
     scene.add(friendWorld);
     objects.push(friendWorld);
 
-    let tempSun = new THREE.Mesh(tinySphereGeom, brightMaterial);
-    tempSun.scale.set(2, 2, 2);
-    friendWorld.add(tempSun);
-    // scene.add(tempSun);
-    objects.push(tempSun);
+    centerObj = new THREE.Mesh(centerObjGeom, brightMaterial);
+    centerObj.scale.set(1, 1, 1);
+    friendWorld.add(centerObj);
+    objects.push(centerObj);
+
+  
 
     const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
-    const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
-    earthMesh.position.x = 20;
-    earthMesh.position.y = 8;
-    earthMesh.scale.set(2, 2, 2);
+    // const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
+    // earthMesh.position.x = 20;
+    // earthMesh.position.y = 8;
+    // earthMesh.scale.set(2, 2, 2);
 
-    friendWorld.add(earthMesh);
-    objects.push(earthMesh);
+    // friendWorld.add(earthMesh);
+    // objects.push(earthMesh);
 
+    function makeTinyRotatorInstance(geometry, color, x, y, z) {
+      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true,  emissive: 1})
+      const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
+      tinyRotator.position.x = x;
+      tinyRotator.position.y = y;
+      tinyRotator.position.z = z;
+      tinyRotator.scale.set(.3, .3, .3);
+      return tinyRotator;
+    }
 
-    // const torusGeo = new THREE.TorusKnotGeometry( 80, .3, 10000, 60, 3, 2);
+    const tinyRotat = [];
 
+    for (let i = -10; i < 10; i++) { 
+      let x = Math.random() * 40 - 25;
+      let y = Math.random() * 15 - 5; // 100
+      let z = Math.random() * 30 - 10; //-200
+      let rotat = makeTinyRotatorInstance(centerObjGeom, 0x8844aa, x, y, z);      
+      friendWorld.add(rotat);
+      objects.push(rotat);
+    }
 
-    // function newNewsParticles(friend, friendWorld){
-    //   let newsMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.2, transparent: true, })
-    //   let newsPart = new THREE.Mesh(tinySphereGeom, newsMaterial);
-    //   newsPart.scale.set(.4, .4, .4);
-    //   friendWorld.add(newsPart)
-    // }
-
-    // function newNewsParticles(friend){
-    //   let newsMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.02, transparent: true, })
-    //   // let torusGeo = new THREE.TorusKnotGeometry(80, .3, 100, 60, 3, 2);
-    //   let newsPart = new THREE.Mesh(tinySphereGeom, newsMaterial);
-    //   newsPart.scale.set(.3, .1, .3);
-    //   friend.add(newsPart)
-    // }
-
-
-
-
-    function makeInstance(geometry, color, x, y, z) {
-      // const material = new THREE.MeshPhongMaterial({ emissive: color });
-      const cube = new THREE.Mesh(tinySphereGeom, brightMaterial);
-      scene.add(cube);
-      cube.position.x = x;
-      cube.position.y = y;
-      cube.position.z = z;
-      return cube;
+    function makeTinyGlowSphereInstance(geometry, color, x, y, z) {
+      const tinyGlowSphere = new THREE.Mesh(tinySphereGeom, brightMaterial);
+      scene.add(tinyGlowSphere);
+      tinyGlowSphere.position.x = x;
+      tinyGlowSphere.position.y = y;
+      tinyGlowSphere.position.z = z;
+      return tinyGlowSphere;
     }
 
     const tinySph = [
-      makeInstance(centerSpGeom, 0x8844aa, -10, 0, 10),
-      makeInstance(centerSpGeom, 0xaa8844, 10, 0, 10),
-      makeInstance(centerSpGeom, 0x8844aa, 0, 0, 0),
+      makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, -10, 0, 10),
+      makeTinyGlowSphereInstance(centerObjGeom, 0xaa8844, 10, 0, 10),
+      makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, 0, 0, 0),
       // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
     ];
 
 
-    // const torusGeo = new THREE.TorusKnotGeometry( 80, .3, 10000, 60, 3, 2);
-    // const torusKnot = new THREE.Mesh( torusGeo, brightMaterial );
-    // scene.add( torusKnot );
-    // torusKnot.position.set(0, -10, 10);
-
-    //
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.499;
@@ -651,7 +639,7 @@ function windowOnLoad() {
       let orb = friendOrbs[j];
 
       // add sparkles to the orb
-      makeSparkles(orb);
+      makeSparkles(orb, .1, 0.5, 35, 1);
 
 
       // create a timer to fade the orb sparkles
@@ -705,9 +693,9 @@ function windowOnLoad() {
     //   p.rotation.z -= 0.001;
     // });
 
-    cenmesh.position.y = Math.sin(time) * 20 + 5;
-    cenmesh.rotation.x = time * 0.5;
-    cenmesh.rotation.z = time * 0.51;
+    centerObj.position.y = Math.sin(time) * 20 + 5;
+    centerObj.rotation.x = time * 0.5;
+    centerObj.rotation.z = time * 0.51;
 
     for (let i = 0; i < boxGroup.children.length; i++) {
       // let random = Math.random() * -.05 - .08; // 100
@@ -803,7 +791,7 @@ function windowOnLoad() {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
   }
-  // findme 
+
   function onClick(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -833,6 +821,15 @@ function windowOnLoad() {
         currModal.classList.remove("openFriendModalDiv");
       }
     }
+
+    let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
+    if(intersectsCenterObj.length > 0) {
+      // spSource, spSpread, spLight, spSize, spQuant
+      makeSparkles(centerObj, 200, .2, 16, 3000);   
+      setTimeout(function(){ removeSparkles(centerObj); }, 3000);
+
+    }
+
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
 
@@ -865,7 +862,7 @@ function windowOnLoad() {
       }
       console.log(`currfriendid = ${currFriendID}`);
       let currentOrb = friendOrbs[currFriendID]; 
-      removeSparkles(currentOrb); //findme
+      removeSparkles(currentOrb); 
     }
   }
 
