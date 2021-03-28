@@ -351,7 +351,7 @@ margin: 2rem auto 2rem auto;
   visibility: hidden;
   transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
 	/* overflow:auto; */
-	background-color:rgba(0, 0, 0, 0.6);
+	background-color:rgba(0, 0, 0, 0.65);
   transition: all 350ms ease-in-out;
 }
 

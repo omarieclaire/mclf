@@ -10,14 +10,6 @@ import { BufferGeometryUtils } from "./node_modules/three/examples/jsm/utils/Buf
 
 import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
 
-
-// import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-// import { ShaderPass } from './node_modules/three/examples/jsm/postprocessing/ShaderPass.js';
-// import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 var firebaseConfig = {
   apiKey: "AIzaSyDiCOSmTc5a0U0m4jY4D8s7ZXZ6ab5NTWo",
   authDomain: "sanctuary-76c32.firebaseapp.com",
@@ -49,8 +41,9 @@ let toggleOpen = false;
 let objects = [];
 let numberOfFriends = 40;
 
-let sparkleSystem, uniforms, sparkGeometry;
-const sparkles = 100;
+let sparkUniforms, sparkGeometry;
+const sparkles = 1;
+const sparkleFriendMap = {};
 
 
 let database = firebase.database();
@@ -134,21 +127,22 @@ function windowOnLoad() {
 
   function makeSparkles(orb){  
     // particles 
-    uniforms = {
+    sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
     };
     const shaderMaterial = new THREE.ShaderMaterial({
-      uniforms: uniforms,
+      uniforms: sparkUniforms,
       vertexShader: document.getElementById('vertexshader').textContent,
       fragmentShader: document.getElementById('fragmentshader').textContent,
 
       blending: THREE.AdditiveBlending,
       depthTest: false,
       transparent: true,
+      opacity: 0.2,  
       vertexColors: true
     });
 
-    const pRadius = 20; //how wide they spread out
+    const sparkRadius = .1; //how wide they spread out
     sparkGeometry = new THREE.BufferGeometry();
     const sparkPositions = [];
     const sparkColors = [];
@@ -156,23 +150,37 @@ function windowOnLoad() {
     const sparkColor = new THREE.Color();
 
     for (let i = 0; i < sparkles; i++) {
-      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
-      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
-      sparkPositions.push((Math.random() * 2 - 1) * pRadius);
+      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
 
-      sparkColor.setHSL(i / sparkles, 1.0, 0.5);
+      sparkColor.setHSL(i / sparkles, 1.0, .8);
       sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
-      sparkSizes.push(10);
+
+      // sparkSizes.push((Math.random() * 15 - 1));
+      sparkSizes.push(35);
     }
 
     sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
     sparkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sparkColors, 3));
     sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
-    sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
+    let sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
     // console.log(particleSystem);
+    sparkleFriendMap[orb.friendID] = sparkleSystem;
 
-    // orb.add(sparkleSystem);
+
+    orb.add(sparkleSystem);
+    // orb.attach(sparkleSystem);
+
     }
+
+    function removeSparkles(orb){
+      // console.log(sparkleSystem);
+      // console.log(`orb is ${orb}`);
+      orb.remove(sparkleFriendMap[orb.friendID]);
+      // console.log("bye");
+    }
+
 
     // particles end
 
@@ -642,11 +650,12 @@ function windowOnLoad() {
       // get a reference to the orb
       let orb = friendOrbs[j];
 
-      // let orb = document.getElementById('');
       // add sparkles to the orb
-      // makeSparkles(orb);
+      makeSparkles(orb);
+
 
       // create a timer to fade the orb sparkles
+      // removeSparkles(orb);
 
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
@@ -854,6 +863,9 @@ function windowOnLoad() {
           }
         });
       }
+      console.log(`currfriendid = ${currFriendID}`);
+      let currentOrb = friendOrbs[currFriendID]; 
+      removeSparkles(currentOrb); //findme
     }
   }
 
