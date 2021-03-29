@@ -50,7 +50,7 @@ let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
 
-let username = "mysterious stranger";
+let username = "";
 let friendOrbs = {};
 let friendQuestions = {
   0: "What did you learn today?",
@@ -125,8 +125,7 @@ function windowOnLoad() {
   init();
   animate();
 
-  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant) {
-    // particles 
+  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, willFade) {
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
     };
@@ -157,8 +156,6 @@ function windowOnLoad() {
       let tempHue = Math.random() * 0xffffff
       sparkColor.setHSL(tempHue, 1.0, spLight);
       sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
-
-      // sparkSizes.push((Math.random() * 15 - 1));
       sparkSizes.push(spSize);
     }
 
@@ -169,21 +166,27 @@ function windowOnLoad() {
     // console.log(particleSystem);
     sparkleFriendMap[spSource.friendID] = sparkleSystem;
 
-
     spSource.add(sparkleSystem);
-    // orb.attach(sparkleSystem);
+
+    if (willFade == true) {
+      let i = 1;
+
+      function fadeThoseSparkles() {
+        // sparkleSystem
+        // shaderMaterial.opacity = 0.1;
+        // spSource.remove(sparkleSystem);
+      }
+
+      setTimeout(function run() {
+        console.log(i);
+        i++;
+        setTimeout(fadeThoseSparkles, 100);
+      }, 100);
+    } else {
+      // do nothing
+    }
 
   }
-
-  function removeSparkles(orb) {
-    // console.log(sparkleSystem);
-    // console.log(`orb is ${orb}`);
-    orb.remove(sparkleFriendMap[orb.friendID]);
-    // console.log("bye");
-  }
-
-
-  // particles end
 
   function init() {
 
@@ -347,26 +350,26 @@ function windowOnLoad() {
     // friendWorld.add(earthMesh);
     // objects.push(earthMesh);
 
-    function makeTinyRotatorInstance(geometry, color, x, y, z) {
-      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
-      const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
-      tinyRotator.position.x = x;
-      tinyRotator.position.y = y;
-      tinyRotator.position.z = z;
-      tinyRotator.scale.set(.3, .3, .3);
-      return tinyRotator;
-    }
+    // function makeTinyRotatorInstance(geometry, color, x, y, z) {
+    //   let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
+    //   const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
+    //   tinyRotator.position.x = x;
+    //   tinyRotator.position.y = y;
+    //   tinyRotator.position.z = z;
+    //   tinyRotator.scale.set(.3, .3, .3);
+    //   return tinyRotator;
+    // }
 
-    const tinyRotat = [];
+    // const tinyRotat = [];
 
-    for (let i = -10; i < 10; i++) {
-      let x = Math.random() * 40 - 25;
-      let y = Math.random() * 15 - 5; // 100
-      let z = Math.random() * 30 - 10; //-200
-      let rotat = makeTinyRotatorInstance(centerObjGeom, 0x8844aa, x, y, z);
-      friendWorldd.add(rotat);
-      objects.push(rotat);
-    }
+    // for (let i = -10; i < 10; i++) {
+    //   let x = Math.random() * 40 - 25;
+    //   let y = Math.random() * 15 - 5; // 100
+    //   let z = Math.random() * 30 - 10; //-200
+    //   let rotat = makeTinyRotatorInstance(centerObjGeom, 0x8844aa, x, y, z);
+    //   friendWorldd.add(rotat);
+    //   objects.push(rotat);
+    // }
 
     function makeTinyGlowSphereInstance(geometry, color, x, y, z) {
       const tinyGlowSphere = new THREE.Mesh(tinySphereGeom, brightMaterial);
@@ -396,9 +399,9 @@ function windowOnLoad() {
     const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
 
-    function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ) {
-      console.log(`setup id ${id}`);
-      obj.scale.multiplyScalar(20);
+    function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objScale) {
+      // console.log(`setup id ${id}`);
+      obj.scale.multiplyScalar(objScale);
       obj.traverse((o) => {
         if (o.isMesh) {
           o.friendID = id;
@@ -410,15 +413,15 @@ function windowOnLoad() {
 
       obj.position.x = positionX;
       obj.position.y = positionY;
-      obj.position.z = positionZ; 
-      
+      obj.position.z = positionZ;
+
       obj.rotation.x = rotationX;
       obj.rotation.y = rotationY;
       obj.rotation.z = rotationZ;
 
       group.add(obj);
       speeds.push(Math.random());
-      console.log('===');
+      // console.log('===');
     }
 
     function makeFriendModal(friendID, id) {
@@ -519,13 +522,18 @@ function windowOnLoad() {
       const gltfLoader = new GLTFLoader();
       gltfLoader.load('./img/friend2.glb', (gltf) => {
         let friendShape = gltf.scene;
-        setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ);
-        //scene.add(friendShape);
+        setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 20);
       });
+
+      // const gltfLoader2 = new GLTFLoader();
+      // gltfLoader2.load('./img/oct.glb', (gltf) => {
+      //   let oct = gltf.scene;
+      //   setupObject(oct, i, boxGroup, boxSpeeds, 10, 10, 10, rotationX, rotationY, rotationZ, 30);
+      // });
 
       friendOrbs[i] = object;
 
-      setupObject(object, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ);
+      setupObject(object, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 1);
       makeFriendModal(object.friendID, i);
 
     }
@@ -550,9 +558,11 @@ function windowOnLoad() {
       // console.log(currUsername);
       if (currUsername != "") {
         console.log("good name");
+        let usernameForm = document.getElementById("usernameForm");
+        // usernameForm.innerHTML = "Welcome " + username;
       } else {
         console.log("no name");
-        currUsername = "anon"
+        // currUsername = "anon"
         return
       }
       localStorage.setItem('name', currUsername);
@@ -640,12 +650,8 @@ function windowOnLoad() {
       // get a reference to the orb
       let orb = friendOrbs[j];
 
-      // add sparkles to the orb
-      makeSparkles(orb, .1, 0.5, 35, 1);
-
-
-      // create a timer to fade the orb sparkles
-      // removeSparkles(orb);
+      // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant
+      makeSparkles(orb, 12.5, 0.1, 30, 5, false);
 
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
@@ -703,8 +709,8 @@ function windowOnLoad() {
       // let random = Math.random() * -.05 - .08; // 100
       const randomSpeedForThisBox = boxSpeeds[i];
       // boxGroup.children[i].position.y = Math.sin(time + initialPositions[i]*20) * 40 + 15;
-      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
-      boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+      boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
+      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
 
 
 
@@ -827,9 +833,7 @@ function windowOnLoad() {
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
       // spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(centerObj, 200, .2, 16, 3000);
-      setTimeout(function () { removeSparkles(centerObj); }, 3000);
-
+      makeSparkles(centerObj, 400, .2, 16, 3000, true);
     }
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
@@ -862,9 +866,9 @@ function windowOnLoad() {
           }
         });
       }
-      console.log(`currfriendid = ${currFriendID}`);
       let currentOrb = friendOrbs[currFriendID];
-      removeSparkles(currentOrb);
+      currentOrb.remove(sparkleFriendMap[currentOrb.friendID]);
+
     }
   }
 
