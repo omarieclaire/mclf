@@ -220,7 +220,7 @@ function windowOnLoad() {
 
     let savedUserName = nameDisplayCheck();
     if (savedUserName) {
-      var usernameInput = document.getElementById("username").value = savedUserName;
+      document.getElementById("username").value = savedUserName;
     }
 
     function playSound(song) {
@@ -601,11 +601,11 @@ function windowOnLoad() {
       let currUsername = document.getElementById("username").value;
       // console.log(currUsername);
       if (currUsername != "") {
-        console.log("good name");
+        // console.log("good name");
         let usernameForm = document.getElementById("usernameForm");
         // usernameForm.innerHTML = "Welcome " + username;
       } else {
-        console.log("no name");
+        // console.log("no name");
         // currUsername = "anon"
         return
       }
