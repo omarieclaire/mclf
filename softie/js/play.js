@@ -117,7 +117,7 @@ let friendQuestions = {
 };
 
 const initialFriendYPositions = [];
-for (let i = 0; i < numberOfFriends; i++) {
+for (let i = 0; i < numberOfFriends*10; i++) {
   initialFriendYPositions.push(Math.random());
 }
 
@@ -651,7 +651,7 @@ function windowOnLoad() {
       let orb = friendOrbs[j];
 
       // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(orb, 12.5, 0.1, 30, 5, false);
+      makeSparkles(orb, 150, 0.1, 10, 3, false);
 
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
@@ -708,8 +708,10 @@ function windowOnLoad() {
     for (let i = 0; i < boxGroup.children.length; i++) {
       // let random = Math.random() * -.05 - .08; // 100
       const randomSpeedForThisBox = boxSpeeds[i];
-      // boxGroup.children[i].position.y = Math.sin(time + initialPositions[i]*20) * 40 + 15;
-      boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
+      // Pi = 3.14159  
+      let offset = initialFriendYPositions[i] * 15;
+      boxGroup.children[i].position.y = Math.sin(time + offset) * 40 + 15;
+      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
       // boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
 
 
@@ -960,14 +962,22 @@ function windowOnLoad() {
   // new toggle info stuff
 
   // settings menu stuff
+
+  let settingsDropdown = document.getElementById("settingsDropdown");
+  let toggleChangeNameInput = document.getElementById("toggleChangeNameInput");
+  let settingsBtn = document.getElementById("settingsBtn");
+  let changeNameInput = document.getElementById("changeNameInput");
+  let changeNameSlider = document.getElementById("changeNameSlider");
+  let changeNameForm = document.getElementById("changeNameForm");
+  // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox");
+
+
   function settingsMenuOpen() {
-    document.getElementById("settingsDropdown").classList.toggle("showDropdown");
-    document.getElementById("toggleChangeNameInput").value = `change name, ${username}?`;
+    settingsDropdown.classList.toggle("showDropdown");
+    toggleChangeNameInput.value = `change name, ${username}?`;
   }
 
-
-  document.getElementById("settingsBtn").addEventListener("click", settingsMenuOpen);
-  let changeNameInput = document.getElementById("changeNameInput");
+  settingsBtn.addEventListener("click", settingsMenuOpen);
 
   function expand() {
     changeNameSlider.className = 'expanded';
@@ -997,24 +1007,17 @@ function windowOnLoad() {
   }
 
   // toggle sound
+  let toggleSoundCheckbox = document.querySelector("input[name=toggleSoundCheckbox]");
+  
+  toggleSoundCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+      console.log("Checkbox is checked..");
 
+    } else {
+      console.log("Checkbox is not checked..");
 
-  // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox"); 
-
-  let toggleSoundCheckbox = document.querySelector("input[name=checkbox]");
-
-
-  // toggleSoundCheckbox.addEventListener('change', function () {
-  //   if (this.checked) {
-  //     console.log("Checkbox is checked..");
-  //     window.alert("check");
-
-  //   } else {
-  //     console.log("Checkbox is not checked..");
-  //     window.alert("uncheck");
-
-  //   }
-  // });
+    }
+  });
 
   // new toggle info stuff end
 

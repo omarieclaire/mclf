@@ -246,6 +246,10 @@ input{
 
 }
 
+#changeNameInput::-webkit-input-placeholder {
+color: rgb(254, 228, 237);
+}
+
 
 .postBtn {
 margin: 2rem auto 2rem auto;
@@ -503,6 +507,12 @@ input {
   /* margin: 3rem, 0 0 0; */
   /* width: 20rem;   */
   /* width: 2rem; */
+}
+
+#changeNameInput{
+  background-color: rgba(204, 130, 154, 55%);
+  color: white;
+
 }
 
 /* .FriendModalDiv > div {padding:23px 27px;} */
@@ -805,7 +815,8 @@ input {
     display: block;
 }
 .dropdownContent a:hover {
-  background-color: rgb(209, 151, 245);
+  background-color: rgb(196, 152, 222, 59%);
+  border-radius: .6rem;
   
 }
 
