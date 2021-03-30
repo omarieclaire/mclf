@@ -149,10 +149,6 @@ body {
   color: rgb(255 194 117);
 }
 
-input{
-  border-radius:8px;
-}
-
 #usernameForm input[type="text"] {
   /* background-color: rgba(53, 34, 154, .8); */
   /* font-style: italic; */
@@ -223,6 +219,7 @@ input{
 
 .chat input[type="text"] {
   margin-right: -1px;
+  width:20rem;
 
 }
 
@@ -500,6 +497,8 @@ input {
   color: white;
   /* border-bottom: 1px solid white; */
   font-size: 1rem;
+  border-radius:8px;
+
   /* padding: 1rem; */
   /* visibility: inherit; */
   /* margin-top: 2rem; */
@@ -510,7 +509,9 @@ input {
 }
 
 #changeNameInput{
-  background-color: rgba(204, 130, 154, 55%);
+  background-color: rgba(178, 124, 211, 0.85);
+  /* border: .5px solid white; */
+  flex: auto;
   color: white;
 
 }
@@ -813,6 +814,8 @@ input {
     padding: 0.8rem 0;
     text-decoration: none;
     display: block;
+    color:rgba(76, 61, 134, .8); 
+    font-size: 1rem;
 }
 .dropdownContent a:hover {
   background-color: rgb(196, 152, 222, 59%);
@@ -844,20 +847,22 @@ input {
 #toggleChangeNameInput {
   flex: 0 0 50%;
   padding:7px;
-  text-align: left;
+  color: rgba(76, 61, 134, .8);
+  /* text-align: left; */
+  background: none;
+
 }
 
-#changeNameInput {
-  flex: auto;
-}
 
 #okButton {
   flex: none;
   flex-basis: 10%;
+  background-color: rgba(167, 95, 211, 0.85);
+
 }
 
 #okButton:hover{
-  background-color: rgba(213, 111, 136, .85);
+  background-color: rgba(240, 130, 158, 0.85);
 }
 
 

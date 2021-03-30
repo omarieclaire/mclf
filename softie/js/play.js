@@ -40,10 +40,14 @@ const radius = 100;
 let toggleOpen = false;
 let objects = [];
 let numberOfFriends = 40;
-
+let soundMuted = false;
 let sparkUniforms, sparkGeometry;
 const sparkles = 1;
 const sparkleFriendMap = {};
+
+const friendSound = new Audio("audio/friend.mp3");
+const seaSound = new Audio("audio/sea.mp3");
+
 
 
 let database = firebase.database();
@@ -117,7 +121,7 @@ let friendQuestions = {
 };
 
 const initialFriendYPositions = [];
-for (let i = 0; i < numberOfFriends*10; i++) {
+for (let i = 0; i < numberOfFriends * 10; i++) {
   initialFriendYPositions.push(Math.random());
 }
 
@@ -179,7 +183,7 @@ function windowOnLoad() {
       }
 
       setTimeout(function fadeThoseSparkles() {
-        console.log(i);
+        // console.log(i);
         i++;
         setTimeout(fadeThoseSparkles, 100);
       }, 100);
@@ -191,6 +195,26 @@ function windowOnLoad() {
 
   function init() {
 
+    // const song3 = new Audio("audio/face.mp3");
+    // const song4 = new Audio("audio/hey.mp3");
+    // const song5 = new Audio("audio/numb.mp3");
+    // const song6 = new Audio("audio/why.mp3");
+
+    // const songs = [seaSound, friendSound];
+
+    // function pauseSounds(){
+    //   for (let i = 0; i < songs.length; i++) {
+    //     songs[i].pause();
+    //   }
+    // }
+
+ 
+
+    function playSound(song) {
+      song.volume = 0.07;
+      song.play();
+    }
+
     container = document.getElementById('container');
 
     renderer = new THREE.WebGLRenderer();
@@ -199,6 +223,7 @@ function windowOnLoad() {
     container.appendChild(renderer.domElement);
 
     //
+
 
     scene = new THREE.Scene();
 
@@ -569,6 +594,9 @@ function windowOnLoad() {
       localStorage.setItem('name', currUsername);
       username = nameDisplayCheck();
       loadingScreenDiv.classList.add("fade");
+      seaSound.play();
+      seaSound.volume = 0.08;
+      seaSound.loop = true;
       setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
     false
@@ -832,15 +860,18 @@ function windowOnLoad() {
       }
     }
 
-
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
       // spSource, spSpread, spLight, spSize, spQuant
       makeSparkles(centerObj, 400, .2, 16, 3000, true);
+
     }
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
     if (intersectsFriend.length > 0) { //you know you have an intersection
+      friendSound.volume = 0.04;
+      friendSound.play();
+
       // document.getElementById("wrapper").classList.add("openWrapper");
 
       // if (wrapper.classList.contains("openWrapper")) {
@@ -878,26 +909,20 @@ function windowOnLoad() {
 
   let currBtn;
 
-  const song1 = new Audio("audio/love.mp3");
-  const song2 = new Audio("audio/ask.mp3");
-  const song3 = new Audio("audio/face.mp3");
-  const song4 = new Audio("audio/hey.mp3");
-  const song5 = new Audio("audio/numb.mp3");
-  const song6 = new Audio("audio/why.mp3");
 
-  const songs = [song1, song2, song3, song4, song5, song6];
+
 
   // let video = document.getElementById("video");
   // let source = document.createElement("source");
   // video.appendChild(source);
 
-  const wrapper = document.getElementById("wrapper");
-  const wrapperBtn = document.getElementById("wrapperBtn");
-  const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
+  // const wrapper = document.getElementById("wrapper");
+  // const wrapperBtn = document.getElementById("wrapperBtn");
+  // const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
 
-  const btn1 = document.getElementById("btn1");
-  const btn2 = document.getElementById("btn2");
-  const btn3 = document.getElementById("btn3");
+  // const btn1 = document.getElementById("btn1");
+  // const btn2 = document.getElementById("btn2");
+  // const btn3 = document.getElementById("btn3");
   // const btn4 = document.getElementById("btn4");
   // const btn5 = document.getElementById("btn5");
   // const btn6 = document.getElementById("btn6");
@@ -911,7 +936,7 @@ function windowOnLoad() {
       } else {
         // console.log("toggle is open");
         if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
-          // console.log("clicking on wrapper or button - return");
+          console.log("clicking on wrapper or button - return");
           // return;
         } else {
           console.log("clicking on world - run code");
@@ -971,10 +996,9 @@ function windowOnLoad() {
   let changeNameForm = document.getElementById("changeNameForm");
   // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox");
 
-
   function settingsMenuOpen() {
     settingsDropdown.classList.toggle("showDropdown");
-    toggleChangeNameInput.value = `change name, ${username}?`;
+    toggleChangeNameInput.value = `Change name, ${username}?`;
   }
 
   settingsBtn.addEventListener("click", settingsMenuOpen);
@@ -1002,21 +1026,34 @@ function windowOnLoad() {
     console.log(changeNameInput.value);
     localStorage.setItem('name', changeNameInput.value);
     username = nameDisplayCheck();
-    document.getElementById("toggleChangeNameInput").value = `change name, ${username}?`;
+    document.getElementById("toggleChangeNameInput").value = `Change name, ${username}?`;
     collapse();
   }
 
   // toggle sound
   let toggleSoundCheckbox = document.querySelector("input[name=toggleSoundCheckbox]");
-  
+
   toggleSoundCheckbox.addEventListener('change', function () {
     if (this.checked) {
       console.log("Checkbox is checked..");
+      seaSound.volume = 0.08;
+      friendSound.volume = 0.04;
 
     } else {
       console.log("Checkbox is not checked..");
-
+      seaSound.volume = 0;
+      friendSound.volume = 0;
     }
+
+    // function muteSounds() {
+    //   if (soundMuted) {
+    //     seaSound.volume = 0.1;
+    //   } else {
+    //     seaSound.volume = 0;
+    //   }
+    //   soundMuted != soundMuted;
+    // }
+    // muteSounds();
   });
 
   // new toggle info stuff end
@@ -1091,18 +1128,9 @@ function windowOnLoad() {
   //   clickedBtn.classList.add("currBtn");
   // }
 
-  function playSong(song) {
-    for (let i = 0; i < songs.length; i++) {
-      songs[i].pause();
-    }
-    song.volume = 0.1;
 
-    song.play();
-  }
 
   document.body.onload = nameDisplayCheck;
-
-
 }
 
 window.addEventListener("load", windowOnLoad);
