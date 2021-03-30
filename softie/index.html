@@ -16,7 +16,7 @@
   <!-- <source src="img/v1.mp4" type="video/mp4"> -->
   <!-- </video> -->
 
-  <div id="wrapperToggleDiv">
+  <!-- <div id="wrapperToggleDiv">
     <div class="btn noselect wrapperBtn wrapperBtnClosed" id="wrapperBtn">
       <p>``</p>
     </div>
@@ -32,15 +32,32 @@
     <div class="btn noselect" id="btn3">
       <p>u§u</p>
     </div>
-    <!-- <div class="btn noselect" id="btn4">
-      <p>o%o</p>
-    </div>
-    <div class="btn noselect" id="btn5">
-      <p>løl</p>
-    </div>
-    <div class="btn noselect" id="btn6">
-      <p>u§u</p>
-    </div> -->
+  </div> -->
+
+  <div id="wrapperToggleDiv" class="settingsMenu">
+    <div id="settingsBtn" class="btn noselect wrapperBtn wrapperBtnClosed">``</div>
+    <ul id="settingsDropdown" class="dropdownContent">
+  
+      <li><a href="#changeNameSection">
+          <form id='changeNameForm' onSubmit={this.onSubmit}>
+            <div id='changeNameSlider' class='collapsed'>
+              <input type='button' id='toggleChangeNameInput' value='Change name?'>
+              <input type='text' id='changeNameInput' tabindex='-1' placeholder='new name' size=12>
+              <input type='submit' id='okButton' tabindex='-1' value='ok'>
+            </div>
+          </form>
+      </a>
+      <li>
+        <a href="#soundToggleSection">
+          <label class="toggleLabel">
+            <span class="toggleLabel">Sound</span>
+            <input class="toggleSoundCheckbox" name"checkbox" type="checkbox" checked> 
+            <div class="toggleSoundDiv"></div>
+          </label>
+        </a>
+      </li>
+      <li><a href="#creditsSection">Made by Marie Claire LeBlanc Flanagan & friends</a></li>
+    </ul>
   </div>
 
 

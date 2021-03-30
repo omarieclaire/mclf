@@ -50,7 +50,7 @@ let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
 
-let username = "";
+let username;
 let friendOrbs = {};
 let friendQuestions = {
   0: "What did you learn today?",
@@ -133,11 +133,9 @@ function windowOnLoad() {
       uniforms: sparkUniforms,
       vertexShader: document.getElementById('vertexshader').textContent,
       fragmentShader: document.getElementById('fragmentshader').textContent,
-
       blending: THREE.AdditiveBlending,
       depthTest: false,
       transparent: true,
-      opacity: 0.2,
       vertexColors: true
     });
 
@@ -168,6 +166,9 @@ function windowOnLoad() {
 
     spSource.add(sparkleSystem);
 
+    //shaderMaterial.opacity = 1;
+
+
     if (willFade == true) {
       let i = 1;
 
@@ -177,7 +178,7 @@ function windowOnLoad() {
         // spSource.remove(sparkleSystem);
       }
 
-      setTimeout(function run() {
+      setTimeout(function fadeThoseSparkles() {
         console.log(i);
         i++;
         setTimeout(fadeThoseSparkles, 100);
@@ -567,7 +568,6 @@ function windowOnLoad() {
       }
       localStorage.setItem('name', currUsername);
       username = nameDisplayCheck();
-
       loadingScreenDiv.classList.add("fade");
       setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
@@ -830,6 +830,7 @@ function windowOnLoad() {
       }
     }
 
+
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
       // spSource, spSpread, spLight, spSize, spQuant
@@ -840,11 +841,11 @@ function windowOnLoad() {
     if (intersectsFriend.length > 0) { //you know you have an intersection
       // document.getElementById("wrapper").classList.add("openWrapper");
 
-      if (wrapper.classList.contains("openWrapper")) {
-        wrapper.classList.remove("openWrapper");
-        wrapperBtn.classList.add("wrapperBtnClosing");
-        toggleOpen = false;
-      }
+      // if (wrapper.classList.contains("openWrapper")) {
+      //   wrapper.classList.remove("openWrapper");
+      //   wrapperBtn.classList.add("wrapperBtnClosing");
+      //   toggleOpen = false;
+      // }
 
       //let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
       let currFriendID = intersectsFriend[0].object.friendID; //grab the id of the friend
@@ -923,69 +924,130 @@ function windowOnLoad() {
     },
   );
 
-  wrapperBtn.addEventListener(
-    "click",
-    function (event) {
-      if (toggleOpen == false) {
-        // console.log("toggle is opening");
-        if (wrapperBtn.classList.contains('wrapperBtnClosed')) {
-          wrapperBtn.classList.remove("wrapperBtnClosed");
-        }
-        if (wrapperBtn.classList.contains('wrapperBtnClosing')) {
-          wrapperBtn.classList.remove("wrapperBtnClosing");
-        }
-        wrapperBtn.classList.add("wrapperBtnOpening");
-        wrapper.classList.add("openWrapper");
-        toggleOpen = true;
-        // console.log(`toggle should be open ${toggleOpen}`);
-      } else {
-        console.log("toggle is closing");
-        if (wrapperBtn.classList.contains('wrapperBtnOpening')) {
-          wrapperBtn.classList.remove("wrapperBtnOpening");
-        }
-        wrapperBtn.classList.add("wrapperBtnClosing");
-        wrapper.classList.remove("openWrapper");
-        toggleOpen = false;
-        // console.log(`toggle should be closed ${toggleOpen}`);
+  // wrapperBtn.addEventListener(
+  //   "click",
+  //   function (event) {
+  //     if (toggleOpen == false) {
+  //       // console.log("toggle is opening");
+  //       if (wrapperBtn.classList.contains('wrapperBtnClosed')) {
+  //         wrapperBtn.classList.remove("wrapperBtnClosed");
+  //       }
+  //       if (wrapperBtn.classList.contains('wrapperBtnClosing')) {
+  //         wrapperBtn.classList.remove("wrapperBtnClosing");
+  //       }
+  //       wrapperBtn.classList.add("wrapperBtnOpening");
+  //       wrapper.classList.add("openWrapper");
+  //       toggleOpen = true;
+  //       // console.log(`toggle should be open ${toggleOpen}`);
+  //     } else {
+  //       console.log("toggle is closing");
+  //       if (wrapperBtn.classList.contains('wrapperBtnOpening')) {
+  //         wrapperBtn.classList.remove("wrapperBtnOpening");
+  //       }
+  //       wrapperBtn.classList.add("wrapperBtnClosing");
+  //       wrapper.classList.remove("openWrapper");
+  //       toggleOpen = false;
+  //       // console.log(`toggle should be closed ${toggleOpen}`);
 
 
-      }
-      // toggleOpen != toggleOpen
-      // console.log(toggleOpen);
-      // toggleOpen
-    },
-  );
+  //     }
+  //     // toggleOpen != toggleOpen
+  //     // console.log(toggleOpen);
+  //     // toggleOpen
+  //   },
+  // );
 
-  btn1.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn1);
-      // source.setAttribute("src", "img/v1.mp4");
-      // video.load();
-      playSong(song1);
-    },
-    false
-  );
-  btn2.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn2);
-      // source.setAttribute("src", "img/v2.mp4");
-      // video.load();
-      playSong(song2);
-    },
-    false
-  );
-  btn3.addEventListener(
-    "click",
-    function () {
-      updateBtnStyle(btn3);
-      // source.setAttribute("src", "img/v3.mp4");
-      // video.load();
-      playSong(song3);
-    },
-    false
-  );
+  // new toggle info stuff
+
+  // settings menu stuff
+  function settingsMenuOpen() {
+    document.getElementById("settingsDropdown").classList.toggle("showDropdown");
+    document.getElementById("toggleChangeNameInput").value = `change name, ${username}?`;
+  }
+
+
+  document.getElementById("settingsBtn").addEventListener("click", settingsMenuOpen);
+  let changeNameInput = document.getElementById("changeNameInput");
+
+  function expand() {
+    changeNameSlider.className = 'expanded';
+    setTimeout(function () {
+      changeNameInput.focus();
+    }, 500);
+  }
+
+  function collapse() {
+    changeNameSlider.className = 'collapsed';
+    changeNameInput.blur();
+  }
+
+  toggleChangeNameInput.onclick = expand;
+
+  changeNameInput.onblur = function () {
+    setTimeout(collapse, 100);
+  }
+
+  changeNameForm.onsubmit = function (e) {
+    e.preventDefault();
+    console.log(changeNameInput.value);
+    localStorage.setItem('name', changeNameInput.value);
+    username = nameDisplayCheck();
+    document.getElementById("toggleChangeNameInput").value = `change name, ${username}?`;
+    collapse();
+  }
+
+  // toggle sound
+
+
+  // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox"); 
+
+  let toggleSoundCheckbox = document.querySelector("input[name=checkbox]");
+
+
+  // toggleSoundCheckbox.addEventListener('change', function () {
+  //   if (this.checked) {
+  //     console.log("Checkbox is checked..");
+  //     window.alert("check");
+
+  //   } else {
+  //     console.log("Checkbox is not checked..");
+  //     window.alert("uncheck");
+
+  //   }
+  // });
+
+  // new toggle info stuff end
+
+  // btn1.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn1);
+  //     // source.setAttribute("src", "img/v1.mp4");
+  //     // video.load();
+  //     playSong(song1);
+  //   },
+  //   false
+  // );
+  // btn2.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn2);
+  //     // source.setAttribute("src", "img/v2.mp4");
+  //     // video.load();
+  //     playSong(song2);
+  //   },
+  //   false
+  // );
+  // btn3.addEventListener(
+  //   "click",
+  //   function () {
+  //     updateBtnStyle(btn3);
+  //     // source.setAttribute("src", "img/v3.mp4");
+  //     // video.load();
+  //     playSong(song3);
+  //   },
+  //   false
+  // );
   // btn4.addEventListener(
   //   "click",
   //   function () {
@@ -1017,14 +1079,14 @@ function windowOnLoad() {
   //   false
   // );
 
-  function updateBtnStyle(clickedBtn) {
-    // remove the class from the old button (which is the "current" button)
-    if (currBtn !== undefined) {
-      currBtn.classList.remove("currBtn");
-    }
-    currBtn = clickedBtn; // update the "current" button to the most recently clicked button
-    clickedBtn.classList.add("currBtn");
-  }
+  // function updateBtnStyle(clickedBtn) {
+  //   // remove the class from the old button (which is the "current" button)
+  //   if (currBtn !== undefined) {
+  //     currBtn.classList.remove("currBtn");
+  //   }
+  //   currBtn = clickedBtn; // update the "current" button to the most recently clicked button
+  //   clickedBtn.classList.add("currBtn");
+  // }
 
   function playSong(song) {
     for (let i = 0; i < songs.length; i++) {

@@ -149,6 +149,10 @@ body {
   color: rgb(255 194 117);
 }
 
+input{
+  border-radius:8px;
+}
+
 #usernameForm input[type="text"] {
   /* background-color: rgba(53, 34, 154, .8); */
   /* font-style: italic; */
@@ -311,27 +315,23 @@ margin: 2rem auto 2rem auto;
   align-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  /* rotate: 90deg; */
   border-radius: 96% 94% 90% 90% / 95% 92% 88% 95%;
   opacity: .9;
+  
 }
 
 .wrapperBtnOpening{
-  /* visibility: hidden; */
   background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
-  /* opacity: .1; */
   animation: rotate 1s forwards;
 
 }
 
 .wrapperBtnClosing{
-  /* visibility: visible; */
   background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
   animation: rotateReverse 1s forwards;
 }
 
 .wrapperBtnClosed{
-  /* visibility: visible; */
   background: radial-gradient(rgb(208, 170, 55), rgb(255, 67, 180));
 }
 
@@ -501,7 +501,8 @@ input {
   /* margin-top: 2rem; */
   /* opacity: .85; */
   /* margin: 3rem, 0 0 0; */
-  width: 20rem;  /* width: 2rem; */
+  /* width: 20rem;   */
+  /* width: 2rem; */
 }
 
 /* .FriendModalDiv > div {padding:23px 27px;} */
@@ -748,3 +749,162 @@ input {
     opacity: .1;
   }
 }
+
+
+/* new toggle div stuff */
+
+
+.settingsMenu {
+  /* background-color: black;
+  position: absolute; */
+/*   width: 50rem; */
+}
+
+.settingsBtn {
+    cursor: pointer;
+    border-radius: 0;
+    display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  /* rotate: 90deg; */
+  border-radius: 96% 94% 90% 90% / 95% 92% 88% 95%;
+  opacity: .9;
+  }
+/* .dropbtn:hover, .dropbtn:focus {
+    background-color: green;
+} */
+
+#settingsDropdown {
+  margin-top: 5rem;
+  min-width: 20rem;
+  z-index: 1;
+  position: fixed;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  padding: 1rem;
+  background-color:rgba(245, 182, 147, 0.878); 
+  border-radius: 40px 40px;
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+  width: 18rem;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  background-color: yellow;
+}
+.dropdownContent a {
+    color: black;
+    padding: 0.8rem 0;
+    text-decoration: none;
+    display: block;
+}
+.dropdownContent a:hover {
+  background-color: rgb(209, 151, 245);
+  
+}
+
+.showDropdown {
+  display:block;
+}
+
+/* username stuff */
+#changeNameForm {
+  overflow: hidden;
+/*   width: 15rem; */
+/*   margin: .5rem; */
+}
+
+#changeNameSlider {
+  display: flex;
+  width: 200%;
+  transition: 0.5s;
+}
+
+#changeNameSlider.expanded {
+  transform: translateX(-50%);
+}
+
+#toggleChangeNameInput {
+  flex: 0 0 50%;
+  padding:7px;
+  text-align: left;
+}
+
+#changeNameInput {
+  flex: auto;
+}
+
+#okButton {
+  flex: none;
+  flex-basis: 10%;
+}
+
+#okButton:hover{
+  background-color: rgba(213, 111, 136, .85);
+}
+
+
+/* sound toggle stuff */
+
+/* *, *:before, *:after {
+	 box-sizing: border-box;
+} */
+
+ .toggleInput {
+	 cursor: pointer;
+	 display: inline-block;
+}
+ .toggleSoundDiv {
+	 display: inline-block;
+	 background: #ccc;
+	 border-radius: 16px;
+	 width: 58px;
+	 height: 32px;
+	 position: relative;
+	 vertical-align: middle;
+	 transition: background 0.25s;
+}
+ .toggleSoundDiv:before, .toggleSoundDiv:after {
+	 content: "";
+}
+ .toggleSoundDiv:before {
+	 display: block;
+	 background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+	 border-radius: 50%;
+	 box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+	 width: 24px;
+	 height: 24px;
+	 position: absolute;
+	 top: 4px;
+	 left: 4px;
+	 transition: left 0.25s;
+}
+ .toggle-switch:hover .toggle-switch:before {
+	 background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+	 box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+ .toggleSoundCheckbox:checked + .toggleSoundDiv {
+	 background: #56c080;
+}
+ .toggleSoundCheckbox:checked + .toggleSoundDiv:before {
+	 left: 30px;
+}
+ .toggleSoundCheckbox {
+	 position: absolute;
+	 visibility: hidden;
+}
+ .toggleLabel {
+	 position: relative;
+
+}
+ 
+ .creditsSection {
+
+}
+
