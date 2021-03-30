@@ -208,7 +208,25 @@ function windowOnLoad() {
     //   }
     // }
 
- 
+    function nameDisplayCheck() {
+      if (localStorage.getItem('name')) {
+        let name = localStorage.getItem('name');
+        return name;
+        // h1.textContent = 'Welcome, ' + name;
+      } else {
+        // h1.textContent = 'Welcome to our website ';
+      }
+    }
+
+    let savedUserName = nameDisplayCheck();
+    if (savedUserName) {
+      var usernameInput = document.getElementById("username").value = savedUserName;
+    }
+
+    function playSound(song) {
+      song.volume = 0.07;
+      song.play();
+    }
 
     function playSound(song) {
       song.volume = 0.07;
