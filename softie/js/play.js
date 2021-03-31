@@ -1023,7 +1023,7 @@ function windowOnLoad() {
   function settingsMenuOpen(event) {
     settingsDropdown.classList.toggle("showDropdown");
     closeAllModals(event);
-    console.log("closeem");
+    // console.log("closeem");
     toggleChangeNameInput.value = `Change name, ${username}?`;
   }
 

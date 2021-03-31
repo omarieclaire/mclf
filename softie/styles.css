@@ -809,7 +809,7 @@ input {
     padding: 0;
     background-color: yellow;
 }
-.dropdownContent a {
+.dropdownContent .tempi {
     color: black;
     padding: 0.8rem 0;
     text-decoration: none;
@@ -817,7 +817,7 @@ input {
     color:rgba(76, 61, 134, .8); 
     font-size: 1rem;
 }
-.dropdownContent a:hover {
+.dropdownContent .tempi:hover {
   background-color: rgb(196, 152, 222, 59%);
   border-radius: .6rem;
   
