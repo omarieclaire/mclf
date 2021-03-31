@@ -560,7 +560,9 @@ function windowOnLoad() {
 
 
       let object = new THREE.Mesh(tinySphereGeom, brightMaterial);
+      // object.scale.set(1, 1, 1);
       object.scale.set(.03, .03, .03);
+
       scene.add(object);
 
       const gltfLoader = new GLTFLoader();
@@ -697,7 +699,7 @@ function windowOnLoad() {
       let orb = friendOrbs[j];
 
       // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(orb, 150, 0.1, 10, 3, false);
+      makeSparkles(orb, 150, 0.1, 10, 30, false);
 
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
@@ -756,9 +758,9 @@ function windowOnLoad() {
       const randomSpeedForThisBox = boxSpeeds[i];
       // Pi = 3.14159  
       let offset = initialFriendYPositions[i] * 15;
-      boxGroup.children[i].position.y = Math.sin(time + offset) * 40 + 15;
+      // boxGroup.children[i].position.y = Math.sin(time + offset) * 40 + 15;
       // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
-      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+      boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
 
 
 
@@ -863,20 +865,22 @@ function windowOnLoad() {
     clickOrTouchFriendOrbs(event);
   }
 
-  function clickOrTouchFriendOrbs(event) {
-    raycaster.setFromCamera(mouse, camera);
-
-    // close modals when clicking outside them - this works but not as expected
+  // close modals when clicking outside them - this works but not as expected
+  function closeAllModals(event){
     var modal = document.getElementsByClassName('friendModalDiv');
     if (event.target.classList.contains('friendModalDiv')) {
-      // console.log(`clicking inside modal: ${event}`);
     } else {
-      // console.log(`clicking outside modal: ${event}`);
       for (var i = 0; i < modal.length; i++) {
         let currModal = modal[i];
         currModal.classList.remove("openFriendModalDiv");
       }
     }
+  }
+
+  function clickOrTouchFriendOrbs(event) {
+    raycaster.setFromCamera(mouse, camera);
+
+    closeAllModals(event);
 
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
@@ -887,8 +891,10 @@ function windowOnLoad() {
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
     if (intersectsFriend.length > 0) { //you know you have an intersection
-      friendSound.volume = 0.04;
+      friendSound.volume = 0.09;
       friendSound.play();
+      document.getElementById("settingsDropdown").classList.remove("showDropdown");
+
 
       // document.getElementById("wrapper").classList.add("openWrapper");
 
@@ -1014,8 +1020,10 @@ function windowOnLoad() {
   let changeNameForm = document.getElementById("changeNameForm");
   // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox");
 
-  function settingsMenuOpen() {
+  function settingsMenuOpen(event) {
     settingsDropdown.classList.toggle("showDropdown");
+    closeAllModals(event);
+    console.log("closeem");
     toggleChangeNameInput.value = `Change name, ${username}?`;
   }
 

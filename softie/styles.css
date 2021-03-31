@@ -803,11 +803,11 @@ input {
 .dropdownContent {
     display: none;
     position: absolute;
-  width: 18rem;
+    width: 18rem;
     list-style-type: none;
     margin: 0;
     padding: 0;
-  background-color: yellow;
+    background-color: yellow;
 }
 .dropdownContent a {
     color: black;
