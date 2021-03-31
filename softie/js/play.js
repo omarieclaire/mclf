@@ -129,7 +129,9 @@ function windowOnLoad() {
   init();
   animate();
 
-  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, willFade) {
+  function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, numOfSets) {
+    let setsOfSparks = [];
+    
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
     };
@@ -150,46 +152,48 @@ function windowOnLoad() {
     const sparkSizes = [];
     const sparkColor = new THREE.Color();
 
-    for (let i = 0; i < spQuant; i++) {
-      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
-      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
-      sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+    for (let x = 0; x < numOfSets; x++) {
+      const set = x;
 
-      let tempHue = Math.random() * 0xffffff
-      sparkColor.setHSL(tempHue, 1.0, spLight);
-      sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
-      sparkSizes.push(spSize);
-    }
-
-    sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
-    sparkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sparkColors, 3));
-    sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
-    let sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
-    // console.log(particleSystem);
-    sparkleFriendMap[spSource.friendID] = sparkleSystem;
-
-    spSource.add(sparkleSystem);
-
-    //shaderMaterial.opacity = 1;
-
-
-    if (willFade == true) {
-      let i = 1;
-
-      function fadeThoseSparkles() {
-        // sparkleSystem
-        // shaderMaterial.opacity = 0.1;
-        // spSource.remove(sparkleSystem);
+      for (let i = 0; i < spQuant; i++) {
+        sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+        sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+        sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
+  
+        let tempHue = Math.random() * 0xffffff
+        sparkColor.setHSL(tempHue, 1.0, spLight);
+        sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
+        sparkSizes.push(spSize);
       }
-
-      setTimeout(function fadeThoseSparkles() {
-        // console.log(i);
-        i++;
-        setTimeout(fadeThoseSparkles, 100);
-      }, 100);
-    } else {
-      // do nothing
+  
+      sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
+      sparkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sparkColors, 3));
+      sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
+      
+      let sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
+      // console.log(particleSystem);
+      sparkleFriendMap[spSource.friendID] = sparkleSystem;
+      spSource.add(sparkleSystem);
+      setsOfSparks.push(sparkleSystem);
+      // console.log(setsOfSparks);
     }
+
+    function removeSparks() {
+      // console.log(`removing sparks! ${setsOfSparks.length} remaining`);
+      if(setsOfSparks.length == 0) {
+        // do nothing
+        // this stops the recursion!
+      } else {
+        let sparklesToFade = setsOfSparks.pop();
+        spSource.remove(sparklesToFade);
+        setTimeout(removeSparks, 50);
+      }
+    }
+    
+    if(numOfSets > 1) {
+      setTimeout(removeSparks, 0);
+    }
+
 
   }
 
@@ -541,7 +545,7 @@ function windowOnLoad() {
       });
 
       closeModalBtn.addEventListener("click", function (event) {
-        console.log("click");
+        // console.log("click");
         friendModalDiv.classList.remove("openFriendModalDiv");
       })
 
@@ -698,8 +702,8 @@ function windowOnLoad() {
       // get a reference to the orb
       let orb = friendOrbs[j];
 
-      // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(orb, 150, 0.1, 10, 30, false);
+      // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant, numofSets
+      makeSparkles(orb, 150, 0.1, 10, 30, 1);
 
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
@@ -884,8 +888,8 @@ function windowOnLoad() {
 
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
-      // spSource, spSpread, spLight, spSize, spQuant
-      makeSparkles(centerObj, 400, .2, 16, 3000, true);
+      // spSource, spSpread, spLight, spSize, spQuant, numofsets
+      makeSparkles(centerObj, 800, .2, 9, 50, 50);
 
     }
 
