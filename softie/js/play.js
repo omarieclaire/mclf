@@ -7,6 +7,8 @@ import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Water } from './node_modules/three/examples/jsm/objects/Water.js';
 import { Sky } from './node_modules/three/examples/jsm/objects/Sky.js';
 import { BufferGeometryUtils } from "./node_modules/three/examples/jsm/utils/BufferGeometryUtils.js";
+import { PointerLockControls } from './node_modules/three/examples/jsm/controls/PointerLockControls.js';
+
 
 import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
 
@@ -25,9 +27,8 @@ firebase.analytics();
 
 let container, stats;
 let camera, scene, raycaster, renderer;
-// let cloudParticles = [];
 
-let controls, water, sun, centerObj;
+let pointerControls, controls, water, sun, centerObj;
 let newText;
 let INTERSECTED;
 let theta = 0;
@@ -45,10 +46,20 @@ let sparkUniforms, sparkGeometry;
 const sparkles = 1;
 const sparkleFriendMap = {};
 
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let canJump = false;
+
+let prevTime = performance.now();
+const velocity = new THREE.Vector3();
+const direction = new THREE.Vector3();
+const vertex = new THREE.Vector3();
+const color = new THREE.Color();
+
 const friendSound = new Audio("audio/friend.mp3");
 const seaSound = new Audio("audio/sea.mp3");
-
-
 
 let database = firebase.database();
 let ref = database.ref();
@@ -131,7 +142,7 @@ function windowOnLoad() {
 
   function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, numOfSets) {
     let setsOfSparks = [];
-    
+
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
     };
@@ -159,58 +170,46 @@ function windowOnLoad() {
         sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
         sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
         sparkPositions.push((Math.random() * 2 - 1) * sparkRadius);
-  
+
         let tempHue = Math.random() * 0xffffff
         sparkColor.setHSL(tempHue, 1.0, spLight);
         sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
         sparkSizes.push(spSize);
       }
-  
+
       sparkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sparkPositions, 3));
       sparkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sparkColors, 3));
       sparkGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
-      
+
       let sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
-      // console.log(particleSystem);
       sparkleFriendMap[spSource.friendID] = sparkleSystem;
       spSource.add(sparkleSystem);
       setsOfSparks.push(sparkleSystem);
-      // console.log(setsOfSparks);
     }
 
     function removeSparks() {
-      // console.log(`removing sparks! ${setsOfSparks.length} remaining`);
-      if(setsOfSparks.length == 0) {
-        // do nothing
-        // this stops the recursion!
+      if (setsOfSparks.length == 0) {
+        // do nothing -this stops the recursion!
       } else {
         let sparklesToFade = setsOfSparks.pop();
         spSource.remove(sparklesToFade);
         setTimeout(removeSparks, 50);
       }
     }
-    
-    if(numOfSets > 1) {
+
+    if (numOfSets > 1) {
       setTimeout(removeSparks, 0);
     }
-
-
   }
 
   function init() {
-
-    // const song3 = new Audio("audio/face.mp3");
-    // const song4 = new Audio("audio/hey.mp3");
-    // const song5 = new Audio("audio/numb.mp3");
-    // const song6 = new Audio("audio/why.mp3");
-
-    // const songs = [seaSound, friendSound];
 
     // function pauseSounds(){
     //   for (let i = 0; i < songs.length; i++) {
     //     songs[i].pause();
     //   }
     // }
+
 
     function nameDisplayCheck() {
       if (localStorage.getItem('name')) {
@@ -227,16 +226,6 @@ function windowOnLoad() {
       document.getElementById("username").value = savedUserName;
     }
 
-    function playSound(song) {
-      song.volume = 0.07;
-      song.play();
-    }
-
-    function playSound(song) {
-      song.volume = 0.07;
-      song.play();
-    }
-
     container = document.getElementById('container');
 
     renderer = new THREE.WebGLRenderer();
@@ -246,7 +235,6 @@ function windowOnLoad() {
 
     //
 
-
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
@@ -254,6 +242,7 @@ function windowOnLoad() {
 
     //
     sun = new THREE.Vector3();
+
 
     // Water
 
@@ -290,10 +279,10 @@ function windowOnLoad() {
 
     const skyUniforms = sky.material.uniforms;
 
-    skyUniforms['turbidity'].value = 10;
-    skyUniforms['rayleigh'].value = 10;
+    skyUniforms['turbidity'].value = 10; //modd
+    skyUniforms['rayleigh'].value = 10; //modd
     skyUniforms['mieCoefficient'].value = 0.009;
-    skyUniforms['mieDirectionalG'].value = 0.8;
+    skyUniforms['mieDirectionalG'].value = 0.8; //modd
 
     const parameters = {
       inclination: 0.49,
@@ -305,12 +294,11 @@ function windowOnLoad() {
     function updateSun() {
 
       const theta = Math.PI * (parameters.inclination - 0.5);
-      const phi = 2 * Math.PI * (parameters.azimuth - 0.5);
+      const phi = 1.85 * Math.PI * (parameters.azimuth - 0.5);
 
       sun.x = Math.cos(phi);
       sun.y = Math.sin(phi) * Math.sin(theta);
       sun.z = Math.sin(phi) * Math.cos(theta);
-      // sun.scale.set(10, 10 10);
 
       sky.material.uniforms['sunPosition'].value.copy(sun);
       water.material.uniforms['sunDirection'].value.copy(sun).normalize();
@@ -330,7 +318,6 @@ function windowOnLoad() {
     light.position.set(5, 10, 2);
     scene.add(light);
     scene.add(light.target);
-    //  
 
     const ncolor = 0xFFFFFF;
     const nintensity = 1;
@@ -338,45 +325,18 @@ function windowOnLoad() {
     nlight.position.set(-1, 2, 4);
     scene.add(nlight);
 
-    //   let directionalLight = new THREE.DirectionalLight(0xff8c19);
-    // directionalLight.position.set(0,0,1);
-    // scene.add(directionalLight);
+    let directionalLight = new THREE.DirectionalLight(0xff8c19);
+    directionalLight.position.set(0, 0, 1);
+    scene.add(directionalLight);
 
     scene.fog = new THREE.FogExp2(15655413, 0.0002);
     renderer.setClearColor(scene.fog.color);
+   
     //
-
-    // let loader = new THREE.TextureLoader();
-    // loader.load("./img/psmoke.png", function (texture) {
-    //   //texture is loaded
-    //   let cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
-    //   let cloudMaterial = new THREE.MeshLambertMaterial({
-    //     map: texture,
-    //     transparent: true
-    //   });
-
-    //   for (let p = 0; p < 50; p++) {
-    //     let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
-    //     cloud.position.set(
-    //       Math.random() * 800 - 400,
-    //       500,
-    //       Math.random() * 500 - 500
-    //     );
-    //     cloud.rotation.x = 1.16;
-    //     cloud.rotation.y = -0.12;
-    //     cloud.rotation.z = Math.random() * 2 * Math.PI;
-    //     cloud.scale.multiplyScalar(2.5);
-    //     cloud.material.opacity = 0.25;
-    //     cloudParticles.push(cloud);
-    //     scene.add(cloud);
-    //   }
-    // });
-
     const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
     const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
     const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
 
-    // mesh = new THREE.Mesh(geometry, material);
 
     ///test area for sun
     const friendWorldd = new THREE.Object3D();
@@ -435,14 +395,100 @@ function windowOnLoad() {
       // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
     ];
 
-
-
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.499;
     controls.target.set(0, 10, 0);
-    controls.minDistance = 40.0;
-    controls.maxDistance = 400.0;
+    controls.minDistance = 10.0;
+    controls.maxDistance = 1800.0;
+
+    // https://threejs.org/docs/#examples/en/controls/OrbitControls.keys
+
     controls.update();
+
+    // ---- pointer controls stuff----- 
+    pointerControls = new PointerLockControls(camera, document.body);
+    scene.add(pointerControls.getObject());
+
+    const onKeyDown = function (event) {
+      var delta = 1;
+
+      switch (event.code) {
+
+        case 'ArrowUp':
+        case 'KeyW':
+          moveForward = true;
+          // camera.position.z = camera.position.z - delta;
+          camera.updateProjectionMatrix();
+
+
+          break;
+
+        case 'ArrowLeft':
+        case 'KeyA':
+          moveLeft = true;
+          // camera.position.x = camera.position.x - delta;
+          camera.updateProjectionMatrix();
+
+
+          break;
+
+        case 'ArrowDown':
+        case 'KeyS':
+          moveBackward = true;
+          // camera.position.z = camera.position.z + delta;
+          camera.updateProjectionMatrix();
+
+
+          break;
+
+        case 'ArrowRight':
+        case 'KeyD':
+          moveRight = true;
+          // camera.position.x = camera.position.x + delta;
+          camera.updateProjectionMatrix();
+
+
+          break;
+
+        case 'Space':
+          if (canJump === true) velocity.y += 350;
+          canJump = false;
+          break;
+
+      }
+
+    };
+
+    const onKeyUp = function (event) {
+
+      switch (event.code) {
+
+        case 'ArrowUp':
+        case 'KeyW':
+          moveForward = false;
+          break;
+
+        case 'ArrowLeft':
+        case 'KeyA':
+          moveLeft = false;
+          break;
+
+        case 'ArrowDown':
+        case 'KeyS':
+          moveBackward = false;
+          break;
+
+        case 'ArrowRight':
+        case 'KeyD':
+          moveRight = false;
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+
+    //end controls
 
     const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
@@ -545,7 +591,6 @@ function windowOnLoad() {
       });
 
       closeModalBtn.addEventListener("click", function (event) {
-        // console.log("click");
         friendModalDiv.classList.remove("openFriendModalDiv");
       })
 
@@ -587,7 +632,6 @@ function windowOnLoad() {
       makeFriendModal(object.friendID, i);
 
     }
-    //all friends created 
 
     scene.add(boxGroup);
 
@@ -605,14 +649,9 @@ function windowOnLoad() {
     function (event) {
       event.preventDefault();
       let currUsername = document.getElementById("username").value;
-      // console.log(currUsername);
       if (currUsername != "") {
-        // console.log("good name");
         let usernameForm = document.getElementById("usernameForm");
-        // usernameForm.innerHTML = "Welcome " + username;
       } else {
-        // console.log("no name");
-        // currUsername = "anon"
         return
       }
       localStorage.setItem('name', currUsername);
@@ -626,14 +665,10 @@ function windowOnLoad() {
     false
   );
 
-  // const h1 = document.querySelector('h1');
   function nameDisplayCheck() {
     if (localStorage.getItem('name')) {
       let name = localStorage.getItem('name');
       return name;
-      // h1.textContent = 'Welcome, ' + name;
-    } else {
-      // h1.textContent = 'Welcome to our website ';
     }
   }
 
@@ -641,9 +676,7 @@ function windowOnLoad() {
   function gotData(data) {
     // if we didn't use .val we'd get a bunch of other info
     let msgDatabase = data.val();
-    // console.log(msgDatabase);
     let keys = Object.keys(msgDatabase);
-    // console.log(`keys: ${keys}`);
     for (let i = 0; i < keys.length; i++) {
       let k = keys[i];
       var friendMsgs = msgDatabase[k].msgs;
@@ -655,7 +688,6 @@ function windowOnLoad() {
       let friendMsgsKeys = Object.keys(friendMsgs);
 
       let txtDivToUpdate = document.getElementById("printTextDivID" + k);
-      // console.log(txtDivToUpdate);
       txtDivToUpdate.innerHTML = '';
       let ulNode = document.createElement('UL');
       txtDivToUpdate.appendChild(ulNode);
@@ -672,14 +704,11 @@ function windowOnLoad() {
         let msgTextNode = document.createTextNode(`${msg.msg}`);
         let usernameTextNode = document.createTextNode(`${msg.username}: `);
 
-        // let msgText = `${msg.msg} -${msg.username}`;
-        // let msgTextNode = document.createTextNode(msgText);
         span.appendChild(usernameTextNode);
         liNode.appendChild(span);
         liNode.appendChild(msgTextNode);
       }
       function scrollToTopOfDiv(txtDivToUpdate) {
-        // var objDiv = document.getElementById("your_div");
         txtDivToUpdate.scrollTop = txtDivToUpdate.scrollHeight;
       }
       scrollToTopOfDiv(txtDivToUpdate);
@@ -701,10 +730,8 @@ function windowOnLoad() {
 
       // get a reference to the orb
       let orb = friendOrbs[j];
-
       // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant, numofSets
       makeSparkles(orb, 150, 0.1, 10, 30, 1);
-
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
 
@@ -717,15 +744,12 @@ function windowOnLoad() {
       } else {
         // console.log(`${j}: not a new item`);
       }
-
-
       newItems = true;
 
     });
   }
 
   function takeModalIDReturnMsg(currModalID) {
-    // console.log(currModalID);
     return "Welcome to orb " + currModalID;
   }
 
@@ -739,19 +763,59 @@ function windowOnLoad() {
   }
 
   function animate() {
-
     requestAnimationFrame(animate);
     render();
-    // stats.update();
+
+    // ---- pointer controls stuff----- 
+    // const time = performance.now();
+
+
+    // raycaster.ray.origin.copy(pointerControls.getObject().position);
+    // raycaster.ray.origin.y -= 10;
+
+    // const intersections = raycaster.intersectObjects(objects);
+
+    // const onObject = intersections.length > 0;
+
+    // const delta = (time - prevTime) / 1000;
+
+    // velocity.x -= velocity.x * 10.0 * delta;
+    // velocity.z -= velocity.z * 10.0 * delta;
+
+    // velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+    // direction.z = Number(moveForward) - Number(moveBackward);
+    // direction.x = Number(moveRight) - Number(moveLeft);
+    // direction.normalize(); // this ensures consistent movements in all directions
+
+    // if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
+    // if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+
+    // if (onObject === true) {
+
+    //   velocity.y = Math.max(0, velocity.y);
+    //   canJump = true;
+
+    // }
+
+    // pointerControls.moveRight(- velocity.x * delta);
+    // pointerControls.moveForward(- velocity.z * delta);
+
+    // pointerControls.getObject().position.y += (velocity.y * delta); // new behavior
+
+    // if (pointerControls.getObject().position.y < 10) {
+
+    //   velocity.y = 0;
+    //   pointerControls.getObject().position.y = 10;
+
+    //   canJump = true;
+
+    // }
 
   }
 
   function render() {
     const time = performance.now() * 0.0001;
-
-    // cloudParticles.forEach(p => {
-    //   p.rotation.z -= 0.001;
-    // });
 
     centerObj.position.y = Math.sin(time) * 20 + 5;
     centerObj.rotation.x = time * 0.5;
@@ -763,10 +827,7 @@ function windowOnLoad() {
       // Pi = 3.14159  
       let offset = initialFriendYPositions[i] * 15;
       // boxGroup.children[i].position.y = Math.sin(time + offset) * 40 + 15;
-      // boxGroup.children[i].position.y = Math.sin(time) * 40 + 15;
       boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
-
-
 
       // boxGroup.children[i].position.y = Math.sin(randomSpeedForThisBox * time) * 80 + 15;
       boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
@@ -805,18 +866,9 @@ function windowOnLoad() {
             o.material.emissive.setHex(0xff0000);
           }
         });
-
-        //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-        //INTERSECTED = intersects[ 0 ].object;
-        //INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-        //INTERSECTED.material.emissive.setHex( 0xff0000 );
       }
     } else {
       if (INTERSECTED) {
-        // loop over intersected meshes and reset their
-        // Hex to the "currentHex" (which is the old hex?)
-        // equivalent to:
-        //if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
         INTERSECTED.traverse((o) => {
           if (o.isMesh) {
             o.material.emissive.setHex(o.currentHex);
@@ -826,19 +878,6 @@ function windowOnLoad() {
       }
       INTERSECTED = null;
     }
-
-    // particles start 
-
-    // particleSystem.rotation.z = 0.01 * time;
-    // const sizes = pGeometry.attributes.size.array;
-    // for (let i = 0; i < particles; i++) {
-    //   sizes[i] = 10 * (1 + Math.sin(0.1 * i + time));
-    // }
-    // pGeometry.attributes.size.needsUpdate = true;
-
-    // particles end 
-
-
 
     renderer.render(scene, camera);
   }
@@ -870,7 +909,7 @@ function windowOnLoad() {
   }
 
   // close modals when clicking outside them - this works but not as expected
-  function closeAllModals(event){
+  function closeAllModals(event) {
     var modal = document.getElementsByClassName('friendModalDiv');
     if (event.target.classList.contains('friendModalDiv')) {
     } else {
@@ -899,16 +938,6 @@ function windowOnLoad() {
       friendSound.play();
       document.getElementById("settingsDropdown").classList.remove("showDropdown");
 
-
-      // document.getElementById("wrapper").classList.add("openWrapper");
-
-      // if (wrapper.classList.contains("openWrapper")) {
-      //   wrapper.classList.remove("openWrapper");
-      //   wrapperBtn.classList.add("wrapperBtnClosing");
-      //   toggleOpen = false;
-      // }
-
-      //let currFriendID = intersectsFriend[0].object.parent.friendID; //grab the id of the friend
       let currFriendID = intersectsFriend[0].object.friendID; //grab the id of the friend
 
       let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
@@ -918,7 +947,6 @@ function windowOnLoad() {
 
       let msg = takeModalIDReturnMsg(currFriendID);
       let currTextDiv = document.getElementById("textInputID" + currFriendID);
-      //currTextDiv.innerHTML = msg;
 
       for (let i = 0; i < intersectsFriend.length; i++) {
         let currObj = intersectsFriend[i].object;
@@ -934,11 +962,7 @@ function windowOnLoad() {
     }
   }
 
-
   let currBtn;
-
-
-
 
   // let video = document.getElementById("video");
   // let source = document.createElement("source");
