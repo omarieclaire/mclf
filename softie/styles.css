@@ -78,6 +78,15 @@ body {
   line-height: 2.6rem;
 }
 
+.creditsMsg{
+  padding: 10px 20px 10px 20px;
+  font-size: 1.3rem;
+  /* margin-bottom: 5vh; */
+  /* margin-top: 15vh; */
+  color: rgba(255, 198, 198, .9); 
+  line-height: 2.6rem;
+}
+
 #sanctuary{
     margin-top: 15vh;
   font-weight: bolder;

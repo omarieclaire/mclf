@@ -615,13 +615,13 @@ function windowOnLoad() {
       scene.add(object);
 
       const gltfLoader = new GLTFLoader();
-      gltfLoader.load('./img/friend2.glb', (gltf) => {
+      gltfLoader.load('./img/friend3.glb', (gltf) => {
         let friendShape = gltf.scene;
         setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 20);
       });
 
       // const gltfLoader2 = new GLTFLoader();
-      // gltfLoader2.load('./img/oct.glb', (gltf) => {
+      // gltfLoader2.load('./img/j1.glb', (gltf) => {
       //   let oct = gltf.scene;
       //   setupObject(oct, i, boxGroup, boxSpeeds, 10, 10, 10, rotationX, rotationY, rotationZ, 30);
       // });
@@ -731,7 +731,7 @@ function windowOnLoad() {
       // get a reference to the orb
       let orb = friendOrbs[j];
       // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant, numofSets
-      makeSparkles(orb, 150, 0.1, 10, 30, 1);
+      makeSparkles(orb, 150, 0.1, 20, 1, 1);
       // keep track of the orbs with sparkles
       ORBS_WITH_SPARKLES[j] = true;
 
