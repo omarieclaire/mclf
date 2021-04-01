@@ -78,7 +78,7 @@ body {
   line-height: 2.6rem;
 }
 #creditsDiv{
-  background-image: linear-gradient( 0deg, #5961F9 10%, #EE9AE5 100%);
+  background-image: linear-gradient( 0deg, #2a32cc 10%, #ec6fdf 100%);
 }
 .creditsMsg{
   padding: 10px 20px 10px 20px;
@@ -86,10 +86,16 @@ body {
   /* margin-bottom: 5vh; */
   /* margin-top: 15vh; */
   color:white; 
-  line-height: 2rem;
+  line-height: 1.5rem;
   letter-spacing: 1px;
   padding: 4vw;
   margin: auto;
+}
+.creditsMsg a{
+  color:white; 
+}
+.creditsMsg a:hover{
+  background-color: #2a32cc; 
 }
 
 #sanctuary{
