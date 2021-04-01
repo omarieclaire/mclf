@@ -333,7 +333,8 @@ function windowOnLoad() {
     renderer.setClearColor(scene.fog.color);
    
     //
-    const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
+    const centerObjGeom = new THREE.TorusKnotGeometry(2.7, 1.1, 300, 20, 2, 3);
+    // const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
     const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
     const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
 
@@ -343,32 +344,35 @@ function windowOnLoad() {
     scene.add(friendWorldd);
     objects.push(friendWorldd);
 
-    centerObj = new THREE.Mesh(centerObjGeom, brightMaterial);
+    const centerObjMateria = new THREE.MeshLambertMaterial({ color: 7603694, opacity: 0.5, transparent: true, emissive: 3})
+    centerObj = new THREE.Mesh(centerObjGeom, centerObjMateria);
     centerObj.scale.set(1, 1, 1);
     friendWorldd.add(centerObj);
     objects.push(centerObj);
 
-
+    const friendWorld = new THREE.Object3D();
+    scene.add(friendWorld);
+    objects.push(friendWorld);
     const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
-    // const earthMesh = new THREE.Mesh(tinySphereGeom, earthMaterial);
-    // earthMesh.position.x = 20;
-    // earthMesh.position.y = 8;
-    // earthMesh.scale.set(2, 2, 2);
+    const earthMesh = new THREE.Mesh(tinySphereGeom, centerObjMateria);
+    earthMesh.position.x = 10;
+    earthMesh.position.y = 3;
+    earthMesh.scale.set(1, 1, 1);
 
-    // friendWorld.add(earthMesh);
+    friendWorld.add(earthMesh);
     // objects.push(earthMesh);
 
-    // function makeTinyRotatorInstance(geometry, color, x, y, z) {
-    //   let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
-    //   const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
-    //   tinyRotator.position.x = x;
-    //   tinyRotator.position.y = y;
-    //   tinyRotator.position.z = z;
-    //   tinyRotator.scale.set(.3, .3, .3);
-    //   return tinyRotator;
-    // }
+    function makeTinyRotatorInstance(geometry, color, x, y, z) {
+      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
+      const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
+      tinyRotator.position.x = x;
+      tinyRotator.position.y = y;
+      tinyRotator.position.z = z;
+      tinyRotator.scale.set(.3, .3, .3);
+      return tinyRotator;
+    }
 
-    // const tinyRotat = [];
+    const tinyRotat = [];
 
     // for (let i = -10; i < 10; i++) {
     //   let x = Math.random() * 40 - 25;
@@ -379,21 +383,20 @@ function windowOnLoad() {
     //   objects.push(rotat);
     // }
 
-    function makeTinyGlowSphereInstance(geometry, color, x, y, z) {
-      const tinyGlowSphere = new THREE.Mesh(tinySphereGeom, brightMaterial);
-      scene.add(tinyGlowSphere);
-      tinyGlowSphere.position.x = x;
-      tinyGlowSphere.position.y = y;
-      tinyGlowSphere.position.z = z;
-      return tinyGlowSphere;
-    }
+    // function makeTinyGlowSphereInstance(geometry, color, x, y, z) {
+    //   const tinyGlowSphere = new THREE.Mesh(tinySphereGeom, brightMaterial);
+    //   scene.add(tinyGlowSphere);
+    //   tinyGlowSphere.position.x = x;
+    //   tinyGlowSphere.position.y = y;
+    //   tinyGlowSphere.position.z = z;
+    //   return tinyGlowSphere;
+    // }
 
-    const tinySph = [
-      makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, -10, 0, 10),
-      makeTinyGlowSphereInstance(centerObjGeom, 0xaa8844, 10, 0, 10),
-      makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, 0, 0, 0),
-      // makeInstance(centerSpGeom, 0xaa8844, 20, 0, 10),
-    ];
+    // const tinySph = [
+    //   makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, -10, 0, 10),
+    //   makeTinyGlowSphereInstance(centerObjGeom, 0xaa8844, 10, 0, 10),
+    //   makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, 0, 0, 0),
+    // ];
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.499;
@@ -490,7 +493,7 @@ function windowOnLoad() {
 
     //end controls
 
-    const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
+    // const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
     boxGroup = new THREE.Group();
 
     function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objScale) {
@@ -615,13 +618,13 @@ function windowOnLoad() {
       scene.add(object);
 
       const gltfLoader = new GLTFLoader();
-      gltfLoader.load('./img/friend3.glb', (gltf) => {
+      gltfLoader.load('./img/friend2.glb', (gltf) => {
         let friendShape = gltf.scene;
         setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 20);
       });
 
       // const gltfLoader2 = new GLTFLoader();
-      // gltfLoader2.load('./img/j1.glb', (gltf) => {
+      // gltfLoader2.load('./img/oct.glb', (gltf) => {
       //   let oct = gltf.scene;
       //   setupObject(oct, i, boxGroup, boxSpeeds, 10, 10, 10, rotationX, rotationY, rotationZ, 30);
       // });
