@@ -137,6 +137,7 @@ for (let i = 0; i < numberOfFriends * 10; i++) {
 }
 
 function windowOnLoad() {
+  document.body.classList.remove("preload");
   init();
   animate();
 
@@ -1053,6 +1054,7 @@ function windowOnLoad() {
 
   function settingsMenuOpen(event) {
     settingsDropdown.classList.toggle("showDropdown");
+    document.getElementsByClassName('slide-in')[0].classList.toggle('show');
     closeAllModals(event);
     // console.log("closeem");
     toggleChangeNameInput.value = `Change name, ${username}?`;

@@ -36,6 +36,13 @@ html {
   overflow: hidden;
 } */
 
+.preload * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
+
 #container {
   width: 100vw;
   height: 100vh;
@@ -809,7 +816,9 @@ input {
 
 #settingsDropdown {
   margin-top: 5rem;
-  min-width: 20rem;
+  min-width: 15rem;
+  max-width: 20rem;
+
   z-index: 1;
   position: fixed;
   flex-direction: column;
@@ -827,24 +836,54 @@ input {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    background-color: yellow;
 }
-.dropdownContent .tempi {
-    color: black;
+
+.tempi {
+    /* color: black; */
     padding: 0.8rem 0;
     text-decoration: none;
     display: block;
     color:rgba(76, 61, 134, .8); 
     font-size: 1rem;
 }
-.dropdownContent .tempi:hover {
+.tempi:hover {
   background-color: rgb(196, 152, 222, 59%);
   border-radius: .6rem;
-  
 }
 
 .showDropdown {
   display:block;
+}
+
+.slide-in {
+  z-index: 10; /* to position it in front of the other content */
+  position: absolute;
+  overflow: hidden; /* to prevent scrollbar appearing */
+}
+
+.slide-in.from-left {
+  left: 0;
+}
+
+.slide-in.from-right {
+  right: 0;
+}
+
+.slide-in-content {
+  padding: 5px 20px;
+  background: #eee;
+  transition: transform 1s ease-out; /* our nice transition */
+}
+
+.slide-in.from-left .slide-in-content {
+  transform: translateX(-150%);
+  -webkit-transform: translateX(-150%);
+}
+
+
+.slide-in.show .slide-in-content {
+  transform: translateX(0);
+  -webkit-transform: translateX(0);
 }
 
 /* username stuff */
