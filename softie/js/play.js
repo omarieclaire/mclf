@@ -880,7 +880,7 @@ function windowOnLoad() {
     // find intersections
     raycaster.setFromCamera(mouse, camera);
     const clickableThings = boxGroup.children.concat(centerObjects);
-    console.log(clickableThings);
+    //console.log(clickableThings);
     const intersects = raycaster.intersectObjects(clickableThings, true);
     if (intersects.length > 0) {
       console.log("gotcha");
