@@ -39,7 +39,7 @@ let boxGroup;
 let boxSpeeds = [];
 const radius = 100;
 let toggleOpen = false;
-let objects = [];
+let centerObjects = [];
 let numberOfFriends = 40;
 let soundMuted = false;
 let sparkUniforms, sparkGeometry;
@@ -60,6 +60,8 @@ const color = new THREE.Color();
 
 const friendSound = new Audio("audio/friend.mp3");
 const seaSound = new Audio("audio/sea.mp3");
+const backgroundSound = new Audio("audio/background.mp3");
+
 
 let database = firebase.database();
 let ref = database.ref();
@@ -334,46 +336,77 @@ function windowOnLoad() {
     renderer.setClearColor(scene.fog.color);
    
     //
-    const centerObjGeom = new THREE.TorusKnotGeometry(2.7, 1.1, 300, 20, 2, 3);
-    // const centerObjGeom = new THREE.SphereGeometry(10, 300, 2, 30);
-    const tinySphereGeom = new THREE.SphereGeometry(2, 30, 20, 30);
-    const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
+
+    boxGroup = new THREE.Group();
+
+    const torusKnotGeometry = new THREE.TorusKnotGeometry(2.7, 1.1, 300, 20, 2, 3);
+    const sphereGeometry = new THREE.SphereGeometry(2, 30, 20, 30);
+    const centerObjMaterial = new THREE.MeshLambertMaterial({ color: 7603694, opacity: 0.5, transparent: true, emissive: 3})
+    const centerObjBabyMaterial = new THREE.MeshLambertMaterial({ color: 8215273, opacity: .3, transparent: true, emissive: 6})
+
+    const centerWorldContainer = new THREE.Object3D();
+    scene.add(centerWorldContainer);
+    centerObjects.push(centerWorldContainer);
+
+    centerObj = new THREE.Mesh(torusKnotGeometry, centerObjMaterial);
+    centerObj.scale.set(.75, .75, .75);
+    centerWorldContainer.add(centerObj);
+    centerObjects.push(centerObj);
+
+    let centerObjBaby = new THREE.Mesh(sphereGeometry, centerObjBabyMaterial);
+    centerObjBaby.scale.set(3.5,3.5, 3.5);
+    centerObj.add(centerObjBaby);
+    centerObjects.push(centerObjBaby);
 
 
-    ///test area for sun
-    const friendWorldd = new THREE.Object3D();
-    scene.add(friendWorldd);
-    objects.push(friendWorldd);
+    function makeCenterObjInstance(geometry, color, x, y, z) {
+      const centerObjInstance = new THREE.Mesh(torusKnotGeometry, centerObjMaterial);
+      centerObjInstance.position.x = x;
+      centerObjInstance.position.y = y;
+      centerObjInstance.position.z = z;
+      centerWorldContainer.add(centerObjInstance);
+      centerObjects.push(centerObjInstance);
+      return centerObjInstance;
+    } 
 
-    const centerObjMateria = new THREE.MeshLambertMaterial({ color: 7603694, opacity: 0.5, transparent: true, emissive: 3})
-    centerObj = new THREE.Mesh(centerObjGeom, centerObjMateria);
-    centerObj.scale.set(1, 1, 1);
-    friendWorldd.add(centerObj);
-    objects.push(centerObj);
+    const triLength = 60;
+    const triHeight = Math.sqrt(3)/2*triLength;
+    const ax = - triLength/2;
+    const ay = -triHeight/3;
+    const bx = triLength/2;
+    const by = -triHeight/3;
+    const cx = 0;
+    const cy = 2/3*triHeight;
 
-    const friendWorld = new THREE.Object3D();
-    scene.add(friendWorld);
-    objects.push(friendWorld);
-    const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
-    const earthMesh = new THREE.Mesh(tinySphereGeom, centerObjMateria);
-    earthMesh.position.x = 10;
-    earthMesh.position.y = 3;
-    earthMesh.scale.set(1, 1, 1);
+    const centerObjs = [
+      makeCenterObjInstance(torusKnotGeometry, 0x8844aa, ax, 0, ay),
+      makeCenterObjInstance(torusKnotGeometry, 0xaa8844, bx, 0, by),
+      makeCenterObjInstance(torusKnotGeometry, 0x8844aa, cx, 0, cy),
+    ];
 
-    friendWorld.add(earthMesh);
+    // const friendWorld = new THREE.Object3D();
+    // scene.add(friendWorld);
+    // objects.push(friendWorld);
+    // const earthMaterial = new THREE.MeshPhongMaterial({ color: 3093151, opacity: 0.5, transparent: true, emissive: 1 })
+    // const earthMesh = new THREE.Mesh(sphereGeometry, centerObjMateria);
+    // earthMesh.position.x = 10;
+    // earthMesh.position.y = 3;
+    // earthMesh.scale.set(1, 1, 1);
+
+    // friendWorld.add(earthMesh);
     // objects.push(earthMesh);
 
-    function makeTinyRotatorInstance(geometry, color, x, y, z) {
-      let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
-      const tinyRotator = new THREE.Mesh(tinySphereGeom, iMaterial);
-      tinyRotator.position.x = x;
-      tinyRotator.position.y = y;
-      tinyRotator.position.z = z;
-      tinyRotator.scale.set(.3, .3, .3);
-      return tinyRotator;
-    }
+    // function makeTinyRotatorInstance(geometry, color, x, y, z) {
+    //   let iMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, emissive: 1 })
+    //   const tinyRotator = new THREE.Mesh(sphereGeometry, iMaterial);
+    //   tinyRotator.position.x = x;
+    //   tinyRotator.position.y = y;
+    //   tinyRotator.position.z = z;
+    //   tinyRotator.scale.set(.3, .3, .3);
+    //   return tinyRotator;
+    // }
 
-    const tinyRotat = [];
+    // const tinyRotat = [];
 
     // for (let i = -10; i < 10; i++) {
     //   let x = Math.random() * 40 - 25;
@@ -384,26 +417,13 @@ function windowOnLoad() {
     //   objects.push(rotat);
     // }
 
-    // function makeTinyGlowSphereInstance(geometry, color, x, y, z) {
-    //   const tinyGlowSphere = new THREE.Mesh(tinySphereGeom, brightMaterial);
-    //   scene.add(tinyGlowSphere);
-    //   tinyGlowSphere.position.x = x;
-    //   tinyGlowSphere.position.y = y;
-    //   tinyGlowSphere.position.z = z;
-    //   return tinyGlowSphere;
-    // }
-
-    // const tinySph = [
-    //   makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, -10, 0, 10),
-    //   makeTinyGlowSphereInstance(centerObjGeom, 0xaa8844, 10, 0, 10),
-    //   makeTinyGlowSphereInstance(centerObjGeom, 0x8844aa, 0, 0, 0),
-    // ];
+    
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.499;
     controls.target.set(0, 10, 0);
     controls.minDistance = 10.0;
-    controls.maxDistance = 1800.0;
+    controls.maxDistance = 800.0;
 
     // https://threejs.org/docs/#examples/en/controls/OrbitControls.keys
 
@@ -495,7 +515,8 @@ function windowOnLoad() {
     //end controls
 
     // const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
-    boxGroup = new THREE.Group();
+ 
+
 
     function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objScale) {
       // console.log(`setup id ${id}`);
@@ -611,15 +632,15 @@ function windowOnLoad() {
       const rotationY = Math.random() * 2 * Math.PI;
       const rotationZ = Math.random() * 2 * Math.PI;
 
-
-      let object = new THREE.Mesh(tinySphereGeom, brightMaterial);
+      const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
+      let sphereAtHeartOfFriend = new THREE.Mesh(sphereGeometry, brightMaterial);
       // object.scale.set(1, 1, 1);
-      object.scale.set(.03, .03, .03);
+      sphereAtHeartOfFriend.scale.set(.03, .03, .03);
 
-      scene.add(object);
+      scene.add(sphereAtHeartOfFriend);
 
       const gltfLoader = new GLTFLoader();
-      gltfLoader.load('./img/friend2.glb', (gltf) => {
+      gltfLoader.load('./img/friend3.glb', (gltf) => {
         let friendShape = gltf.scene;
         setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 20);
       });
@@ -630,14 +651,15 @@ function windowOnLoad() {
       //   setupObject(oct, i, boxGroup, boxSpeeds, 10, 10, 10, rotationX, rotationY, rotationZ, 30);
       // });
 
-      friendOrbs[i] = object;
+      friendOrbs[i] = sphereAtHeartOfFriend;
 
-      setupObject(object, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 1);
-      makeFriendModal(object.friendID, i);
+      setupObject(sphereAtHeartOfFriend, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 1);
+      makeFriendModal(sphereAtHeartOfFriend.friendID, i);
 
     }
 
     scene.add(boxGroup);
+
 
     raycaster = new THREE.Raycaster();
     document.addEventListener('mousemove', onDocumentMouseMove);
@@ -664,6 +686,9 @@ function windowOnLoad() {
       seaSound.play();
       seaSound.volume = 0.08;
       seaSound.loop = true;
+      backgroundSound.play();
+      backgroundSound.volume = 0.08;
+      backgroundSound.loop = true;
       setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
     false
@@ -839,8 +864,10 @@ function windowOnLoad() {
 
     }
 
-    objects.forEach((obj) => {
+    centerObjects.forEach((obj) => {
       obj.rotation.y = time;
+      centerObj.rotation.x = time * 0.5;
+    centerObj.rotation.z = time * 0.51;
     });
 
 
@@ -849,12 +876,13 @@ function windowOnLoad() {
 
     camera.updateMatrixWorld();
 
-    //mouse stuff
+    //HOVER stuff
     // find intersections
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(boxGroup.children, true);
-
+    const clickableThings = boxGroup.children.concat(centerObjects);
+    const intersects = raycaster.intersectObjects(clickableThings, true);
     if (intersects.length > 0) {
+      console.log("gotcha");
       if (INTERSECTED != intersects[0].object) {
         if (INTERSECTED) {
           INTERSECTED.traverse((o) => {
@@ -1053,6 +1081,7 @@ function windowOnLoad() {
   // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox");
 
   function settingsMenuOpen(event) {
+    // document.getElementById("wrapperBtn").classList.add("wrapperBtnOpening");
     settingsDropdown.classList.toggle("showDropdown");
     document.getElementsByClassName('slide-in')[0].classList.toggle('show');
     closeAllModals(event);
@@ -1095,11 +1124,13 @@ function windowOnLoad() {
   toggleSoundCheckbox.addEventListener('change', function () {
     if (this.checked) {
       console.log("Checkbox is checked..");
+      backgroundSound.volume = 0.08;
       seaSound.volume = 0.08;
       friendSound.volume = 0.04;
 
     } else {
       console.log("Checkbox is not checked..");
+      backgroundSound.volume = 0;
       seaSound.volume = 0;
       friendSound.volume = 0;
     }
