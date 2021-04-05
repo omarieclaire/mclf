@@ -1,6 +1,6 @@
 <!-- softsanctuary.club -->
 <!DOCTYPE html>
-<html lang="">
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -24,56 +24,29 @@
 </head>
 
 <body class="preload">
-
-  <!-- <video autoplay muted loop playsinline id="video"> -->
-  <!-- <source src="img/v1.mp4" type="video/mp4"> -->
-  <!-- </video> -->
-
-  <!-- <div id="wrapperToggleDiv">
-    <div class="btn noselect wrapperBtn wrapperBtnClosed" id="wrapperBtn">
-      <p>``</p>
-    </div>
-  </div>
-
-  <div class="wrapper" id="wrapper">
-    <div class="btn noselect" id="btn1">
-      <p>v≠v</p>
-    </div>
-    <div class="btn noselect " id="btn2">
-      <p>løl</p>
-    </div>
-    <div class="btn noselect" id="btn3">
-      <p>u§u</p>
-    </div>
-  </div> -->
-
   <div id="wrapperToggleDiv" class="settingsMenu">
     <div id="settingsBtn" class="btn noselect wrapperBtn wrapperBtnClosed">``</div>
-    <div class="slide-in from-left">
-      <!-- <div class="slide-in-content"> -->
-
+    <div id="slidein" class="slide-in from-left">
       <ul id="settingsDropdown" class="slide-in-content">
-
-        <li class="tempi">
-          <form id='changeNameForm' onSubmit={this.onSubmit}>
+        <li class="dropdownContainer">
+          <form id='changeNameForm'>
             <div id='changeNameSlider' class='collapsed'>
-              <input type='button' id='toggleChangeNameInput' value='Change name?'>
-              <input type='text' id='changeNameInput' tabindex='-1' placeholder='new name' size=12>
+              <input type='button' id="toggleChangeNameInput" name='toggleChangeNameInput' value='¿Quieres cambiar tu nombre?'>
+              <input type='text' id="changeNameInput" name='changeNameInput' tabindex='-1' placeholder='Nuevo nombre' size=12>
               <input type='submit' id='okButton' tabindex='-1' value='ok'>
             </div>
           </form>
-        <li class="tempi">
+        <li class="dropdownContainer">
           <label class="toggleLabel">
-            <span class="toggleLabel">Sound</span>
+            <span class="toggleLabel" id="soundLabel">Sonido</span>
             <input class="toggleSoundCheckbox" name="toggleSoundCheckbox" type="checkbox" checked>
             <div class="toggleSoundDiv"></div>
           </label>
         </li>
-        <li class="tempi">
-          <a target="blank" href="/credits.html">Made by Marie Claire LeBlanc Flanagan & friends</a>
+        <li class="dropdownContainer">
+          <a target="blank" id='credits' href="/credits.html">Desarrollado por omarieclaire</a>
         </li>
       </ul>
-      <!-- </div> -->
     </div>
 
   </div>
@@ -83,15 +56,13 @@
   <!-- <canvas id="canvas"></canvas> -->
   <div id="loadingScreenDiv" class="loadingScreenDiv">
     <p class="welcomeMsg" id="sanctuary">sanctuary</p>
-    <p class="welcomeMsg" id="motto">a soft space for gentle connection</p>
-    <!-- <p id="welcomeMsg"><span id="sanctuary">sanctuary</span><br><span id="motto">a soft space for gentle connection</span></p> -->
+    <p class="welcomeMsg" id="motto">Un espacio tranquilo de conexión</p>
     <form id="usernameForm">
-      <input name="name" autocomplete="off" id="username" type="text" placeholder="your name or username" required
-        autofocus>
-      <input type="submit" value="begin" id="submitUsername" onsubmit="return false">
+      <input name="initialUsernameInput" autocomplete="off" id="username" type="text" placeholder="Tu nombre o nombre de usuario" required autofocus>
+      <input type="submit" name="submitInitialUsername" value="Comenzar" id="submitUsername" onsubmit="return false">
     </form>
-  </div>
-
+    <p class="welcomeMsg" id="languageSwitchLink"><a href="">english</a></p>
+    <!-- <p class="welcomeMsg" id="languagePS" lang="en"><a id="language" href="">español</a></p> -->
   </div>
 
   <script type="x-shader/x-vertex" id="vertexshader">

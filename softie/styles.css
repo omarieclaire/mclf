@@ -76,7 +76,7 @@ body {
   background-color:rgba(43, 0, 255, .5);
 }
 
-.welcomeMsg{
+.welcomeMsg {
   padding: 10px 20px 10px 20px;
   font-size: 2.3rem;
   /* margin-bottom: 5vh; */
@@ -84,6 +84,29 @@ body {
   color: rgba(255, 198, 198, .9); 
   line-height: 2.6rem;
 }
+
+#languageSwitchLink {
+margin-top: 10rem;
+text-decoration: none;
+  font-size: 1rem;
+  color: rgba(191 202 255); 
+  /* letter-spacing: 4px; */
+}
+
+#languageSwitchLink a {
+  margin-top: 10rem;
+  text-decoration: none;
+    font-size: 1rem;
+    color: rgba(191 202 255); 
+    /* letter-spacing: 4px; */
+  }
+
+#languageSwitchLink:hover {
+  text-decoration: underline;
+  font-size: 1rem;
+  color: rgba(191 202 255); 
+}
+
 #creditsDiv{
   background-image: linear-gradient( 0deg, #2a32cc 10%, #ec6fdf 100%);
 }
@@ -111,7 +134,7 @@ body {
   /* color: rgb(213, 20, 243); */
 }
 
-#motto{
+#motto {
   font-style: italic;
   font-size: 1.3rem;
 }
@@ -246,7 +269,7 @@ body {
 
 .chat input[type="text"] {
   margin-right: -1px;
-  width:20rem;
+  width:70vw;
 
 }
 
@@ -535,7 +558,7 @@ input {
   /* width: 2rem; */
 }
 
-#changeNameInput{
+#changeNameInput {
   background-color: rgba(178, 124, 211, 0.85);
   /* border: .5px solid white; */
   flex: auto;
@@ -646,7 +669,7 @@ input {
     margin-top: 5rem;
   }
 
-  #motto{
+  #motto {
     font-style: italic;
     font-size: 1.8rem;
   }
@@ -817,16 +840,17 @@ input {
 #settingsDropdown {
   margin-top: 5rem;
   min-width: 15rem;
-  max-width: 20rem;
-
+  max-width: 60vw;
   z-index: 1;
   position: fixed;
-  flex-direction: column;
+  /* flex-direction: column;
   justify-content: left;
-  align-items: left;
+  align-items: left; */
   padding: 1rem;
   background-color:rgba(245, 182, 147, 0.75); 
   border-radius: 40px 40px;
+  transition: background-color 2s, transform 1000ms ease-out;
+
 }
 
 .dropdownContent {
@@ -838,7 +862,7 @@ input {
     padding: 0;
 }
 
-.tempi {
+.dropdownContainer {
     /* color: black; */
     padding: 0.8rem 0;
     text-decoration: none;
@@ -846,7 +870,7 @@ input {
     color:rgba(76, 61, 134, .8); 
     font-size: 1rem;
 }
-.tempi:hover {
+.dropdownContainer:hover {
   background-color: rgb(196, 152, 222, 59%);
   border-radius: .6rem;
 }
@@ -872,7 +896,8 @@ input {
 .slide-in-content {
   padding: 5px 20px;
   background: #eee;
-  transition: transform 1s ease-out; /* our nice transition */
+  /* transition: <property> <duration> <timing-function> <delay>; */
+  transition: background-color 1000ms, transform 1000ms ease-out;
 }
 
 .slide-in.from-left .slide-in-content {
@@ -913,7 +938,7 @@ input {
 }
 
 
-#okButton {
+#okButton, #okButtonS {
   flex: none;
   flex-basis: 10%;
   background-color: rgba(167, 95, 211, 0.85);

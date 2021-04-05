@@ -12,7 +12,48 @@ import { PointerLockControls } from './node_modules/three/examples/jsm/controls/
 
 import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
 
-var firebaseConfig = {
+// if the language is defined, then use that
+// if the language is not defined, make it be spanish (but dont' save it)
+let currentLanguage = localStorage.getItem('lang') || 'es';
+
+// language
+let languageSwitchLink = document.getElementById("languageSwitchLink");
+let motto = document.getElementById("motto");
+let initialUsernameInput = document.getElementsByName('initialUsernameInput')[0];
+let submitUsernameValue = document.getElementsByName('submitInitialUsername')[0];
+let changeNameInput = document.getElementsByName("changeNameInput")[0]; 
+let soundLabel = document.getElementById("soundLabel");
+let credits = document.getElementById("credits");
+
+
+function renderLoadingPage(lang) {
+  if (currentLanguage == 'es') {
+    languageSwitchLink.innerHTML = "english";
+    motto.innerHTML = "Un espacio tranquilo de conexión";
+    initialUsernameInput.placeholder = "Tu nombre o nombre de usuario";
+    submitUsernameValue.value = "Comenzar";
+    changeNameInput.placeholder = "Nuevo nombre";
+    soundLabel.innerHTML = "Sonido";
+    credits.innerHTML = "Desarrollado por Marie Claire LeBlanc Flanagan & friends";
+    document.getElementsByName('sendYourBeautifulSelf').forEach((s) => {
+      s.value = "Enviar";
+    });
+  } else {
+    languageSwitchLink.innerHTML = "español";
+    motto.innerHTML = "a soft space for gentle connection";
+    initialUsernameInput.placeholder = "your name or username";
+    submitUsernameValue.value = "begin";
+    changeNameInput.placeholder = "New name";
+    soundLabel.innerHTML = "Sound";
+    credits.innerHTML = "Made by Marie Claire LeBlanc Flanagan & friends";
+    document.getElementsByName('sendYourBeautifulSelf').forEach((s) => {
+      s.value = "send";
+    });
+  }
+}
+renderLoadingPage(currentLanguage);
+
+let firebaseConfig = {
   apiKey: "AIzaSyDiCOSmTc5a0U0m4jY4D8s7ZXZ6ab5NTWo",
   authDomain: "sanctuary-76c32.firebaseapp.com",
   projectId: "sanctuary-76c32",
@@ -28,7 +69,10 @@ firebase.analytics();
 let container, stats;
 let camera, scene, raycaster, renderer;
 
-let pointerControls, controls, water, sun, centerObj;
+let controls, water, sun, centerObj;
+
+const sky = new Sky();
+let skyBright = 10;
 let newText;
 let INTERSECTED;
 let theta = 0;
@@ -40,6 +84,9 @@ let boxSpeeds = [];
 const radius = 100;
 let toggleOpen = false;
 let centerObjects = [];
+let rot1;
+let rot2;
+let rot3;
 let numberOfFriends = 40;
 let soundMuted = false;
 let sparkUniforms, sparkGeometry;
@@ -58,94 +105,236 @@ const direction = new THREE.Vector3();
 const vertex = new THREE.Vector3();
 const color = new THREE.Color();
 
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioContext = new AudioContext();
 const friendSound = new Audio("audio/friend.mp3");
+friendSound.volume = 0.09;
 const seaSound = new Audio("audio/sea.mp3");
 const backgroundSound = new Audio("audio/background.mp3");
+const rot1Sound = new Audio("audio/rot1.mp3");
+const rot2Sound = new Audio("audio/rot2.mp3");
+const rot3Sound = new Audio("audio/rot3.mp3");
+let sounds = [friendSound, seaSound, backgroundSound, rot1Sound, rot2Sound, rot3Sound];
 
+
+let jellyfish = [];
+let jellyfishOnScreen = [];
+let flyingBoxes = [];
+let flyingBoxesOnScreen = [];
+let flyingSpheres = [];
+let flyingSpheresOnScreen = [];
 
 let database = firebase.database();
 let ref = database.ref();
 let msgsRef = ref.child('msg');
 
-let username;
+let username = localStorage.getItem('name') || undefined;
+
 let friendOrbs = {};
-let friendQuestions = {
-  0: "What did you learn today?",
-  1: "What does it mean?",
-  2: "Where does the time go?",
-  3: "Where are you from?",
-  4: "Who inspires you?",
-  5: "How do you learn?",
-  6: "Who do you love?",
-  7: "When did you last rest?",
-  8: "Do you wish you had more?",
-  9: "Can you imagine a better way?",
-  10: "What is a strange thing you know?",
-  11: "What is at the bottom?",
-  12: "Have you ever failed?",
-  13: "What is the perfect day?",
-  14: "Who do you wish you could speak to?",
-  15: "What are you grateful for?",
-  16: "If you had a secret hour every day how would you spend it?",
-  17: "What is your earliest memory of play?",
-  18: "What does friendship mean to you?",
-  19: "What song will you listen to right now?",
-  20: "How does your body feel?",
-  21: "What are you curious about?",
-  22: "Why do you get up in the morning?",
-  23: "What book changed your life?",
-  24: "Where do you wish you could go?",
-  25: "Would you choose peace, love, or joy?",
-  26: "What meal would you like to eat?",
-  27: "What is something you shared with someone?",
-  28: "Tell us about a dream?",
-  29: "Tell us a fact?",
-  30: "Tell us a story in 10 words?",
-  31: "What are you looking forward to?",
-  32: "Describe a peaceful place?",
-  33: "Describe a perfect day?",
-  34: "Describe a good question",
-  35: "Describe a good friend",
-  36: "Describe a peaceful evening",
-  37: "Where is home?",
-  38: "Where have you been?",
-  39: "Where have you never been?",
-  40: "Where is the good life?",
-  41: "Why are you happy?",
-  42: "What gift would you like to give?",
-  43: "How have you changed someone's life?",
-  44: "What is a beloved tree?",
-  45: "What is a beloved animal?",
-  46: "When did you last stretch?",
-  47: "What can you hear right now?",
-  48: "When you turn around, what do you see?",
-  49: "Where could you walk today?",
-  50: "Describe a beloved soft thing",
-  51: "Describe a beloved smell?",
-  52: "Where do you wish you were?",
-  53: "When did you last dance?",
-  54: "What do your hands want to do?",
-  55: "What does your face want to do?",
-  56: "How do you feel?",
-  57: "What are you thinking about?",
-  58: "What soft surface can you touch right now",
-  59: "What are you hoping for?",
-  60: "What is behind you?"
+let friendMap = {};
+let friendQuestionsS = {
+  0: "¿Cuál sería un placer sencillo para ti?",
+  1: "¿Qué significa eso?",
+  2: "¿Quién te inspira?",
+  3: "¿Cómo aprendes?",
+  4: "¿Desearías tener más?",
+  5: "¿Puedes imaginar una mejor alternativa?",
+  6: "¿Qué cosa sorprendente has aprendido?",
+  7: "¿Qué hay al final?",
+  8: "Describe una mañana hermosa",
+  9: "¿Con quién te gustaría poder hablar?",
+  10: "Describe algo suave que ames",
+  11: "Si los días tuvieran una hora extra ¿cómo la aprovecharías?",
+  12: "¿Cuál es tu recuerdo más temprano de juego?",
+  13: "¿Cómo sabes cuando alguien es un/a verdadero/a amigo/a?",
+  14: "¿Qué canción quisieras compartir por aquí?",
+  15: "¿Cómo huele tu lugar favorito?",
+  16: "¿Qué quieren hacer tus manos?",
+  17: "¿Qué texturas te gusta tocar?",
+  18: "¿Qué cosa buena podrías hacer por vos ahora mismo?",
+  19: "¿Qué se ve por tu ventana?",
+  20: "¿Qué quiere hacer tu cuerpo ahora?",
+  21: "¿Qué te genera curiosidad?",
+  22: "¿Qué te hace reír incontrolablemente?",
+  23: "¿Qué libro darías como regalo?",
+  24: "Describe algo que adores",
+  25: "¿Elegirías paz, amor o alegría?",
+  26: "¿Qué comida te gustaría comer ahora mismo?",
+  27: "¿Qué es algo que hayas compartido con alguien?",
+  28: "Describe un sueño memorable",
+  29: "¿Un lugar que recuerdes con cariño?",
+  30: "Cuenta una historia en 10 palabras",
+  31: "¿Qué es lo que estás buscando?",
+  32: "Describe un lugar imaginario pacífico?",
+  33: "¿Qué ves cuando miras hacia atrás?",
+  34: "¿Qué hace que una pregunta sea buena?",
+  35: "¿Qué sonidos escuchas en este momento?",
+  36: "¿Qué te hace sentir conectado/a?",
+  37: "¿Qué es el hogar?",
+  38: "¿Qué regalo te gustaría dar?",
+  39: "Describe un animal que ames",
+  40: "Describe una planta que ames"
 };
+
+let friendQuestions = {
+  0: "What is a simple pleasure for you?",
+  1: "What does it mean?",
+  2: "Who inspires you?",
+  3: "How do you learn?",
+  4: "Do you wish you had more?",
+  5: "Can you imagine a better way?",
+  6: "What is a surprising thing you’ve learned?",
+  7: "What is at the bottom?",
+  8: "Describe a beautiful morning?",
+  9: "Who do you wish you could speak to?",
+  10: "Describe a beloved soft thing?",
+  11: "If you had an extra hour every day how would you spend it?",
+  12: "What is your earliest memory of play?",
+  13: "How do you know when someone is a true friend?",
+  14: "What song would you like to share here?",
+  15: "What does your favourite place smell like?",
+  16: "What do your hands want to do?",
+  17: "What texture do you like to touch?",
+  18: "What kind thing could you do for yourself right now?",
+  19: "What is outside your window?",
+  20: "What does your body want to do?",
+  21: "What are you curious about?",
+  22: "What makes you laugh uncontrollably?",
+  23: "What book would you give as a gift?",
+  24: "Describe a beloved soft thing",
+  25: "Would you choose peace, love, or joy?",
+  26: "What meal would you like to eat right now?",
+  27: "What is something you shared with someone?",
+  28: "Describe a memorable dream?",
+  29: "What is a place you remember fondly?",
+  30: "Tell a story in 10 words?",
+  31: "What are you looking forward to?",
+  32: "Describe an imaginary peaceful place?",
+  33: "When you turn around, what do you see?",
+  34: "What makes a question good?",
+  35: "What quiet under-noises do your ears hear right now?",
+  36: "What makes you feel connected?",
+  37: "What is home?",
+  38: "What gift would you like to give?",
+  39: "Describe a beloved animal?",
+  40: "Describe a plant that you love?"
+};
+
+function updateModalLanguage(idNumber) {
+  const infoTextDiv = document.getElementById("infoTextDiv" + idNumber);
+  infoTextDiv.innerHTML = '';
+  if(currentLanguage == 'en') {
+    const newInfoText = document.createTextNode(`${friendQuestions[idNumber]}`);
+    infoTextDiv.appendChild(newInfoText);
+  } else {
+    const newInfoText = document.createTextNode(`${friendQuestionsS[idNumber]}`);
+    infoTextDiv.appendChild(newInfoText);
+  }
+}
+
+
+function updateModalLanguages() {
+  for(let i = 0; i < numberOfFriends ; i++) {
+    updateModalLanguage(i);
+  }
+}
+
+function handleLanguageUpdate(event) {
+  event.preventDefault();
+  console.log(`currentLanguage = ${currentLanguage}`);
+  // update the language
+  if (currentLanguage == 'en') {
+    currentLanguage = 'es';
+    localStorage.setItem('lang', 'es');
+  } else {
+    currentLanguage = 'en';
+    localStorage.setItem('lang', 'en');
+  }
+
+  renderLoadingPage(currentLanguage);
+  updateModalLanguages();
+}
+
+languageSwitchLink.addEventListener('click', handleLanguageUpdate)
 
 const initialFriendYPositions = [];
 for (let i = 0; i < numberOfFriends * 10; i++) {
   initialFriendYPositions.push(Math.random());
 }
 
+function mkGoodPosition() {
+  return {
+    x: Math.random() * 900 - 500,
+    y: Math.random() * 150 - 5, // 100
+    z: Math.random() * 900 - 600 // -200
+  };
+}
+
+function mkGoodRotation() {
+  return {
+    x: Math.random() * 2 * Math.PI,
+    y: Math.random() * 2 * Math.PI,
+    z: Math.random() * 2 * Math.PI
+  };
+}
+
 function windowOnLoad() {
   document.body.classList.remove("preload");
+
+  const jellyFishGLTFPromise = new Promise((resolve, reject) => {
+    const gltfLoader2 = new GLTFLoader();
+    gltfLoader2.load('./img/oct.glb', (gltf) => {
+      resolve(gltf.scene);
+    });
+  });
+
+  const friendShapePromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./img/friend3.glb', (gltf) => {
+      resolve(gltf.scene);
+    });
+  });
+
+  const boxGeometry = new THREE.TorusKnotGeometry(.8, .1, 300, 7, 5, 7);
+
+  
+  function makeFlyingBoxes(x, y, z) {
+    let boxGeometryInstance = new THREE.Mesh(boxGeometry, buildTwistMaterial(0.5));
+    boxGeometryInstance.position.x = x;
+    boxGeometryInstance.position.y = y;
+    boxGeometryInstance.position.z = z;
+    // centerWorldContainer.add(boxGeometryInstance); //rotate
+    return boxGeometryInstance;
+  }
+
+  const nsphereGeometry = new THREE.TorusGeometry(18, .8, 21, 100, 6.3);
+  function makeFlyingSpheres(x, y, z) {
+    let sphereGeometryInstance = new THREE.Mesh(nsphereGeometry, buildTwistMaterial(0.2));
+    sphereGeometryInstance.position.x = x;
+    sphereGeometryInstance.position.y = y;
+    sphereGeometryInstance.position.z = z;
+    // centerWorldContainer.add(boxGeometryInstance); //rotate
+    return sphereGeometryInstance;
+  }
+
   init();
   animate();
 
+  function pauseSounds(){
+    for (let i = 0; i < sounds.length; i++) {
+      sounds[i].pause();
+    }
+  }
+
+  function playSound(sound){
+    // for (let i = 0; i < sounds.length; i++) {
+    //   sounds[i].pause();
+    // }
+  }
+
   function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, numOfSets) {
     let setsOfSparks = [];
-
     sparkUniforms = {
       pointTexture: { value: new THREE.TextureLoader().load("img/spark1.png") }
     };
@@ -205,30 +394,30 @@ function windowOnLoad() {
     }
   }
 
-  function init() {
-
-    // function pauseSounds(){
-    //   for (let i = 0; i < songs.length; i++) {
-    //     songs[i].pause();
-    //   }
-    // }
-
-
-    function nameDisplayCheck() {
-      if (localStorage.getItem('name')) {
-        let name = localStorage.getItem('name');
-        return name;
-        // h1.textContent = 'Welcome, ' + name;
-      } else {
-        // h1.textContent = 'Welcome to our website ';
+  function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objScale) {
+    obj.scale.multiplyScalar(objScale);
+    obj.traverse((o) => {
+      if (o.isMesh) {
+        o.friendID = id;
+        o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
       }
-    }
+    });
 
-    let savedUserName = nameDisplayCheck();
-    if (savedUserName) {
-      document.getElementById("username").value = savedUserName;
-    }
+    obj.friendID = id;
 
+    obj.position.x = positionX;
+    obj.position.y = positionY;
+    obj.position.z = positionZ;
+
+    obj.rotation.x = rotationX;
+    obj.rotation.y = rotationY;
+    obj.rotation.z = rotationZ;
+
+    group.add(obj);
+    speeds.push(Math.random());
+  }
+
+  function init() {
     container = document.getElementById('container');
 
     renderer = new THREE.WebGLRenderer();
@@ -241,7 +430,7 @@ function windowOnLoad() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
-    camera.position.set(30, 30, 200);
+    camera.position.set(0, 0, 200);
 
     //
     sun = new THREE.Vector3();
@@ -276,13 +465,12 @@ function windowOnLoad() {
 
     // Skybox
 
-    const sky = new Sky();
     sky.scale.setScalar(10000);
     scene.add(sky);
 
     const skyUniforms = sky.material.uniforms;
 
-    skyUniforms['turbidity'].value = 10; //modd
+    skyUniforms['turbidity'].value = skyBright; // 0 makes the sky go black
     skyUniforms['rayleigh'].value = 10; //modd
     skyUniforms['mieCoefficient'].value = 0.009;
     skyUniforms['mieDirectionalG'].value = 0.8; //modd
@@ -334,55 +522,69 @@ function windowOnLoad() {
 
     scene.fog = new THREE.FogExp2(15655413, 0.0002);
     renderer.setClearColor(scene.fog.color);
-   
+
     //
 
     boxGroup = new THREE.Group();
 
     const torusKnotGeometry = new THREE.TorusKnotGeometry(2.7, 1.1, 300, 20, 2, 3);
     const sphereGeometry = new THREE.SphereGeometry(2, 30, 20, 30);
-    const centerObjMaterial = new THREE.MeshLambertMaterial({ color: 7603694, opacity: 0.5, transparent: true, emissive: 3})
-    const centerObjBabyMaterial = new THREE.MeshLambertMaterial({ color: 8215273, opacity: .3, transparent: true, emissive: 6})
+    const centerObjMaterial = new THREE.MeshLambertMaterial({ color: 16737818, opacity: 0.54, transparent: true, emissive: 3 })
+    const centerObjSphereMaterial = new THREE.MeshLambertMaterial({ color: 8215273, opacity: .2, transparent: true, emissive: 6 })
 
     const centerWorldContainer = new THREE.Object3D();
     scene.add(centerWorldContainer);
     centerObjects.push(centerWorldContainer);
 
-    centerObj = new THREE.Mesh(torusKnotGeometry, centerObjMaterial);
+    // centerObj = new THREE.Mesh(torusKnotGeometry, centerObjMaterial);
+
+    centerObj = new THREE.Mesh(torusKnotGeometry, buildTwistMaterial(20.0));
+
+
     centerObj.scale.set(.75, .75, .75);
     centerWorldContainer.add(centerObj);
     centerObjects.push(centerObj);
 
-    let centerObjBaby = new THREE.Mesh(sphereGeometry, centerObjBabyMaterial);
-    centerObjBaby.scale.set(3.5,3.5, 3.5);
-    centerObj.add(centerObjBaby);
-    centerObjects.push(centerObjBaby);
+    let centerObjSphere = new THREE.Mesh(sphereGeometry, centerObjSphereMaterial);
+    centerObjSphere.scale.set(3.5, 3.5, 3.5);
+    centerObj.add(centerObjSphere);
+    // centerObjects.push(centerObjSphere);
 
 
-    function makeCenterObjInstance(geometry, color, x, y, z) {
-      const centerObjInstance = new THREE.Mesh(torusKnotGeometry, centerObjMaterial);
-      centerObjInstance.position.x = x;
-      centerObjInstance.position.y = y;
-      centerObjInstance.position.z = z;
-      centerWorldContainer.add(centerObjInstance);
-      centerObjects.push(centerObjInstance);
-      return centerObjInstance;
-    } 
+    function makeRotatorObjInstance(geometry, color, x, y, z) {
+      const rotatorMaterial = new THREE.MeshLambertMaterial({ color: color, opacity: 0.4, transparent: true, emissive: 1 })
+      const rotatorObjInstance = new THREE.Mesh(torusKnotGeometry, rotatorMaterial);
+      rotatorObjInstance.position.x = x;
+      rotatorObjInstance.position.y = y;
+      rotatorObjInstance.position.z = z;
+      centerObjects.push(rotatorObjInstance);
+      centerWorldContainer.add(rotatorObjInstance); //rotate
+
+      let rotatorSphere = new THREE.Mesh(sphereGeometry, centerObjSphereMaterial);
+      rotatorSphere.scale.set(1.5, 1.5, 1.5);
+      rotatorObjInstance.add(rotatorSphere);
+      return rotatorObjInstance;
+    }
 
     const triLength = 60;
-    const triHeight = Math.sqrt(3)/2*triLength;
-    const ax = - triLength/2;
-    const ay = -triHeight/3;
-    const bx = triLength/2;
-    const by = -triHeight/3;
+    const triHeight = Math.sqrt(3) / 2 * triLength;
+    const ax = - triLength / 2;
+    const ay = -triHeight / 3;
+    const bx = triLength / 2;
+    const by = -triHeight / 3;
     const cx = 0;
-    const cy = 2/3*triHeight;
+    const cy = 2 / 3 * triHeight;
 
-    const centerObjs = [
-      makeCenterObjInstance(torusKnotGeometry, 0x8844aa, ax, 0, ay),
-      makeCenterObjInstance(torusKnotGeometry, 0xaa8844, bx, 0, by),
-      makeCenterObjInstance(torusKnotGeometry, 0x8844aa, cx, 0, cy),
-    ];
+    rot1 = makeRotatorObjInstance(torusKnotGeometry, 6823151, ax, 0, ay);
+    rot2 = makeRotatorObjInstance(torusKnotGeometry, 1514735, bx, 0, by);
+    rot3 = makeRotatorObjInstance(torusKnotGeometry, 1543450, cx, 0, cy);
+
+
+    // const centerObjs = [
+    //   makeCenterObjInstance(torusKnotGeometry, 0x8844aa, ax, 0, ay),
+    //   makeCenterObjInstance(torusKnotGeometry, 0xaa8844, bx, 0, by),
+    //   makeCenterObjInstance(torusKnotGeometry, 0x8844aa, cx, 0, cy),
+    // ];
 
     // const friendWorld = new THREE.Object3D();
     // scene.add(friendWorld);
@@ -417,131 +619,22 @@ function windowOnLoad() {
     //   objects.push(rotat);
     // }
 
-    
+
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.499;
     controls.target.set(0, 10, 0);
     controls.minDistance = 10.0;
     controls.maxDistance = 800.0;
-
+    controls.listenToKeyEvents(window); // optional
+    controls.screenSpacePanning = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.keyPanSpeed = 50;
+    controls.update();
     // https://threejs.org/docs/#examples/en/controls/OrbitControls.keys
 
-    controls.update();
-
-    // ---- pointer controls stuff----- 
-    pointerControls = new PointerLockControls(camera, document.body);
-    scene.add(pointerControls.getObject());
-
-    const onKeyDown = function (event) {
-      var delta = 1;
-
-      switch (event.code) {
-
-        case 'ArrowUp':
-        case 'KeyW':
-          moveForward = true;
-          // camera.position.z = camera.position.z - delta;
-          camera.updateProjectionMatrix();
-
-
-          break;
-
-        case 'ArrowLeft':
-        case 'KeyA':
-          moveLeft = true;
-          // camera.position.x = camera.position.x - delta;
-          camera.updateProjectionMatrix();
-
-
-          break;
-
-        case 'ArrowDown':
-        case 'KeyS':
-          moveBackward = true;
-          // camera.position.z = camera.position.z + delta;
-          camera.updateProjectionMatrix();
-
-
-          break;
-
-        case 'ArrowRight':
-        case 'KeyD':
-          moveRight = true;
-          // camera.position.x = camera.position.x + delta;
-          camera.updateProjectionMatrix();
-
-
-          break;
-
-        case 'Space':
-          if (canJump === true) velocity.y += 350;
-          canJump = false;
-          break;
-
-      }
-
-    };
-
-    const onKeyUp = function (event) {
-
-      switch (event.code) {
-
-        case 'ArrowUp':
-        case 'KeyW':
-          moveForward = false;
-          break;
-
-        case 'ArrowLeft':
-        case 'KeyA':
-          moveLeft = false;
-          break;
-
-        case 'ArrowDown':
-        case 'KeyS':
-          moveBackward = false;
-          break;
-
-        case 'ArrowRight':
-        case 'KeyD':
-          moveRight = false;
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-
-    //end controls
-
     // const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
- 
-
-
-    function setupObject(obj, id, group, speeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objScale) {
-      // console.log(`setup id ${id}`);
-      obj.scale.multiplyScalar(objScale);
-      obj.traverse((o) => {
-        if (o.isMesh) {
-          o.friendID = id;
-          o.material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, opacity: 0.5, transparent: true, })
-        }
-      });
-
-      obj.friendID = id;
-
-      obj.position.x = positionX;
-      obj.position.y = positionY;
-      obj.position.z = positionZ;
-
-      obj.rotation.x = rotationX;
-      obj.rotation.y = rotationY;
-      obj.rotation.z = rotationZ;
-
-      group.add(obj);
-      speeds.push(Math.random());
-      // console.log('===');
-    }
 
     function makeFriendModal(friendID, id) {
       let container = document.getElementById("container");
@@ -550,8 +643,14 @@ function windowOnLoad() {
       let printFriendNumberDiv = document.createElement("div");
       let friendNumber = document.createTextNode("#" + friendID);    // Create a text node
       let infoTextDiv = document.createElement("div");
+
       let hr = document.createElement("hr");
-      let newInfoText = document.createTextNode(`${friendQuestions[id]}`);    // Create a text node
+      let newInfoText;
+      if(currentLanguage == 'en') {
+        newInfoText = document.createTextNode(`${friendQuestions[id]}`);
+      } else {
+        newInfoText = document.createTextNode(`${friendQuestionsS[id]}`);
+      }
       let printTextDiv = document.createElement("div");
       let printText = document.createTextNode(" ");    // Create a text node
       let formDiv = document.createElement("div");
@@ -565,10 +664,13 @@ function windowOnLoad() {
       friendModalDiv.id = "friendModalDivID" + friendID;
       printTextDiv.id = "printTextDivID" + friendID;
       textInput.id = "textInput" + friendID;
+      infoTextDiv.id = "infoTextDiv" + friendID;
+
 
       printFriendNumberDiv.classList.add("printFriendNumberDiv");
       hr.classList.add("hr");
       infoTextDiv.classList.add("infoTextDiv");
+
       friendModalDiv.classList.add("friendModalDiv");
       printTextDiv.classList.add("printTextDiv");
       formDiv.classList.add("formDiv");
@@ -578,14 +680,20 @@ function windowOnLoad() {
 
       textInput.type = "text";
       textInput.placeholder = "";
+      textInput.maxLength = "300";
+
       submitInput.type = "submit";
-      submitInput.value = "send";
+      submitInput.name = "sendYourBeautifulSelf"
+      if(currentLanguage == 'en') {
+        submitInput.value = "send";
+      } else {
+        submitInput.value = "Enviar";
+      }
 
       printFriendNumberDiv.appendChild(friendNumber);
       printTextDiv.appendChild(printText);
       infoTextDiv.appendChild(newInfoText);
       infoTextDiv.appendChild(hr);
-
       formDiv.appendChild(form);
       form.appendChild(textInput);
       form.appendChild(submitInput);
@@ -624,13 +732,15 @@ function windowOnLoad() {
     // makefriendorbs
     for (let i = 0; i < numberOfFriends; i++) {
 
-      const positionX = Math.random() * 800 - 500;
-      const positionY = Math.random() * 150 - 5; // 100
-      const positionZ = Math.random() * 600 - 400; //-200
+      const goodPosition = mkGoodPosition();
+      const positionX = goodPosition.x;
+      const positionY = goodPosition.y; // 100
+      const positionZ = goodPosition.z; //-200
 
-      const rotationX = Math.random() * 2 * Math.PI;
-      const rotationY = Math.random() * 2 * Math.PI;
-      const rotationZ = Math.random() * 2 * Math.PI;
+      const goodRotation = mkGoodRotation();
+      const rotationX = goodRotation.x;
+      const rotationY = goodRotation.y;
+      const rotationZ = goodRotation.z;
 
       const brightMaterial = new THREE.MeshPhongMaterial({ emissive: 0xFFFF00 });
       let sphereAtHeartOfFriend = new THREE.Mesh(sphereGeometry, brightMaterial);
@@ -639,17 +749,19 @@ function windowOnLoad() {
 
       scene.add(sphereAtHeartOfFriend);
 
-      const gltfLoader = new GLTFLoader();
-      gltfLoader.load('./img/friend3.glb', (gltf) => {
-        let friendShape = gltf.scene;
+      friendShapePromise.then((friendShapeGLTF) => {
+        // buildTwistMaterial(20.0)
+        const friendShape = friendShapeGLTF.clone()
+        friendMap[i] = friendShape;
         setupObject(friendShape, i, boxGroup, boxSpeeds, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, 20);
       });
 
-      // const gltfLoader2 = new GLTFLoader();
-      // gltfLoader2.load('./img/oct.glb', (gltf) => {
-      //   let oct = gltf.scene;
-      //   setupObject(oct, i, boxGroup, boxSpeeds, 10, 10, 10, rotationX, rotationY, rotationZ, 30);
-      // });
+      jellyFishGLTFPromise.then((jelly) => {
+        jellyfish[i] = jelly.clone();
+      });
+
+      flyingBoxes[i] = makeFlyingBoxes(positionX, positionY, positionZ);
+      flyingSpheres[i] = makeFlyingSpheres(positionX, positionY, positionZ);
 
       friendOrbs[i] = sphereAtHeartOfFriend;
 
@@ -664,12 +776,51 @@ function windowOnLoad() {
     raycaster = new THREE.Raycaster();
     document.addEventListener('mousemove', onDocumentMouseMove);
     window.addEventListener('resize', onWindowResize);
+  }
+
+  function buildTwistMaterial(amount) {
+
+    const material = new THREE.MeshNormalMaterial();
+    material.opacity = 0.54;
+    material.transparent = true;
+    material.onBeforeCompile = function (shader) {
+
+      shader.uniforms.time = { value: 0 };
+
+      shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        [
+          `float theta = sin( time + position.y ) / ${amount.toFixed(1)};`,
+          'float c = cos(theta);',
+          'float s = sin(theta);',
+          'mat3 m = mat3(c, 0, s, 0, 1, 0, -s, 0, c);',
+          'vec3 transformed = vec3(position) * m;',
+          'vNormal = vNormal * m;'
+        ].join('\n')
+      );
+
+      material.userData.shader = shader;
+
+    };
+
+    // Make sure WebGLRenderer doesnt reuse a single program
+
+    material.customProgramCacheKey = function () {
+
+      return amount;
+
+    };
+
+    return material;
 
   }
 
   let loadingScreenDiv = document.getElementById("loadingScreenDiv");
   let submitUsername = document.getElementById("submitUsername");
-
+  if(typeof(username) !== 'undefined') {
+    initialUsernameInput.value = username;
+  }
   submitUsername.addEventListener(
     "click",
     function (event) {
@@ -701,6 +852,13 @@ function windowOnLoad() {
     }
   }
 
+  function modifyMesh(object, callback) {
+    object.traverse(function (o) {
+      if (o.isMesh) {
+        callback(o);
+      }
+    })
+  }
 
   function gotData(data) {
     // if we didn't use .val we'd get a bunch of other info
@@ -708,7 +866,7 @@ function windowOnLoad() {
     let keys = Object.keys(msgDatabase);
     for (let i = 0; i < keys.length; i++) {
       let k = keys[i];
-      var friendMsgs = msgDatabase[k].msgs;
+      let friendMsgs = msgDatabase[k].msgs;
 
       if (typeof (friendMsgs) === 'undefined') { //deal with empty friends
         friendMsgs = {};
@@ -757,6 +915,16 @@ function windowOnLoad() {
     msgsRef.child(`${j}/msgs`).limitToLast(1).on('child_added', function (snapshot, prevKey) {
       let msg = snapshot.val();
 
+      const friend = friendMap[j];
+      if (typeof (friend) !== 'undefined') {
+        modifyMesh(friend, (o) => {
+          o.material.opacity = 0.5;
+          // let noOfPosts = msgsRef.child(); https://stackoverflow.com/questions/53815822/most-efficient-way-to-count-children-with-firebase-database
+          // o.scale.multiplyScalar(2); findme 
+        });
+      }
+
+
       // get a reference to the orb
       let orb = friendOrbs[j];
       // add sparkles to the orb spSource, spSpread, spLight, spSize, spQuant, numofSets
@@ -768,7 +936,7 @@ function windowOnLoad() {
         if (msg.username == username) {
           console.log("don't display sparkles");
         } else {
-          console.log(j, snapshot.val());
+          // console.log(j, snapshot.val());
         }
       } else {
         // console.log(`${j}: not a new item`);
@@ -794,56 +962,24 @@ function windowOnLoad() {
   function animate() {
     requestAnimationFrame(animate);
     render();
-
-    // ---- pointer controls stuff----- 
-    // const time = performance.now();
-
-
-    // raycaster.ray.origin.copy(pointerControls.getObject().position);
-    // raycaster.ray.origin.y -= 10;
-
-    // const intersections = raycaster.intersectObjects(objects);
-
-    // const onObject = intersections.length > 0;
-
-    // const delta = (time - prevTime) / 1000;
-
-    // velocity.x -= velocity.x * 10.0 * delta;
-    // velocity.z -= velocity.z * 10.0 * delta;
-
-    // velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
-    // direction.z = Number(moveForward) - Number(moveBackward);
-    // direction.x = Number(moveRight) - Number(moveLeft);
-    // direction.normalize(); // this ensures consistent movements in all directions
-
-    // if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-    // if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
-
-    // if (onObject === true) {
-
-    //   velocity.y = Math.max(0, velocity.y);
-    //   canJump = true;
-
-    // }
-
-    // pointerControls.moveRight(- velocity.x * delta);
-    // pointerControls.moveForward(- velocity.z * delta);
-
-    // pointerControls.getObject().position.y += (velocity.y * delta); // new behavior
-
-    // if (pointerControls.getObject().position.y < 10) {
-
-    //   velocity.y = 0;
-    //   pointerControls.getObject().position.y = 10;
-
-    //   canJump = true;
-
-    // }
-
+    controls.update();
   }
 
+
+
   function render() {
+
+    scene.traverse(function (child) {
+      if (child.isMesh) {
+        const shader = child.material.userData.shader;
+        if (shader) {
+          shader.uniforms.time.value = performance.now() / 1000;
+        }
+      }
+    });
+    // example of updating sky in render
+    // sky.material.uniforms['turbidity'].value = 0;
+
     const time = performance.now() * 0.0001;
 
     centerObj.position.y = Math.sin(time) * 20 + 5;
@@ -867,7 +1003,7 @@ function windowOnLoad() {
     centerObjects.forEach((obj) => {
       obj.rotation.y = time;
       centerObj.rotation.x = time * 0.5;
-    centerObj.rotation.z = time * 0.51;
+      centerObj.rotation.z = time * 0.51;
     });
 
 
@@ -879,11 +1015,10 @@ function windowOnLoad() {
     //HOVER stuff
     // find intersections
     raycaster.setFromCamera(mouse, camera);
-    const clickableThings = boxGroup.children.concat(centerObjects);
-    //console.log(clickableThings);
-    const intersects = raycaster.intersectObjects(clickableThings, true);
+    const hoverableThings = boxGroup.children.concat(centerObjects);
+    const intersects = raycaster.intersectObjects(hoverableThings, true);
     if (intersects.length > 0) {
-      console.log("gotcha");
+      // console.log("gotcha");
       if (INTERSECTED != intersects[0].object) {
         if (INTERSECTED) {
           INTERSECTED.traverse((o) => {
@@ -893,21 +1028,17 @@ function windowOnLoad() {
           });
         }
         INTERSECTED = intersects[0].object;
-        INTERSECTED.traverse((o) => {
-          if (o.isMesh) {
-            o.currentHex = o.material.emissive.getHex();
-            o.material.emissive.setHex(0xff0000);
-          }
+
+        modifyMesh(INTERSECTED, (o) => {
+          o.currentHex = o.material.emissive.getHex();
+          o.material.emissive.setHex(0xff0000);
         });
       }
     } else {
       if (INTERSECTED) {
-        INTERSECTED.traverse((o) => {
-          if (o.isMesh) {
-            o.material.emissive.setHex(o.currentHex);
-          }
+        modifyMesh(INTERSECTED, (o) => {
+          o.material.emissive.setHex(o.currentHex);
         });
-
       }
       INTERSECTED = null;
     }
@@ -943,14 +1074,63 @@ function windowOnLoad() {
 
   // close modals when clicking outside them - this works but not as expected
   function closeAllModals(event) {
-    var modal = document.getElementsByClassName('friendModalDiv');
+    let modal = document.getElementsByClassName('friendModalDiv');
     if (event.target.classList.contains('friendModalDiv')) {
     } else {
-      for (var i = 0; i < modal.length; i++) {
+      for (let i = 0; i < modal.length; i++) {
         let currModal = modal[i];
         currModal.classList.remove("openFriendModalDiv");
       }
     }
+  }
+
+  const fadeAmount = 1 / numberOfFriends;
+
+  function fadeFlyingThingsFromScene(thingsOnScreen, counter) {
+    if (thingsOnScreen.length === 0) {
+      // do nothing / return
+    } else {
+
+      let minimumOpacity = 1.0;
+
+      thingsOnScreen.forEach((thing) => {
+        modifyMesh(thing, (o) => {
+          const opacity = o.material.opacity;
+          minimumOpacity = Math.min(opacity, minimumOpacity);
+          if (opacity > fadeAmount) {
+            o.material.opacity = opacity - fadeAmount;
+          }
+        });
+      });
+
+
+      // fadeAmount = 0.025
+      if (minimumOpacity < fadeAmount) {
+        for(let i = 0; i < 1; i++) {
+          const thingOnScreen = thingsOnScreen.pop();
+          if(typeof(thingOnScreen) !== 'undefined') {
+            boxGroup.remove(thingOnScreen);
+          }
+        }
+      }
+
+      setTimeout(fadeFlyingThingsFromScene, 300, thingsOnScreen);
+    }
+  }
+
+  function makeRotatingCreatures(flyingThings, flyingThingsOnScreen) {
+    flyingThings.forEach(function (box) {
+      flyingThingsOnScreen.push(box);
+      let setup = box.iHaveBeenSetup || false;
+      if (setup == true) {
+        boxGroup.add(box);
+      } else {
+        const rotation = mkGoodRotation();
+        const position = mkGoodPosition();
+        setupObject(box, 100, boxGroup, boxSpeeds, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, 30);
+        box.iHaveBeenSetup = true;
+      }
+    });
   }
 
   function clickOrTouchFriendOrbs(event) {
@@ -965,12 +1145,51 @@ function windowOnLoad() {
 
     }
 
+    let intersectsRot1 = raycaster.intersectObjects([rot1], true);
+    if (intersectsRot1.length > 0) {
+      rot1Sound.play();
+      rot1Sound.volume = 0.08;
+      jellyfish.forEach((jelly) => {
+        modifyMesh(jelly, (mesh) => {
+          mesh.material.opacity = 0.5;
+        })
+      })
+      makeRotatingCreatures(jellyfish, jellyfishOnScreen);
+      fadeFlyingThingsFromScene(jellyfishOnScreen);
+      // skyBright = 0;
+    }
+    let intersectsRot2 = raycaster.intersectObjects([rot2], true);
+    if (intersectsRot2.length > 0) {
+      rot2Sound.play();
+      rot2Sound.volume = 0.08;
+      flyingBoxes.forEach((jelly) => {
+        modifyMesh(jelly, (mesh) => {
+          mesh.material.opacity = 0.5;
+        })
+      })
+      makeRotatingCreatures(flyingBoxes, flyingBoxesOnScreen);
+      fadeFlyingThingsFromScene(flyingBoxesOnScreen);
+    }
+    let intersectsRot3 = raycaster.intersectObjects([rot3], true);
+    if (intersectsRot3.length > 0) {
+      rot3Sound.play();
+      rot3Sound.volume = 0.08;
+      flyingSpheres.forEach((jelly) => {
+        modifyMesh(jelly, (mesh) => {
+          mesh.material.opacity = 0.5;
+        })
+      })
+      makeRotatingCreatures(flyingSpheres, flyingSpheresOnScreen);
+      fadeFlyingThingsFromScene(flyingSpheresOnScreen);
+    }
+
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
+ 
     if (intersectsFriend.length > 0) { //you know you have an intersection
-      friendSound.volume = 0.09;
+      // friendSound.volume = 0.09;
       friendSound.play();
       document.getElementById("settingsDropdown").classList.remove("showDropdown");
-
+      document.getElementById("slidein").classList.remove("show");
       let currFriendID = intersectsFriend[0].object.friendID; //grab the id of the friend
 
       let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
@@ -978,15 +1197,16 @@ function windowOnLoad() {
       currFriendModalDiv.classList.add("openFriendModalDiv")
       modalOpen = true;
 
-      let msg = takeModalIDReturnMsg(currFriendID);
-      let currTextDiv = document.getElementById("textInputID" + currFriendID);
+      // let msg = takeModalIDReturnMsg(currFriendID);
+      // let currTextDiv = document.getElementById("textInputID" + currFriendID);
 
       for (let i = 0; i < intersectsFriend.length; i++) {
         let currObj = intersectsFriend[i].object;
-        currObj.traverse((o) => {
-          if (o.isMesh) {
+        currObj.parent.children.forEach((obj) => {
+          modifyMesh(obj, (o) => {
             o.material.emissive.setHex(3135135);
-          }
+            o.material.opacity = 0.2;
+          })
         });
       }
       let currentOrb = friendOrbs[currFriendID];
@@ -997,97 +1217,40 @@ function windowOnLoad() {
 
   let currBtn;
 
-  // let video = document.getElementById("video");
-  // let source = document.createElement("source");
-  // video.appendChild(source);
-
-  // const wrapper = document.getElementById("wrapper");
-  // const wrapperBtn = document.getElementById("wrapperBtn");
-  // const wrapperToggleDiv = document.getElementById("wrapperToggleDiv");
-
-  // const btn1 = document.getElementById("btn1");
-  // const btn2 = document.getElementById("btn2");
-  // const btn3 = document.getElementById("btn3");
-  // const btn4 = document.getElementById("btn4");
-  // const btn5 = document.getElementById("btn5");
-  // const btn6 = document.getElementById("btn6");
-
   document.addEventListener(
     "click",
     function (event) {
       if (toggleOpen == false) {
-        // console.log("toggle is closed - return");
-        // return;
       } else {
-        // console.log("toggle is open");
         if (event.target.classList.contains(wrapper)) { // || event.target.contains( wrapper )
           console.log("clicking on wrapper or button - return");
-          // return;
         } else {
           console.log("clicking on world - run code");
-
-          // if (wrapper.classList.contains("openWrapper")) {
-          //   wrapper.classList.remove("openWrapper");
-          //   wrapperBtn.classList.add("wrapperBtnClosing");
-          //   toggleOpen = false;
-          // }
         }
       }
     },
   );
 
-  // wrapperBtn.addEventListener(
-  //   "click",
-  //   function (event) {
-  //     if (toggleOpen == false) {
-  //       // console.log("toggle is opening");
-  //       if (wrapperBtn.classList.contains('wrapperBtnClosed')) {
-  //         wrapperBtn.classList.remove("wrapperBtnClosed");
-  //       }
-  //       if (wrapperBtn.classList.contains('wrapperBtnClosing')) {
-  //         wrapperBtn.classList.remove("wrapperBtnClosing");
-  //       }
-  //       wrapperBtn.classList.add("wrapperBtnOpening");
-  //       wrapper.classList.add("openWrapper");
-  //       toggleOpen = true;
-  //       // console.log(`toggle should be open ${toggleOpen}`);
-  //     } else {
-  //       console.log("toggle is closing");
-  //       if (wrapperBtn.classList.contains('wrapperBtnOpening')) {
-  //         wrapperBtn.classList.remove("wrapperBtnOpening");
-  //       }
-  //       wrapperBtn.classList.add("wrapperBtnClosing");
-  //       wrapper.classList.remove("openWrapper");
-  //       toggleOpen = false;
-  //       // console.log(`toggle should be closed ${toggleOpen}`);
-
-
-  //     }
-  //     // toggleOpen != toggleOpen
-  //     // console.log(toggleOpen);
-  //     // toggleOpen
-  //   },
-  // );
-
-  // new toggle info stuff
-
-  // settings menu stuff
-
   let settingsDropdown = document.getElementById("settingsDropdown");
   let toggleChangeNameInput = document.getElementById("toggleChangeNameInput");
   let settingsBtn = document.getElementById("settingsBtn");
-  let changeNameInput = document.getElementById("changeNameInput");
+  // let changeNameInput = document.getElementById("changeNameInput");
   let changeNameSlider = document.getElementById("changeNameSlider");
   let changeNameForm = document.getElementById("changeNameForm");
+  // let changeNameFormS = document.getElementById("changeNameFormS");
+
   // let toggleSoundCheckbox = document.getElementById("toggleSoundCheckbox");
 
   function settingsMenuOpen(event) {
-    // document.getElementById("wrapperBtn").classList.add("wrapperBtnOpening");
     settingsDropdown.classList.toggle("showDropdown");
     document.getElementsByClassName('slide-in')[0].classList.toggle('show');
     closeAllModals(event);
     // console.log("closeem");
-    toggleChangeNameInput.value = `Change name, ${username}?`;
+    if (currentLanguage == 'en') {
+      toggleChangeNameInput.value = `Change name, ${username}?`;
+    } else {
+      toggleChangeNameInput.value = `¿Quieres cambiar tu nombre, ${username}?`;
+    }
   }
 
   settingsBtn.addEventListener("click", settingsMenuOpen);
@@ -1106,34 +1269,48 @@ function windowOnLoad() {
 
   toggleChangeNameInput.onclick = expand;
 
+
   changeNameInput.onblur = function () {
     setTimeout(collapse, 100);
   }
 
-  changeNameForm.onsubmit = function (e) {
+  document.getElementById("okButton").onclick = function changeContent(e) {
     e.preventDefault();
-    console.log(changeNameInput.value);
+    // console.log(changeNameInput.value);
     localStorage.setItem('name', changeNameInput.value);
+    // console.log(changeNameInput.value);
     username = nameDisplayCheck();
-    document.getElementById("toggleChangeNameInput").value = `Change name, ${username}?`;
+
+    if (currentLanguage == 'en') {
+      toggleChangeNameInput.value = `Change name, ${username}?`;
+    } else {
+      toggleChangeNameInput.value = `¿Quieres cambiar tu nombre, ${username}?`;
+
+    }
     collapse();
   }
 
   // toggle sound
   let toggleSoundCheckbox = document.querySelector("input[name=toggleSoundCheckbox]");
-
   toggleSoundCheckbox.addEventListener('change', function () {
     if (this.checked) {
       console.log("Checkbox is checked..");
       backgroundSound.volume = 0.08;
       seaSound.volume = 0.08;
-      friendSound.volume = 0.04;
-
+      friendSound.volume = 0.08;
+      backgroundSound.play();
+      backgroundSound.loop = true;
+      seaSound.play();
+      seaSound.loop = true;
+      soundMuted = false;
     } else {
       console.log("Checkbox is not checked..");
       backgroundSound.volume = 0;
       seaSound.volume = 0;
       friendSound.volume = 0;
+      soundMuted = true;
+      pauseSounds();
+
     }
 
     // function muteSounds() {
@@ -1147,81 +1324,8 @@ function windowOnLoad() {
     // muteSounds();
   });
 
-  // new toggle info stuff end
-
-  // btn1.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn1);
-  //     // source.setAttribute("src", "img/v1.mp4");
-  //     // video.load();
-  //     playSong(song1);
-  //   },
-  //   false
-  // );
-  // btn2.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn2);
-  //     // source.setAttribute("src", "img/v2.mp4");
-  //     // video.load();
-  //     playSong(song2);
-  //   },
-  //   false
-  // );
-  // btn3.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn3);
-  //     // source.setAttribute("src", "img/v3.mp4");
-  //     // video.load();
-  //     playSong(song3);
-  //   },
-  //   false
-  // );
-  // btn4.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn4);
-  //     // source.setAttribute("src", "img/v4.mp4");
-  //     // video.load();
-  //     playSong(song4);
-  //   },
-  //   false
-  // );
-  // btn5.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn5);
-  //     // source.setAttribute("src", "img/v5.mp4");
-  //     // video.load();
-  //     playSong(song5);
-  //   },
-  //   false
-  // );
-  // btn6.addEventListener(
-  //   "click",
-  //   function () {
-  //     updateBtnStyle(btn6);
-  //     // source.setAttribute("src", "img/v6.mp4");
-  //     // video.load();
-  //     playSong(song6);
-  //   },
-  //   false
-  // );
-
-  // function updateBtnStyle(clickedBtn) {
-  //   // remove the class from the old button (which is the "current" button)
-  //   if (currBtn !== undefined) {
-  //     currBtn.classList.remove("currBtn");
-  //   }
-  //   currBtn = clickedBtn; // update the "current" button to the most recently clicked button
-  //   clickedBtn.classList.add("currBtn");
-  // }
-
-
-
   document.body.onload = nameDisplayCheck;
+
 }
 
 window.addEventListener("load", windowOnLoad);
