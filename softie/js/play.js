@@ -54,13 +54,14 @@ function renderLoadingPage(lang) {
 renderLoadingPage(currentLanguage);
 
 let firebaseConfig = {
-  apiKey: "AIzaSyDiCOSmTc5a0U0m4jY4D8s7ZXZ6ab5NTWo",
-  authDomain: "sanctuary-76c32.firebaseapp.com",
-  projectId: "sanctuary-76c32",
-  storageBucket: "sanctuary-76c32.appspot.com",
-  messagingSenderId: "656056199487",
-  appId: "1:656056199487:web:278a2511cfb83f7798cb8a",
-  measurementId: "G-TDGFN204SM"
+  apiKey: "AIzaSyBXolNIyPOHsyrIT65npifDL3M9tLRNKwI",
+  authDomain: "santuary-en.firebaseapp.com",
+  databaseURL: "https://santuary-en-default-rtdb.firebaseio.com",
+  projectId: "santuary-en",
+  storageBucket: "santuary-en.appspot.com",
+  messagingSenderId: "185035563851",
+  appId: "1:185035563851:web:18909aae86cb29fa0c7ece",
+  measurementId: "G-QZ3BR4E11G"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
