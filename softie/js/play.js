@@ -30,7 +30,7 @@ function renderLoadingPage(lang) {
   if (currentLanguage == 'es') {
     languageSwitchLink.innerHTML = "english";
     motto.innerHTML = "Un espacio tranquilo de conexión";
-    initialUsernameInput.placeholder = "Tu nombre o nombre de usuario";
+    initialUsernameInput.placeholder = "Tu nombre";
     submitUsernameValue.value = "Comenzar";
     changeNameInput.placeholder = "Nuevo nombre";
     soundLabel.innerHTML = "Sonido";
@@ -54,15 +54,25 @@ function renderLoadingPage(lang) {
 renderLoadingPage(currentLanguage);
 
 let firebaseConfig = {
-  apiKey: "AIzaSyBXolNIyPOHsyrIT65npifDL3M9tLRNKwI",
-  authDomain: "santuary-en.firebaseapp.com",
-  databaseURL: "https://santuary-en-default-rtdb.firebaseio.com",
-  projectId: "santuary-en",
-  storageBucket: "santuary-en.appspot.com",
-  messagingSenderId: "185035563851",
-  appId: "1:185035563851:web:18909aae86cb29fa0c7ece",
-  measurementId: "G-QZ3BR4E11G"
+  apiKey: "AIzaSyDiCOSmTc5a0U0m4jY4D8s7ZXZ6ab5NTWo",
+  authDomain: "sanctuary-76c32.firebaseapp.com",
+  projectId: "sanctuary-76c32",
+  storageBucket: "sanctuary-76c32.appspot.com",
+  messagingSenderId: "656056199487",
+  appId: "1:656056199487:web:278a2511cfb83f7798cb8a",
+  measurementId: "G-TDGFN204SM"
 };
+
+// let firebaseConfig = {
+//   apiKey: "AIzaSyBXolNIyPOHsyrIT65npifDL3M9tLRNKwI",
+//   authDomain: "santuary-en.firebaseapp.com",
+//   databaseURL: "https://santuary-en-default-rtdb.firebaseio.com",
+//   projectId: "santuary-en",
+//   storageBucket: "santuary-en.appspot.com",
+//   messagingSenderId: "185035563851",
+//   appId: "1:185035563851:web:18909aae86cb29fa0c7ece",
+//   measurementId: "G-QZ3BR4E11G"
+// };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
@@ -78,7 +88,7 @@ let newText;
 let INTERSECTED;
 let theta = 0;
 let currFriendModalDiv = undefined;
-let modalOpen = false;
+let openModal;
 const mouse = new THREE.Vector2();
 let boxGroup;
 let boxSpeeds = [];
@@ -107,22 +117,26 @@ const vertex = new THREE.Vector3();
 const color = new THREE.Color();
 
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioContext = new AudioContext();
 const friendSound = new Audio("audio/friend.mp3");
-friendSound.volume = 0.09;
+friendSound.volume = 0.02;
+const friendSound1 = new Audio("audio/friend1.mp3");
+friendSound1.volume = 0.02;
+const friendSound2 = new Audio("audio/friend2.mp3");
+friendSound2.volume = 0.02;
 const seaSound = new Audio("audio/sea.mp3");
 const backgroundSound = new Audio("audio/background.mp3");
 const rot1Sound = new Audio("audio/rot1.mp3");
 const rot2Sound = new Audio("audio/rot2.mp3");
 const rot3Sound = new Audio("audio/rot3.mp3");
-let sounds = [friendSound, seaSound, backgroundSound, rot1Sound, rot2Sound, rot3Sound];
-
+const emmanuelle = new Audio("audio/emmanuelle.mp3");
+let friendSounds = [friendSound, friendSound1, friendSound2];
+let ambientMusicSounds = [backgroundSound, emmanuelle, rot1Sound, rot2Sound, rot3Sound]
+let sounds = [friendSound, friendSound1, friendSound2, seaSound, backgroundSound, rot1Sound, rot2Sound, rot3Sound, emmanuelle];
 
 let jellyfish = [];
 let jellyfishOnScreen = [];
-let flyingBoxes = [];
-let flyingBoxesOnScreen = [];
+let flyingCrullers = [];
+let flyingCrullersOnScreen = [];
 let flyingSpheres = [];
 let flyingSpheresOnScreen = [];
 
@@ -134,6 +148,20 @@ let username = localStorage.getItem('name') || undefined;
 
 let friendOrbs = {};
 let friendMap = {};
+
+let numberOfMediQuestions = 3;
+let mediQuestionsS = {
+  0: "Detente un momento, cierra tus ojos y haz 3 inhalaciones lentas y profundas.",
+  1: "Elonga tus músculos. Estira tus manos, tus pies, tus piernas, tus brazos, tu cara, tu cuello, tu espalda, y sumérgete en ti mismo.",
+  2: "¿Qué necesito ahora mismo?"
+}
+
+let mediQuestions = {
+  0: "Close your eyes and take 3 slow deep breaths.",
+  1: "Stretch your muscles. Stretch your hands, your feet, your legs, your arms, your face, your neck, your back, and sink into your own softness.",
+  2: "What do you need right now? Can you give it to yourself, even in the smallest way?"
+}
+
 let friendQuestionsS = {
   0: "¿Cuál sería un placer sencillo para ti?",
   1: "¿Qué significa eso?",
@@ -241,9 +269,27 @@ function updateModalLanguages() {
   }
 }
 
+function updateMediModalText(rotID) {
+  const mediTextID = "mediTextDiv" + rotID;
+  const mediTextDiv = document.getElementById(mediTextID);
+  let newMediText;
+  if(currentLanguage == 'en') {
+    newMediText = document.createTextNode(`${mediQuestions[rotID]}`);
+  } else {
+    newMediText = document.createTextNode(`${mediQuestionsS[rotID]}`);
+  }
+  mediTextDiv.innerHTML = '';
+  mediTextDiv.appendChild(newMediText);
+}
+
+function updateMediModalLanguages() {
+  for(let i = 0; i < numberOfMediQuestions; i++) {
+    updateMediModalText(i);
+  }
+}
+
 function handleLanguageUpdate(event) {
   event.preventDefault();
-  console.log(`currentLanguage = ${currentLanguage}`);
   // update the language
   if (currentLanguage == 'en') {
     currentLanguage = 'es';
@@ -255,9 +301,79 @@ function handleLanguageUpdate(event) {
 
   renderLoadingPage(currentLanguage);
   updateModalLanguages();
+  updateMediModalLanguages();
 }
 
 languageSwitchLink.addEventListener('click', handleLanguageUpdate)
+
+
+function playFriendSound() {
+  let thisFriendSound = friendSounds[Math.floor(Math.random() * friendSounds.length)];
+  thisFriendSound = thisFriendSound.cloneNode(); // so it can play twice quickly
+  thisFriendSound.volume = 0.03;
+  thisFriendSound.play();
+}
+
+function playBackgroundMusic(currSound) {
+  currSound.play();
+}
+
+function pauseAmbientMusicSounds(){
+  for (let i = 0; i < ambientMusicSounds.length; i++) {
+    ambientMusicSounds[i].pause();
+    ambientMusicSounds[i].volume = 0;
+
+  }
+}
+
+function pauseAllSounds(){
+  for (let i = 0; i < sounds.length; i++) {
+    sounds[i].pause();
+  }
+}
+
+function playSpecialSound(specialSound, length) {
+  pauseAmbientMusicSounds();
+  backgroundSound.volume = 0;
+  specialSound.volume = 0.08;
+  specialSound.play();
+  setTimeout(function(){ 
+  backgroundSound.volume = 0.09;
+  backgroundSound.play();
+  }, length);
+}
+
+// toggle sound
+let toggleSoundCheckbox = document.querySelector("input[name=toggleSoundCheckbox]");
+toggleSoundCheckbox.addEventListener('change', function () {
+  if (this.checked) {
+    console.log("Checkbox is checked..");
+    backgroundSound.volume = 0.09;
+    seaSound.volume = 0.08;
+    backgroundSound.play();
+    backgroundSound.loop = true;
+    seaSound.play();
+    seaSound.loop = true;
+    soundMuted = false;
+  } else {
+    console.log("Checkbox is not checked..");
+    backgroundSound.volume = 0;
+    seaSound.volume = 0;
+    friendSound.volume = 0;
+    soundMuted = true;
+    pauseAllSounds();
+  }
+});
+
+function fadeMeOut(me, classToRemove){
+  me.classList.add("fadeMeOut");
+  setTimeout(function(){ 
+    me.classList.remove(classToRemove);
+   }, 1200);
+   setTimeout(function(){ 
+    me.classList.remove("fadeMeOut");
+   }, 1600);
+}
 
 const initialFriendYPositions = [];
 for (let i = 0; i < numberOfFriends * 10; i++) {
@@ -286,7 +402,39 @@ function windowOnLoad() {
   const jellyFishGLTFPromise = new Promise((resolve, reject) => {
     const gltfLoader2 = new GLTFLoader();
     gltfLoader2.load('./img/oct.glb', (gltf) => {
-      resolve(gltf.scene);
+
+      // console.log('load');
+      const jelly = gltf.scene;
+      // console.log(jelly);
+
+      // console.log('===== before =====');
+      jelly.traverse((o) => {
+        if(o.isMesh) {
+          // console.log(o.material); failed log 
+          o.material = buildTwistMaterial(0.02);
+          o.material.needsUpdate = true;
+          o.updateMatrix();
+          // console.log('updated');
+          // console.log(o.material);
+        }
+      });
+
+      // console.log('====== after =====');
+      jelly.traverse((o) => {
+        if(o.isMesh) {
+          // console.log(o.material);
+        }
+      });
+
+
+      // let mesh = new THREE.Mesh(geometry, buildTwistMaterial(2.0));
+      // scene.add(mesh);
+      // geometry.scene.add(mesh);
+
+
+      jelly.scale.multiplyScalar(1.2);
+      
+      resolve(jelly);
     });
   });
 
@@ -297,42 +445,28 @@ function windowOnLoad() {
     });
   });
 
-  const boxGeometry = new THREE.TorusKnotGeometry(.8, .1, 300, 7, 5, 7);
-
-  
-  function makeFlyingBoxes(x, y, z) {
-    let boxGeometryInstance = new THREE.Mesh(boxGeometry, buildTwistMaterial(0.5));
-    boxGeometryInstance.position.x = x;
-    boxGeometryInstance.position.y = y;
-    boxGeometryInstance.position.z = z;
+  const crullerGeometry = new THREE.TorusKnotGeometry(.8, .1, 300, 7, 5, 7);
+  function makeFlyingCrullers(x, y, z) {
+    let cruller = new THREE.Mesh(crullerGeometry, buildTwistMaterial(0.5));
+    cruller.position.x = x;
+    cruller.position.y = y;
+    cruller.position.z = z;
     // centerWorldContainer.add(boxGeometryInstance); //rotate
-    return boxGeometryInstance;
+    return cruller;
   }
 
-  const nsphereGeometry = new THREE.TorusGeometry(18, .8, 21, 100, 6.3);
-  function makeFlyingSpheres(x, y, z) {
-    let sphereGeometryInstance = new THREE.Mesh(nsphereGeometry, buildTwistMaterial(0.2));
-    sphereGeometryInstance.position.x = x;
-    sphereGeometryInstance.position.y = y;
-    sphereGeometryInstance.position.z = z;
+  const giantLoopGeometry = new THREE.TorusGeometry(18, .8, 21, 100, 6.3);
+  function makeGiantLoops(x, y, z) {
+    let giantLoop = new THREE.Mesh(giantLoopGeometry, buildTwistMaterial(0.2));
+    giantLoop.position.x = x;
+    giantLoop.position.y = y;
+    giantLoop.position.z = z;
     // centerWorldContainer.add(boxGeometryInstance); //rotate
-    return sphereGeometryInstance;
+    return giantLoop;
   }
 
   init();
   animate();
-
-  function pauseSounds(){
-    for (let i = 0; i < sounds.length; i++) {
-      sounds[i].pause();
-    }
-  }
-
-  function playSound(sound){
-    // for (let i = 0; i < sounds.length; i++) {
-    //   sounds[i].pause();
-    // }
-  }
 
   function makeSparkles(spSource, spSpread, spLight, spSize, spQuant, numOfSets) {
     let setsOfSparks = [];
@@ -386,7 +520,7 @@ function windowOnLoad() {
       } else {
         let sparklesToFade = setsOfSparks.pop();
         spSource.remove(sparklesToFade);
-        setTimeout(removeSparks, 50);
+        setTimeout(removeSparks, 500);
       }
     }
 
@@ -579,8 +713,6 @@ function windowOnLoad() {
     rot1 = makeRotatorObjInstance(torusKnotGeometry, 6823151, ax, 0, ay);
     rot2 = makeRotatorObjInstance(torusKnotGeometry, 1514735, bx, 0, by);
     rot3 = makeRotatorObjInstance(torusKnotGeometry, 1543450, cx, 0, cy);
-
-
     // const centerObjs = [
     //   makeCenterObjInstance(torusKnotGeometry, 0x8844aa, ax, 0, ay),
     //   makeCenterObjInstance(torusKnotGeometry, 0xaa8844, bx, 0, by),
@@ -633,9 +765,50 @@ function windowOnLoad() {
     controls.dampingFactor = 0.05;
     controls.keyPanSpeed = 50;
     controls.update();
+    // controls.keys = {
+    //   LEFT: 'ArrowLeft', //left arrow
+    //   UP: 'ArrowUp', // up arrow
+    //   RIGHT: 'ArrowRight', // right arrow
+    //   BOTTOM: 'ArrowDown' // down arrow
+    // }
     // https://threejs.org/docs/#examples/en/controls/OrbitControls.keys
 
     // const geometry = new THREE.TorusKnotGeometry(10, 6, 100, 14, 4, 2);
+    function makeMediModal(rotID, id) {
+      // medQuestionsS
+      let container = document.getElementById("container");
+      let mediModalDiv = document.createElement("div");
+      let mediTextDiv = document.createElement("div");
+
+      let newMediText;
+      if(currentLanguage == 'en') {
+        newMediText = document.createTextNode(`${mediQuestions[id]}`);
+      } else {
+        newMediText = document.createTextNode(`${mediQuestionsS[id]}`);
+      }
+      let closeModalBtnDiv = document.createElement("div");
+      let closeModalBtn = document.createElement("div");
+
+      mediModalDiv.id = "mediModalDivID" + rotID;
+      mediTextDiv.id = "mediTextDiv" + rotID;
+
+      mediTextDiv.classList.add("infoTextDiv");
+      mediModalDiv.classList.add("mediModalDiv");
+      closeModalBtnDiv.classList.add("closeModalBtnDiv");
+      closeModalBtn.classList.add("closeModalBtn");
+
+      mediTextDiv.appendChild(newMediText);
+      closeModalBtnDiv.appendChild(closeModalBtn);
+
+      container.insertBefore(mediModalDiv, container.childNodes[0]);
+      mediModalDiv.insertBefore(mediTextDiv, mediModalDiv.childNodes[0]);
+      mediModalDiv.insertBefore(closeModalBtnDiv, mediModalDiv.childNodes[0]);
+
+      closeModalBtn.addEventListener("click", function (event) {
+        fadeMeOut(mediModalDiv, "openMediModalDiv");
+        let currModalID = undefined;
+      })
+    }
 
     function makeFriendModal(friendID, id) {
       let container = document.getElementById("container");
@@ -658,8 +831,8 @@ function windowOnLoad() {
       let form = document.createElement("form");
       let textInput = document.createElement("input");
       let submitInput = document.createElement("input");
-      let closeModalBtnDiv = document.createElement("div")
-      let closeModalBtn = document.createElement("div")
+      let closeModalBtnDiv = document.createElement("div");
+      let closeModalBtn = document.createElement("div");
 
 
       friendModalDiv.id = "friendModalDivID" + friendID;
@@ -682,6 +855,12 @@ function windowOnLoad() {
       textInput.type = "text";
       textInput.placeholder = "";
       textInput.maxLength = "300";
+      textInput.addEventListener('keydown', function(event) {
+        event.stopPropagation();
+      });
+      textInput.addEventListener('keyup', function(event) {
+        event.stopPropagation();
+      });
 
       submitInput.type = "submit";
       submitInput.name = "sendYourBeautifulSelf"
@@ -725,9 +904,14 @@ function windowOnLoad() {
       });
 
       closeModalBtn.addEventListener("click", function (event) {
-        friendModalDiv.classList.remove("openFriendModalDiv");
+        fadeMeOut(friendModalDiv, "openFriendModalDiv");
+        let currModalID = undefined;
       })
 
+    }
+
+    for (let i = 0; i < numberOfMediQuestions; i++) {
+      makeMediModal(i, i);
     }
 
     // makefriendorbs
@@ -761,8 +945,8 @@ function windowOnLoad() {
         jellyfish[i] = jelly.clone();
       });
 
-      flyingBoxes[i] = makeFlyingBoxes(positionX, positionY, positionZ);
-      flyingSpheres[i] = makeFlyingSpheres(positionX, positionY, positionZ);
+      flyingCrullers[i] = makeFlyingCrullers(positionX, positionY, positionZ);
+      flyingSpheres[i] = makeGiantLoops(positionX, positionY, positionZ);
 
       friendOrbs[i] = sphereAtHeartOfFriend;
 
@@ -839,7 +1023,7 @@ function windowOnLoad() {
       seaSound.volume = 0.08;
       seaSound.loop = true;
       backgroundSound.play();
-      backgroundSound.volume = 0.08;
+      backgroundSound.volume = 0.09;
       backgroundSound.loop = true;
       setTimeout(function () { loadingScreenDiv.style.display = "none"; }, 600);
     },
@@ -921,7 +1105,7 @@ function windowOnLoad() {
         modifyMesh(friend, (o) => {
           o.material.opacity = 0.5;
           // let noOfPosts = msgsRef.child(); https://stackoverflow.com/questions/53815822/most-efficient-way-to-count-children-with-firebase-database
-          // o.scale.multiplyScalar(2); findme 
+          // o.scale.multiplyScalar(2);  
         });
       }
 
@@ -1076,14 +1260,23 @@ function windowOnLoad() {
   // close modals when clicking outside them - this works but not as expected
   function closeAllModals(event) {
     let modal = document.getElementsByClassName('friendModalDiv');
-    if (event.target.classList.contains('friendModalDiv')) {
+    let medimodal = document.getElementsByClassName('mediModalDiv');
+    if (event.target.classList.contains('friendModalDiv') || event.target.classList.contains('mediModalDiv')) {
+      // do nothing
     } else {
       for (let i = 0; i < modal.length; i++) {
         let currModal = modal[i];
+        // fadeMeOut(currModal, "openFriendModalDiv");
         currModal.classList.remove("openFriendModalDiv");
+      }
+      for (let i = 0; i < medimodal.length; i++) {
+        let currModal = medimodal[i];
+        // fadeMeOut(currModal, "openMediModalDiv");
+        currModal.classList.remove("openMediModalDiv");
       }
     }
   }
+
 
   const fadeAmount = 1 / numberOfFriends;
 
@@ -1115,7 +1308,7 @@ function windowOnLoad() {
         }
       }
 
-      setTimeout(fadeFlyingThingsFromScene, 300, thingsOnScreen);
+      setTimeout(fadeFlyingThingsFromScene, 350, thingsOnScreen);
     }
   }
 
@@ -1136,83 +1329,99 @@ function windowOnLoad() {
 
   function clickOrTouchFriendOrbs(event) {
     raycaster.setFromCamera(mouse, camera);
-
     closeAllModals(event);
-
     let intersectsCenterObj = raycaster.intersectObjects([centerObj], true);
     if (intersectsCenterObj.length > 0) {
+      playSpecialSound(emmanuelle, 240000);
+      // let currModalID = "friendModalDivID0"; 
+      // currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+      // currFriendModalDiv.classList.add("openMediModalDiv")
       // spSource, spSpread, spLight, spSize, spQuant, numofsets
-      makeSparkles(centerObj, 800, .2, 9, 50, 50);
-
+      makeSparkles(centerObj, 800, .2, 5, 50, 50);
     }
 
     let intersectsRot1 = raycaster.intersectObjects([rot1], true);
     if (intersectsRot1.length > 0) {
-      rot1Sound.play();
-      rot1Sound.volume = 0.08;
+      playSpecialSound(rot1Sound, 240000);
       jellyfish.forEach((jelly) => {
         modifyMesh(jelly, (mesh) => {
           mesh.material.opacity = 0.5;
         })
       })
       makeRotatingCreatures(jellyfish, jellyfishOnScreen);
+      let currModalID = "mediModalDivID0";
+      currFriendModalDiv = document.getElementById(currModalID);
+      openModal =  currFriendModalDiv;
+      currFriendModalDiv.classList.add("openMediModalDiv");
       fadeFlyingThingsFromScene(jellyfishOnScreen);
       // skyBright = 0;
     }
+
     let intersectsRot2 = raycaster.intersectObjects([rot2], true);
     if (intersectsRot2.length > 0) {
-      rot2Sound.play();
+      playSpecialSound(rot2Sound, 240000);
       rot2Sound.volume = 0.08;
-      flyingBoxes.forEach((jelly) => {
+      flyingCrullers.forEach((jelly) => {
         modifyMesh(jelly, (mesh) => {
           mesh.material.opacity = 0.5;
         })
       })
-      makeRotatingCreatures(flyingBoxes, flyingBoxesOnScreen);
-      fadeFlyingThingsFromScene(flyingBoxesOnScreen);
+      makeRotatingCreatures(flyingCrullers, flyingCrullersOnScreen);
+      setTimeout(function(){ 
+        let currModalID = "mediModalDivID1";
+        currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+        openModal =  currFriendModalDiv;
+        currFriendModalDiv.classList.add("openMediModalDiv");
+       }, 3000);
+      fadeFlyingThingsFromScene(flyingCrullersOnScreen);
     }
     let intersectsRot3 = raycaster.intersectObjects([rot3], true);
     if (intersectsRot3.length > 0) {
-      rot3Sound.play();
+      playSpecialSound(rot3Sound, 240000);
       rot3Sound.volume = 0.08;
       flyingSpheres.forEach((jelly) => {
         modifyMesh(jelly, (mesh) => {
-          mesh.material.opacity = 0.5;
+          mesh.material.opacity = 0.5;    
         })
       })
       makeRotatingCreatures(flyingSpheres, flyingSpheresOnScreen);
+      setTimeout(function(){ 
+        let currModalID = "mediModalDivID2";
+        currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
+        openModal =  currFriendModalDiv;
+        currFriendModalDiv.classList.add("openMediModalDiv");
+       }, 3000);      
       fadeFlyingThingsFromScene(flyingSpheresOnScreen);
     }
 
     let intersectsFriend = raycaster.intersectObjects(boxGroup.children, true);
  
-    if (intersectsFriend.length > 0) { //you know you have an intersection
-      // friendSound.volume = 0.09;
-      friendSound.play();
+    if (intersectsFriend.length > 0) { //you know you have an friend intersection
+      if (soundMuted == false) {
+        playFriendSound();
+      }
       document.getElementById("settingsDropdown").classList.remove("showDropdown");
       document.getElementById("slidein").classList.remove("show");
       let currFriendID = intersectsFriend[0].object.friendID; //grab the id of the friend
 
       let currModalID = "friendModalDivID" + currFriendID; //form the modal ID
       currFriendModalDiv = document.getElementById(currModalID); //grad the current Modal
-      currFriendModalDiv.classList.add("openFriendModalDiv")
-      modalOpen = true;
+      currFriendModalDiv.classList.add("openFriendModalDiv");
+      openModal = currFriendModalDiv;
 
       // let msg = takeModalIDReturnMsg(currFriendID);
       // let currTextDiv = document.getElementById("textInputID" + currFriendID);
 
       for (let i = 0; i < intersectsFriend.length; i++) {
         let currObj = intersectsFriend[i].object;
-        currObj.parent.children.forEach((obj) => {
-          modifyMesh(obj, (o) => {
-            o.material.emissive.setHex(3135135);
-            o.material.opacity = 0.2;
-          })
+        // console.log('intersection!');
+        modifyMesh(currObj, (o) => {
+          o.material.emissive.setHex(3135135);
+          o.material.opacity = 0.2;
         });
       }
       let currentOrb = friendOrbs[currFriendID];
       currentOrb.remove(sparkleFriendMap[currentOrb.friendID]);
-
     }
   }
 
@@ -1250,7 +1459,7 @@ function windowOnLoad() {
     if (currentLanguage == 'en') {
       toggleChangeNameInput.value = `Change name, ${username}?`;
     } else {
-      toggleChangeNameInput.value = `¿Quieres cambiar tu nombre, ${username}?`;
+      toggleChangeNameInput.value = `¿Cambiar tu nombre, ${username}?`;
     }
   }
 
@@ -1285,45 +1494,11 @@ function windowOnLoad() {
     if (currentLanguage == 'en') {
       toggleChangeNameInput.value = `Change name, ${username}?`;
     } else {
-      toggleChangeNameInput.value = `¿Quieres cambiar tu nombre, ${username}?`;
+      toggleChangeNameInput.value = `¿Cambiar tu nombre, ${username}?`;
 
     }
     collapse();
   }
-
-  // toggle sound
-  let toggleSoundCheckbox = document.querySelector("input[name=toggleSoundCheckbox]");
-  toggleSoundCheckbox.addEventListener('change', function () {
-    if (this.checked) {
-      console.log("Checkbox is checked..");
-      backgroundSound.volume = 0.08;
-      seaSound.volume = 0.08;
-      friendSound.volume = 0.08;
-      backgroundSound.play();
-      backgroundSound.loop = true;
-      seaSound.play();
-      seaSound.loop = true;
-      soundMuted = false;
-    } else {
-      console.log("Checkbox is not checked..");
-      backgroundSound.volume = 0;
-      seaSound.volume = 0;
-      friendSound.volume = 0;
-      soundMuted = true;
-      pauseSounds();
-
-    }
-
-    // function muteSounds() {
-    //   if (soundMuted) {
-    //     seaSound.volume = 0.1;
-    //   } else {
-    //     seaSound.volume = 0;
-    //   }
-    //   soundMuted != soundMuted;
-    // }
-    // muteSounds();
-  });
 
   document.body.onload = nameDisplayCheck;
 
