@@ -4,12 +4,19 @@
 
 body {
   font-family: 'Open-sans', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   background:rgb(250, 252, 255);
+  /* background: rgb(131,58,180); */
+  /* background: linear-gradient(161deg, rgba(131,58,180,1) 0%, rgb(116, 93, 247) 50%, rgba(252,175,69,1) 100%); */
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+
 }
 
 .section {
   margin: 4rem 25vw;
+  padding: 2rem;
+  background:rgb(250, 252, 255, .7);
+
 }
 
 p {
@@ -44,6 +51,11 @@ img {
   display: block;
   max-width: 50vw;
   margin: auto;
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+
+#logo:hover{
+  /* background: black; */
 }
 
 .work-Img {
@@ -67,9 +79,9 @@ h1 {
 h2 {
   font-family: 'Quicksand', sans-serif;
   color: rgba(250, 128, 114, 0.9);
-  font-size: 1.5rem;
+  font-size: 1.9rem;
   font-weight: 600;
-  margin: 2rem 0 .35rem 0;
+  margin: 3rem 0 1.35rem 0;
 
 }
 
@@ -95,7 +107,12 @@ nav li {
 }
 
 li {
-  margin-bottom: .3rem;
+  margin-bottom: 1rem;
+}
+
+li::marker {
+  color: rgb(24, 24, 24);
+  /* font-size: 1.5em; */
 }
 
 nav a {
