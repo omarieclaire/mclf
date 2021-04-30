@@ -29,7 +29,7 @@ body {
 
 p {
   line-height: 1.7;
-  color: #252525;
+  color: rgba(0, 0, 0, 0.75);
   /* margin: 20vw; */
 }
 
