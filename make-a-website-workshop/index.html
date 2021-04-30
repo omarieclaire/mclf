@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+
+<head>
+	<!-- Load Stripe.js on your website. -->
+	<script src="https://js.stripe.com/v3"></script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="Marie Claire LeBlanc Flanagan">
+	<meta name="description"
+		content="Join our PWYC (pay-what-you-can) 4-hour workshop for *total beginners* where you will make a one-page simple website and learn the fundamentals of HTML and CSS along the way.">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<title>Workshop: Make a simple personal website</title>
+	<link href="styles.css" rel="stylesheet" type="text/css">
+	<meta property="og:image" content="IMAGE URL HERE">
+	<meta property="og:url" content="URL OF SITE HERE">
+</head>
+
+<body>
+	<header>
+		<nav>
+			<ul>
+				<li><a href="#about">About</a></li>
+				<li><a href="#structure">Structure</a></li>
+				<li><a href="#notes">Notes</a></li>
+				<li><a href="#signup">Sign Up</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<div>
+		<img src="img/logo.png" alt="Stylized image of a colourful shape" id="logo">
+	</div>
+
+	<div id="about" class="section">
+		<h1>Learn how to make a website</h1>
+		<p>It’s hard to stand out online.
+			Using social media to share your work can be disempowering and
+			frustrating; your content quickly disappears down the feed minutes after posting it. Or a sudden tweak in
+			the Instagram algorithm and you suddenly don't exist anymore.
+		</p>
+		<h2>Websites are great!</h2>
+		<p>With your own website, you have a space that belongs to you, that you can shape to your own vision. You can
+			showcase your work, link to other sites, and build a permanent online space where people can find you.
+
+		<h2>Join our workshop</h2>
+
+		<p class="highlight">Join our pay-what-you-can 4-hour workshop for <span class="strong">total
+				beginners</span> where you
+			will make a one-page simple website and learn the fundamentals of HTML and CSS along the way.
+		</p>
+
+		<p>You will leave the workshop with:</p>
+		<ul>
+			<li>a simple one-page website (like this one) with images and external links which is live on the internet
+			</li>
+			<li>an understanding of the fundamentals of HTML and CSS</li>
+			<li>new knowledge and skills</li>
+		</ul>
+	</div>
+
+	<div id="structure" class="section">
+		<h1>Structure</h1>
+		<p>The structure of the workshop will be:</p>
+		<ol>
+			<li>Introduction to HTML</li>
+			<li>Making content</li>
+			<li>Introduction to CSS</li>
+			<li>Using a text editor (Visual Studio Code)</li>
+			<li>Putting your website online (Github Pages)</li>
+			<li>Overflow: questions and experimentation</li>
+
+		</ol>
+
+		<h2>Dates</h2>
+		<p>You can choose either date (not both) as we'll be running the workshop twice.</p>
+		<ul>
+			<li>Sunday May 16th 10 AM - 2 PM EDT</li>
+			<li>Sunday May 23rd 10 AM - 2 PM EDT</li>
+		</ul>
+
+		<h2 id="notes">Notes</h2>
+		<ul>
+			<li>This is a workshop for total beginners. Bring a deep love for tiny steps and thoughtful slowness.
+			</li>
+			<li>This workshop won't cover: custom URLs, multipage sites, contact forms, fancy CSS, animations,
+				JavaScript, or payment processing. All of these features are totally possible in future
+				additional workshops, just let us know!
+			</li>
+			<li>If you have accessibility needs, desires, or questions, please reach out.
+			</li>
+			<li>All workshop fees will go into the labour of designing and hosting this and future workshops.
+			</li>
+			<li>We will take breaks between each section, this is intended to be gentle and slow.</li>
+
+		</ul>
+		<br>
+		<img src="img/s1.png" alt="Common" class="work-Img"></a>
+		<!-- <img src="img/s2.png" alt="Closer" class="work-Img"></a> -->
+	</div>
+
+	<div id="signup" class="section">
+		<h1>Sign up:</h1>
+		<p>If you have any questions, please do reach out <a
+				href="mailto:%20marieflanagan@gmail.com" target="_blank">marieflanagan@gmail.com</a>.</p>
+
+		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours. If you are unemployed or otherwise struggling, you don't need to pay.</p>
+
+		<!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
+		<button style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+			id="checkout-button-sku_H7ccno9QHsYazj" role="link">
+			Checkout
+		</button>
+
+		<div id="error-message"></div>
+
+		<script>
+			(function () {
+				var stripe = Stripe('pk_live_GN4rzNopq4foXx4GMQiRdvb20034bVG58q');
+
+				var checkoutButton = document.getElementById('checkout-button-sku_H7ccno9QHsYazj');
+				checkoutButton.addEventListener('click', function () {
+					// When the customer clicks on the button, redirect
+					// them to Checkout.
+					stripe.redirectToCheckout({
+						items: [{ sku: 'sku_H7ccno9QHsYazj', quantity: 1 }],
+
+						// Do not rely on the redirect to the successUrl for fulfilling
+						// purchases, customers may not always reach the success_url after
+						// a successful payment.
+						// Instead use one of the strategies described in
+						// https://stripe.com/docs/payments/checkout/fulfillment
+						successUrl: 'http://specialguest.best/success',
+						cancelUrl: 'http://specialguest.best/canceled',
+					})
+						.then(function (result) {
+							if (result.error) {
+								// If `redirectToCheckout` fails due to a browser or network
+								// error, display the localized error message to your customer.
+								var displayError = document.getElementById('error-message');
+								displayError.textContent = result.error.message;
+							}
+						});
+				});
+			})();
+		</script>
+
+
+
+	</div>
+
+	<footer>
+		<div>
+			<a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="img/social-icons/mail.svg" alt="email"
+					class="feather"></a>
+			<a href="https://linkedin.com/in/marieflanagan/" target="blank"><img src="img/social-icons/linked-in.svg"
+					alt="LinkedIn" class="feather"></a>
+			<a href="https://twitter.com/omarieclaire/" target="blank"><img src="img/social-icons/twitter.svg"
+					alt="twitter" class="feather"></a>
+			<a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="img/social-icons/facebook.svg"
+					alt="facebook" class="feather"></a>
+			<a href="https://www.instagram.com/omarieclaire/" target="blank"><img src="img/social-icons/instagram.svg"
+					alt="instagram" class="feather"></a>
+		</div>
+	</footer>
+</body>
+
+</html>

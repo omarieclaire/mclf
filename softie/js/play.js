@@ -919,6 +919,8 @@ function windowOnLoad() {
       closeModalBtn.classList.add("closeModalBtn");
 
       textInput.type = "text";
+      textInput.autocomplete = "off"
+
       textInput.placeholder = "";
       textInput.maxLength = "300";
       textInput.addEventListener('keydown', function(event) {
