@@ -21,7 +21,7 @@ body {
 
 @media (max-width: 480px) {
   .section {
-    margin: 4rem 5vw;
+    margin: 4rem 2vw;
     padding: 2rem;
     background:rgb(250, 252, 255, .7);
   }
