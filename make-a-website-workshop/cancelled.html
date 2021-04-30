@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+
+<head>
+	<!-- Load Stripe.js on your website. -->
+	<script src="https://js.stripe.com/v3"></script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="Marie Claire LeBlanc Flanagan">
+	<meta name="description"
+		content="Join our PWYC (pay-what-you-can) 4-hour workshop for *total beginners* where you will make a one-page simple website and learn the fundamentals of HTML and CSS along the way.">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<title>Workshop: Make a simple personal website</title>
+	<link href="styles.css" rel="stylesheet" type="text/css">
+	<meta property="og:image" content="img/logo.png">
+	<meta property="og:url" content="https://marieflanagan.com/make-a-website-workshop/index.html">
+</head>
+
+<body>
+	<header>
+        <h1>Your payment has been cancelled. Feel free to begin again!</h1>
+		<nav>
+			<ul>
+				<li><a href="#about">About</a></li>
+				<li><a href="#structure">Structure</a></li>
+				<li><a href="#notes">Notes</a></li>
+				<li><a href="#signup">Sign Up</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<div>
+		<img src="img/logo.png" alt="Illustration of an open laptop with the text 'my site' on the screen" id="logo">
+	</div>
+
+	<div id="about" class="section">
+		<h1>Learn how to make a website</h1>
+		<p>It’s hard to stand out online.
+			Using social media to share your work can be disempowering and
+			frustrating; your content quickly disappears down the feed minutes after posting it. Or a sudden tweak in
+			a social media algorithm means that no-one sees your post.
+		</p>
+		<h2>Websites are great!</h2>
+		<p>With your own website, you have a space that belongs to you, that you can shape to your own vision. You don't
+			have to pay any monthly fees, and it's easy for you to update. You can
+			showcase your work, link to other sites, and build a permanent online space where people can find you.</p>
+
+		<h2>Join our workshop</h2>
+
+		<p class="highlight">Join our pay-what-you-can workshop for <span class="strong">total
+				beginners</span> to make a one-page website and learn the fundamentals of HTML and CSS along the way.
+		</p>
+
+		<p>You'll leave the workshop with:</p>
+		<ol>
+			<li>A simple one-page website (like this one) with images and external links
+			</li>
+			<li>An understanding of the fundamentals of HTML and CSS</li>
+			<li>New knowledge and skills</li>
+		</ol>
+	</div>
+
+	<div id="structure" class="section">
+		<h1>Structure</h1>
+		<p>The workshop will last 4 hours and will include 6 sections with breaks in between each sections:</p>
+		<ol>
+			<li>Introduction to HTML</li>
+			<li>Making content</li>
+			<li>Introduction to CSS</li>
+			<li>Using a text editor (Visual Studio Code)</li>
+			<li>Putting your website online (Github Pages)</li>
+			<li>Overflow: questions and experimentation</li>
+		</ol>
+	</div>
+
+	<img src="img/s1.png" alt="HTML example" class="work-Img"></a>
+
+
+	<div class="section">
+		<h2>Dates</h2>
+		<p>The workshop will run twice. You can choose either date (not both).</p>
+		<ul>
+			<li>Sunday May 16th 10 AM - 2 PM EDT</li>
+			<li>Sunday May 23rd 10 AM - 2 PM EDT</li>
+		</ul>
+	</div>
+
+	<div class="section">
+		<h2 id="notes">Notes</h2>
+		<ul>
+			<li>This is a workshop for <span class="strong">total beginners</span>. Bring a deep love for tiny steps and
+				thoughtful slowness.
+			</li>
+			<li>This workshop won't cover: custom URLs, multipage sites, contact forms, fancy CSS, animations,
+				JavaScript, or payment processing. All of these features are totally possible in future
+				additional workshops, just ask!
+			</li>
+			<li>If you have accessibility needs, desires, or questions, please reach out.
+			</li>
+			<li>All workshop fees will go into the labour of designing and hosting this and future workshops.
+			</li>
+			<li>We will take breaks between each section, this is intended to be gentle and slow.</li>
+		</ul>
+		<br>
+	</div>
+
+	<div id="signup" class="section">
+		<h1>Sign up:</h1>
+
+		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours. You can e-transfer to marieflanagan@gmail.com or use the payment button below.</p>
+		
+		<p>If you are unemployed or
+			otherwise struggling, you don't need to pay. Simply email me with your preferred date (May 16 or May 23).</p>
+		
+		<p>If you have any questions, please <a href="mailto:marieflanagan@gmail.com"
+			target="_blank">reach out</a>!</p>
+		<!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
+		<button
+			id="checkout-button-sku_H7ccno9QHsYazj" role="link">
+			Payment
+		</button>
+
+		
+		<div id="error-message"></div>
+
+		<script>
+			(function () {
+				var stripe = Stripe('pk_live_GN4rzNopq4foXx4GMQiRdvb20034bVG58q');
+
+				var checkoutButton = document.getElementById('checkout-button-sku_H7ccno9QHsYazj');
+				checkoutButton.classList.add("button");
+				checkoutButton.addEventListener('click', function () {
+					// When the customer clicks on the button, redirect
+					// them to Checkout.
+					stripe.redirectToCheckout({
+						items: [{ sku: 'sku_H7ccno9QHsYazj', quantity: 1 }],
+
+						// Do not rely on the redirect to the successUrl for fulfilling
+						// purchases, customers may not always reach the success_url after
+						// a successful payment.
+						// Instead use one of the strategies described in
+						// https://stripe.com/docs/payments/checkout/fulfillment
+						successUrl: 'http://marieflanagan.com/make-a-website-workshop/confirmed.html',
+						cancelUrl: 'http://marieflanagan.com/make-a-website-workshop/cancelled.html',
+					})
+						.then(function (result) {
+							if (result.error) {
+								// If `redirectToCheckout` fails due to a browser or network
+								// error, display the localized error message to your customer.
+								var displayError = document.getElementById('error-message');
+								displayError.textContent = result.error.message;
+							}
+						});
+				});
+			})();
+		</script>
+	</div>
+
+	<footer>
+		<div>
+			<!-- <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="img/social-icons/mail.svg" alt="email"
+					class="feather"></a> -->
+			<a href="https://linkedin.com/in/marieflanagan/" target="blank"><img src="img/social-icons/linked-in.svg"
+					alt="LinkedIn" class="feather"></a>
+			<a href="https://twitter.com/omarieclaire/" target="blank"><img src="img/social-icons/twitter.svg"
+					alt="twitter" class="feather"></a>
+			<a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="img/social-icons/facebook.svg"
+					alt="facebook" class="feather"></a>
+			<a href="https://www.instagram.com/omarieclaire/" target="blank"><img src="img/social-icons/instagram.svg"
+					alt="instagram" class="feather"></a>
+		</div>
+	</footer>
+</body>
+
+</html>
