@@ -107,18 +107,17 @@
 	<div id="signup" class="section">
 		<h1>Sign up:</h1>
 
-		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours. If you are unemployed or
-			otherwise struggling, you don't need to pay.</p>
-
-		<p>Email to sign up for May 16 or May 23, and Interac e-Transfer funds to <a href="mailto:marieflanagan@gmail.com"
-			target="_blank">marieflanagan@gmail.com</a></p>
-
+		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours.</p>
+		
+		<p>If you are unemployed or
+			otherwise struggling, you don't need to pay. Simply email to let me know which date you prefer.</p>
+		
 		<p>If you have any questions, please <a href="mailto:marieflanagan@gmail.com"
 			target="_blank">reach out</a>!</p>
 		<!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
 		<button style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
 			id="checkout-button-sku_H7ccno9QHsYazj" role="link">
-			Checkout
+			Payment
 		</button>
 
 		<div id="error-message"></div>
@@ -128,6 +127,7 @@
 				var stripe = Stripe('pk_live_GN4rzNopq4foXx4GMQiRdvb20034bVG58q');
 
 				var checkoutButton = document.getElementById('checkout-button-sku_H7ccno9QHsYazj');
+				checkoutButton.classList.add("button");
 				checkoutButton.addEventListener('click', function () {
 					// When the customer clicks on the button, redirect
 					// them to Checkout.

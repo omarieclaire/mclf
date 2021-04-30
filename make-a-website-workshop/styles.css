@@ -159,11 +159,22 @@ nav a:hover {
 
 /* button stuff */
 .button {
-  display: inline-block;
+  /* display: inline-block; */
   text-decoration: none;
-  text-transform: uppercase;
-  /* padding: .6em 4em; */
+  /* text-transform: uppercase; */
+  padding: .6em 4em;
+  background-color: blue;
 }
+
+.button:hover {
+  outline: 3px solid white;
+}
+
+.button:active {
+  box-shadow: 3px 5px rgb(17, 17, 160);
+  transform: translateY(4px);
+}
+
 
 /* Footer
 =================== */
