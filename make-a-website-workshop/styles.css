@@ -55,6 +55,7 @@ img {
 }
 
 #logo:hover{
+  rotate: 90;
   /* background: black; */
 }
 
