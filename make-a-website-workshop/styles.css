@@ -158,19 +158,22 @@ nav a:hover {
 }
 
 /* button stuff */
-.button {
-  /* display: inline-block; */
+button {
   text-decoration: none;
-  /* text-transform: uppercase; */
-  padding: .6em 4em;
-  background-color: blue;
+  background-color:#6772E5;
+  color:#FFF;
+  padding:8px 12px;
+  margin: 1rem;
+  border:0;
+  border-radius:4px;
+  font-size:1em;
 }
 
-.button:hover {
+button:hover {
   outline: 3px solid white;
 }
 
-.button:active {
+button:active {
   box-shadow: 3px 5px rgb(17, 17, 160);
   transform: translateY(4px);
 }
