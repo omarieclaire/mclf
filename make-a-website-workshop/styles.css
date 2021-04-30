@@ -15,6 +15,7 @@ body {
 .section {
   margin: 4rem 25vw;
   padding: 2rem;
+  border-radius: 12px;
   background:rgb(250, 252, 255, .7);
 }
 
@@ -59,6 +60,14 @@ img {
   max-width: 50vw;
   margin: auto;
   background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+
+@media (max-width: 480px) {
+  #logo{
+    padding-top: 2rem;
+    max-width: 80vw;
+
+  }
 }
 
 #logo:hover{
@@ -108,6 +117,12 @@ nav ul {
   width: 100%;
   overflow: hidden;
   margin: 2rem 0 0 0;
+}
+
+@media (max-width: 480px) {
+  nav ul {
+    display:none;
+  }  
 }
 
 nav li {
