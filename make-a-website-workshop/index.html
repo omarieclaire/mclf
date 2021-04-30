@@ -5,6 +5,18 @@
 	<!-- Load Stripe.js on your website. -->
 	<script src="https://js.stripe.com/v3"></script>
 
+ <!-- Global site tag (gtag.js) - Google Analytics -->
+ <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+ <script>
+   window.dataLayer = window.dataLayer || [];
+
+   function gtag() {
+	 dataLayer.push(arguments);
+   }
+   gtag('js', new Date());
+   gtag('config', 'UA-77465632-1');
+ </script>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="author" content="Marie Claire LeBlanc Flanagan">
@@ -18,9 +30,10 @@
 
 
 	<meta name="twitter:title" content="Workshop: Make a simple personal website">
-<meta name="twitter:description" content="Join our PWYC (pay-what-you-can) 4-hour workshop for *total beginners* where you will make a one-page simple website and learn the fundamentals of HTML and CSS along the way.">
-<meta name="twitter:image" content="img/logo.png">
-<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:description"
+		content="Join our PWYC (pay-what-you-can) 4-hour workshop for *total beginners* where you will make a one-page simple website and learn the fundamentals of HTML and CSS along the way.">
+	<meta name="twitter:image" content="img/logo.png">
+	<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body>
@@ -113,20 +126,19 @@
 	<div id="signup" class="section">
 		<h1>Sign up:</h1>
 
-		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours. You can e-transfer to marieflanagan@gmail.com or use the full payment button below.</p>
-		
+		<p>This workshop is pay-what-you-can, with a recommended rate of $79 for 4 hours. You can e-transfer to
+			marieflanagan@gmail.com or use the full payment button below.</p>
+
 		<p>If you are unemployed or
 			otherwise struggling, you don't need to pay. Simply email me with your preferred date.</p>
-		
-		<p>If you have any questions, please <a href="mailto:marieflanagan@gmail.com"
-			target="_blank">reach out</a>!</p>
+
+		<p>If you have any questions, please <a href="mailto:marieflanagan@gmail.com" target="_blank">reach out</a>!</p>
 		<!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
-		<button
-			id="checkout-button-sku_H7ccno9QHsYazj" role="link">
+		<button id="checkout-button-sku_H7ccno9QHsYazj" role="link">
 			Payment
 		</button>
 
-		
+
 		<div id="error-message"></div>
 
 		<script>
