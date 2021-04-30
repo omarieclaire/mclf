@@ -16,7 +16,14 @@ body {
   margin: 4rem 25vw;
   padding: 2rem;
   background:rgb(250, 252, 255, .7);
+}
 
+@media (max-width: 480px) {
+  .section {
+    margin: 4rem 5vw;
+    padding: 2rem;
+    background:rgb(250, 252, 255, .7);
+  }
 }
 
 p {
