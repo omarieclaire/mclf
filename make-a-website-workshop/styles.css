@@ -109,6 +109,10 @@ h2 {
 
 }
 
+.strikethru {
+  text-decoration: line-through;
+}
+
 /* header stuff */
 header {
   text-align: center;
