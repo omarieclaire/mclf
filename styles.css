@@ -962,6 +962,8 @@ nav a:hover {
   /* color: #FFF; */
   /* background: rgba(102, 97, 127, .80); */
   padding-bottom: 0em;
+  text-decoration: none;
+  text-transform: none;
 }
 
 .port-desc p {
@@ -992,6 +994,8 @@ nav a:hover {
 
 .port-desc {
   position: absolute;
+  text-decoration: none;
+  text-transform: none;
   /* z-index: 90;
   bottom: 0em;
   left: 0em;
