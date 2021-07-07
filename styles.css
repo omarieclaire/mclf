@@ -406,18 +406,20 @@ hr.blog-preview-divider {
 }
 
 .button-port {
-  /* background: rgba(14, 8, 45, .60); */
   background: rgba(14, 8, 45, .7);
   color: salmon;
   width: 100%;
 
-  /* font-size: 1rem; */
     display: inline-block;
     text-decoration: none;
     text-transform: none;
-    /* padding: .6em 3em; */
-    /* font-weight: 100; */
-    /* letter-spacing: 0.07em; */
+
+}
+
+.button-port-header {
+  /* font-size: 2rem; */
+  font-weight: bold;
+  margin-bottom: 4rem;
 }
 
 .button-port-text {
@@ -461,7 +463,8 @@ hr.blog-preview-divider {
     text-transform: none;
     /* border-style: none; */
     /* findme */
-    /* width: 100%; */
+    width: 100%;
+    height: 100%;
     padding: .6em 3em;
     font-weight: 100;
     letter-spacing: 0.07em;
@@ -985,6 +988,17 @@ nav a:hover {
   .port-item:hover .port-desc {
     transform: translateY(0%);
   }
+}
+
+.port-desc {
+  position: absolute;
+  /* z-index: 90;
+  bottom: 0em;
+  left: 0em;
+  right: 0em; */
+  /* color: #FFF; */
+  /* background: rgba(102, 97, 127, .80); */
+  /* padding-bottom: 0em; */
 }
 
 /* CTA
