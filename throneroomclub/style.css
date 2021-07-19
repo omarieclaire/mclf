@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffd183;
+  touch-action: pinch-zoom;
+  -webkit-touch-callout: none;
+
+
+  /* height: 100%; */
+  /* overflow: hidden; */
+}
+
+
+input {
+  /* outline: none;
+  color: transparent;
+  background: transparent;
+  resize: none;
+  border: 0 none;
+  font-size: 5px;
+  width: 0px;
+  height: 0px; */
+}
