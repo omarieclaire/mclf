@@ -1,0 +1,84 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-content: space-evenly;
+  font-family: "Times", sans-serif;
+}
+
+.time-select {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: .3;
+
+}
+.time-select button {
+  color: white;
+  padding: 1rem;
+  margin: 1rem;
+  background: none;
+  font-size: 20px;
+  /* border-radius: 8%; */
+  cursor: pointer;
+  border: none;
+  /* border-bottom: 2px dotted white; */
+  transition: all 0.2s ease;
+}
+
+.time-select button:hover {
+  opacity: 1;
+  background-color: white;
+  color: gray;
+}
+
+.player-container {
+  position: relative;
+  height: 80%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  flex: 1;
+}
+
+.player-container svg {
+  position: absolute;
+  height: 50%;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  pointer-events: none;
+}
+.player-container svg circle {
+  transition: all 0.2s ease-in-out;
+}
+.time-display {
+  color: white;
+  position: absolute;
+  font-size: 2rem;
+  bottom: 10%;
+}
+
+video {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  z-index: -10;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  video {
+    position: fixed;
+    width: 400%;
+  }
+  }
