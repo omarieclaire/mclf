@@ -1,6 +1,6 @@
 let timer = document.getElementsByClassName('js-timer')[0]; 
 let timer_part = document.getElementsByClassName('js-timer_part');
-let dur = "301s"
+let dur = "20s"
    
 function reset_timer() {
    timer.classList.remove("start");

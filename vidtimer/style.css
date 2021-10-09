@@ -2,14 +2,24 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Caveat', cursive;
 }
 
 .app {
   height: 100vh;
   display: flex;
+  min-width: 100%;
+  min-height: 100%;
   flex-direction: column;
   align-content: space-evenly;
-  font-family: "Times", sans-serif;
+}
+
+video {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  z-index: -10;
 }
 
 .time-select {
@@ -21,8 +31,13 @@
 
 }
 .time-select button {
-  color: white;
-  padding: 1rem;
+  color: rgba(198, 230, 255, 0.605);
+  width: 4rem;
+  height: 4rem;
+
+  text-align: center;
+  border-radius: 50%;
+  /* padding: 1rem; */
   margin: 1rem;
   background: none;
   font-size: 20px;
@@ -34,9 +49,11 @@
 }
 
 .time-select button:hover {
-  opacity: 1;
-  background-color: white;
-  color: gray;
+  font-weight: bold;
+  color: rgba(225, 242, 255, 0.788);
+
+  /* background-color: white; */
+  /* color: gray; */
 }
 
 .player-container {
@@ -67,13 +84,7 @@
   bottom: 10%;
 }
 
-video {
-  position: fixed;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  z-index: -10;
-}
+
 
 @media only screen and (max-width: 768px) {
   /* For mobile phones: */
