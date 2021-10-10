@@ -19,9 +19,15 @@
 
 video {
   position: fixed;
-  top: 0%;
-  left: 0%;
-  width: 120%;
+  /* top: 0%; */
+  /* left: 0%; */
+  width: 100%;
+  object-fit: cover;
+  /* height: 150%; */
+  transform: scaleY(1.3);
+  /* -webkit-transform: scaleX(2);  */
+  /* -moz-transform: scaleX(2); */
+  /* object-fit: fill; */
   opacity: .45;
   /* z-index: -1; */
 }
