@@ -11,29 +11,37 @@ for (var i = 0; i < numbers.length; i++) {
 
 
 
-var videoelement = document.createElement("video");
-videoelement.setAttribute("id", "video1");
+// var videoelement = document.createElement("video");
+// videoelement.setAttribute("id", "video1");
 
-var sourceMP4 = document.createElement("source"); 
-sourceMP4.type = "video/mp4";
-sourceMP4.src = "https://www.youtube.com/watch?v=ejDbI_bwSbM";
-videoelement.appendChild(sourceMP4);
+// var sourceMP4 = document.createElement("source"); 
+// sourceMP4.type = "video/mp4";
+// sourceMP4.src = "https://www.youtube.com/watch?v=sRxrwjOtIag";
+// videoelement.appendChild(sourceMP4);
 
-// var sourceWEBM = document.createElement("source"); 
-// sourceWEBM.type = "video/webm";
-// sourceWEBM.src = "https://www.youtube.com/watch?v=ejDbI_bwSbM";
-// videoelement.appendChild(sourceWEBM);
-
-//maybe here I need to append the videoelement to the #vidDiv instead of whatever this says
-var vidDiv = document.getElementById(vidDiv);
-console.log(vidDiv);
+// var vidDiv = document.getElementById('vidDiv');
 // vidDiv.appendChild(videoelement);
-// document.querySelector('vidDiv').html(videoelement);
-// var video = document.getElementById("video1");
-// video.play();
+
+// console.log(vidDiv);
 
 
+// var x = document.createElement("VIDEO");
 
+// x.setAttribute("src","https://www.youtube.com/watch?v=sRxrwjOtIag");
+// x.setAttribute("width", "320");
+// x.setAttribute("height", "240");
+// x.setAttribute("controls", "controls");
+// // document.body.appendChild(x);
+
+// var vidDiv = document.getElementById('vidDiv');
+// vidDiv.appendChild(x);
+
+// console.log(vidDiv);
+
+var obj = {"video": {
+  "value": "<iframe title='YouTube video player' type=\"text/html\" width='640' height='390' src='http://www.youtube.com/embed/sRxrwjOtIag' frameborder='0' allowFullScreen></iframe>"
+}}
+document.write(obj.video.value);
 
 
 function openVideo(day) {
