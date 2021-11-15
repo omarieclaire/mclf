@@ -1,0 +1,256 @@
+/* Calendar Styles */
+
+#calendar {
+  position: relative;
+}
+
+.calendar-month {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  list-style-type: none;
+}
+.calendar-month .week {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.calendar-month .week__header {
+  order: 1;
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  text-align: center;
+  padding: 20px;
+  text-transform: uppercase;
+  color: teal;
+  letter-spacing: 4px;
+  width: 14.2857%;
+  box-sizing: border-box;
+}
+.calendar-month .week__header:nth-child(7) {
+  border-right: 0;
+}
+.calendar-month .week__header:first-letter {
+  font-size: 12px;
+}
+@media (max-width: 767px) {
+  .calendar-month .week__header {
+    padding: 10px 0;
+    font-size: 0;
+  }
+}
+.calendar-month .days {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  width: 100%;
+}
+.calendar-month .day {
+  position: relative;
+  order: 1;
+  width: 14.2857%;
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  border-top: 1px solid #e8e8e8;
+  transition: 0.5s;
+  box-sizing: border-box;
+  background-size: cover;
+}
+
+  #day1 {
+    background-image: url("https://marieflanagan.com/img/blog-images/vt-meet.png");
+}
+
+.calendar-month .day:nth-child(7n + 7) {
+  border-left: none;
+}
+.calendar-month .day:nth-child(7n + 7) {
+  border-right: none;
+}
+.calendar-month .day:after {
+  /* Create responsive square div */
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+.calendar-month .day:hover {
+/*   transform: scale(1.08); */
+   background-color: rgba(3,3,3,.1); /* Tint color */
+  background-blend-mode: multiply;
+/*   filter: hue-rotate(30deg); */
+
+}
+.calendar-month .day__number {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  margin: 0;
+}
+@media (max-width: 767px) {
+  .calendar-month .day__number {
+    right: 5px;
+    top: 5px;
+  }
+}
+.calendar-month .empty {
+  background: #f8f8f8;
+}
+.calendar-month .empty:hover {
+  cursor: default;
+  background: #f8f8f8;
+}
+.calendar-month a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: .75rem;
+  padding: 50px 0;
+  margin: 0;
+  background: teal;
+}
+
+a {
+  color: red;
+  text-decoration: none;
+}
+
+#footer{
+  display:flex ;
+  flex-direction: column;
+  margin: auto;
+}
+
+#mailchimp {
+  display:flex ;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+#paypal {
+  display:flex;
+  margin: auto;
+  padding: 2rem;
+}
+
+.vidDiv {
+  z-index: 10;
+  left: 1%;
+  right: 1%;
+  top: 2%;
+  width: 98%;
+  height: 98%;
+  background-color: blue;
+  opacity: 90%;
+  position: absolute;
+}
+
+.close {
+  color: white;
+  z-index: 20;
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  visibility: hidden;
+}
+.close:hover {
+  opacity: 1;
+}
+.close:before,
+.close:after {
+  position: absolute;
+  left: 15px;
+  content: " ";
+  height: 33px;
+  width: 2px;
+  background-color: #8d0cff;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
+}
+.visible {
+  visibility: visible;
+}
+
+#logo {
+  width: 10rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 10%;
+  padding: 1rem;
+}
+
+.iconImg {
+  width: 4rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+btn {
+/*   font-weight: 600; */
+/*   color: #212121; */
+}
+
+
+#footer{
+/*   max-width: 40rem; */
+/*   padding: 3rem 5rem 0; */
+}
+
+.form {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  width: 80%;
+  padding: 2rem 2rem;
+  margin: 1rem;
+/*   display: inline-block; */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  
+}
+
+.mc-field-group {
+  display: flex;
+/*   margin: auto; */
+/*   vertical-align: middle; */
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+}
+
+#mc-embedded-subscribe {
+  padding: 10px 20px;
+  background-color: none;
+  border: 1px solid #ddd;
+/*   color: white; */
+}
+
+.mc-field-group button:hover {
+/*   background-color: royalblue; */
+}
+
+/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
