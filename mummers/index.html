@@ -1,257 +1,296 @@
-<!-- add email signup link -->
-<!-- add donate button -->
-<!-- use js to set the background for each day with an image -->
-<!-- put the videos all in the hmtl, use a class to hide them, remove that class when I need the video-->
-<!-- https://stackoverflow.com/questions/18695651/html-js-lock-hide-content-until-date-set -->
+<!DOCTYPE html>
+<html lang="en">
 
-<div id="vidDiv">
-  <a id="closeButton" href="#" class="close">
-  </a>
-  <!--   <video controls preload="none" poster="replaceme.jpg">
-  <source src="https://www.youtube.com/watch?v=ejDbI_bwSbM" type="video/mp4">
-</video> -->
-</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <title>Mummer's Journey</title>
+</head>
 
-<img id="logo" src="https://static.wixstatic.com/media/f68b97_069a6011976f487fa12242cd2eebacf1~mv2.png/v1/fill/w_364,h_376,al_c,q_85,usm_0.66_1.00_0.01/MummersJourney_Logo.webp">
+<body>
+  <!-- use js to set the background for each day with an image -->
+  <!-- put the videos all in the hmtl, use a class to hide them, remove that class when I need the video-->
+  <!-- https://stackoverflow.com/questions/18695651/html-js-lock-hide-content-until-date-set -->
+  <!-- use esc to close box -->
 
-<div id="calendar">
-  <ol class="calendar-month">
-    <li class="week">
-      <ol class="days">
-        <div class="week__header">Monday</div>
-        <div class="week__header">Tuesday</div>
-        <div class="week__header">Wednesday</div>
-        <div class="week__header">Thursday</div>
-        <div class="week__header">Friday</div>
-        <div class="week__header">Saturday</div>
-        <div class="week__header">Sunday</div>
-      </ol>
-    </li>
-    <li class="week">
-      <ol class="days">
-        <li class="day empty"></li>
-        <li class="day empty"></li>
-        <li id="day1" class="day">
-          <a href="#">
-            <span class="day__number">1</span>
-          </a>
-        </li>
-        <li id="day2" class="day">
-          <!--<img class="iconImg" id="iconImg" src="https://marieflanagan.com/img/blog-images/vt-meet.png"> -->
-          <a href="#">
-            <span class="day__number">2</span>
-          </a>
-        </li>
-        <li id="day3" class="day">
-          <a href="#">
-            <span class="day__number">3</span>
-          </a>
-        </li>
-        <li id="day4" class="day">
-          <a href="#">
-            <span class="day__number">4</span>
-          </a>
-        </li>
-        <li id="day5" class="day">
-          <a href="#">
-            <span class="day__number">5</span>
-          </a>
-        </li>
-      </ol>
-    </li>
-    <li class="week">
-      <ol class="days">
-        <li id="day6" class="day">
-          <a href="#">
-            <span class="day__number">6</span>
-          </a>
-        </li>
-        <li id="day7" class="day">
-          <a href="#">
-            <span class="day__number">7</span>
-          </a>
-        </li>
-        <li id="day8" class="day">
-          <a href="#">
-            <span class="day__number">8</span>
-          </a>
-        </li>
-        <li id="day9" class="day">
-          <a href="#">
-            <span class="day__number">9</span>
-          </a>
-        </li>
-        <li id="day10" class="day">
-          <a href="#">
-            <span class="day__number">10</span>
-          </a>
-        </li>
-        <li id="day11" class="day">
-          <a href="#">
-            <span class="day__number">11</span>
-          </a>
-        </li>
-        <li id="day12" class="day">
-          <a href="#">
-            <span class="day__number">12</span>
-          </a>
-        </li>
-      </ol>
-    </li>
-    <li class="week">
-      <ol class="days">
-        <li id="day13" class="day">
-          <a href="#">
-            <span class="day__number">13</span>
-          </a>
-        </li>
-        <li id="day14" class="day">
-          <a href="#">
-            <span class="day__number">14</span>
-          </a>
-        </li>
-        <li id="day15" class="day">
-          <a href="#">
-            <span class="day__number">15</span>
-          </a>
-        </li>
-        <li id="day16" class="day">
-          <a href="#">
-            <span class="day__number">16</span>
-          </a>
-        </li>
-        <li id="day17" class="day">
-          <a href="#">
-            <span class="day__number">17</span>
-          </a>
-        </li>
-        <li id="day18" class="day">
-          <a href="#">
-            <span class="day__number">18</span>
-          </a>
-        </li>
-        <li id="day19" class="day">
-          <a href="#">
-            <span class="day__number">19</span>
-          </a>
-        </li>
-      </ol>
-    </li>
-    <li class="week">
-      <ol class="days">
-        <li id="day20" class="day">
-          <a href="#">
-            <span class="day__number">20</span>
-          </a>
-        </li>
-        <li id="day21" class="day">
-          <a href="#">
-            <span class="day__number">21</span>
-          </a>
-        </li>
-        <li id="day22" class="day">
-          <a href="#">
-            <span class="day__number">22</span>
-          </a>
-        </li>
-        <li id="day23" class="day">
-          <a href="#">
-            <span class="day__number">23</span>
-          </a>
-        </li>
-        <li id="day24" class="day">
-          <a href="#">
-            <span class="day__number">24</span>
-          </a>
-        </li>
-        <li id="day25" class="day">
-          <a href="#">
-            <span class="day__number">25</span>
-          </a>
-        </li>
-        <li id="day26" class="day">
-          <a href="#">
-            <span class="day__number">26</span>
-          </a>
-        </li>
-      </ol>
-    </li>
-    <li class="week">
-      <ol class="days">
-        <li id="day27" class="day">
-          <a href="#">
-            <span class="day__number">27</span>
-          </a>
-        </li>
-        <li id="day28" class="day">
-          <a href="#">
-            <span class="day__number">28</span>
-          </a>
-        </li>
-        <li id="day29" class="day">
-          <a href="#">
-            <span class="day__number">29</span>
-          </a>
-        </li>
-        <li id="day30" class="day">
-          <a href="#">
-            <span class="day__number">30</span>
-          </a>
-        </li>
-        <li id="day31" class="day">
-          <a href="#">
-            <span class="day__number">31</span>
-          </a>
-        </li>
-        <li class="day empty"></li>
-        <li class="day empty"></li>
-      </ol>
-    </li>
-  </ol>
-</div>
+  <div id="vidDiv">
+    <a id="closeButton" href="#" class="close">
+    </a>
+  </div>
 
-<container id="footer">
+  <img id="logo"
+    src="https://static.wixstatic.com/media/f68b97_069a6011976f487fa12242cd2eebacf1~mv2.png/v1/fill/w_364,h_376,al_c,q_85,usm_0.66_1.00_0.01/MummersJourney_Logo.webp">
 
-  <container id="mailchimp">
+  <div id="calendar">
+    <ol class="calendar-month">
+      <li class="week">
+        <ol class="days">
+          <div class="week__header">Monday</div>
+          <div class="week__header">Tuesday</div>
+          <div class="week__header">Wednesday</div>
+          <div class="week__header">Thursday</div>
+          <div class="week__header">Friday</div>
+          <div class="week__header">Saturday</div>
+          <div class="week__header">Sunday</div>
+        </ol>
+      </li>
+      <li class="week">
+        <ol class="days">
+          <li class="day empty"></li>
+          <li class="day empty"></li>
+          <li id="day1" class="day">
+            <a href="#">
+              <span class="day__number">1</span>
+            </a>
+          </li>
+          <li id="day2" class="day">
+            <!--<img class="iconImg" id="iconImg" src="https://marieflanagan.com/img/blog-images/vt-meet.png"> -->
+            <a href="#">
+              <span class="day__number">2</span>
+            </a>
+          </li>
+          <li id="day3" class="day">
+            <a href="#">
+              <span class="day__number">3</span>
+            </a>
+          </li>
+          <li id="day4" class="day">
+            <a href="#">
+              <span class="day__number">4</span>
+            </a>
+          </li>
+          <li id="day5" class="day">
+            <a href="#">
+              <span class="day__number">5</span>
+            </a>
+          </li>
+        </ol>
+      </li>
+      <li class="week">
+        <ol class="days">
+          <li id="day6" class="day">
+            <a href="#">
+              <span class="day__number">6</span>
+            </a>
+          </li>
+          <li id="day7" class="day">
+            <a href="#">
+              <span class="day__number">7</span>
+            </a>
+          </li>
+          <li id="day8" class="day">
+            <a href="#">
+              <span class="day__number">8</span>
+            </a>
+          </li>
+          <li id="day9" class="day">
+            <a href="#">
+              <span class="day__number">9</span>
+            </a>
+          </li>
+          <li id="day10" class="day">
+            <a href="#">
+              <span class="day__number">10</span>
+            </a>
+          </li>
+          <li id="day11" class="day">
+            <a href="#">
+              <span class="day__number">11</span>
+            </a>
+          </li>
+          <li id="day12" class="day">
+            <a href="#">
+              <span class="day__number">12</span>
+            </a>
+          </li>
+        </ol>
+      </li>
+      <li class="week">
+        <ol class="days">
+          <li id="day13" class="day">
+            <a href="#">
+              <span class="day__number">13</span>
+            </a>
+          </li>
+          <li id="day14" class="day">
+            <a href="#">
+              <span class="day__number">14</span>
+            </a>
+          </li>
+          <li id="day15" class="day">
+            <a href="#">
+              <span class="day__number">15</span>
+            </a>
+          </li>
+          <li id="day16" class="day">
+            <a href="#">
+              <span class="day__number">16</span>
+            </a>
+          </li>
+          <li id="day17" class="day">
+            <a href="#">
+              <span class="day__number">17</span>
+            </a>
+          </li>
+          <li id="day18" class="day">
+            <a href="#">
+              <span class="day__number">18</span>
+            </a>
+          </li>
+          <li id="day19" class="day">
+            <a href="#">
+              <span class="day__number">19</span>
+            </a>
+          </li>
+        </ol>
+      </li>
+      <li class="week">
+        <ol class="days">
+          <li id="day20" class="day">
+            <a href="#">
+              <span class="day__number">20</span>
+            </a>
+          </li>
+          <li id="day21" class="day">
+            <a href="#">
+              <span class="day__number">21</span>
+            </a>
+          </li>
+          <li id="day22" class="day">
+            <a href="#">
+              <span class="day__number">22</span>
+            </a>
+          </li>
+          <li id="day23" class="day">
+            <a href="#">
+              <span class="day__number">23</span>
+            </a>
+          </li>
+          <li id="day24" class="day">
+            <a href="#">
+              <span class="day__number">24</span>
+            </a>
+          </li>
+          <li id="day25" class="day">
+            <a href="#">
+              <span class="day__number">25</span>
+            </a>
+          </li>
+          <li id="day26" class="day">
+            <a href="#">
+              <span class="day__number">26</span>
+            </a>
+          </li>
+        </ol>
+      </li>
+      <li class="week">
+        <ol class="days">
+          <li id="day27" class="day">
+            <a href="#">
+              <span class="day__number">27</span>
+            </a>
+          </li>
+          <li id="day28" class="day">
+            <a href="#">
+              <span class="day__number">28</span>
+            </a>
+          </li>
+          <li id="day29" class="day">
+            <a href="#">
+              <span class="day__number">29</span>
+            </a>
+          </li>
+          <li id="day30" class="day">
+            <a href="#">
+              <span class="day__number">30</span>
+            </a>
+          </li>
+          <li id="day31" class="day">
+            <a href="#">
+              <span class="day__number">31</span>
+            </a>
+          </li>
+          <li class="day empty"></li>
+          <li class="day empty"></li>
+        </ol>
+      </li>
+    </ol>
+  </div>
 
-    <!-- Begin Mailchimp Signup Form -->
+  <container id="footer-container" class="footer-content">
 
-    <div id="mc_embed_signup" class="form">
+    <container id="mailchimp-container">
 
-      <form action="https://gmsm.us12.list-manage.com/subscribe/post?u=8f354e0cee7bf7caed4af86d7&amp;id=db3e7bac07" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+      <!-- Begin Mailchimp Signup Form -->
+      <!-- Begin Mailchimp Signup Form -->
+      <link href="//cdn-images.mailchimp.com/embedcode/horizontal-slim-10_7.css" rel="stylesheet" type="text/css">
+      <style type="text/css">
+        #mc_embed_signup {
+          background: #fff;
+          clear: left;
+          font: 1.5rem Helvetica, Arial, sans-serif;
+          width: 100%;
+        }
 
-        <div id="mc_embed_signup_scroll">
-          <p>To receive a special link every day as we count down to Christmas, enter your email here.</p>
-          <div class="mc-field-group">
-            <label for="mce-EMAIL">Email Address</label>
-            <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+        /* Add your own Mailchimp form style overrides in your site stylesheet or in this style block.
+	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+      </style>
+      <div id="mc_embed_signup" class="form">
+
+        <form action="https://gmsm.us12.list-manage.com/subscribe/post?u=8f354e0cee7bf7caed4af86d7&amp;id=db3e7bac07"
+          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+          target="_blank" novalidate>
+
+          <div id="mc_embed_signup_scroll">
+            <p class="footer-text">Let’s countdown to Christmas together! Enter your email to receive a new video every day until Christmas day!</p>
+            <div class="mc-field-group">
+              <!-- <label for="mce-EMAIL">Email Address</label> -->
+              <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+            </div>
+            <div id="mce-responses" class="clear">
+              <div class="response" id="mce-error-response" style="display:none"></div>
+              <div class="response" id="mce-success-response" style="display:none"></div>
+            </div>
+            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+            <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text"
+                name="b_8f354e0cee7bf7caed4af86d7_db3e7bac07" tabindex="-1" value=""></div>
+            <div id="mce-BUTTON" class="clear"><input type="submit" value="Subscribe" name="subscribe"
+                id="mc-embedded-subscribe" class="button"></div>
           </div>
-          <div id="mce-responses" class="clear">
-            <div class="response" id="mce-error-response" style="display:none"></div>
-            <div class="response" id="mce-success-response" style="display:none"></div>
-          </div> <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_8f354e0cee7bf7caed4af86d7_db3e7bac07" tabindex="-1" value=""></div>
-          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-        </div>
+        </form>
+      </div>
+      <!--End mc_embed_signup-->
+
+    </container>
+
+    <container id="paypal-container" class="footer-content">
+      <p id="paypal-text" class="footer-text">Help us make more projects like this in the future?      </p>
+      <form id="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <!-- Identify your business so that you can collect the payments. -->
+        <input type="hidden" name="business" value="donations@kcparkfriends.org">
+        <!-- Specify a Donate button. -->
+        <input type="hidden" name="cmd" value="_donations">
+        <!-- Specify details about the contribution -->
+        <input type="hidden" name="item_name" value="Friends of the Park">
+        <input type="hidden" name="item_number" value="Fall Cleanup Campaign">
+        <input type="hidden" name="currency_code" value="USD">
+        <!-- Display the payment button. -->
+        <input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+          alt="Donate">
+        <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
       </form>
-    </div>
-    <!--End mc_embed_signup-->
-  </container>
+    </container>
 
-  <container id="paypal">
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-      <!-- Identify your business so that you can collect the payments. -->
-      <input type="hidden" name="business" value="donations@kcparkfriends.org">
-      <!-- Specify a Donate button. -->
-      <input type="hidden" name="cmd" value="_donations">
-      <!-- Specify details about the contribution -->
-      <input type="hidden" name="item_name" value="Friends of the Park">
-      <input type="hidden" name="item_number" value="Fall Cleanup Campaign">
-      <input type="hidden" name="currency_code" value="USD">
-      <!-- Display the payment button. -->
-      <input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
-      <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
-    </form>
   </container>
+  <!-- partial -->
+  <script src="./script.js"></script>
 
-</container>
+</body>
+
+</html>

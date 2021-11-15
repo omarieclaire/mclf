@@ -9,6 +9,33 @@ for (var i = 0; i < numbers.length; i++) {
   dayIDs.push(oneDay);  
 }
 
+
+
+var videoelement = document.createElement("video");
+videoelement.setAttribute("id", "video1");
+
+var sourceMP4 = document.createElement("source"); 
+sourceMP4.type = "video/mp4";
+sourceMP4.src = "https://www.youtube.com/watch?v=ejDbI_bwSbM";
+videoelement.appendChild(sourceMP4);
+
+// var sourceWEBM = document.createElement("source"); 
+// sourceWEBM.type = "video/webm";
+// sourceWEBM.src = "https://www.youtube.com/watch?v=ejDbI_bwSbM";
+// videoelement.appendChild(sourceWEBM);
+
+//maybe here I need to append the videoelement to the #vidDiv instead of whatever this says
+var vidDiv = document.getElementById(vidDiv);
+console.log(vidDiv);
+// vidDiv.appendChild(videoelement);
+// document.querySelector('vidDiv').html(videoelement);
+// var video = document.getElementById("video1");
+// video.play();
+
+
+
+
+
 function openVideo(day) {
   function functionThatReceivesAnEvent(event) {
       for (var i = 0; i < dayIDs.length; i++) {
@@ -33,6 +60,3 @@ function hideVidDiv(){
   vidDiv.classList.remove("vidDiv");
   closeButton.classList.remove("visible"); 
 }
-
-
-

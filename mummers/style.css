@@ -1,7 +1,52 @@
-/* Calendar Styles */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* end reset */
 
 #calendar {
-  position: relative;
+  display: block;
+  /* position: relative; */
 }
 
 .calendar-month {
@@ -59,7 +104,7 @@
   background-size: cover;
 }
 
-  #day1 {
+#day1 {
     background-image: url("https://marieflanagan.com/img/blog-images/vt-meet.png");
 }
 
@@ -109,9 +154,10 @@
 
 body {
   font-family: Arial, sans-serif;
+  letter-spacing: 1.3px;
   font-size: .75rem;
-  padding: 50px 0;
-  margin: 0;
+  /* padding: 50px 0; */
+  /* margin: 0; */
   background: teal;
 }
 
@@ -120,24 +166,95 @@ a {
   text-decoration: none;
 }
 
-#footer{
-  display:flex ;
+#footer-container{
+  display: flex;
   flex-direction: column;
-  margin: auto;
+  width: 100% !important;
+  margin: auto !important;
+  margin-top: 3rem !important;
+  padding: 0 !important;
 }
 
-#mailchimp {
-  display:flex ;
+.footer-content {
+  display: flex;
+  flex-direction: column; 
+  box-sizing: border-box !important; 
+  /* margin: 4rem auto;  */
+  padding: 3rem 5rem;
+  /* width: 90% !important; */
+}
+
+#mailchimp-container {
+  background-color:transparent !important;
+  display:flex;
+  margin: 4rem auto;
+  width: 93% !important;
+
+  /* padding: 2rem; */
+  /* background-color: red; */
+  /* box-sizing: border-box !important; */
+  /* width: 50% !important; */
+  /* margin: auto !important; */
+  /* display:flex ;
   margin: auto;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
 }
 
-#paypal {
-  display:flex;
-  margin: auto;
-  padding: 2rem;
+.form {
+  padding-bottom: 3rem;
+  /* border: 1px solid #ccc; */
+  border: 3px dashed red;
 }
+
+#mc_embed_signup{
+  background-color: transparent !important;
+}
+
+#mc_embed_signup .button {
+  /* font-size: 13px;  */
+  border: 2px solid grey !important; 
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px; 
+  letter-spacing: .03em; 
+  color: #fff; 
+  background-color: #aaa; 
+  box-sizing:border-box; 
+  height:32px; 
+  line-height:32px; 
+  padding:0 18px; 
+  display: inline-block; 
+  margin: 0; 
+  transition: all 0.23s ease-in-out 0s;
+  /* max-width: 30%; */
+}
+
+
+#paypal-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  background-color:black;
+  padding: 2rem 6rem;
+  /* border-top: 3px double red; */
+  margin-top: 4rem;
+}
+
+.footer-text {
+  font-size: 1.3rem;
+  text-align: center;
+  padding: 2rem 6rem;
+  /* display: block; */
+  /* color: purple; */
+}
+
+#paypal-text {
+  color: white;
+}
+
+
 
 .vidDiv {
   z-index: 10;
@@ -146,9 +263,10 @@ a {
   top: 2%;
   width: 98%;
   height: 98%;
-  background-color: blue;
-  opacity: 90%;
-  position: absolute;
+  background-color: black;
+  opacity: 95%;
+  /* position: absolute; */
+  position: fixed;
 }
 
 .close {
@@ -187,8 +305,8 @@ a {
 #logo {
   width: 10rem;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
+  margin-bottom: 2rem;
   width: 10%;
   padding: 1rem;
 }
@@ -200,57 +318,3 @@ a {
   margin-right: auto;
 }
 
-btn {
-/*   font-weight: 600; */
-/*   color: #212121; */
-}
-
-
-#footer{
-/*   max-width: 40rem; */
-/*   padding: 3rem 5rem 0; */
-}
-
-.form {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  width: 80%;
-  padding: 2rem 2rem;
-  margin: 1rem;
-/*   display: inline-block; */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  
-}
-
-.mc-field-group {
-  display: flex;
-/*   margin: auto; */
-/*   vertical-align: middle; */
-  margin: 5px 10px 5px 0;
-  padding: 10px;
-}
-
-#mc-embedded-subscribe {
-  padding: 10px 20px;
-  background-color: none;
-  border: 1px solid #ddd;
-/*   color: white; */
-}
-
-.mc-field-group button:hover {
-/*   background-color: royalblue; */
-}
-
-/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
-@media (max-width: 800px) {
-  .form-inline input {
-    margin: 10px 0;
-  }
-
-  .form-inline {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
