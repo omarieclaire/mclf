@@ -236,6 +236,9 @@ a {
 
 .form {
   padding-bottom: 3rem;
+  margin: 3rem auto;
+  /* margin-top: ; */
+  max-width: 70%;
   /* border: 1px solid #ccc; */
   border: 1px dashed red;
 }
@@ -280,7 +283,8 @@ a {
   text-align: center;
   padding: 2rem 6rem;
   /* display: block; */
-  /* color: purple; */
+  color: white;
+  
 }
 
 #paypal-text {
@@ -303,8 +307,6 @@ a {
   /* position: absolute; */
   position: fixed;
 }
-
-
 
 .close {
   color: white;
@@ -352,5 +354,42 @@ a {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* background video  */
+/* Style the video: 100% width and height to cover the entire window */
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -200;
+}
+
+/* Add some content at the bottom of the video/page */
+.content {
+  position: fixed;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Style the button used to pause/play the video */
+#myBtn {
+  width: 200px;
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+#myBtn:hover {
+  background: #ddd;
+  color: black;
 }
 
