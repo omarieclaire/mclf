@@ -50,7 +50,7 @@ table {
 }
 
 .calendar-month {
-  width: 90%;
+  width: 86.5%;
   margin: 0 auto;
   padding: 20px;
   background: #fff;
@@ -221,7 +221,7 @@ a {
   background-color:transparent !important;
   display:flex;
   margin: 4rem auto;
-  width: 93% !important;
+  width: 90% !important;
 
   /* padding: 2rem; */
   /* background-color: red; */
@@ -237,7 +237,7 @@ a {
 .form {
   padding-bottom: 3rem;
   /* border: 1px solid #ccc; */
-  border: 3px dashed red;
+  border: 1px dashed red;
 }
 
 #mc_embed_signup{
@@ -270,7 +270,7 @@ a {
   justify-content: center;
   width: 100% !important;
   background-color:black;
-  padding: 2rem 6rem;
+  padding: 3rem 6rem 6rem 15rem;
   /* border-top: 3px double red; */
   margin-top: 4rem;
 }
@@ -290,28 +290,32 @@ a {
 
 
 .vidDiv {
-  z-index: 10;
-  left: 1%;
-  right: 1%;
-  top: 2%;
-  width: 98%;
-  height: 98%;
+  z-index: 5;
+  display:flex;
+  margin: auto;
+  left: 2.5%;
+  right: 2.5%;
+  top: 10%;
+  width: 90%;
+  height: 90%;
   background-color: black;
-  opacity: 95%;
+  opacity: 100%;
   /* position: absolute; */
   position: fixed;
 }
 
+
+
 .close {
   color: white;
-  z-index: 20;
+  z-index: 200;
   position: absolute;
-  right: 32px;
-  top: 32px;
+  right: -35px;
+  top: -30px;
   width: 32px;
   height: 32px;
   opacity: 0.8;
-  visibility: hidden;
+  /* visibility: hidden; */
 }
 .close:hover {
   opacity: 1;
@@ -322,7 +326,7 @@ a {
   left: 15px;
   content: " ";
   height: 33px;
-  width: 2px;
+  width: 4px;
   background-color: #8d0cff;
 }
 .close:before {
@@ -338,8 +342,8 @@ a {
 #logo {
   width: 15rem;
   display: block;
-  margin: auto;
-  margin-bottom: 2rem;
+  margin: 2rem auto;
+  margin-top: 7rem;
   padding: 1rem;
 }
 

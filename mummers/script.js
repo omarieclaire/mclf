@@ -9,62 +9,34 @@ for (var i = 0; i < numbers.length; i++) {
   dayIDs.push(oneDay);  
 }
 
-
-
-// var videoelement = document.createElement("video");
-// videoelement.setAttribute("id", "video1");
-
-// var sourceMP4 = document.createElement("source"); 
-// sourceMP4.type = "video/mp4";
-// sourceMP4.src = "https://www.youtube.com/watch?v=sRxrwjOtIag";
-// videoelement.appendChild(sourceMP4);
-
-// var vidDiv = document.getElementById('vidDiv');
-// vidDiv.appendChild(videoelement);
-
-// console.log(vidDiv);
-
-
-// var x = document.createElement("VIDEO");
-
-// x.setAttribute("src","https://www.youtube.com/watch?v=sRxrwjOtIag");
-// x.setAttribute("width", "320");
-// x.setAttribute("height", "240");
-// x.setAttribute("controls", "controls");
-// // document.body.appendChild(x);
-
-// var vidDiv = document.getElementById('vidDiv');
-// vidDiv.appendChild(x);
-
-// console.log(vidDiv);
-
-var obj = {"video": {
-  "value": "<iframe title='YouTube video player' type=\"text/html\" width='640' height='390' src='http://www.youtube.com/embed/sRxrwjOtIag' frameborder='0' allowFullScreen></iframe>"
-}}
-document.write(obj.video.value);
-
-
+// sRxrwjOtIag
 function openVideo(day) {
   function functionThatReceivesAnEvent(event) {
       for (var i = 0; i < dayIDs.length; i++) {
-	      // dayIDs[i].style.backgroundColor = "blue"; 
       }
-      // day.style.backgroundColor = "red";  
       displayVidDiv();
   };
   return functionThatReceivesAnEvent;
 }
 
-vidDiv = document.getElementById("vidDiv");
-closeButton = document.getElementById("closeButton");
-closeButton.addEventListener('click', hideVidDiv);
+let vidDiv = document.getElementById("vidDiv");
 
 function displayVidDiv(){
   vidDiv.classList.add("vidDiv");
-  closeButton.classList.add("visible");
+  vidDiv.innerHTML = "<iframe title='YouTube video player' type=\'text/html\' width='100%' height='100%' src='http://www.youtube.com/embed/LJMRu0UAYRg' frameborder='0' allowFullScreen></iframe>"
+  var a = document.createElement('a');
+  a.classList.add("close");
+  a.id = "closeButton";
+  a.href = "#";
+  vidDiv.appendChild(a);
+  a.addEventListener('click', hideVidDiv);
+  vidDiv.classList.add("visible");
 }
 
 function hideVidDiv(){
+  console.log("dgdf");
+  vidDiv.innerHTML = null;
   vidDiv.classList.remove("vidDiv");
+  vidDiv.classList.remove("visible");
   closeButton.classList.remove("visible"); 
 }
