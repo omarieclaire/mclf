@@ -59,6 +59,7 @@ table {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  /* height: 15% !important; */
 }
 .calendar-month .week__header {
   order: 1;
@@ -67,7 +68,7 @@ table {
   text-align: center;
   padding: 20px;
   text-transform: uppercase;
-  color: teal;
+  color: rgb(0, 128, 0);
   letter-spacing: 4px;
   width: 14.2857%;
   box-sizing: border-box;
@@ -75,8 +76,12 @@ table {
 .calendar-month .week__header:nth-child(7) {
   border-right: 0;
 }
+
 .calendar-month .week__header:first-letter {
-  font-size: 12px;
+  font-size: .7rem;
+}
+.calendar-month .week__header:first-letter {
+  font-size: .8rem;
 }
 @media (max-width: 767px) {
   .calendar-month .week__header {
@@ -101,24 +106,27 @@ table {
   transition: 0.5s;
   box-sizing: border-box;
   background-size: cover;
+  
 }
 
 #day1 {
     /* background-image: url("img/bell.png"); */
     /* background-repeat: no-repeat; */
     /* background-size: contain, cover; */
+
   }
 
 
 .icon{
-  display: block;
+  display: flex;
   margin-left: auto;
   margin-right: auto;
   /* margin-bottom: -100%; */
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   padding-top: 2rem;
   max-width: 50%;
-  max-height: 60%;
+  /* min-height: 50%; */
+  /* max-height: 50%; */
   
   /* background-color: transparent; */
 }
@@ -130,6 +138,8 @@ table {
   max-height: 60%;
   padding: 1rem;
   margin-bottom: -100%; */
+  max-width: 30%;
+
 }
 
 .blurIcon{
@@ -151,8 +161,8 @@ table {
 .calendar-month .day:after {
   /* Create responsive square div */
   content: "";
-  display: block;
-  padding-bottom: 100%;
+  display: inline-block;
+  /* padding-bottom: 100%; */
 }
 .calendar-month .day:hover {
 /*   transform: scale(1.08); */
@@ -173,14 +183,15 @@ table {
   }
 }
 .calendar-month .empty {
-  background: #f8f8f8;
+  /* background: #f8f8f8; */
 }
 .calendar-month .empty:hover {
   cursor: default;
-  background: #f8f8f8;
+  background: #ffffff37;
 }
 .calendar-month a {
-  display: block;
+  /* display: block; */
+  display: inline;
   width: 100%;
   height: 100%;
 }
@@ -218,52 +229,14 @@ a {
 }
 
 #mailchimp-container {
-  background-color:transparent !important;
+  background-color: rgba(7, 41, 21, 0.653) !important;
   display:flex;
   margin: 4rem auto;
   width: 90% !important;
-
-  /* padding: 2rem; */
-  /* background-color: red; */
-  /* box-sizing: border-box !important; */
-  /* width: 50% !important; */
-  /* margin: auto !important; */
-  /* display:flex ;
-  margin: auto;
-  align-items: center;
-  justify-content: center; */
-}
-
-.form {
   padding-bottom: 3rem;
   margin: 3rem auto;
-  /* margin-top: ; */
-  max-width: 70%;
-  /* border: 1px solid #ccc; */
-  border: 1px dashed red;
-}
-
-#mc_embed_signup{
-  background-color: transparent !important;
-}
-
-#mc_embed_signup .button {
-  /* font-size: 13px;  */
-  border: 2px solid grey !important; 
-  -webkit-border-radius: 3px; 
-  -moz-border-radius: 3px; 
-  border-radius: 3px; 
-  letter-spacing: .03em; 
-  color: #fff; 
-  background-color: #aaa; 
-  box-sizing:border-box; 
-  height:32px; 
-  line-height:32px; 
-  padding:0 18px; 
-  display: inline-block; 
-  margin: 0; 
-  transition: all 0.23s ease-in-out 0s;
-  /* max-width: 30%; */
+  max-width: 90%;
+  border: 1px dotted red;
 }
 
 
@@ -273,7 +246,7 @@ a {
   justify-content: center;
   width: 100% !important;
   background-color:black;
-  padding: 3rem 6rem 6rem 15rem;
+  padding: 3rem 6rem 5rem 6rem;
   /* border-top: 3px double red; */
   margin-top: 4rem;
 }
@@ -284,14 +257,13 @@ a {
   padding: 2rem 6rem;
   /* display: block; */
   color: white;
+  line-height: 2rem;
   
 }
 
 #paypal-text {
   color: white;
 }
-
-
 
 .vidDiv {
   z-index: 5;
@@ -306,6 +278,7 @@ a {
   opacity: 100%;
   /* position: absolute; */
   position: fixed;
+  outline: 5rem solid red;
 }
 
 .close {
@@ -377,19 +350,50 @@ a {
   padding: 20px;
 }
 
-/* Style the button used to pause/play the video */
-#myBtn {
-  width: 200px;
-  font-size: 18px;
-  padding: 10px;
-  border: none;
-  background: #000;
-  color: #fff;
-  cursor: pointer;
+
+
+/* mailchimp stuff */
+
+#mc_embed_signup form {background-color: transparent; text-align:center; padding:10px 0 10px 0;}
+.mc-field-group { display: inline-block; } /* positions input field horizontally */
+#mc_embed_signup input.email {font-family:"Open Sans","Helvetica Neue",Arial,Helvetica,Verdana,sans-serif; font-size: 15px; border: 1px solid #ABB0B2;  -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; color: #343434; background-color: #fff; box-sizing:border-box; height:32px; padding: 0px 0.4em; display: inline-block; margin: 0; width:350px; vertical-align:top;}
+#mc_embed_signup ∏abel {display:block; font-size:16px; padding-bottom:10px; font-weight:bold;}
+#mc_embed_signup .clear {display: inline-block;} /* positions button horizontally in line with input */
+#mc_embed_signup .button {font-size: 13px; border: none; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; letter-spacing: .03em; color: #fff; background-color: #aaa; box-sizing:border-box; height:32px; line-height:32px; padding:0 18px; display: inline-block; margin: 0; transition: all 0.23s ease-in-out 0s;}
+#mc_embed_signup .button:hover {background-color:#777; cursor:pointer;}
+#mc_embed_signup div#mce-responses {float:left; top:-1.4em; padding:0em .5em 0em .5em; overflow:hidden; width:90%;margin: 0 5%; clear: both;}
+#mc_embed_signup div.response {margin:1em 0; padding:1em .5em .5em 0; font-weight:bold; float:left; top:-1.5em; z-index:1; width:80%;}
+#mc_embed_signup #mce-error-response {display:none;}
+#mc_embed_signup #mce-success-response {color:#529214; display:none;}
+#mc_embed_signup label.error {display:block; float:none; width:auto; margin-left:1.05em; text-align:left; padding:.5em 0;}
+@media (max-width: 768px) {
+    #mc_embed_signup input.email {width:100%; margin-bottom:5px;}
+    #mc_embed_signup .clear {display: block; width: 100% }
+    #mc_embed_signup .button {width: 100%; margin:0; }
 }
 
-#myBtn:hover {
-  background: #ddd;
-  color: black;
+#mc_embed_signup{
+  background-color: transparent;
+  clear: left;
+  /* font: 1.5rem Helvetica, Arial, sans-serif; */
+  width: 100%;
 }
 
+#mc_embed_signup .button {
+  /* font-size: 13px;  */
+  border: 2px solid grey !important; 
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  /* border-radius: 3px;  */
+  /* letter-spacing: .03em;  */
+  color: #fff; 
+  background-color: rgb(255, 0, 0); 
+  box-sizing:border-box; 
+  height:32px; 
+  line-height:32px; 
+  padding:0 18px; 
+  display: inline-block; 
+  margin: 0; 
+  transition: all 0.23s ease-in-out 0s;
+  /* max-width: 30%; */
+}
