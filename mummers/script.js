@@ -29,99 +29,99 @@ if (end - now <= 0) {
 let numbers = {
   day1:{
     dayID:"day1",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day2:{
     dayID:"day2",
-    youtube:"http://www.youtube.com/embed/3t13XOceq0Q"
+    youtube:"https://www.youtube.com/embed/3t13XOceq0Q"
   },
   day3:{
     dayID:"day3",
-    youtube:"http://www.youtube.com/embed/u_cLu4XM1uM"
+    youtube:"https://www.youtube.com/embed/u_cLu4XM1uM"
   },
   day4:{
     dayID:"day4",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day5:{
     dayID:"day5",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day6:{
     dayID:"day6",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day7:{
     dayID:"day7",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day8:{
     dayID:"day8",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day9:{
     dayID:"day9",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day10:{
     dayID:"day10",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day11:{
     dayID:"day11",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day12:{
     dayID:"day12",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day13:{
     dayID:"day13",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day14:{
     dayID:"day14",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day15:{
     dayID:"day15",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day16:{
     dayID:"day16",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day17:{
     dayID:"day17",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day18:{
     dayID:"day18",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day19:{
     dayID:"day19",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day20:{
     dayID:"day20",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day21:{
     dayID:"day21",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day22:{
     dayID:"day22",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day23:{
     dayID:"day23",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   },
   day24:{
     dayID:"day24",
-    youtube:"http://www.youtube.com/embed/LJMRu0UAYRg"
+    youtube:"https://www.youtube.com/embed/LJMRu0UAYRg"
   }
 };
 
@@ -131,7 +131,6 @@ for (const number in numbers) {
   thisDay = document.getElementById(thisDay);
   thisDay.addEventListener('click', openVideo());
 }
-
 
 // sRxrwjOtIag
 function openVideo(e) {  
