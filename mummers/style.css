@@ -137,8 +137,8 @@ table {
 }
 
 .blurIcon{
-  opacity: .3;
-  filter: grayscale(1) blur(5px) opacity(.9);
+  /* opacity: .3; */
+  /* filter: grayscale(1) blur(5px) opacity(.9); */
   /* filter: blur(3px); */
 }
 
