@@ -145,7 +145,12 @@ function openVideo(e) {
 let vidDiv = document.getElementById("vidDiv");
 
 function displayVidDiv(e){
-  let clickedDayID = e.path[1].id;
+  // e.path doesn't work in firefox
+  console.log(e);
+  let clickedDayID = e.srcElement.closest("li").id;
+
+  // let clickedDayID = e.path[1].id;
+  console.log(e.path);
   // console.log(clickedDayID);
   let thisVideo = numbers[clickedDayID].youtube;
   // console.log(thisVideo);
