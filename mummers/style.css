@@ -52,7 +52,7 @@ table {
   width: 86.5%;
   margin: 0 auto;
   padding: 20px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.835);
   list-style-type: none;
 }
 .calendar-month .week {
@@ -63,8 +63,8 @@ table {
 }
 .calendar-month .week__header {
   order: 1;
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
+  /* background: #fff; */
+  border-right: 1px solid #ff0000;
   text-align: center;
   padding: 20px;
   text-transform: uppercase;
@@ -100,9 +100,9 @@ table {
   position: relative;
   order: 1;
   width: 14.2857%;
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
-  border-top: 1px solid #e8e8e8;
+  /* background: #fff; */
+  border-right: 1px solid #ff0000;
+  border-top: 1px solid #ff0000;
   transition: 0.5s;
   box-sizing: border-box;
   background-size: cover;
@@ -121,14 +121,8 @@ table {
   display: flex;
   margin-left: auto;
   margin-right: auto;
-  /* margin-bottom: -100%; */
-  /* box-sizing: border-box; */
   padding-top: 2rem;
-  max-width: 50%;
-  /* min-height: 50%; */
-  /* max-height: 50%; */
-  
-  /* background-color: transparent; */
+  max-width: 50%;  
 }
 
 .icon-tall{
@@ -144,7 +138,7 @@ table {
 
 .blurIcon{
   opacity: .3;
-  filter: grayscale(1) blur(9px) opacity(.7);
+  filter: grayscale(1) blur(5px) opacity(.9);
   /* filter: blur(3px); */
 }
 
