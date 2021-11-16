@@ -11,6 +11,21 @@
 // }
 
 
+// need to find where I disable things. Is there a style making the link invisible?
+// is something making the link unclickable? 
+
+// To "disable" a link, you can remove its href attribute, or add a click handler that returns false.
+
+
+var end = new Date('2021-11-17');
+var now = new Date();
+console.log(now);
+if (end - now <= 0) {
+    // var e = document.getElementById('locked');
+    // e.parentElement.removeChild(e);
+}
+
+
 let numbers = {
   day1:{
     dayID:"day1",
@@ -117,6 +132,7 @@ for (const number in numbers) {
   thisDay.addEventListener('click', openVideo());
 }
 
+
 // sRxrwjOtIag
 function openVideo(e) {  
   function functionThatReceivesAnEvent(event) {
@@ -153,10 +169,3 @@ function hideVidDiv(){
   vidDiv.classList.remove("visible");
   closeButton.classList.remove("visible"); 
 }
-
-// var end = new Date('2013-01-01');
-// var now = new Date();
-// if (end - now <= 0) {
-//     var e = document.getElementById('locked');
-//     e.parentElement.removeChild(e);
-// }
