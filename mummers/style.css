@@ -41,11 +41,10 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-
 /* end reset */
 
 #calendar {
-  display: block;
+  /* display: block; */
   /* position: relative; */
 }
 
@@ -115,7 +114,7 @@ table {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: -100%;
+  /* margin-bottom: -100%; */
   box-sizing: border-box;
   padding-top: 2rem;
   max-width: 50%;
@@ -135,7 +134,8 @@ table {
 
 .blurIcon{
   opacity: .3;
-  filter: blur(3px);
+  filter: grayscale(1) blur(9px) opacity(.7);
+  /* filter: blur(3px); */
 }
 
 .colorIcon{
