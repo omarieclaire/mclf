@@ -312,6 +312,9 @@ padding-top: 3.3rem;
   padding: 2rem;
   color: red;
   font-size: 1.3rem;
+  background:rgba(8, 23, 14, 0.469);
+  width: 84.2%;
+  margin: auto;
 }
 
 .vidDiv {
@@ -416,7 +419,7 @@ padding-top: 3.3rem;
 #mc_embed_signup form {
   border: 1px dotted red;
   background-color: rgba(8, 23, 14, 0.769) !important;
-  margin: 9rem 4rem 6rem 4rem;
+  margin: 9rem 2.8rem 6rem 2.8rem;
 	background-color: transparent;
 	text-align: center;
 	padding: 2rem 0 3rem 0;
