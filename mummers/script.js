@@ -213,7 +213,7 @@ function displayVidDiv(e) {
   let thisVideo = numbers[clickedDayID].youtube;
   vidDiv.classList.add("vidDiv");
 
-  vidDiv.innerHTML = "<iframe title='YouTube video player' type=\'text/html\' width='90%' height='90%' src=" + thisVideo + " frameborder='0' allowFullScreen></iframe>"
+  vidDiv.innerHTML = "<iframe title='YouTube video player' type=\'text/html\' width='80%' height='80%' position='absolute' src=" + thisVideo + " frameborder='0' allowFullScreen></iframe>"
   var a = document.createElement('a');
   a.classList.add("close");
   a.id = "closeButton";

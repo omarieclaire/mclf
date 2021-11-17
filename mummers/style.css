@@ -43,7 +43,6 @@ table {
 }
 /* end reset */
 
-
 @font-face{
   font-family: myFont;
   src: url('ChristmasCeremony.ttf');
@@ -65,7 +64,6 @@ a {
   text-decoration: none;
 }
 
-
 #calendar {
   /* display: block; */
   /* position: relative; */
@@ -80,10 +78,9 @@ a {
 }
 
 @media (max-width: 768px) {
-.calendar-month {
-  /* padding: 2px; */
-}
-
+  .calendar-month {
+    /* padding: 2px; */
+  }
 }
 
 .calendar-month .week {
@@ -319,25 +316,48 @@ padding-top: 3.3rem;
 
 .vidDiv {
   z-index: 5;
-  display:flex;
-  margin: auto;
-  left: 2.5%;
-  right: 2.5%;
+  /* display:flex; */
+  /* margin: auto; */
+  left: 9.5%;
+  right: 9.5%;
   top: 10%;
-  width: 90%;
-  height: 90%;
+  /* width: 90%; */
+  /* height: 90%; */
   background-color: black;
   opacity: 100%;
-  /* position: absolute; */
   position: fixed;
   outline: 5rem solid rgba(0, 0, 0, 0.83);
+
+  /* position: relative;  */
+  padding-bottom: 56.25%; 
+  /* padding-top: 30px;  */
+  height: 0; 
+  /* overflow: hidden; */
 }
+
+.vidDiv iframe, .video-container object, .video-container embed { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  /* margin: auto; */
+  width: 98%; 
+  height: 90%; 
+}
+
+
+/* 
+@media (max-width: 767px) {
+  .vidDiv {
+    width: 100%;
+    height: 100%; 
+  }
+} */
 
 .close {
   color: white;
   z-index: 200;
   position: absolute;
-  right: -35px;
+  right: -25px;
   top: -30px;
   width: 32px;
   height: 32px;
