@@ -86,7 +86,7 @@ let numbers = {
     youtube: "https://www.youtube.com/embed/djn1iOaWUvc"
   },
   day15: {
-    day: new Date('December 15, 2021 00:00:01'),
+    day: new Date('November 15, 2021 00:00:01'),
     dayID: "day15",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/R8Gd29pTDak"
