@@ -86,61 +86,61 @@ let numbers = {
     youtube: "https://www.youtube.com/embed/djn1iOaWUvc"
   },
   day15: {
-    day: new Date('November 15, 2021 00:00:01'),
+    day: new Date('December 15, 2021 00:00:01'),
     dayID: "day15",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/R8Gd29pTDak"
   },
   day16: {
-    day: new Date('November 16, 2021 00:00:01'),
+    day: new Date('December 16, 2021 00:00:01'),
     dayID: "day16",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/-ed3EfTKxuQ"
   },
   day17: {
-    day: new Date('November 17, 2021 00:00:01'),
+    day: new Date('December 17, 2021 00:00:01'),
     dayID: "day17",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/zRdbQfv7rC0"
   },
   day18: {
-    day: new Date('November 18, 2021 00:00:01'),
+    day: new Date('December 18, 2021 00:00:01'),
     dayID: "day18",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/LVAwLDGn-Vk"
   },
   day19: {
-    day: new Date('November 19, 2021 00:00:01'),
+    day: new Date('December 19, 2021 00:00:01'),
     dayID: "day19",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/ayg6APzzyXg"
   },
   day20: {
-    day: new Date('November 20, 2021 00:00:01'),
+    day: new Date('December 20, 2021 00:00:01'),
     dayID: "day20",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/QWsD_fiMB3o"
   },
   day21: {
-    day: new Date('November 21, 2021 00:00:01'),
+    day: new Date('December 21, 2021 00:00:01'),
     dayID: "day21",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/qbZ4FTqOJKQ"
   },
   day22: {
-    day: new Date('November 22, 2021 00:00:01'),
+    day: new Date('December 22, 2021 00:00:01'),
     dayID: "day22",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/ZIyLC9w5ro0"
   },
   day23: {
-    day: new Date('November 23, 2021 00:00:01'),
+    day: new Date('December 23, 2021 00:00:01'),
     dayID: "day23",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/NnjHyaCVAho"
   },
   day24: {
-    day: new Date('November 24, 2021 00:00:01'),
+    day: new Date('December 24, 2021 00:00:01'),
     dayID: "day24",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/PA1RhS4ezYs"
@@ -148,6 +148,10 @@ let numbers = {
 };
 
 const today = new Date();
+// console.log(itoday);
+
+// const today = "Fri Nov 19 2021 12:53:31 GMT-0500 (Eastern Standard Time)"
+// console.log(today);
 
 function addEventListenersToDays(){
   for (const number in numbers) {
@@ -161,6 +165,8 @@ addEventListenersToDays();
 
 dateInPastArrow = (firstDate, secondDate) => firstDate <= secondDate;
 
+// dateInPastArrow = (firstDate, secondDate) => firstDate <= secondDate;
+
 
 function unBlurOpenDays (){
   // loop through all the days
@@ -168,6 +174,7 @@ function unBlurOpenDays (){
     // get the day ID
     let thisDayID = numbers[number].dayID;
     let thisDay = numbers[number].day;
+
 
     // check if the firstDate is smaller than or equal to the second Date.
     if (dateInPastArrow(thisDay, today)) {
@@ -189,10 +196,9 @@ function openVideo(e) {
 
     let clickedDayID = event.srcElement.closest("li").id;
     let clickedDay = numbers[clickedDayID].day;
-
+console.log("functionThatReceivesAnEvent");
     // check if the firstDate is smaller than or equal to the second Date.
     if (dateInPastArrow(clickedDay, today)) {
-      // console.log("good")
       displayVidDiv(event);
     }
   };
@@ -204,6 +210,7 @@ let vidDiv = document.getElementById("vidDiv");
 function displayVidDiv(e) {
   let clickedDayID = e.srcElement.closest("li").id;
   let thisVideo = numbers[clickedDayID].youtube;
+  console.log(thisVideo);
   vidDiv.classList.add("vidDiv");
   vidDiv.innerHTML = "<iframe title='YouTube video player' type=\'text/html\' width='80%' height='80%' position='absolute' src=" + thisVideo + " frameborder='0' allowFullScreen></iframe>"
   var a = document.createElement('a');
