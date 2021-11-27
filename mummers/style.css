@@ -291,6 +291,10 @@ padding-top: 3.3rem;
   }
 }
 
+#donate-button {
+  margin-bottom: 2rem;
+}
+
 .footer-text {
   text-align: center;
   padding: 2rem 6rem;  
@@ -417,6 +421,7 @@ padding-top: 3.3rem;
   min-height: 100%;
   z-index: -200;
 }
+
 
 /* *************** */
 /* mailchimp stuff */
