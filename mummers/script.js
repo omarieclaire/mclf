@@ -2,91 +2,91 @@
 
 let numbers = {
   day1: {
-    day: new Date('November 1, 2021 00:00:01'),
+    day: new Date('December 1, 2021 00:00:01'),
     dayID: "day1",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/SSSvQ8ushNg"
   },
   day2: {
-    day: new Date('November 2, 2021 00:00:01'),
+    day: new Date('December 2, 2021 00:00:01'),
     dayID: "day2",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/kUsLMGWUO0k"
   },
   day3: {
-    day: new Date('November 3, 2021 00:00:01'),
+    day: new Date('December 3, 2021 00:00:01'),
     dayID: "day3",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/Sexmkj_8Fb0"
   },
   day4: {
-    day: new Date('November 4, 2021 00:00:01'),
+    day: new Date('December 4, 2021 00:00:01'),
     dayID: "day4",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/qBJ2DIpYVbA"
   },
   day5: {
-    day: new Date('November 5, 2021 00:00:01'),
+    day: new Date('December 5, 2021 00:00:01'),
     dayID: "day5",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/UkUvtcNyy4k"
   },
   day6: {
-    day: new Date('November 6, 2021 00:00:01'),
+    day: new Date('December 6, 2021 00:00:01'),
     dayID: "day6",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/v-PTbVAHaUE"
   },
   day7: {
-    day: new Date('November 7, 2021 00:00:01'),
+    day: new Date('December 7, 2021 00:00:01'),
     dayID: "day7",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/tv7YttVN_cM"
   },
   day8: {
-    day: new Date('November 8, 2021 00:00:01'),
+    day: new Date('December 8, 2021 00:00:01'),
     dayID: "day8",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/61yxl36q7LI"
   },
   day9: {
-    day: new Date('November 9, 2021 00:00:01'),
+    day: new Date('December 9, 2021 00:00:01'),
     dayID: "day9",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/NbkoNp5AM8E"
   },
   day10: {
-    day: new Date('November 10, 2021 00:00:01'),
+    day: new Date('December 10, 2021 00:00:01'),
     dayID: "day10",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/N1-WBSbNpyo"
   },
   day11: {
-    day: new Date('November 11, 2021 00:00:01'),
+    day: new Date('December 11, 2021 00:00:01'),
     dayID: "day11",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/XTkUcpFk6QE"
   },
   day12: {
-    day: new Date('November 12, 2021 00:00:01'),
+    day: new Date('December 12, 2021 00:00:01'),
     dayID: "day12",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/GWpCWq4J5ss"
   },
   day13: {
-    day: new Date('November 13, 2021 00:00:01'),
+    day: new Date('December 13, 2021 00:00:01'),
     dayID: "day13",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/uG7B7aVivAk"
   },
   day14: {
-    day: new Date('November 14, 2021 00:00:01'),
+    day: new Date('December 14, 2021 00:00:01'),
     dayID: "day14",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/djn1iOaWUvc"
   },
   day15: {
-    day: new Date('November 15, 2021 00:00:01'),
+    day: new Date('December 15, 2021 00:00:01'),
     dayID: "day15",
     isVisible: false,
     youtube: "https://www.youtube.com/embed/R8Gd29pTDak"
