@@ -1,4 +1,3 @@
-console.log("hi");
 var zoom = (function () {
   function z() {
     k = p.getContext("2d");
@@ -48,6 +47,8 @@ var zoom = (function () {
   function A() {
     steps = [];
     for (var a = 0; 46 > a; a++)
+      // steps.push(new C("https://marieflanagan.com/imgZoom/img/" + D[0] + ".png"));
+
       steps.push(new C("https://marieflanagan.com/imgZoom/img/" + D[(20 + a) % 46] + ".png"));
   }
   function t() {
@@ -108,7 +109,7 @@ var zoom = (function () {
     x = !1,
     h = 0,
     y = 0,
-    D = "img1 img2 img3 img4 img5 img6 img7".split(
+    D = "1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5".split(
       " "
     );
   $(window).resize(function () {
