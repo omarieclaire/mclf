@@ -48,7 +48,7 @@ var zoom = (function () {
   function A() {
     steps = [];
     for (var a = 0; 46 > a; a++)
-      steps.push(new C("https://marieflanagan.com/imgZoom/img" + D[(20 + a) % 46] + ".png"));
+      steps.push(new C("https://marieflanagan.com/imgZoom/img/" + D[(20 + a) % 46] + ".png"));
   }
   function t() {
     k.clearRect(0, 0, p.width, p.height);
@@ -108,7 +108,7 @@ var zoom = (function () {
     x = !1,
     h = 0,
     y = 0,
-    D = "1 2 3 4 5 6 7".split(
+    D = "img1 img2 img3 img4 img5 img6 img7".split(
       " "
     );
   $(window).resize(function () {
@@ -392,19 +392,19 @@ var zoom = (function () {
 })(jQuery);
 var seencredits = false;
 $("#zc, #infotoggle").mousedown(function () {
-  var video = $(".video").get(0);
+  // var video = $(".video").get(0);
 
-  if ($("#info").hasClass("closed")) {
-    video.play();
-    $("#info").removeClass("closed");
-    $("#infotoggle").removeClass("closed");
-    $("#infotoggle").html("&laquo;");
-  } else {
-    video.pause();
-    $("#info").addClass("closed");
-    $("#infotoggle").addClass("closed");
-    $("#infotoggle").html("&raquo;");
-  }
+  // if ($("#info").hasClass("closed")) {
+  //   video.play();
+  //   $("#info").removeClass("closed");
+  //   $("#infotoggle").removeClass("closed");
+  //   $("#infotoggle").html("&laquo;");
+  // } else {
+  //   video.pause();
+  //   $("#info").addClass("closed");
+  //   $("#infotoggle").addClass("closed");
+  //   $("#infotoggle").html("&raquo;");
+  // }
   // window.clearTimeout(timer);
   $("#topinfo").hide();
 });
