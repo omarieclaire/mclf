@@ -9,7 +9,7 @@
 			box-sizing: border-box;
 		}
 
-		#zc {
+		#zoomCanvas {
 			position: fixed;
 			left: 0;
 			top: 0;
