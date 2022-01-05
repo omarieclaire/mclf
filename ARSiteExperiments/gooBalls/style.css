@@ -1,0 +1,16 @@
+/* CSS files add styling rules to your content */
+
+body {
+  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  color: white;
+  margin: 20px;
+  line-height: 150%;
+}
+h1{
+  font-style: italic;
+}
+#canvas0{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}

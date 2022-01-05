@@ -1,0 +1,41 @@
+/* CSS files add styling rules to your content */
+
+body {
+  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  margin: 2em;
+  background: rgb(255,237,0);
+  background: radial-gradient(circle, rgba(255,237,0,1) 0%, rgba(255,183,241,1) 44%, rgba(195,220,255,1) 84%);
+}
+
+h1 {
+  font-style: italic;
+  color: #37ff48;
+  text-shadow: 2px 2px 0px coral;
+
+}
+
+/* h1 {
+    color: #373fff;
+  } */
+
+.h1-1 {
+    text-shadow: 2px 2px 0px coral;
+  }
+  
+  .h1-2 {
+    text-shadow: 2px 2px 0px greenyellow;
+  }
+
+#story a:link, a:visited, a:active {
+  color: #111;
+  cursor: pointer;
+  text-decoration: none;
+}
+#story a:hover {
+  color: #111;
+  cursor: hand;
+  text-decoration: none;
+}
+#story{
+  font-size: 40px;
+}

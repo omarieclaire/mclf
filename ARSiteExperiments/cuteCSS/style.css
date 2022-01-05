@@ -1,0 +1,84 @@
+@font-face {
+    font-family: cstm;
+    src: url("https://cdn.glitch.com/0dda0d41-1bcd-4175-8112-99af6f54bae2%2FCSTM%20Xprmntl%2003-Medium-Web.ttf?v=1611645729956") format("truetype"), /* Safari, Android, iOS */
+         url("https://cdn.glitch.com/0dda0d41-1bcd-4175-8112-99af6f54bae2%2FCSTM%20Xprmntl%2003-Medium-Web.woff?v=1611645659966") format("woff"), /* Modern Browsers */
+         url("https://cdn.glitch.com/0dda0d41-1bcd-4175-8112-99af6f54bae2%2FCSTM%20Xprmntl%2003-Medium-Web.woff2?v=1611645660049") format("woff2");/* Modern Browsers */
+    font-weight: 500;
+    font-style: normal;
+  }
+  /* "CSTM Xprmntl 03 Medium", sans-serif */
+  
+  
+  
+  h1 {
+    color: #a20000;
+    font-size: 8.57vw;
+    font-family: cstm;
+    line-height: 70%;
+    font-weight: 500;
+  /*   letter-spacing: 0.004em; */
+    
+    margin: 0 0 0.2em 0;
+    padding: 0;
+    width: 100vw;
+  }
+
+  #logo {
+    width: 250px;
+    margin: 10rem;
+    animation: imgrotate 30s infinite linear;
+  }
+
+  #kitten {
+      width: 7rem;
+      position: fixed;
+  }
+
+  @keyframes imgrotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+  }
+
+
+   /* MARQUEE */
+.marquee {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 6;
+  
+  background-color: #000000;
+  color: #ffffff;
+  padding: 3px;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.marquee span {
+  display: inline-block;
+  width: max-content;
+  padding-left: 100%;
+  will-change: transform;
+  animation: marquee 20s linear infinite;
+}
+
+.marquee span:hover {
+  animation-play-state: paused;
+}
+
+.marquee span a {
+  text-decoration: underline;
+  font-style: italic;
+  color: #fafae1;
+  pointer-events: auto !important;
+}
+
+@keyframes marquee {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
