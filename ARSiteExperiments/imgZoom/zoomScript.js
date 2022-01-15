@@ -48,12 +48,12 @@ var zoom = (function () {
     steps = [];
     for (var a = 0; 46 > a; a++)
     // steps.push(new C("img/" + D[(20 + a) % 46] + ".png"));
-    steps.push(new C("img/" + D[(20 + a) % 21] + ".png"));
+    steps.push(new C("img2/" + D[(20 + a) % 6] + ".png"));
   }
   function t() {
     k.clearRect(0, 0, p.width, p.height);
     for (var a = [], e = 0; e < E; e++)
-      a.push(steps[(Math.floor(b) + e) % steps.length]);
+      a.push([(Math.floor(b) + e) % steps.length]);
     for (var c = Math.pow(2, b % 1), e = 0; e < a.length; e++) {
       var d = v - (q / 2) * c,
         f = w - (r / 2) * c,
@@ -108,7 +108,9 @@ var zoom = (function () {
     x = !1,
     h = 0,
     y = 0,
-    D = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23".split(
+    D = "1 2 3 4 5 6".split(
+
+    // D = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23".split(
     // D = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47".split(
       " "
     );
