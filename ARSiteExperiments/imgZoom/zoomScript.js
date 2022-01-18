@@ -48,7 +48,7 @@ var zoom = (function () {
     steps = [];
     for (var a = 0; 46 > a; a++)
     // steps.push(new C("img/" + D[(20 + a) % 46] + ".png"));
-    steps.push(new C("img2/" + D[(20 + a) % 6] + ".png"));
+    steps.push(new C("img2/" + D[(20 + a) % 4] + ".png"));
   }
   function t() {
     k.clearRect(0, 0, p.width, p.height);
