@@ -199,6 +199,8 @@ h2 {
   color: salmon;
   font-size: 1.8rem;
   font-weight: 400;
+  margin: 1em 0em .75em 0em;
+
 }
 
 h2.blog-teaser {
@@ -267,7 +269,12 @@ ul {
 }
 
 li {
-  margin-bottom: 0.5em;
+  text-align: left;
+  margin-right: 1.5em;
+  margin-left: .7em;
+  line-height: 1.5;
+  margin-bottom: .5em;
+  list-style-type: disc;
 }
 
 .toc{
@@ -403,7 +410,7 @@ hr.blog-preview-divider {
     /* findme */
     width: 100%;
     height: 100%;
-    padding: .6em 3em;
+    /* padding: .6em 3em; */
     font-weight: 100;
     letter-spacing: 0.07em;
     /* background: rgba(14, 8, 45, .9); */
@@ -556,6 +563,8 @@ nav ul {
 
 nav li {
   margin: 2em 1em;
+  list-style-type: none;
+
 }
 
 nav a {
@@ -988,10 +997,7 @@ nav a:hover {
   }
 
   .page-content li {
-    /* margin-right: 1.5em; */
-    /* margin-left: .7em; */
-    /* line-height: 1.5; */
-    margin-bottom: .5em;
+    
   }
 
   .noBullet-list {
@@ -1033,12 +1039,10 @@ nav a:hover {
     font-weight: 200;
     margin-top: 4rem;
     margin-bottom: 4rem;
-    /* padding-left: 2rem; */
   }
 
   .page-content h2 {
     font-size: 2rem;
-    padding: 0em 0em 0em 0em;
   }
 
   span.subtitle {
@@ -1375,7 +1379,7 @@ footer {
 /* IMAGES */
 img {
   width: 100%;
-  max-width: 600%;
+  max-width: 100%;
   /* display: block; */
   height: auto;
 }
