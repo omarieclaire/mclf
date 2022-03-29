@@ -1,0 +1,96 @@
+<!-- https://miro.com/app/board/o9J_lZ2ecUg=/ -->
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <title>Monahan</title>
+
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="A sound walk for curious ears" />
+
+    <meta property="og:title" content="Monahan" />
+    <meta property="og:description" content="Wander and listen" />
+    <meta property="og:image" content="images/mon1.png" />
+    <meta property="og:url" content="https://monahanwalks.ca/index.html" />
+    <meta property="og:type" content="game" />
+
+    <meta name="twitter:title" content="Monahan" />
+    <meta name="twitter:description" content="Wander and listen" />
+    <meta
+      name="twitter:image"
+      content="https://monahanwalks.ca/images/mon1.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script>
+      window.addEventListener("load", (event) => {
+        document.body.classList.remove("preload");
+      });
+    </script>
+  </head>
+
+  <body class="preload">
+    <header>
+      <a href="../index.html"
+        ><img src="images/icons/frog.png" alt="describe" class="circle-logo"
+      /></a>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <p id="welcome-name">Monahan</p>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="about">About</a></li>
+          <li><a href="accessiblity">Accessibility</a></li>
+          <li id="lang"><a href="lang">FR</a></li>
+        </ul>
+      </nav>
+      <label for="nav-toggle" class="nav-toggle-label">
+        <span></span>
+      </label>
+    </header>
+
+    <main class="container">
+      <div class="row">
+        <img
+        id="landingImg"
+        src="images/mon1.png"
+        alt="describe it here"
+        class="imageSide"
+      />
+      <div class="textSide">
+        <h1>A sound walk for curious ears</h1>
+        <p>
+          Join us for a custom audio walk with the sounds of the Monahan
+          wetlands
+        </p>
+        <input type="submit" id="beginBtn" class="btn" value="Begin" />
+
+        <button id="play">Click me!</button>
+
+        <input type="number" name="total-duration" id="total-duration" min="0" max="1000"></input>
+      </div>
+    </div>
+
+      
+    </main>
+
+    <!-- <form
+    action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeqlWaUDZQohPOdlUsr_8DT9aV2yESFIQojiOfapHQZKio68w/formResponse"
+    method="post" target="hidden_iframe" autocomplete="off" onsubmit="submitted=true;">
+    <input name="entry.1016404426" class="choice" maxlength="30" id="seekText" placeholder=""></input>
+    <div id="seekBtnArrowDiv"></div>
+    <input type="submit" id="seekBtn" class="btn" value="send" />
+  </form> -->
+
+    <!-- <audio id="player1" controls preload>
+    <source id='audioSource' src='' type="audio/mpeg">
+  </audio> -->
+
+    <script src="play.js"></script>
+  </body>
+</html>
