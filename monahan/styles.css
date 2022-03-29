@@ -671,10 +671,15 @@ nav a:hover {
 =================== */
 form {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin: 0 auto;
   background-color: #CCC;
   padding: 1em;
+}
+
+fieldset {
+  flex-direction: row;
 }
 
 @media screen and (min-width: 900px) {
