@@ -1,4 +1,3 @@
-<!-- https://miro.com/app/board/o9J_lZ2ecUg=/ -->
 <!DOCTYPE html>
 <html lang="">
   <head>
@@ -24,7 +23,8 @@
     <meta name="twitter:description" content="Wander and listen" />
     <meta
       name="twitter:image"
-      content="https://monahanwalks.ca/images/mon1.png" />
+      content="https://monahanwalks.ca/images/mon1.png"
+    />
     <meta name="twitter:card" content="summary_large_image" />
 
     <script>
@@ -43,10 +43,10 @@
       <p id="welcome-name">Monahan</p>
       <nav>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="about">About</a></li>
+          <!-- <li><a href="#">Home</a></li> -->
+          <!-- <li><a href="about">About</a></li> -->
           <li><a href="accessiblity">Accessibility</a></li>
-          <li id="lang"><a href="lang">FR</a></li>
+          <!-- <li id="lang"><a href="lang">FR</a></li> -->
         </ul>
       </nav>
       <label for="nav-toggle" class="nav-toggle-label">
@@ -55,38 +55,36 @@
     </header>
 
     <main class="container">
-      <div class="row">
-        <img
-        id="landingImg"
-        src="images/mon1.png"
-        alt="describe it here"
-        class="imageSide"
-      />
-      <div class="textSide">
-        <h1>A sound walk for curious ears</h1>
-        <p>
-          Join us for a custom audio walk with the sounds of the Monahan
-          wetlands
-        </p>
-        <input type="submit" id="beginBtn" class="btn" value="Begin" />
-      </div>
-    </div>
+      <h1>Choose your walk duration to begin</h1>
+      <form action="/my-handling-form-page" method="post">
+        <ul>
+         <li>
+           <label for="total-duration">Duration:</label>
+           <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input>
+         </li>
+         <li>
+          <label for="stereoCheckbox"> Stereo sound:</label>
+          <input type="checkbox" name="stereoCheckbox" checked></input>
+        </li>
+        <li>
+          <button class="btn" id="play">Begin</button>
+         </li>
+        </ul>
+       </form>
 
-      
+
+
+
+        <!-- <form>
+          <input type="number" name="total-duration" id="total-duration" value="42" min="0" max="1000"></input>
+          <input type="checkbox" name="stereoCheckbox" checked>
+          <label for="stereoCheckbox"> Stereo sound</label><br>
+
+          <button class="btn" id="play">Begin</button>
+          
+        </form>
+        <a href="texttranscript">or view text transcript</a> -->
+
     </main>
-
-    <!-- <form
-    action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeqlWaUDZQohPOdlUsr_8DT9aV2yESFIQojiOfapHQZKio68w/formResponse"
-    method="post" target="hidden_iframe" autocomplete="off" onsubmit="submitted=true;">
-    <input name="entry.1016404426" class="choice" maxlength="30" id="seekText" placeholder=""></input>
-    <div id="seekBtnArrowDiv"></div>
-    <input type="submit" id="seekBtn" class="btn" value="send" />
-  </form> -->
-
-    <!-- <audio id="player1" controls preload>
-    <source id='audioSource' src='' type="audio/mpeg">
-  </audio> -->
-
-    <script src="play.js"></script>
   </body>
 </html>

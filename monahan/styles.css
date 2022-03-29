@@ -79,7 +79,7 @@ body {
   /* height: 100vh; */
   /* margin: 0; */
   font-size: 1.3rem;
-  color: #ffffff;
+  color: black;
   height: 100vh;
   text-align: center;
   -webkit-perspective: 1px;
@@ -776,6 +776,48 @@ nav a:hover {
 
 }
 
+
+/* Form
+=================== */
+form {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  width: 60%;
+  background-color: #CCC;
+  padding: 1em;
+}
+
+form ul {
+  padding: 10px;
+  margin: 0;
+}
+
+form li {
+  list-style: none;
+  margin-top: 1em;
+}
+
+label {
+  /* Uniform size & alignment */
+  /* display: inline-block; */
+  /* width: 90px; */
+  /* text-align: right; */
+}
+
+input,
+textarea {
+  font: 1em sans-serif;
+  /* width: 300px; */
+  box-sizing: border-box;
+  border: 1px solid #999;
+}
+
+input:focus,
+textarea:focus {
+  /* Additional highlight for focused elements */
+  border-color: #000;
+}
 
 
 /* CTA
