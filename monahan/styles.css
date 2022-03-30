@@ -132,6 +132,11 @@ table {
 
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700");
 @import url("https://fonts.googleapis.com/css?family=Lora&display=swap");
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@200&display=swap');
+
+
 
 /***********************/
 /*****   PRELOAD   *****/
@@ -146,7 +151,7 @@ table {
 /***********************/
 
 body {
-  font-family: "PT Mono", monospace;
+  font-family: 'Montserrat', sans-serif;
   width: 100vw;
   height: 100vh;
   letter-spacing: 0.15rem;
@@ -157,11 +162,32 @@ body {
   overflow-y: auto;
 }
 
+.container {
+  padding-top: 4rem;
+}
+
+@media screen and (min-width: 900px) {
+  .container {
+    padding-top: 10rem;
+  }
+}
+
 p {
+  font-family: 'Montserrat', sans-serif;
   /* margin: 0 2rem; */
-  /* font-size: 1.15rem; */
-  /* line-height: 1.5; */
+  font-size: 1.15rem;
+  line-height: 1.25;
   /* color: purple; */
+  padding-bottom: 3rem;
+}
+
+@media screen and (min-width: 900px) {
+  p {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    padding-bottom: 0;
+
+  }
 }
 
 /***********************/
@@ -232,18 +258,33 @@ btn:focus,
 }
 
 /***********************/
+/******  IMAGES  *******/
+/***********************/
+
+img {
+  max-width: 100%
+}
+/***********************/
 /******* HEADERS *******/
 /***********************/
 
 h1 {
-  text-align: center;
+  /* font-family: 'Merriweather', serif; */
+    text-align: center;
   background-color: inherit;
   color: rgba(71, 20, 86, 0.81);
-  font-size: 1.5rem;
-  letter-spacing: 0.08em;
-  font-weight: 200;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  /* font-weight: 200; */
   PADDING-top: 2rem;
   margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+@media screen and (min-width: 900px) {
+  h1 {
+    font-size: 2.5rem;
+  }
 }
 
 h2 {
@@ -301,24 +342,6 @@ h5 {
 
   .container .row:nth-child(2n + 1) {
     flex-direction: row-reverse;
-  }
-}
-
-/************************/
-/****** LANGUAGE *******/
-/************************/
-
-#lang {
-  padding: 7px 20px;
-  background-color: pink;
-  font-size: 0.75rem;
-}
-
-@media (min-width: 60rem) {
-  #lang {
-    padding: 0px 20px;
-    background-color: pink;
-    font-size: 0.75rem;
   }
 }
 
@@ -409,18 +432,23 @@ textarea:focus {
 
 header {
   background-color: rgba(245, 243, 251, 0.98);
-  position: absolute; /* this is important for the mobile toggle */
-  display: block;
-  width: 100vw;
+  position: absolute;
+  width: 100vw; 
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  justify-content: space-between;
 }
 
 @media screen and (min-width: 900px) {
   header {
     width: 100vw;
     display: grid;
-    grid-template-columns: max-content max-content auto;
+    grid-template-columns: max-content auto max-content;
     padding: 0;
     margin: 0;
+    justify-content: normal;
     /* grid-template-columns: auto max-content minmax(600px, 3fr) 1fr; */
     /* border-bottom: .05em solid rgba(250, 128, 114, 0.3); */
     /* margin-bottom: 2rem; */
@@ -431,34 +459,55 @@ header {
 /*** SITE NAME & LOGO **/
 /***********************/
 
-#welcome-name {
-  display: block;
-  border: none;
+#nameAndLogo {
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  padding: .5rem;
+}
+
+#siteName {
   text-align: center;
-  font-size: 1.2rem;
-  margin: 1rem 0 1rem 40px;
-  background: -webkit-linear-gradient(magenta, purple);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  cursor: pointer;
+  /* cursor: pointer; */
+  /* margin: 0 .15em; */
 }
 
 .frog-logo {
-  /* display: none;  */
+  padding: 1rem;
 }
 
-
-.circle-logo:hover,
+.frog-logo:hover,
 .button:focus {
   /* background: #232323; */
   filter: hue-rotate(280deg);
 }
 
 @media screen and (min-width: 900px) {
-  .circle-logo {
-    grid-column: 2 / 3;
-    width: 3rem;
-    display: block;
+  .frog-logo {
+    /* grid-column: 2 / 3; */
+    /* width: 3rem; */
+    /* display: block; */
+  }
+}
+
+/************************/
+/****** LANGUAGE *******/
+/************************/
+
+#lang {
+  background-color: pink;
+  padding: .75rem;
+  box-sizing: border-box;
+  margin: 2rem;
+  
+}
+
+@media (min-width: 60rem) {
+  #lang {
+    /* width: 3rem; */
+    /* height: auto; */
+    /* paddin g: 1rem; */
+
   }
 }
 
@@ -471,9 +520,7 @@ nav {
   text-align: left;
   top: 100%;
   left: 0;
-  /* background: var(--background); */
   background-color: rgba(245, 243, 251, 0.9);
-  /* color: inherit; */
   width: 100%;
   transform: scale(1, 0);
   transform-origin: top;
@@ -482,7 +529,6 @@ nav {
 
 nav ul {
   padding: 0;
-  /* list-style: none; */
 }
 
 nav li {
@@ -492,12 +538,9 @@ nav li {
 
 nav a {
   color: rgba(35, 29, 66, 0.95);
-  /* background-color: inherit; */
-  /* text-decoration: none; */
   font-size: 1.2rem;
   transition: opacity 150ms ease-in-out;
 }
-
 
 /*************************/
 /****** NAV DESKTOP ******/
@@ -505,7 +548,6 @@ nav a {
 @media screen and (min-width: 900px) {
   nav {
     box-sizing: border-box;
-
     /* add Edge support */
     position: relative;
     text-align: left;
@@ -532,7 +574,7 @@ nav a {
 
   nav li {
     /* color:blue; */
-    margin: 0 1em 0 1em;
+    margin: 0 1.5em;
     /* background: #232323; */
     /* filter: hue-rotate(9f0deg); */
   }
@@ -540,19 +582,6 @@ nav a {
   nav a {
     opacity: 1;
     position: relative;
-  }
-
-  nav a::before {
-    /* content: ""; */
-    /* display: block; */
-    /* height: 5px; */
-    /* background: #2a2835bf; */
-    /* position: absolute; */
-    /* top: -0.75em; */
-    /* left: 0; */
-    /* right: 0; */
-    /* transform: scale(0, 1); */
-    /* transition: transform ease-in-out 250ms; */
   }
 
   nav a:hover::before {
@@ -584,10 +613,10 @@ nav a {
 }
 
 .nav-toggle-label {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   left: 0;
-  margin-left: 0.45em;
+  margin: 0 0.45em;
   height: 100%;
   display: flex;
   align-items: center;
