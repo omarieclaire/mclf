@@ -134,9 +134,21 @@ table {
 @import url("https://fonts.googleapis.com/css?family=Lora&display=swap");
 /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@100&display=swap');
 
 
+:root {
+  --white: rgb(244, 244, 244);
+  --lightGrey: rgb(211, 211, 211);
+  --medGrey: rgb(147, 147, 147);
+  --darkGrey: rgb(101, 101, 101);
+  --black: rgb(79, 79, 79);
+  --accentLight: rgb(232, 187, 255);
+  --accentMed: rgb(122, 84, 142);
+  --accentDark: rgb(90, 42, 114);
+  --accentTwo:rgb(89, 56, 255);
+
+}
 
 /***********************/
 /*****   PRELOAD   *****/
@@ -156,30 +168,34 @@ body {
   height: 100vh;
   letter-spacing: 0.15rem;
   font-size: 1.3rem;
-  color: black;
+  background-color: var(—black);
   text-align: center;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .container {
-  padding-top: 4rem;
+  padding-top: 20vh;
 }
 
 @media screen and (min-width: 900px) {
   .container {
-    padding-top: 10rem;
+    padding-top: 11%;
   }
 }
 
 p {
   font-family: 'Montserrat', sans-serif;
-  /* margin: 0 2rem; */
   font-size: 1.15rem;
   line-height: 1.25;
-  /* color: purple; */
+  color: var(—black);
+}
+
+
+.textSide p {
   padding-bottom: 3rem;
 }
+
 
 @media screen and (min-width: 900px) {
   p {
@@ -195,14 +211,13 @@ p {
 /***********************/
 
 a {
-  color: #2f08ff;
+  color: var(--accentDark);
   text-decoration: none;
-  background-color: inherit;
+
 }
 
 a:hover {
-  color: salmon;
-  background-color: inherit;
+  color: var(--accentTwo);
 }
 
 /***********************/
@@ -211,7 +226,7 @@ a:hover {
 
 btn .btn {
   display: inline-block;
-  background-color: #999;
+  background-color: var(--darkGrey);
   font-size: 1.11rem;
   text-decoration: none;
   text-transform: uppercase;
@@ -222,10 +237,10 @@ btn .btn {
 }
 
 #beginBtn {
-  color: white;
+  color: var(--white);
   text-decoration: none;
   display: inline-block;
-  background-color: #999;
+  background-color: var(--medGrey);
   font-size: 1.11rem;
   outline: none;
   text-decoration: none;
@@ -250,10 +265,10 @@ btn .btn {
 btn:focus,
 #beginBtn:hover,
 #beginBtn:focus {
-  background: rgb(0, 150, 73);
-  color: white;
+  background: var(--accentDark);
+  color: var(--white);
   outline: none;
-  border: white;
+  border: var(--white);
   border-width: 0px;
 }
 
@@ -271,14 +286,16 @@ img {
 h1 {
   /* font-family: 'Merriweather', serif; */
     text-align: center;
-  background-color: inherit;
   color: rgba(71, 20, 86, 0.81);
   font-size: 2rem;
   letter-spacing: 0.1em;
-  /* font-weight: 200; */
   PADDING-top: 2rem;
   margin-bottom: 2rem;
   font-weight: 700;
+}
+
+h1:hover {
+  /* letter-spacing: 0.2em; */
 }
 
 @media screen and (min-width: 900px) {
@@ -288,8 +305,8 @@ h1 {
 }
 
 h2 {
-  background-color: inherit;
-  color: salmon;
+
+  color: var(--accentLight);
   font-size: 1.8rem;
   font-weight: 400;
   margin: 1em 0em 0.75em 0em;
@@ -298,23 +315,20 @@ h2 {
 h3 {
   font-size: 1.5rem;
   font-weight: 400;
-  background-color: inherit;
-  color: #482886;
+  color: var(--accentDark);
 }
 
 h4 {
   font-size: 1rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  background-color: inherit;
-  color: salmon;
+  color: var(--accentLight);
 }
 
 h5 {
   font-size: 1.4rem;
   font-weight: 400;
-  background-color: inherit;
-  color: salmon;
+  color: var(--accentLight);
 }
 
 /************************/
@@ -345,6 +359,9 @@ h5 {
   }
 }
 
+@media screen and (min-width: 900px) {
+}
+
 /***********************/
 /*****    LISTS    *****/
 /***********************/
@@ -370,7 +387,7 @@ form {
   display: flex;
   justify-content: center;
   margin: 0 auto;
-  background-color: #ccc;
+  background-color: var(--lightGrey);
   padding: 1em;
 }
 
@@ -431,7 +448,7 @@ textarea:focus {
 /***********************/
 
 header {
-  background-color: rgba(245, 243, 251, 0.98);
+  background-color: var(--white);
   position: absolute;
   width: 100vw; 
   display:flex;
@@ -495,11 +512,18 @@ header {
 /************************/
 
 #lang {
-  background-color: pink;
+  background-color: var(--accentLight);
   padding: .75rem;
   box-sizing: border-box;
   margin: 2rem;
-  
+}
+
+#lang:hover {
+  color: var(--accentLight);
+  background-color: var(--accentDark);
+  padding: .75rem;
+  box-sizing: border-box;
+  margin: 2rem;
 }
 
 @media (min-width: 60rem) {
@@ -520,7 +544,7 @@ nav {
   text-align: left;
   top: 100%;
   left: 0;
-  background-color: rgba(245, 243, 251, 0.9);
+  background-color: var(--lightGrey);
   width: 100%;
   transform: scale(1, 0);
   transform-origin: top;
@@ -537,7 +561,7 @@ nav li {
 }
 
 nav a {
-  color: rgba(35, 29, 66, 0.95);
+  color: var(--accentDark);
   font-size: 1.2rem;
   transition: opacity 150ms ease-in-out;
 }
@@ -589,8 +613,7 @@ nav a {
   }
 
   nav a:hover {
-    background-color: inherit;
-    color: BLUE;
+    color: var(--accentTwo);
   }
 }
 
@@ -608,15 +631,14 @@ nav a {
 
 .nav-toggle:focus,
 .nav-toggle-label {
-  background-color: inherit;
-  color: salmon;
+  color: var(--accentLight);
 }
 
 .nav-toggle-label {
   /* position: absolute; */
   top: 0;
   left: 0;
-  margin: 0 0.45em;
+  margin: 0 .95em;
   height: 100%;
   display: flex;
   align-items: center;
@@ -626,8 +648,7 @@ nav a {
 .nav-toggle-label span::before,
 .nav-toggle-label span::after {
   display: block;
-  background-color: salmon;
-  color: inherit;
+  background-color: var(--accentLight);
   height: 3px;
   width: 50px;
   border-radius: 2px;
@@ -669,7 +690,7 @@ nav a {
 
 footer {
   padding: 1em 0;
-  background-color: rgba(245, 243, 251, 0.9);
+  background-color: var(--lightGrey);
   text-align: center;
   display: inline-block;
   width: 100vw;
