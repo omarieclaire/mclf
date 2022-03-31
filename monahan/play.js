@@ -140,18 +140,57 @@ window.addEventListener("load", (event) => {
 
   const SONGS = [
     {
-      url: "/sounds/openTileSound.mp3",
+      url: "/sounds/Story_WildWales.mp3",
       tags: ["drone", "uplifting"],
     },
     {
-      url: "/sounds/waterSound.mp3",
-      // url: "https://marieflanagan.com/throneroomclub/audio/lineupSound.mp3",
+      url: "/sounds/Story_WhatRemainsTheSame.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/writingSound.mp3",
+      url: "/sounds/Story_TheSpirit.mp3",
       tags: ["drone"],
     },
+    {
+      url: "/sounds/Story_Carnations.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Poem_ToAnswerYou.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Nature_SnowyWalk.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Nature_Frogs.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Nature_Bubbling.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Music_WhatMadeUs.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Music_Fragments.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Excerpt_Zen.mp3",
+      tags: ["drone"],
+    },
+    {
+      url: "/sounds/Excerpt_Mycelium.mp3",
+      tags: ["drone"],
+    }
+    // {
+    //   url: "/sounds/writingSound.mp3",
+    //   tags: ["drone"],
+    // },
   ].map((song) => {
     song.audio = createAudioElement(song.url);
     return song;
