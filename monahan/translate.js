@@ -1,4 +1,5 @@
 let lang = "EN"
+localStorage['lang'] = "EN"; 
 let langLabel = document.querySelector('#langToggle')
 let langToggle = document.getElementById("langToggle").addEventListener("click", toggleLanguage);
 
@@ -55,6 +56,7 @@ function toggleLanguage() {
       langLabel.innerHTML = 'FR';
       lang  = "EN"
   }
+  localStorage['lang'] = lang;
   changeEachLangDiv(lang);
 }
 

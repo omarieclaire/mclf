@@ -133,9 +133,8 @@ table {
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700");
 @import url("https://fonts.googleapis.com/css?family=Lora&display=swap");
 /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@100&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@100&display=swap");
 
 :root {
   --white: rgb(244, 244, 244);
@@ -146,8 +145,7 @@ table {
   --accentLight: rgb(232, 187, 255);
   --accentMed: rgb(122, 84, 142);
   --accentDark: rgb(90, 42, 114);
-  --accentTwo:rgb(89, 56, 255);
-
+  --accentTwo: rgb(89, 56, 255);
 }
 
 /***********************/
@@ -163,7 +161,7 @@ table {
 /***********************/
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   width: 100vw;
   height: 100vh;
   letter-spacing: 0.15rem;
@@ -185,12 +183,11 @@ body {
 }
 
 p {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.15rem;
   line-height: 1.25;
   color: var(—black);
 }
-
 
 .textSide p {
   padding-bottom: 3rem;
@@ -200,13 +197,11 @@ p {
   padding-bottom: 0;
 }
 
-
 @media screen and (min-width: 900px) {
   p {
     font-size: 1.5rem;
     line-height: 1.25;
     padding-bottom: 0;
-
   }
 }
 
@@ -217,7 +212,6 @@ p {
 a {
   color: var(--accentDark);
   text-decoration: none;
-
 }
 
 a:hover {
@@ -282,8 +276,7 @@ btn:focus,
 
 img {
   max-width: 100%;
-  max-height: 100%;
-
+  /* max-height: auto; */
 }
 /***********************/
 /******* HEADERS *******/
@@ -291,11 +284,11 @@ img {
 
 h1 {
   /* font-family: 'Merriweather', serif; */
-    text-align: center;
+  text-align: center;
   color: rgba(71, 20, 86, 0.81);
   font-size: 2rem;
   letter-spacing: 0.1em;
-  PADDING-top: 2rem;
+  padding-top: 2rem;
   margin-bottom: 2rem;
   font-weight: 700;
 }
@@ -311,7 +304,6 @@ h1:hover {
 }
 
 h2 {
-
   color: var(--accentLight);
   font-size: 1.8rem;
   font-weight: 400;
@@ -358,6 +350,7 @@ h5 {
 
   .imageSide {
     max-width: 50%;
+    /* max-height: auto; */
   }
 
   .container .row:nth-child(2n + 1) {
@@ -449,6 +442,27 @@ textarea:focus {
   /* border-color: #000; */
 }
 
+select {
+  width: 12rem;
+  padding: 5px 35px 5px 5px;
+  font-size: 1rem;
+  height: 2rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+select::-ms-expand {
+  display: none; /* Remove default arrow in Internet Explorer 10 and 11 */
+}
+
+@media screen and (min-width: 0\0) {
+  select {
+    background: none\9;
+    padding: 5px\9;
+  }
+}
+
 /***********************/
 /******** HEADER *******/
 /***********************/
@@ -456,8 +470,8 @@ textarea:focus {
 header {
   background-color: var(--white);
   position: absolute;
-  width: 100vw; 
-  display:flex;
+  width: 100vw;
+  display: flex;
   flex-direction: row;
   align-items: center;
   box-sizing: border-box;
@@ -483,10 +497,10 @@ header {
 /***********************/
 
 #nameAndLogo {
-  display:flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 #siteName {
@@ -496,7 +510,8 @@ header {
 }
 
 .frog-logo {
-  padding: 1rem;
+  width: 2.5rem;
+  padding: 0.5rem;
 }
 
 .frog-logo:hover,
@@ -519,16 +534,16 @@ header {
 
 #langToggle {
   background-color: var(--accentLight);
-  padding: .75rem;
+  padding: 0.75rem;
   box-sizing: border-box;
   margin: 2rem;
-  border:none;
+  border: none;
 }
 
 #langToggle:hover {
   color: var(--accentLight);
   background-color: var(--accentDark);
-  padding: .75rem;
+  padding: 0.75rem;
   box-sizing: border-box;
   margin: 2rem;
 }
@@ -538,8 +553,69 @@ header {
     /* width: 3rem; */
     /* height: auto; */
     /* paddin g: 1rem; */
-
   }
+}
+
+/***********************/
+/******* LOADER ********/
+/***********************/
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/***********************/
+/** MUSIC PLAYER DIV ***/
+/***********************/
+
+#musicPlayerDiv {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#wrapper {
+  text-align: center;
+  margin: 0 auto;
+  padding: 0px;
+  width: 995px;
+}
+#player {
+  background-color: #084b8a;
+  width: 400px;
+  margin-left: 300px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+input[type="image"] {
+  float: left;
+  height: 20px;
+  margin-left: 2px;
+  margin-right: 5px;
+  margin-top: 2px;
+}
+#vol_img {
+  margin-left: 150px;
+  width: 20px;
+}
+
+#exitLink {
+  padding: 2rem;
 }
 
 /***********************/
@@ -645,7 +721,7 @@ nav a {
   /* position: absolute; */
   top: 0;
   left: 0;
-  margin: 0 .95em;
+  margin: 0 0.95em;
   height: 100%;
   display: flex;
   align-items: center;
@@ -703,7 +779,8 @@ footer {
   width: 100vw;
 }
 
-@media screen and (min-width: 900px) {}
+@media screen and (min-width: 900px) {
+}
 
 /***********************/
 /**** TRANSCRIPT *******/
@@ -713,5 +790,5 @@ footer {
   margin: 2rem 0;
 }
 
-@media screen and (min-width: 900px) {}
-
+@media screen and (min-width: 900px) {
+}

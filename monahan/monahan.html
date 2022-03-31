@@ -1,86 +1,79 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="styles.css" rel="stylesheet" type="text/css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap"
-      rel="stylesheet"
-    />
-    <title>Monahan</title>
 
-    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
-    <meta name="description" content="A sound walk for curious ears" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="styles.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet" />
+  <title>Monahan</title>
 
-    <meta property="og:title" content="Monahan" />
-    <meta property="og:description" content="Wander and listen" />
-    <meta property="og:image" content="images/mon1.png" />
-    <meta property="og:url" content="https://monahanwalks.ca/index.html" />
-    <meta property="og:type" content="game" />
+  <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+  <meta name="description" content="A sound walk for curious ears" />
 
-    <meta name="twitter:title" content="Monahan" />
-    <meta name="twitter:description" content="Wander and listen" />
-    <meta
-      name="twitter:image"
-      content="https://monahanwalks.ca/images/mon1.png"
-    />
-    <meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:title" content="Monahan" />
+  <meta property="og:description" content="Wander and listen" />
+  <meta property="og:image" content="images/mon1.png" />
+  <meta property="og:url" content="https://monahanwalks.ca/index.html" />
+  <meta property="og:type" content="game" />
 
-    <script>
-      window.addEventListener("load", (event) => {
-        document.body.classList.remove("preload");
-      });
-    </script>
-  </head>
+  <meta name="twitter:title" content="Monahan" />
+  <meta name="twitter:description" content="Wander and listen" />
+  <meta name="twitter:image" content="https://monahanwalks.ca/images/mon1.png" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  <body class="preload">
-    <header>
-      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-      <label for="nav-toggle" class="nav-toggle-label">
-        <span></span>
-      </label>
-      <div id="nameAndLogo">
-        <a href="index.html"><img src="images/icons/frog.png" alt="describe" class="frog-logo" /></a>
-        <a href="index.html">
-          <p id="siteName">Monahan</p>
-        </a>
-      </div>
-      <nav>
-        <ul>
-          <!-- <li><a href="#">Home</a></li> -->
-          <li><a href="about.html" id="aboutNav">About</a></li>
-          <li><a href="accessiblity.html" id="accessiblityNav">Accessibility</a></li>
-        </ul>
-      </nav>
-      <button type="button" class="btn" id="langToggle">FR</button>
-    </header>
+  <script>
+    window.addEventListener("load", (event) => {
+      document.body.classList.remove("preload");
+    });
+  </script>
+</head>
 
-    <main class="container">
-      <h1>Choose your walk duration to begin</h1>
-      <form>
-        <ul>
-         <li>
-           <label for="total-duration">Duration:</label>
-           <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input>
-         </li>
-         <li>
+<body class="preload">
+  <header>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+    </label>
+    <div id="nameAndLogo">
+      <a href="index.html"><img src="images/icons/frog.png" alt="describe" class="frog-logo" /></a>
+      <a href="index.html">
+        <p id="siteName">Monahan</p>
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <!-- <li><a href="#">Home</a></li> -->
+        <li><a href="about.html" id="aboutNav">About</a></li>
+        <li><a href="accessiblity.html" id="accessiblityNav">Accessibility</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="btn" id="langToggle">FR</button>
+  </header>
+
+  <main id="musicPlayerDiv" class="container">
+    <h1 id="musicPlayerH1">Choose your walk duration to begin</h1>
+    <form id="launchMusicPlayerForm">
+      <ul>
+        <li>
+          <label for="total-duration">Duration:</label>
+          <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input>
+        </li>
+        <li>
           <label for="stereoCheckbox"> Stereo sound:</label>
           <input type="checkbox" name="stereoCheckbox" checked></input>
         </li>
         <li>
           <button type="button" class="btn" id="play">Begin</button>
-         </li>
-        </ul>
-       </form>
-       <p id="textTranscript"><a href="testTranscript.txt" download>or download text transcript</a>
-       </p>
+        </li>
+      </ul>
+    </form>
+    <p id="textTranscript"><a href="testTranscript.txt" download>or download text transcript</a>
+    </p>
 
 
 
-
-
-        <!-- <form>
+    <!-- <form>
           <input type="number" name="total-duration" id="total-duration" value="42" min="0" max="1000"></input>
           <input type="checkbox" name="stereoCheckbox" checked>
           <label for="stereoCheckbox"> Stereo sound</label><br>
@@ -90,8 +83,9 @@
         </form>
         <a href="texttranscript">or view text transcript</a> -->
 
-    </main>
-    <script src="play.js"></script>
+  </main>
+  <script src="play.js"></script>
 
-  </body>
+</body>
+
 </html>
