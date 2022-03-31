@@ -45,19 +45,19 @@
     <nav>
       <ul>
         <!-- <li><a href="#">Home</a></li> -->
-        <li><a href="about.html">About</a></li>
-        <li><a href="accessiblity.html">Accessibility</a></li>
+        <li><a href="about.html" id="aboutNav">About</a></li>
+        <li><a href="accessiblity.html" id="accessiblityNav">Accessibility</a></li>
       </ul>
     </nav>
-      <a href="index.html" id="lang">FR</a>
+    <button type="button" class="btn" id="langToggle">FR</button>
   </header>
 
   <main class="container">
     <div class="row">
       <img id="landingImg" src="images/mon1.png" alt="describe it here" class="imageSide" />
       <div class="textSide">
-        <h1>A sound walk for curious ears</h1>
-        <p>
+        <h1 id="homeH1">A sound walk for curious ears</h1>
+        <p id="homeTxt">
           Join us for a custom audio walk with the sounds of the Monahan
           wetlands
         </p>
@@ -81,6 +81,8 @@
   </audio> -->
 
   <script src="play.js"></script>
+  <script src="translate.js"></script>
+
 </body>
 
 </html>

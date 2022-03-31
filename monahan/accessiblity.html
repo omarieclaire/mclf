@@ -57,38 +57,34 @@
     </header>
 
     <main class="container">
-      <h1>Choose your walk duration to begin</h1>
-      <form>
-        <ul>
-         <li>
-           <label for="total-duration">Duration:</label>
-           <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input>
-         </li>
-         <li>
-          <label for="stereoCheckbox"> Stereo sound:</label>
-          <input type="checkbox" name="stereoCheckbox" checked></input>
-        </li>
-        <li>
-          <button type="button" class="btn" id="play">Begin</button>
-         </li>
-        </ul>
-       </form>
-       <p id="textTranscript"><a href="testTranscript.txt" download>or download text transcript</a>
-       </p>
+      <h1>Accessibility</h1>
+      <p>None of this is functional yet - we'll wait on the designer before implementing</p>
+        <form id="accessForm">
+          <fieldset>
+            <legend>Contrast:</legend>
+            <div>
+              <select name="contrast" id="contrast">
+                <option value="blackWhite">Black & White</option>
+                <option value="dark">Dark</option>
+                <option value="bright">Bright</option>
+              </select>
+          </fieldset>
 
-
-
-
-
-        <!-- <form>
-          <input type="number" name="total-duration" id="total-duration" value="42" min="0" max="1000"></input>
-          <input type="checkbox" name="stereoCheckbox" checked>
-          <label for="stereoCheckbox"> Stereo sound</label><br>
-
-          <button class="btn" id="play">Begin</button>
-          
+          <fieldset>
+            <legend>Font size:</legend>
+            <div>
+              <select name="fontSize" id="fontSize">
+                <option value="largeFont">Large</option>
+                <option value="mediumFont">Medium</option>
+                <option value="smallFont">Small</option>
+              </select>
+              </div>
+          </fieldset>
         </form>
-        <a href="texttranscript">or view text transcript</a> -->
+
+
+
+      
 
     </main>
     <script src="play.js"></script>
