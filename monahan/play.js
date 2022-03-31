@@ -140,43 +140,43 @@ window.addEventListener("load", (event) => {
 
   const SONGS = [
     {
-      url: "/sounds/Story_WildWales.mp3",
+      url: "./sounds/Story_WildWales.mp3",
       tags: ["drone", "uplifting"],
     },
     {
-      url: "/sounds/Story_WhatRemainsTheSame.mp3",
+      url: "./sounds/Story_WhatRemainsTheSame.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Story_TheSpirit.mp3",
+      url: "./sounds/Story_TheSpirit.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Story_Carnations.mp3",
+      url: "./sounds/Story_Carnations.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Poem_ToAnswerYou.mp3",
+      url: "./sounds/Poem_ToAnswerYou.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Nature_SnowyWalk.mp3",
+      url: "./sounds/Nature_SnowyWalk.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Nature_Frogs.mp3",
+      url: "./sounds/Nature_Frogs.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Nature_Bubbling.mp3",
+      url: "./sounds/Nature_Bubbling.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Music_WhatMadeUs.mp3",
+      url: "./sounds/Music_WhatMadeUs.mp3",
       tags: ["drone"],
     },
     {
-      url: "/sounds/Music_Fragments.mp3",
+      url: "./sounds/Music_Fragments.mp3",
       tags: ["drone"],
     },
     {
@@ -184,7 +184,7 @@ window.addEventListener("load", (event) => {
       tags: ["drone"],
     },
     {
-      url: "/sounds/Excerpt_Mycelium.mp3",
+      url: "./sounds/Excerpt_Mycelium.mp3",
       tags: ["drone"],
     }
     // {
