@@ -657,6 +657,10 @@ header {
   border-color: transparent transparent transparent #404040;
 }
 
+#current-time{
+  font-size: 1.6rem;
+}
+
 .musicPlayerBtn {
   /* color: black; */
   /* padding: 0; */

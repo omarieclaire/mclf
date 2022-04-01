@@ -8,6 +8,8 @@ window.addEventListener("load", (event) => {
   var audioContext = null;
   var gainNode = null;
   var previousVolume = "100";
+  var timerInterval;
+  var timerDuration;
 
   let playState = "play";
   let muteState = "unmute";
@@ -41,11 +43,11 @@ window.addEventListener("load", (event) => {
 
     // inputs
 
-    // let currTime = document.createElement("span");
-    // currTime.classList.add("time");
-    // currTime.id = "current-time";
-    // currTime.innerHTML = "0:00";
-    // audioPlayerContainer.append(currTime);
+    let currTime = document.createElement("span");
+    currTime.classList.add("time");
+    currTime.id = "current-time";
+    currTime.innerHTML = "0:00";
+    audioPlayerContainer.append(currTime);
 
     let playIconContainer = document.createElement("button");
     playIconContainer.id = "play-icon";
@@ -60,12 +62,14 @@ window.addEventListener("load", (event) => {
         playIconContainer.classList.remove("paused");
         playState = "pause";
         audioContext.suspend();
+        clearInterval(timerInterval);
       } else {
         player.currentTime = 0;
         // playIconContainer.innerHTML = "pause";
         playIconContainer.classList.add("paused");
         playState = "play";
         audioContext.resume();
+        timerInterval = createTimerLoop(timerDuration);
       }
     });
 
@@ -92,7 +96,7 @@ window.addEventListener("load", (event) => {
     volumeSlider.type = "range";
     volumeSlider.id = "volume-slider";
     volumeSlider.max = "100";
-    volumeSlider.min = "0"
+    volumeSlider.min = "0";
     volumeSlider.value = "100";
     audioPlayerContainer.append(volumeSlider);
     volumeSlider.addEventListener("change", (event) => {
@@ -171,6 +175,7 @@ window.addEventListener("load", (event) => {
 
     exitBtn.addEventListener("click", (event) => {
       audioContext.suspend();
+      clearInterval(timerInterval);
 
       musicPlayerh1.innerHTML = "Thank you for joining us";
       document.getElementById("wrapper").remove();
@@ -188,6 +193,8 @@ window.addEventListener("load", (event) => {
     });
 
     startplayer();
+    timerInterval = createTimerLoop(0);
+
   }
 
   function displayLoadingGif() {
@@ -361,6 +368,7 @@ window.addEventListener("load", (event) => {
         const remainingMs = (TOTAL_DURATION - currentRuntime) * 1000;
         setTimeout(() => {
           audioContext.suspend();
+          clearInterval(timerInterval);
         }, remainingMs);
       } else if (index < songs.length - 1) {
         // set a timer to preload the next file
@@ -376,7 +384,6 @@ window.addEventListener("load", (event) => {
     });
 
     audio.play();
-    createTimerLoop();
   }
 
   const button = document.getElementById("play");
@@ -413,29 +420,34 @@ window.addEventListener("load", (event) => {
     TOTAL_DURATION = parseInt(event.target.value) * 60;
   });
 
-  // function updateProgress(seconds) {
-  //   let currTime = document.getElementById('current-time');
-  //   if(currTime == null) {
-      // do nothing. there is a delay whe the player is made.
-  //   } else {
-  //     let minutes = Math.floor(seconds / 60);
-  //     let remainingSeconds = (seconds % 60).toLocaleString('en-US', {
-  //       minimumIntegerDigits: 2,
-  //       useGrouping: false
-  //     });
-  //     currTime.innerHTML = `${minutes}:${remainingSeconds}`;
-  //   }
-  // }
+  function updateProgress(seconds, previousDuration) {
+    let currTime = document.getElementById("current-time");
+    timerDuration = seconds + previousDuration;
+    if (currTime == null) {
+      //do nothing. there is a delay whe the player is made.
+    } else {
+      let remaining = TOTAL_DURATION - (seconds + previousDuration);
+      let minutes = Math.floor(remaining / 60);
+      if (remaining <= 0) {
+        currTime.innerHTML = "done";
+      } else {
+        let remainingSeconds = (remaining % 60).toLocaleString("en-US", {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        });
+        currTime.innerHTML = `${minutes}:${remainingSeconds}`;
+      }
+    }
+  }
 
-  function createTimerLoop() {
+  function createTimerLoop(previousDuration) {
     var start = Date.now();
     return setInterval(() => {
       let delta = Date.now() - start; // milliseconds since elapsed
       let deltaSeconds = Math.floor(delta / 1000);
-      updateProgress(deltaSeconds);
+      updateProgress(deltaSeconds, previousDuration);
     }, 200);
   }
-
 });
 
 // Music player
