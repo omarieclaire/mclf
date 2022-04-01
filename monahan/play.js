@@ -7,27 +7,22 @@ window.addEventListener("load", (event) => {
   var player;
   var audioContext = null;
   var gainNode = null;
+  var previousVolume = "100";
+
+  let playState = "play";
+  let muteState = "unmute";
+
 
   function startplayer() {
     player = document.getElementById("music_player");
     player.controls = false;
   }
 
-  function play_aud() {
-    player.play();
-  }
-  function pause_aud() {
-    player.pause();
-  }
-  function stop_aud() {
-    player.pause();
-    player.currentTime = 0;
-  }
   function change_vol(event) {
     gainNode.gain.value = parseFloat(event.target.value);
-    //player.volume = parseFloat(event.target.value);
   }
 
+  // https://css-tricks.com/lets-create-a-custom-audio-player/
   function createHTMLMusicPlayer(musicPlayerDiv, musicPlayerh1) {
     // wrapper div
     let wrapperDiv = document.createElement("div");
@@ -35,49 +30,115 @@ window.addEventListener("load", (event) => {
     musicPlayerDiv.append(wrapperDiv);
 
     // player div
-    let playerDiv = document.createElement("div");
-    playerDiv.id = "player";
-    wrapperDiv.append(playerDiv);
+    let audioPlayerContainer = document.createElement("div");
+    audioPlayerContainer.id = "audio-player-container";
+    wrapperDiv.append(audioPlayerContainer);
 
     // music player audio element
     let musicPlayer = document.createElement("audio");
     musicPlayer.id = "music_player";
-    playerDiv.append(musicPlayer);
-
-    // sample music track
-    //let sampleTrack = document.createElement("source");
-    //sampleTrack.src = "http://localhost:8000/sounds/Nature_Frogs.mp3";
-    //musicPlayer.append(sampleTrack);
+    audioPlayerContainer.append(musicPlayer);
 
     // inputs
-    let playBtn = document.createElement("input");
-    playBtn.type = "image";
-    playBtn.src = "images/icons/play.png";
-    playBtn.addEventListener('click', play_aud);
-    playBtn.id = "play_button";
-    playerDiv.append(playBtn);
 
-    let stopBtn = document.createElement("input");
-    stopBtn.type = "image";
-    stopBtn.src = "images/icons/stop.png";
-    stopBtn.addEventListener('click', stop_aud);
-    stopBtn.id = "play_button";
-    playerDiv.append(stopBtn);
+    // let currTime = document.createElement("span");
+    // currTime.classList.add("time");
+    // currTime.id = "current-time";
+    // currTime.innerHTML = "0:00";
+    // audioPlayerContainer.append(currTime);
 
-    let volImg = document.createElement("img");
-    volImg.src = "images/icons/volume.png";
-    volImg.id = "vol_img";
-    playerDiv.append(volImg);
+    let playIconContainer = document.createElement("button");
+    playIconContainer.id = "play-icon";
+    playIconContainer.classList.add("play-icon");
+    playIconContainer.classList.add("paused");
+    // playIconContainer.innerHTML = "pause";
+    audioPlayerContainer.append(playIconContainer);
 
-    let volChange = document.createElement("input");
-    volChange.type = "range";
-    volChange.id = "change_vol";
-    volChange.addEventListener('change', change_vol);
-    volChange.step = "0.05";
-    volChange.min = "0";
-    volChange.max = "1";
-    volChange.value = "1";
-    playerDiv.append(volChange);
+    playIconContainer.addEventListener("click", () => {
+      if (playState === "play") {
+        // playIconContainer.innerHTML = "play";
+        playIconContainer.classList.remove("paused");
+        playState = "pause";
+        audioContext.suspend();
+      } else {
+        player.currentTime = 0;
+        // playIconContainer.innerHTML = "pause";
+        playIconContainer.classList.add("paused");
+        playState = "play";
+        audioContext.resume();
+      }
+    });
+
+    // let seekSlider = document.createElement("input");
+    // seekSlider.type = "range";
+    // seekSlider.id = "seek-slider";
+    // seekSlider.value = "0";
+    // seekSlider.max = "100";
+    // audioPlayerContainer.append(seekSlider);
+    // seekSlider.addEventListener('change', change_vol);
+
+    // let duration = document.createElement("span");
+    // duration.classList.add("time");
+    // duration.id = "duration";
+    // duration.innerHTML = "duration XX";
+    // audioPlayerContainer.append(duration);
+
+    // let volOutput = document.createElement("output");
+    // volOutput.id = "volume-output";
+    // volOutput.innerHTML = "100";
+    // audioPlayerContainer.append(volOutput);
+
+    let volumeSlider = document.createElement("input");
+    volumeSlider.type = "range";
+    volumeSlider.id = "volume-slider";
+    volumeSlider.max = "100";
+    volumeSlider.min = "0"
+    volumeSlider.value = "100";
+    audioPlayerContainer.append(volumeSlider);
+    volumeSlider.addEventListener("change", (event) => {
+      gainNode.gain.value = getCurrentSliderVolume();
+    });
+
+    function getCurrentSliderVolume() {
+      let value = volumeSlider.value;
+      return parseFloat(value) / 100;
+    }
+
+    // let muteIconContainer = document.createElement("button");
+    // muteIconContainer.id = "mute-icon";
+    // muteIconContainer.classList.add("musicPlayerBtn");
+    // muteIconContainer.innerHTML = "mute";
+    // audioPlayerContainer.append(muteIconContainer);
+
+    // muteIconContainer.addEventListener("click", (event) => {
+    //   if (muteState === "unmute") {
+    //     gainNode.gain.value = 0;
+    //     previousVolume = getCurrentSliderVolume();
+    //     volumeSlider.value = "0";
+    //     muteState = "mute";
+    //     event.target.innerHTML = "unmute";
+    //   } else {
+    //     gainNode.gain.value = previousVolume;
+    //     volumeSlider.value = previousVolume * 100;
+    //     muteState = "unmute";
+    //     event.target.innerHTML = "mute";
+    //   }
+    // });
+
+    // let volImg = document.createElement("img");
+    // volImg.src = "images/icons/volume.png";
+    // volImg.id = "vol_img";
+    // playerDiv.append(volImg);
+
+    // let volChange = document.createElement("input");
+    // volChange.type = "range";
+    // volChange.id = "change_vol";
+    // volChange.addEventListener('change', change_vol);
+    // volChange.step = "0.05";
+    // volChange.min = "0";
+    // volChange.max = "1";
+    // volChange.value = "1";
+    // playerDiv.append(volChange);
 
     // let exitA = document.createElement("a");
     // exitA.id = "exitLink";
@@ -87,20 +148,38 @@ window.addEventListener("load", (event) => {
     // exitA.href = "";
     // musicPlayerDiv.appendChild(exitA);
 
+    // const showRangeProgress = (rangeInput) => {
+    //     if(rangeInput === seekSlider) audioPlayerContainer.style.setProperty('--seek-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+    //     else audioPlayerContainer.style.setProperty('--volume-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+    // }
+
+    // seekSlider.addEventListener('input', (e) => {
+    //     showRangeProgress(e.target);
+    // });
+    // volumeSlider.addEventListener('input', (e) => {
+    //     showRangeProgress(e.target);
+    // });
+    // end pasted in code
+
     let exitBtn = document.createElement("button");
-    exitBtn.innerHTML = "Exit";
+    exitBtn.innerHTML = "exit";
     // exitBtn.type = "submit";
     exitBtn.name = "exitBtn";
     exitBtn.id = "exitBtn";
+    exitBtn.classList.add("btn");
     musicPlayerDiv.appendChild(exitBtn);
 
     exitBtn.addEventListener("click", (event) => {
+      audioContext.suspend();
+
       musicPlayerh1.innerHTML = "Thank you for joining us";
       document.getElementById("wrapper").remove();
       document.getElementById("exitBtn").remove();
+
       let beginAgainBtn = document.createElement("button");
       beginAgainBtn.innerHTML = "Begin again";
-      beginAgainBtn.name = "exitBtn";
+      beginAgainBtn.name = "beginAgainBtn";
+      beginAgainBtn.classList.add("beginAgainBtn");
       musicPlayerDiv.appendChild(beginAgainBtn);
 
       beginAgainBtn.addEventListener("click", (event) => {
@@ -125,9 +204,9 @@ window.addEventListener("load", (event) => {
     musicPlayerDiv.append(loaderDiv);
     setTimeout(() => {
       loaderDiv.remove();
-      musicPlayerh1.innerHTML = "Monahan";
+      musicPlayerh1.innerHTML = "";
       createHTMLMusicPlayer(musicPlayerDiv, musicPlayerh1);
-    }, 2000);
+    }, 50);
   }
 
   function createAudioElement(url) {
@@ -139,10 +218,10 @@ window.addEventListener("load", (event) => {
   }
 
   const SONGS = [
-    {
-      url: "./sounds/Story_WildWales.mp3",
-      tags: ["drone", "uplifting"],
-    },
+    // {
+    //   url: "./sounds/Story_WildWales.mp3",
+    //   tags: ["drone", "uplifting"],
+    // },
     {
       url: "./sounds/Story_WhatRemainsTheSame.mp3",
       tags: ["drone"],
@@ -186,7 +265,7 @@ window.addEventListener("load", (event) => {
     {
       url: "./sounds/Excerpt_Mycelium.mp3",
       tags: ["drone"],
-    }
+    },
     // {
     //   url: "/sounds/writingSound.mp3",
     //   tags: ["drone"],
@@ -197,7 +276,7 @@ window.addEventListener("load", (event) => {
   });
 
   // amount of time in seconds
-  var TOTAL_DURATION = 100;
+  var TOTAL_DURATION = 600;
 
   // how many seconds before a song is completed
   // that we should pre-fetch the next song
@@ -281,7 +360,7 @@ window.addEventListener("load", (event) => {
       if (currentRuntime + duration > TOTAL_DURATION) {
         const remainingMs = (TOTAL_DURATION - currentRuntime) * 1000;
         setTimeout(() => {
-          audio.pause();
+          audioContext.suspend();
         }, remainingMs);
       } else if (index < songs.length - 1) {
         // set a timer to preload the next file
@@ -297,6 +376,7 @@ window.addEventListener("load", (event) => {
     });
 
     audio.play();
+    createTimerLoop();
   }
 
   const button = document.getElementById("play");
@@ -306,10 +386,10 @@ window.addEventListener("load", (event) => {
   button.addEventListener("click", (event) => {
     displayLoadingGif();
 
-    if(audioContext == null) {
+    if (audioContext == null) {
       // for browser compatibility, redefine AudioContext
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      audioContext = new AudioContext(); 
+      audioContext = new AudioContext();
       gainNode = audioContext.createGain();
       gainNode.connect(audioContext.destination);
     }
@@ -327,11 +407,35 @@ window.addEventListener("load", (event) => {
   });
 
   const totalDurationInput = document.getElementById("total-duration");
-  totalDurationInput.value = TOTAL_DURATION;
+  totalDurationInput.value = TOTAL_DURATION / 60;
 
   totalDurationInput.addEventListener("input", (event) => {
-    TOTAL_DURATION = parseInt(event.target.value);
+    TOTAL_DURATION = parseInt(event.target.value) * 60;
   });
+
+  // function updateProgress(seconds) {
+  //   let currTime = document.getElementById('current-time');
+  //   if(currTime == null) {
+      // do nothing. there is a delay whe the player is made.
+  //   } else {
+  //     let minutes = Math.floor(seconds / 60);
+  //     let remainingSeconds = (seconds % 60).toLocaleString('en-US', {
+  //       minimumIntegerDigits: 2,
+  //       useGrouping: false
+  //     });
+  //     currTime.innerHTML = `${minutes}:${remainingSeconds}`;
+  //   }
+  // }
+
+  function createTimerLoop() {
+    var start = Date.now();
+    return setInterval(() => {
+      let delta = Date.now() - start; // milliseconds since elapsed
+      let deltaSeconds = Math.floor(delta / 1000);
+      updateProgress(deltaSeconds);
+    }, 200);
+  }
+
 });
 
 // Music player
