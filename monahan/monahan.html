@@ -56,8 +56,13 @@
     <form id="launchMusicPlayerForm">
       <ul>
         <li>
-          <label for="total-duration">Duration:</label>
-          <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input>
+            <label for="total-duration">Duration:</label>
+              <select name="total-duration" id="total-duration">
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+              </select>
+          <!-- <input type="number" name="total-duration" id="total-duration" value="10" min="0" max="1000"></input> -->
         </li>
         <li>
           <label for="stereoCheckbox"> Stereo sound:</label>
