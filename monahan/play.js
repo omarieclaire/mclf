@@ -1,3 +1,11 @@
+// opening sequence or sound?
+// grab me a song from a, b, and c 
+// grab a random a. if a is longer than half of the total duration grab a different a
+// grab a random b. add a + b durations together 
+// grab a random c. If c is longer than the remaining time grab a different c 
+// calc the remaining time and fill it with a drone or other sound that can cut off when time is up
+
+
 window.addEventListener("load", (event) => {
   // when you go to the website
   // * you press a button and it plays three songs in a row.
@@ -405,6 +413,7 @@ window.addEventListener("load", (event) => {
     // they play in a random order
     // first we copy the array
     const shuffledSongs = [...SONGS];
+  
     // next we shuffle it
     shuffleArray(shuffledSongs);
 
