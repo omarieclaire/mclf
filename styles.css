@@ -696,7 +696,7 @@ nav a:hover {
   background: -webkit-linear-gradient(magenta, purple);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  cursor:pointer;
+  /* cursor:pointer; */
 }
 
 @media screen and (min-width: 900px) {
@@ -819,7 +819,7 @@ nav a:hover {
     background: -webkit-linear-gradient(magenta, purple);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    cursor:pointer;
+    /*cursor:pointer;*/
   }
 
   #shape-logo:hover,
