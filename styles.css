@@ -55,34 +55,27 @@ table {
   width: 100%;
   margin-top: 1em;
 }
-
 [class^=col-]:first-child {
   margin-top: 0;
 }
-
 .col-1 {
   width: 33.333334%;
   float: left;
 }
-
 @media (min-width: 40rem) {
   [class^=col-] {
     float: left;
     padding: 0.5em;
   }
-
   [class^=col-]:first-child {
     padding-left: 0;
   }
-
   [class^=col-]:last-child {
     padding-right: 0;
   }
-
   .col-3 {
     width: 50%;
   }
-
   .col-1 {
   }
 } */
