@@ -1472,3 +1472,11 @@ img {
   border-bottom: .1rem solid rgba(250, 128, 114, 0.3);
   border-top: .1rem solid rgba(250, 128, 114, 0.3);
 }
+
+/* CV styles */
+.cv {
+  margin-bottom: 3rem;
+}
+.img-cv:hover {
+  border: 1px dashed salmon; 
+}
