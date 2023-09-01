@@ -1257,7 +1257,7 @@ footer {
 .timeline .event:before {
   left: -11.5rem;
   background-color: inherit;
-  color: rgba(128, 128, 128, 0.2);
+  color: rgba(128, 128, 128, 0.4);
   content: attr(data-date);
   text-align: right;
   font-weight: 100;
@@ -1268,7 +1268,7 @@ footer {
 
 .timeline .event:after {
   box-shadow: 0 0 0 4px salmon;
-  left: -3.6rem;
+  left: -4.4rem;
   color: inherit;
   background: white;
   border-radius: 50%;
@@ -1281,7 +1281,7 @@ footer {
   font-size: 1.4rem;
   font-weight: 300;
   margin: 0;
-  padding:0:
+  padding: 0;
   background-color:inherit;
   color:salmon;
 }
@@ -1319,12 +1319,18 @@ footer {
     position: absolute;
     display: block;
     top: 0;
+    /* left: -4em; */
+    /* left: 1.6rem; */
   }
+/* 
+  .timeline .event:after {
+    left: 1.6rem;
+  } */
   
   .timeline .event:before {
     left: -12.4rem;
     background-color: inherit;
-    color: rgba(128, 128, 128, 0.2);
+    color: rgba(128, 128, 128, 0.5);
     content: attr(data-date);
     text-align: right;
     font-weight: 100;
