@@ -79,8 +79,44 @@
         margin-top: 10px;
       }
 
+
+       /* new slider stuff */
+
+ /* Default styles for mobile devices */
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px; /* Adjust font size as needed */
+}
+
+/* Styles for mobile devices: Hide text and show initials and dots */
+.slider-labels.mobile {
+  font-size: 0; /* Hide text labels */
+}
+
+.slider-labels.mobile span::before {
+  content: attr(data-initials);
+  display: inline-block;
+  text-align: center;
+  width: 20px; /* Adjust as needed */
+}
+
+/* Media query for desktop devices */
+@media screen and (min-width: 768px) {
+  .slider-labels.mobile {
+    display: none; /* Hide the mobile version */
+  }
+
+  .slider-labels {
+    font-size: 16px; /* Adjust font size for desktop */
+  }
+}
+
+       /* new slider stuff end */
+
+
+
       .slider-labels span {
-        /* font-size: 1.4rem; */
         font-weight: 300;
         color: salmon;
         position: relative;
@@ -88,8 +124,8 @@
         cursor: pointer;
       }
 
-      /* Style for the slider labels' circle */
-      .slider-labels span::after {
+      /* Style for the slider labels' circle */ */
+       .slider-labels span::after {
         content: "";
         background: white;
         border-radius: 50%;
@@ -233,9 +269,12 @@
           <h1>Bio</h1>
 
           <div class="bio-container">
-            <div id="bio-text">
-              <!-- Default bio content -->
-              Marie LeBlanc Flanagan is an artist...
+            <div class="slider-labels">
+              <span>Tiny</span>
+              <span>Short</span>
+              <span>Med</span>
+              <span>Long</span>
+              <span>Blah</span>
             </div>
             <input
               type="range"
@@ -245,13 +284,25 @@
               step="1"
               value="0"
             />
-            <div class="slider-labels">
-              <span>Shortest</span>
-              <span>Short</span>
-              <span>Medium</span>
-              <span>Long</span>
-              <span>Longest</span>
-            </div>
+            
+            <div id="bio-text">
+              <!-- Default bio content -->
+              <p>
+                <a href="http://marieflanagan.com/">Marie LeBlanc Flanagan</a> is an artist working in the playful spaces between people, especially related to connection and community. Marie builds experimental video games, playful installations, and cooperative experiences and has an enduring fondness for the possibilities of trash.</p>
+                <p>Marie co-founded <a href="https://wyrdartsinitiatives.org/">Wyrd Arts Initiatives</a>; 
+                <a href="http://droneday.org/">founded Drone Day</a>; served as the editor-in-chief of <a href="https://weirdcanada.com/">Weird Canada;</a> 
+                co-founded <a href="https://imaginaryresidency.com/">Imaginary Residency</a>, an artist-run online residency; 
+                co-founded <a href="https://torontogamesweek.com/">Toronto Games Week</a>; 
+                and co-organizes <a href="http://gaiasymposium.net/">GAIA</a>.</p> 
+              
+                <p>Marie has worked with <a href="https://wizardzines.com/">Wizard Zines</a>, 
+                <a href="https://2021.amaze-berlin.de/">A MAZE. Berlin</a> International Games and Playful Media Festival, 
+                <a href="https://processingfoundation.org/">The Processing Foundation</a>,
+                <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>, 
+                <a href="https://www.ada-x.org/">Ada x</a>, 
+                <a href="https://www.dailytouslesjours.com/en">Daily Tous Les Jours</a>, 
+                and <a href="https://gameartsinternational.network/">Game Arts International Network</a>.</p>
+              </div>
           </div>
 
 
