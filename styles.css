@@ -1241,6 +1241,10 @@ footer {
   position: relative;
 }
 
+.timeline .event::marker {
+  display:none
+}
+
 .timeline .event:last-of-type {
   padding-bottom: 0;
   margin-bottom: 0;
@@ -1328,7 +1332,7 @@ footer {
   } */
   
   .timeline .event:before {
-    left: -12.4rem;
+    left: -12.5rem;
     background-color: inherit;
     color: rgba(128, 128, 128, 0.5);
     content: attr(data-date);
@@ -1336,12 +1340,12 @@ footer {
     font-weight: 100;
     font-size: 1.4rem;
     min-width: 7.7rem;
-    top: -.05rem;
+    top: .3rem;
   }
   
   .timeline .event:after {
     box-shadow: 0 0 0 4px salmon;
-    left: -3.6rem;
+    left: -4.4rem;
     color: inherit;
     background: white;
     border-radius: 50%;
