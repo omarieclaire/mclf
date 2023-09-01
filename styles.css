@@ -270,6 +270,15 @@ li {
   list-style-type: disc;
 }
 
+#li-noDisc {
+  text-align: left;
+  margin-right: 1.5em;
+  margin-left: .7em;
+  line-height: 1.5;
+  margin-bottom: .5em;
+  list-style-type: none;
+}
+
 .toc{
   list-style-type: none; /* Remove bullets */
   padding: 0; /* Remove padding */
@@ -1481,7 +1490,7 @@ img {
 }
 
 /* CV styles */
-.cv {
+.mgn-bttm {
   margin-bottom: 3rem;
 }
 .img-cv:hover {
