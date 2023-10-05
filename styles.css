@@ -1248,6 +1248,7 @@ footer {
 .timeline .event {
   margin-bottom: 50px;
   position: relative;
+  list-style: none;
 }
 
 .timeline .event::marker {
@@ -1295,6 +1296,7 @@ footer {
   font-weight: 300;
   margin: 0;
   padding: 0;
+  list-style: none;
   background-color:inherit;
   color:salmon;
 }
@@ -1362,6 +1364,16 @@ footer {
     width: .8rem;
     content: "";
     top: .5rem;
+  }
+
+  .city {
+    font-size: 2rem;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color:inherit;
+    color:salmon;
   }
 }
 
