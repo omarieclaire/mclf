@@ -2,10 +2,7 @@
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"
-    ></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -15,15 +12,11 @@
       gtag("config", "UA-77465632-1");
     </script>
 
-
     <meta charset="UTF-8" />
     <!-- helps responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
-    <meta
-      name="description"
-      content="Designing and building play experiences, experimental games, installations, events, and  spaces for people."
-    />
+    <meta name="description" content="Designing and building play experiences, experimental games, installations, events, and  spaces for people." />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
@@ -31,8 +24,7 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
-      crossorigin="anonymous"
-    />
+      crossorigin="anonymous" />
 
     <style>
       .bio-container {
@@ -80,42 +72,39 @@
         margin-top: 10px;
       }
 
+      /* new slider stuff */
 
-       /* new slider stuff */
+      /* Default styles for mobile devices */
+      .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px; /* Adjust font size as needed */
+      }
 
- /* Default styles for mobile devices */
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px; /* Adjust font size as needed */
-}
+      /* Styles for mobile devices: Hide text and show initials and dots */
+      .slider-labels.mobile {
+        font-size: 0; /* Hide text labels */
+      }
 
-/* Styles for mobile devices: Hide text and show initials and dots */
-.slider-labels.mobile {
-  font-size: 0; /* Hide text labels */
-}
+      .slider-labels.mobile span::before {
+        content: attr(data-initials);
+        display: inline-block;
+        text-align: center;
+        width: 20px; /* Adjust as needed */
+      }
 
-.slider-labels.mobile span::before {
-  content: attr(data-initials);
-  display: inline-block;
-  text-align: center;
-  width: 20px; /* Adjust as needed */
-}
+      /* Media query for desktop devices */
+      @media screen and (min-width: 768px) {
+        .slider-labels.mobile {
+          display: none; /* Hide the mobile version */
+        }
 
-/* Media query for desktop devices */
-@media screen and (min-width: 768px) {
-  .slider-labels.mobile {
-    display: none; /* Hide the mobile version */
-  }
+        .slider-labels {
+          font-size: 16px; /* Adjust font size for desktop */
+        }
+      }
 
-  .slider-labels {
-    font-size: 16px; /* Adjust font size for desktop */
-  }
-}
-
-       /* new slider stuff end */
-
-
+      /* new slider stuff end */
 
       .slider-labels span {
         font-weight: 300;
@@ -125,8 +114,8 @@
         cursor: pointer;
       }
 
-      /* Style for the slider labels' circle */ */
-       .slider-labels span::after {
+      /* Style for the slider labels' circle */
+      */ .slider-labels span::after {
         content: "";
         background: white;
         border-radius: 50%;
@@ -239,12 +228,7 @@
 
   <body>
     <header>
-      <a href="../index.html"
-        ><img
-          src="../img/circle-logo.png"
-          alt="circle logo"
-          class="circle-logo"
-      /></a>
+      <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
       <input type="checkbox" id="nav-toggle" class="nav-toggle" />
       <p id="welcome-name">
         <a href="../index.html">Marie LeBlanc Flanagan</a>
@@ -268,7 +252,6 @@
       <div class="container">
         <div class="page-content">
           <h1>Bio</h1>
-
           <div class="bio-container">
             <div class="slider-labels">
               <span>Tiny</span>
@@ -285,30 +268,34 @@
               step="1"
               value="0"
             />
-            
             <div id="bio-text">
               <!-- Default bio content -->
               <p>
-                <a href="http://marieflanagan.com/">Marie LeBlanc Flanagan</a> is an artist working in the playful spaces between people, especially related to connection and community. Marie builds experimental video games, playful installations, and cooperative experiences and has an enduring fondness for the possibilities of trash.</p>
-                <p>Marie co-founded <a href="https://wyrdartsinitiatives.org/">Wyrd Arts Initiatives</a>; 
-                <a href="http://droneday.org/">founded Drone Day</a>; served as the editor-in-chief of <a href="https://weirdcanada.com/">Weird Canada;</a> 
-                co-founded <a href="https://imaginaryresidency.com/">Imaginary Residency</a>, an artist-run online residency; 
-                co-founded <a href="https://torontogamesweek.com/">Toronto Games Week</a>; 
-                and co-organizes <a href="http://gaiasymposium.net/">GAIA</a>.</p> 
-              
-                <p>Marie has worked with <a href="https://wizardzines.com/">Wizard Zines</a>, 
-                <a href="https://2021.amaze-berlin.de/">A MAZE. Berlin</a> International Games and Playful Media Festival, 
+                <a href="http://marieflanagan.com/">Marie LeBlanc Flanagan</a> is an artist working in the playful spaces between people, especially
+                related to connection and community. Marie builds experimental video games, playful installations, and cooperative experiences and has
+                an enduring fondness for the possibilities of trash.
+              </p>
+              <p>
+                Marie co-founded <a href="https://wyrdartsinitiatives.org/">Wyrd Arts Initiatives</a>;
+                <a href="http://droneday.org/">founded Drone Day</a>; served as the editor-in-chief of
+                <a href="https://weirdcanada.com/">Weird Canada;</a> co-founded <a href="https://imaginaryresidency.com/">Imaginary Residency</a>, an
+                artist-run online residency; co-founded <a href="https://torontogamesweek.com/">Toronto Games Week</a>; and co-organizes
+                <a href="http://gaiasymposium.net/">GAIA</a>.
+              </p>
+
+              <p>
+                Marie has worked with <a href="https://wizardzines.com/">Wizard Zines</a>,
+                <a href="https://2021.amaze-berlin.de/">A MAZE. Berlin</a> International Games and Playful Media Festival,
                 <a href="https://processingfoundation.org/">The Processing Foundation</a>,
-                <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>, 
-                <a href="https://www.ada-x.org/">Ada x</a>, 
-                <a href="https://www.dailytouslesjours.com/en">Daily Tous Les Jours</a>, 
-                and <a href="https://gameartsinternational.network/">Game Arts International Network</a>.</p>
-              </div>
+                <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>,
+                <a href="https://www.ada-x.org/">Ada x</a>, <a href="https://www.dailytouslesjours.com/en">Daily Tous Les Jours</a>, and
+                <a href="https://gameartsinternational.network/">Game Arts International Network</a>.
+              </p>
+            </div>
           </div>
 
-
-          <br>
-          <br>
+          <br />
+          <br />
           <h1>Timeline</h1>
 
           <div class="page-content-timeline">
@@ -318,26 +305,18 @@
                 <li class="event" data-date="2023">
                   <p class="city">Pittsburgh/Toronto/Montreal</p>
                   <p>Co-founded Toronto Games Week</p>
-                  <p>Co-founded <a target="_blank" href="https://torontogamesweek.com/"
-                    >Toronto Games Week</a
-                  ></p>
-                  <p>Co-led <a target="_blank" href="http://gaiasymposium.net/"
-                    >GAIA</a
-                  ></p>
+                  <p>Co-founded <a target="_blank" href="https://torontogamesweek.com/">Toronto Games Week</a></p>
+                  <p>Co-led <a target="_blank" href="http://gaiasymposium.net/">GAIA</a></p>
                   <p>Created "Change the Rules" Comic</p>
                   <p>Artist in residence at the ETC at Carnegie Mellon University</p>
                 </li>
                 <li class="event" data-date="2022">
                   <p class="city">Online/Europe/Montreal</p>
-                  <p></p>
-                  <p>Created <a target="_blank" href="https://tendercircuits.ca/home/indexx/"
-                    >Tender Circuits</a
-                  > for <a target="_blank" href="https://digitalartsresourcecentre.ca/"
-                  >DARC</a
-                ></p>
-                 
+                  <p>
+                    Created <a target="_blank" href="https://tendercircuits.ca/home/indexx/">Tender Circuits</a> for
+                    <a target="_blank" href="https://digitalartsresourcecentre.ca/">DARC</a>
+                  </p>
 
-                  
                   <p>Co-led GAIA</p>
                   <p>Created "Change the Rules" Comic</p>
                   <p>Artist in residence at the ETC at Carnegie Mellon University</p>
@@ -356,83 +335,53 @@
                   <p>Artist in residence at Technoculture, Art and Games</p>
                   <p>
                     Consulted with
-                    <a target="_blank" href="http://www.dailytouslesjours.com/"
-                      >Daily Tous Les Jours</a
-                    >
+                    <a target="_blank" href="http://www.dailytouslesjours.com/">Daily Tous Les Jours</a>
                     and
-                    <a target="_blank" href="https://www.genielab.co/"
-                      >GenieLab</a
-                    >
+                    <a target="_blank" href="https://www.genielab.co/">GenieLab</a>
                     on creative installations and gatherings.
                   </p>
                   <p>6 months learning the fundamentals of French</p>
                 </li>
                 <li class="event" data-date="2017" ;>
                   <p class="city">San Francisco</p>
-                  <p>
-                    Researched decentralized communities for an installation
-                  </p>
+                  <p>Researched decentralized communities for an installation</p>
                   <p>
                     Co-organized a Game Jam at
-                    <a target="_blank" href="https://dynamicland.org/">
-                      Dynamicland</a
-                    >.
+                    <a target="_blank" href="https://dynamicland.org/"> Dynamicland</a>.
                   </p>
                   <p>
-                    Spoke and showed my work at festivals and events in England,
-                    Germany, USA, Canada, Netherlands, Poland, Brazil, Scotland,
-                    South Africa, and Ukraine.
+                    Spoke and showed my work at festivals and events in England, Germany, USA, Canada, Netherlands, Poland, Brazil, Scotland, South
+                    Africa, and Ukraine.
                   </p>
                 </li>
                 <li class="event" data-date="2015" ;>
                   <p class="city">Berlin</p>
-                  <p>
-                    Designed and created 9 experimental games, installations,
-                    and play experiences.
-                  </p>
-                  <p>
-                    Work with the School of Machines, Making, and Make-Believe
-                  </p>
+                  <p>Designed and created 9 experimental games, installations, and play experiences.</p>
+                  <p>Work with the School of Machines, Making, and Make-Believe</p>
                   <p>Experience design with A MAZE. Berlin</p>
-                  <p>
-                    Editor at SoundCloud, helping document and share technical
-                    work.
-                  </p>
+                  <p>Editor at SoundCloud, helping document and share technical work.</p>
                 </li>
                 <li class="event" data-date="2013" ;>
                   <p class="city">Kitchener</p>
                   <p>Worked on a city-funded arts and culture web portal</p>
-                  <p>
-                    Founded Drone Day, an annual national day for the
-                    celebration of drone music and communities
-                  </p>
+                  <p>Founded Drone Day, an annual national day for the celebration of drone music and communities</p>
                 </li>
                 <li class="event" data-date="2011" ;>
                   <p class="city">Toronto</p>
                   <p>
-                    Incorporated Wyrd Arts Initiatives, a national nonprofit for
-                    encouraging, documenting, and connecting creative expression
-                    across Canada
+                    Incorporated Wyrd Arts Initiatives, a national nonprofit for encouraging, documenting, and connecting creative expression across
+                    Canada
                   </p>
                 </li>
                 <li class="event" data-date="2009" ;>
                   <p class="city">Edmonton</p>
-                  <p>
-                    “Best music website in Canada” from CBC 3 for
-                    weirdcanada.com
-                  </p>
-                  <p>
-                    Managed a community arts space, overseeing 150+ lectures,
-                    festivals, screenings, and events.
-                  </p>
+                  <p>“Best music website in Canada” from CBC 3 for weirdcanada.com</p>
+                  <p>Managed a community arts space, overseeing 150+ lectures, festivals, screenings, and events.</p>
                   <p>Worked with CBC Edmonton and CBC North</p>
                 </li>
                 <li class="event" data-date="2008" ;>
                   <p class="city">Ottawa</p>
-                  <p>
-                    Ran a social enterprise, creating alternative educational
-                    programs
-                  </p>
+                  <p>Ran a social enterprise, creating alternative educational programs</p>
                 </li>
                 <li class="event" data-date="2007" ;>
                   <p class="city">Peterborough</p>
@@ -445,9 +394,8 @@
                 <li class="event" data-date="&#8593;">
                   <p class="city">Perth</p>
                   <p>
-                    Spent my childhood reading every book I could find, climbing
-                    trees, and asking inappropriate questions. I tried to start
-                    a revolution in my elementary school.
+                    Spent my childhood reading every book I could find, climbing trees, and asking inappropriate questions. I tried to start a
+                    revolution in my elementary school.
                   </p>
                 </li>
               </ul>
@@ -459,32 +407,16 @@
 
     <footer>
       <div>
-        <a href="mailto:%20marieflanagan@gmail.com" target="blank"
-          ><img src="../img/social-icons/mail.svg" alt="email" class="feather"
-        /></a>
+        <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
         <a href="https://linkedin.com/in/marieflanagan/" target="blank"
-          ><img
-            src="../img/social-icons/linked-in.svg"
-            alt="LinkedIn"
-            class="feather"
+          ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
         /></a>
-        <a href="https://twitter.com/omarieclaire/" target="blank"
-          ><img
-            src="../img/social-icons/twitter.svg"
-            alt="twitter"
-            class="feather"
-        /></a>
+        <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
         <a href="https://www.facebook.com/0marieclaire/" target="blank"
-          ><img
-            src="../img/social-icons/facebook.svg"
-            alt="facebook"
-            class="feather"
+          ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
         /></a>
         <a href="https://www.instagram.com/omarieclaire/" target="blank"
-          ><img
-            src="../img/social-icons/instagram.svg"
-            alt="instagram"
-            class="feather"
+          ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
         /></a>
       </div>
     </footer>
