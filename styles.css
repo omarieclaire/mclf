@@ -1246,7 +1246,7 @@ footer {
 }
 
 .timeline .event {
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   position: relative;
   list-style: none;
 }
@@ -1367,6 +1367,15 @@ footer {
   }
 
   .city, .page-content p {
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color:inherit;
+    color:salmon;
+  }
+
+  .city {
     font-size: 2rem;
     font-weight: 300;
     margin: 0;
