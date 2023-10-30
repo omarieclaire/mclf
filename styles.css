@@ -1422,6 +1422,7 @@ img {
 }
 
 .new-port-container {
+  display: flex;
   position: relative;
 }
 
@@ -1492,7 +1493,6 @@ img {
   margin: auto;
   margin-top: 3rem;
   margin-bottom: 3rem;
-
 }
 
 .vidContent iframe {
