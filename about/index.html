@@ -20,210 +20,12 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
+    <link href="aboutstyles.css" rel="stylesheet" type="text/css" />
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
       crossorigin="anonymous" />
-
-    <style>
-      .bio-container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      #bio-text {
-        margin-bottom: 20px;
-      }
-
-      #bio-slider {
-        width: 100%;
-      }
-
-      .slider-container {
-        position: relative;
-      }
-
-      /* Style for the slider track */
-      #bio-slider::-webkit-slider-runnable-track {
-        background: rgb(241, 153, 143);
-        border-radius: 2px;
-        height: 2px;
-      }
-
-      /* Style for the slider thumb */
-      #bio-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: salmon;
-        margin-top: -8px;
-        position: relative;
-        z-index: 2;
-      }
-
-      /* Style for the slider labels */
-      .slider-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-      }
-
-      /* new slider stuff */
-
-      /* Default styles for mobile devices */
-      .slider-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px; /* Adjust font size as needed */
-      }
-
-      /* Styles for mobile devices: Hide text and show initials and dots */
-      .slider-labels.mobile {
-        font-size: 0; /* Hide text labels */
-      }
-
-      .slider-labels.mobile span::before {
-        content: attr(data-initials);
-        display: inline-block;
-        text-align: center;
-        width: 20px; /* Adjust as needed */
-      }
-
-      /* Media query for desktop devices */
-      @media screen and (min-width: 768px) {
-        .slider-labels.mobile {
-          display: none; /* Hide the mobile version */
-        }
-
-        .slider-labels {
-          font-size: 16px; /* Adjust font size for desktop */
-        }
-      }
-
-      /* new slider stuff end */
-
-      .slider-labels span {
-        font-weight: 300;
-        color: salmon;
-        position: relative;
-        z-index: 1;
-        cursor: pointer;
-      }
-
-      /* Style for the slider labels' circle */
-      */ .slider-labels span::after {
-        content: "";
-        background: white;
-        border-radius: 50%;
-        height: 10px;
-        width: 10px;
-        position: absolute;
-        top: -4px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: -1;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .slider-labels span.active::after {
-        opacity: 1;
-      }
-
-      input[type="range"] {
-        height: 44px;
-        -webkit-appearance: none;
-        margin: 10px 0;
-        width: 100%;
-      }
-      input[type="range"]:focus {
-        outline: none;
-      }
-      input[type="range"]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 12px;
-        cursor: pointer;
-        animate: 0.2s;
-        box-shadow: 0px 0px 1px #000000;
-        background: #ff9b87;
-        border-radius: 6px;
-        border: 0px solid #000000;
-      }
-      input[type="range"]::-webkit-slider-thumb {
-        box-shadow: 0px 0px 0px #000000;
-        border: 2px solid #ff9b87;
-        height: 36px;
-        width: 14px;
-        border-radius: 9px;
-        background: #ffffff;
-        cursor: pointer;
-        -webkit-appearance: none;
-        margin-top: -13px;
-      }
-      input[type="range"]:focus::-webkit-slider-runnable-track {
-        background: #ff9b87;
-      }
-      input[type="range"]::-moz-range-track {
-        width: 100%;
-        height: 12px;
-        cursor: pointer;
-        animate: 0.2s;
-        box-shadow: 0px 0px 1px #000000;
-        background: #ff9b87;
-        border-radius: 6px;
-        border: 0px solid #000000;
-      }
-      input[type="range"]::-moz-range-thumb {
-        box-shadow: 0px 0px 0px #000000;
-        /* border: 2px solid #ff9b87; */
-        height: 36px;
-        width: 14px;
-        border-radius: 9px;
-        background: #ffffff;
-        cursor: pointer;
-      }
-      input[type="range"]::-ms-track {
-        width: 100%;
-        height: 12px;
-        cursor: pointer;
-        animate: 0.2s;
-        background: transparent;
-        border-color: transparent;
-        color: transparent;
-      }
-      input[type="range"]::-ms-fill-lower {
-        background: #ff9b87;
-        border: 0px solid #000000;
-        border-radius: 12px;
-        box-shadow: 0px 0px 1px #000000;
-      }
-      input[type="range"]::-ms-fill-upper {
-        background: #ff9b87;
-        border: 0px solid #000000;
-        border-radius: 12px;
-        box-shadow: 0px 0px 1px #000000;
-      }
-      input[type="range"]::-ms-thumb {
-        margin-top: 1px;
-        box-shadow: 0px 0px 0px #000000;
-        border: 2px solid #ff9b87;
-        height: 36px;
-        width: 14px;
-        border-radius: 9px;
-        background: #ffffff;
-        cursor: pointer;
-      }
-      input[type="range"]:focus::-ms-fill-lower {
-        background: #ff9b87;
-      }
-      input[type="range"]:focus::-ms-fill-upper {
-        background: #ff9b87;
-      }
-    </style>
   </head>
 
   <body>
@@ -241,7 +43,7 @@
           <li><a href="../consulting">Consulting</a></li>
           <li><a href="../blog">Blog</a></li>
           <li><a href="../contact">Contact</a></li>
-          <!-- <!-- <li><a href="#">CV</a></li> --> -->
+          <!-- <li><a href="#">CV</a></li> -->
         </ul>
       </nav>
       <label for="nav-toggle" class="nav-toggle-label">
@@ -252,7 +54,7 @@
       <div class="container">
         <div class="page-content">
           <h1>Bio</h1>
-          <div class="bio-container">
+          <div class="content-container">
             <div class="slider-labels">
               <span>Tiny</span>
               <span>Short</span>
@@ -260,14 +62,7 @@
               <span>Long</span>
               <span>Blah</span>
             </div>
-            <input
-              type="range"
-              id="bio-slider"
-              min="0"
-              max="4"
-              step="1"
-              value="0"
-            />
+            <input type="range" id="bio-slider" min="0" max="4" step="1" value="0" />
             <div id="bio-text">
               <!-- Default bio content -->
               <p>
@@ -296,108 +91,62 @@
 
           <br />
           <br />
+
+
           <h1>Timeline</h1>
 
-          <div class="page-content-timeline">
-            <div id="content">
-              <ul class="timeline">
-                <li class="event" data-date="2023">
-                  <p class="city">Pittsburgh/Toronto/Montreal</p>
-                  <ul>
-                    <li>Co-founded <a target="_blank" href="https://torontogamesweek.com/">Toronto Games Week</a>, a celebration of playable arts and culture.</li>
-                    <li>Co-led <a target="_blank" href="http://gaiasymposium.net/">the GAIA Symposium</a>, a gathering of game curators and intermediaries from around the world.</li>
-                    <li>Created <a target="_blank" href="https://gameartsinternational.network/if-you-dont-like-the-game-change-the-rules/">If you don't like the game, change the rules</a>  
-                      a research project and comic about co-ops, unions, and work in the games industry.</li>
-                    <li>Artist in residence at the <a target="_blank" href="https://www.etc.cmu.edu/">Entertainment Technology Center</a> at Carnegie Mellon University</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2022">
-                  <p class="city">Online/Montreal/Europe</p>
-                  <ul>
-                    <li>Created <a target="_blank" href="https://tendercircuits.ca/home/indexx/">Tender Circuits</a> with <a target="_blank" href="https://digitalartsresourcecentre.ca/">DARC</a></li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2020">
-                  <p class="city">Online</p>
-                  <ul>
-                    <li>Exploring the spaces between us</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2019">
-                  <p class="city">Montreal/New York City</p>
-                  <ul>
-                    <li>Artist in Residence at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a></li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2018">
-                  <p class="city">Montréal</p>
-                  <ul>
-                    <li>Built a one-month city-wide play experience for CAFKA.</li>
-                    <li>Artist in residence at <a target="_blank" href="https://tag.hexagram.ca/">Technoculture, Art and Games</a></li>
-                    <li>Consulted with <a target="_blank" href="http://www.dailytouslesjours.com/">Daily Tous Les Jours</a> and <a target="_blank" href="https://www.genielab.co/">GenieLab</a> on creative installations and gatherings.</li>
-                    <li>6 months learning the fundamentals of French</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2017">
-                  <p class="city">San Francisco</p>
-                  <ul>
-                    <li>Researched decentralized communities for an installation</li>
-                    <li>Co-organized a Game Jam at <a target="_blank" href="https://dynamicland.org/">Dynamicland</a>.</li>
-                    <li>Spoke and showed my work at festivals and events in England, Germany, USA, Canada, Netherlands, Poland, Brazil, Scotland, South Africa, and Ukraine.</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2015">
-                  <p class="city">Berlin</p>
-                  <ul>
-                    <li>Designed and created 9 experimental games, installations, and play experiences.</li>
-                    <li>Work with the School of Machines, Making, and Make-Believe</li>
-                    <li>Experience design with A MAZE. Berlin</li>
-                    <li>Editor at SoundCloud, helping document and share technical work.</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2013">
-                  <p class="city">Kitchener</p>
-                  <ul>
-                    <li>Worked on a city-funded arts and culture web portal</li>
-                    <li>Founded Drone Day, an annual national day for the celebration of drone music and communities</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2011">
-                  <p class="city">Toronto</p>
-                  <ul>
-                    <li>Incorporated Wyrd Arts Initiatives, a national nonprofit for encouraging, documenting, and connecting creative expression across Canada</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2009">
-                  <p class="city">Edmonton</p>
-                  <ul>
-                    <li>“Best music website in Canada” from CBC 3 for weirdcanada.com</li>
-                    <li>Managed a community arts space, overseeing 150+ lectures, festivals, screenings, and events.</li>
-                    <li>Worked with CBC Edmonton and CBC North</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2008">
-                  <p class="city">Ottawa</p>
-                  <ul>
-                    <li>Ran a social enterprise, creating alternative educational programs</li>
-                  </ul>
-                </li>
-                <li class="event" data-date="2007">
-                  <p class="city">Peterborough</p>
-                  <ul>
-                    <li>Honours degree in <em>Global Studies: Communities and Identities</em> from <a href="https://www.trentu.ca/">Trent University</a></li>
-                  </ul>
-                </li>
-                <li class="event" data-date="&#8593;">
-                  <p class="city">Perth</p>
-                  <ul>
-                    <li>Spent my childhood reading every book I could find, climbing trees, and asking inappropriate questions. I tried to start a revolution in my elementary school.</li>
-                  </ul>
-                </li>
-              </ul>
+          <div class="timeline-container">
+            <div class="timeline-slider-labels">
+              <span>2023</span>
+              <span>2022</span>
+              <span>2021</span>
+              <span>2020</span>
+              <span>2019</span>
+            </div>
+            <input type="range" id="timeline-slider" orient="vertical" min="0" max="4" step="1" value="0" />
+
+            <div id="timeline-text">
+              <!-- Default bio content -->
+              <p>
+               Whee! I co-founded <a target="_blank" href="https://torontogamesweek.com/">Toronto Games Week</a>, a celebration of playable arts
+                and culture with <a target="_blank" href="https://nomediakings.org/">Jim Munroe</a>. We celebrated the 9th annual
+                <a target="_blank" href="http://droneday.org/">Drone Day</a>. I co-organized
+                <a target="_blank" href="http://gaiasymposium.net/">the GAIA Symposium</a>, an international think tank and network for the
+                professional development of the game arts community: aimed at curators, producers, event organizers and academics working in the field
+                of videogame culture. I wrote and illustrated
+                <a target="_blank" href="https://gameartsinternational.network/if-you-dont-like-the-game-change-the-rules/"
+                  >If you don't like the game, change the rules</a
+                >, a comic about co-ops, unions, and work in the games industry. I travelled to Mexico City for
+                <a target="_blank" href="https://oasis.esne.es/">OASIS</a>
+                <a target="_blank" href="https://www.cenart.gob.mx/">CENART in Ciudad de Mexico</a> thanks to the Canadian Embassy and
+                <a target="_blank" href="https://mexico.sae.edu/">SAE Institute Mexico</a> and had the chance to talk about my games and research into
+                games and work. I hosted a
+                <a
+                  target="_blank"
+                  href="http://eyelevel.art/post/change-rules-collaborative-zine-making-workshop-and-artist-panel-marie-leblanc-flanagan"
+                  >collaborative zine-making workshop</a
+                >
+                and
+                <a
+                  target="_blank"
+                  href="http://eyelevel.art/post/change-rules-collaborative-zine-making-workshop-and-artist-panel-marie-leblanc-flanagan"
+                  >Artist Panel x Labour Rights</a
+                >
+                in Halifax with <a target="_blank" href="LINK">Eyelevel Gallery.</a> I paired with
+                <a target="_blank" href="https://jvns.ca/">Julia Evans</a> to create
+                <a target="_blank" href="https://wizardzines.com/zines/integers-floats/">How Integers and Floats Work</a> (floats are tricky!). I did
+                a DIY citizen science retreat with <a target="_blank" href="https://leecyb.org/">Lee Cyborg</a>,
+                <a target="_blank" href="https://hillarypredko.com/">Hillary Predko</a>, Julia Evans, and company. I delightedly explored the hills of
+                Pittsburgh during an artist residency at the <a target="_blank" href="https://www.etc.cmu.edu/">Entertainment Technology Center</a> at
+                Carnegie Mellon University in Pittsburgh and created a game-poem with
+                <a target="_blank" href="https://en.wikipedia.org/wiki/Heather_Kelley">Heather Kelley</a> and other collaborators that we showed at
+                <a target="_blank" href="https://likelike.org/2023/03/01/grow-still/">LIKELIKE.</a> I travelled to Point Arena and Los Angeles to
+                intentionally fall into the ocean and make zines, animation flipbooks, and a whale fall with
+                <a target="_blank" href="http://cabbibo.com/">Cabbibo</a> and
+                <a target="_blank" href="https://www.twitch.tv/pendletonward">Pen Ward</a>. The year is not done yet!
+              </p>
             </div>
           </div>
-          
         </div>
       </div>
     </main>
