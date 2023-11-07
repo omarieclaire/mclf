@@ -146,7 +146,7 @@ I did research on the TouchingYou project, exploring softness, touch and connect
  </p>`,
 
   //2021
-  `<p class="year">In the generative year of 2021: 
+  `<p> <span class="year">In the generative year of 2021:</span> 
   ☀ I created Soft Sanctuary for Proyecto Bios in Argentina, a peaceful web space for slow connection, through interactive question prompt, 3D sculptures, and soft sounds with the support of the Canadian Embassy. 
   ☀ I co-organized the Game Arts International Assembly (GAIA) Online, a 9-session online conference event for 150+ game curators around the world, focused on interconnecting existing game arts organizations and nurturing new structures in emerging regions. 
   ☀ I ran <a target="_blank" href="https://milieux.concordia.ca/event/hypo-hyper-presence-workshop-n%CB%9A-1-filters-with-marie-leblanc-flanagan/">HYPO//HYPER PRESENCE N˚ 1: FILTERS</a>, an Augmented Realities workshop at the Milieux Institute.
@@ -180,8 +180,9 @@ around precariousness in the creative community.
 I did an interview about drone sounds? 2021: Buzz about drones - the aural kind - gets kids excited about learning twitter  
 </p>`,
   //2020
-
-  `<p>I showed Closer in Toronto. I organized an Experimental Gathering. Then the pandemic hit.  ☀ 
+  `<p> <span class="year">In the unspeakable year of 2020:</span> 
+I showed Closer in Toronto. I organized an Experimental Gathering. Then the pandemic hit.  
+☀ 
   I made Throne Room, a virtual bathroon for people to collaboratively graffiti and deface at A MAZE. Berlin, and for people to consider what they flush away. ☀ 
 
   ☀ I co-organized <a target="_blank" href="https://ccfest.rocks/virtual-cc-fest-june-18">Future Tense: Virtual Creative Code Fest (CC Fest)</a>, a free & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and arduino with <a target="_blank" href="https://www.edsaber.info/">Saber Khan</a> 
@@ -220,9 +221,9 @@ I taught a class at <a href="https://www.schoolofma.org/">The School of Machines
   
   </p>`,
   //2019
-  `<p>Lungbutter? New York: Artist in Residence at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a></p>`,
+  // `<p>Lungbutter? New York: Artist in Residence at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a></p>`,
   //2018
-  `<p>I built a one-month city-wide play experience for CAFKA in Kitchener-Waterloo. To Montreal to do an artist residency at <a target="_blank" href="https://tag.hexagram.ca/">Technoculture, Art and Games</a>. I consulted with <a target="_blank" href="http://www.dailytouslesjours.com/">Daily Tous Les Jours</a> and <a target="_blank" href="https://www.genielab.co/">GenieLab</a> on creative installations and gatherings. I spent 6 months learning the fundamentals of French</p>`,
+  // `<p>I built a one-month city-wide play experience for CAFKA in Kitchener-Waterloo. To Montreal to do an artist residency at <a target="_blank" href="https://tag.hexagram.ca/">Technoculture, Art and Games</a>. I consulted with <a target="_blank" href="http://www.dailytouslesjours.com/">Daily Tous Les Jours</a> and <a target="_blank" href="https://www.genielab.co/">GenieLab</a> on creative installations and gatherings. I spent 6 months learning the fundamentals of French</p>`,
 ];
 
 /* Daily Tous les jours Trillium Consultation */
