@@ -1,0 +1,350 @@
+.content-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.timeline-container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch; /* Make both children stretch to the same height */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Update timeline slider styles to match bio slider */
+input[type="range"] {
+  writing-mode: vertical-rl; /* For modern browsers */
+  -webkit-writing-mode: vertical-rl; /* For older WebKit-based browsers */
+  outline: none;
+}
+
+/* Update timeline slider styles to match bio slider */
+#timeline-slider {
+  -webkit-appearance: none;
+  outline: none;
+  width: 20px;
+  transform: rotate(180deg); /* Rotate the slider thumb 180 degrees to make it appear at the bottom */
+  height: 10rem;
+  -webkit-writing-mode: vertical-rl; /* For older WebKit-based browsers */
+  margin: 0 20px 0 10px;
+  background-color: #ff9b87; /* Match the background color of the bio slider */
+  -webkit-appearance: slider-vertical; /* WebKit */
+}
+
+#bio-text,
+#timeline-text {
+  margin-bottom: 20px;
+}
+
+/* Style for the slider track */
+#bio-slider::-webkit-slider-runnable-track {
+  background: rgb(241, 153, 143);
+  border-radius: 2px;
+  height: 2px;
+}
+
+/* Style for the slider track */
+#timeline-slider::-webkit-slider-runnable-track {
+  background: rgb(241, 153, 143);
+  border-radius: 2px;
+}
+
+/* Style for the slider thumb */
+#bio-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: salmon;
+  margin-top: -8px;
+  position: relative;
+  z-index: 2;
+  /* background: #4caf50; */
+  /* real Green background */
+}
+
+/* Style for the slider thumb */
+
+
+
+/* Style for the slider labels */
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px; /* Adjust font size as needed */
+}
+
+/* Adjust margin-left for spacing */
+.timeline-slider-labels {
+  flex-direction: column;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+/* Styles for mobile devices: Hide text and show initials and dots */
+.slider-labels.mobile,
+.timeline-slider-labels.mobile {
+  font-size: 0; /* Hide text labels */
+}
+
+.slider-labels.mobile span::before,
+.timeline-slider-labels.mobile span::before {
+  content: attr(data-initials);
+  display: inline-block;
+  text-align: center;
+  width: 20px; /* Adjust as needed */
+}
+
+/* Media query for desktop devices */
+@media screen and (min-width: 768px) {
+  .slider-labels.mobile,
+  .timeline-slider-labels.mobile {
+    display: none; /* Hide the mobile version */
+  }
+
+  .slider-labels,
+  .timeline-slider-labels {
+    font-size: 16px; /* Adjust font size for desktop */
+  }
+}
+
+.slider-labels span,
+.timeline-slider-labels span {
+  font-weight: 300;
+  color: salmon;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  margin: 0 0 1rem 0;
+}
+
+/* Style for the slider labels' circle */
+.slider-labels span::after {
+  content: "";
+  background: white;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Style for the slider labels' circle */
+.timeline-slider-labels span::after {
+  content: "";
+  background: white;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.slider-labels span.active::after,
+.timeline-slider-labels span.active::after {
+  opacity: 1;
+}
+
+input[type="range"] {
+  height: 44px;
+  -webkit-appearance: none;
+  margin: 0px 0;
+  width: 100%;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  /* width: 100%; */
+  /* height: 12px; */
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 1px #000000;
+  background: #ff9b87;
+  border-radius: 6px;
+  border: 0px solid #000000;
+}
+input[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 2px solid #ff9b87;
+  height: 36px;
+  width: 14px;
+  border-radius: 9px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -13px;
+  /* background: #4CAF50;  */
+  /* Green background */
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: #ff9b87;
+}
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 12px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 1px #000000;
+  background: #ff9b87;
+  border-radius: 6px;
+  border: 0px solid #000000;
+}
+input[type="range"]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  /* border: 2px solid #ff9b87; */
+  height: 36px;
+  width: 14px;
+  border-radius: 9px;
+  background: #ffffff;
+  cursor: pointer;
+  background: #4caf50;
+  /* Green background */
+}
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 12px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type="range"]::-ms-fill-lower {
+  background: #ff9b87;
+  border: 0px solid #000000;
+  border-radius: 12px;
+  box-shadow: 0px 0px 1px #000000;
+}
+input[type="range"]::-ms-fill-upper {
+  background: #ff9b87;
+  border: 0px solid #000000;
+  border-radius: 12px;
+  box-shadow: 0px 0px 1px #000000;
+}
+input[type="range"]::-ms-thumb {
+  margin-top: 1px;
+  box-shadow: 0px 0px 0px #000000;
+  border: 2px solid #ff9b87;
+  height: 36px;
+  width: 14px;
+  border-radius: 9px;
+  background: #ffffff;
+  cursor: pointer;
+  /* background: #4CAF50; Green background */
+}
+input[type="range"]:focus::-ms-fill-lower {
+  background: #ff9b87;
+}
+input[type="range"]:focus::-ms-fill-upper {
+  background: #ff9b87;
+}
+
+.year {
+  font-size: 1.6rem;
+}
+
+input[type="range" i] {
+}
+
+/* input {
+  appearance: auto;
+  cursor: default;
+  color: -internal-light-dark(rgb(255, 208, 208), rgb(255, 255, 255));
+  padding: initial;
+  border: none;
+  margin: 2px;
+  appearance: slider-vertical;
+  /* background-color: rgb(255, 155, 135); */
+  border-bottom-color: rgb(16, 16, 16);
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(16, 16, 16);
+  border-left-style: none;
+  border-left-width: 0px;
+  border-right-color: rgb(16, 16, 16);
+  border-right-style: none;
+  border-right-width: 0px;
+  border-top-color: rgb(16, 16, 16);
+  border-top-style: none;
+  border-top-width: 0px;
+  color: rgb(16, 16, 16);
+  cursor: default;
+  display: block;
+  font-family: Arial;
+  font-feature-settings: normal;
+  font-kerning: auto;
+  font-optical-sizing: auto;
+  font-size: 13.3333px;
+  font-stretch: 100%;
+  font-style: normal;
+  font-variant-alternates: normal;
+  font-variant-caps: normal;
+  font-variant-east-asian: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-variant-position: normal;
+  font-variation-settings: normal;
+  font-weight: 400;
+  height: 160px;
+  letter-spacing: normal;
+  line-height: normal;
+  margin-bottom: 0px;
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-top: 0px;
+  outline-color: rgb(16, 16, 16);
+  outline-style: none;
+  outline-width: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  text-align: start;
+  text-indent: 0px;
+  text-rendering: auto;
+  text-shadow: none;
+  text-transform: none;
+  transform: matrix(-1, 0, 0, -1, 0, 0);
+  width: 20px;
+  word-spacing: 0px;
+  writing-mode: horizontal-tb;
+  -webkit-rtl-ordering: logical;
+} */
+
+
+#timeline-slider::-webkit-slider-thumb {
+  /* -webkit-appearance: none; */
+  /* appearance: none; */
+  /* width: 20px; */
+  /* height: 20px; */
+  /* border-radius: 50%; */
+  /* margin-top: -8px; */
+  /* position: relative; */
+  /* z-index: 2; */
+  /* transform: rotate(180deg);  */
+  /* Rotate the thumb 180 degrees */
+  background: #4caf50; /* Green background */
+  background: salmon;
+  color: red;
+}
