@@ -125,7 +125,7 @@ const timelines = [
   ☀ I co-created <a target="_blank" href="https://www.instagram.com/p/Cd1LID2pTDi/">Song of the Soil</a> with Dirtpunk (Henry Driver, Rebecka Pettersson, Ashley Cho, and Sacha Holsnyder) about <a target="_blank" href="https://instagram.com/p/CdEIKmNpg6o/">microbes and fungus</a> and the beauty of <a target="_blank" href="https://twitter.com/omarieclaire/status/1521181177704558594">soil</a> for <a target="_blank" href="https://www.indiecade.com/">IndieCade's</a> Climate Jam, and we won the Most Adventurous/Innovative award 
   ☀ I worked with Leslie Ting to create <a target="_blank" href="http://summerworks.ca/show/what-brings-you-in/">What Brings You In</a>, an interactive online show with music, live narration, guest voices, and playful interactions.  ☀ I worked with <a target="_blank" href="https://adelheid.ca/welcome">adelheid</a> on <a target="_blank" href="https://adelheid.ca/in-development">You are swimming here</a>, an AR exploration of the human and natural histories that exist in our shared spaces. ☀ We celebrated the 8th annual <a target="_blank" href="http://droneday.org/">Drone Day</a>, and I organized the first ever <a target="_blank" href="https://itch.io/jam/drone">Drone Jam</a>, where we made experimental games, toys, or playful things related to the idea of sustained tones. You can play the <a target="_blank" href="https://droneday.org/play.html">drone games here</a>. 
   ☀ I worked with <a target="_blank" href="https://truluv.ai/">TruLuv</a> on Design for <a target="_blank" href="https://truluv.ai/selfcare">#SelfCare</a>, incorporating rituals to deepen care, compassion, and connection. ☀ I co-organized <a target="_blank" href="https://ccfest.rocks/virtual-cc-fest-june-18">Virtual Creative Code Fest (CC Fest)</a>, a free & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and arduino with <a target="_blank" href="https://www.edsaber.info/">Saber Khan</a> ☀ I hosted a play session for artists few events for artists ​​exploring feelings around ai / ethics / being here now as we tried out new AI tools.  
-  ☀ I co-organized with Ada X, and InterAccess Ctrl+Shift: Data Sovereignty & Community Action, conversations about listening, inquiring, contemplating, and consent-building in the age of digital giants. 
+  ☀ I co-organized with Ada X, and InterAccess <a target="_blank" href="https://interaccess.org/event/2022/ctrlshift-data-sovereignty-community-action">Ctrl+Shift: Data Sovereignty & Community Action</a>, conversations about listening, inquiring, contemplating, and consent-building in the age of digital giants. 
   ☀ I hosted conversations with <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/fp4tga4fbxtnbnsp98zjfffx975j2w">Grace Scheele: not yr angel bby harpist</a>, <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/e4lmf7fg4alnrhsssjpnp2yyykfwtk">Viktorija Kovac: Theatre of Heartbreak(s)</a>, <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/lbjd57kr34jt69dm9kwb32y8dfsm26">Sam Mercury: mixed(er)</a>, <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/ltpe2se4nxr9j8tredarjtb5ej6am5">Andrew Jacob Rinehart: Searching for Stillness through Radical Play</a>, <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/d76t6l3h9m2c4cn9mrkpsa5rfdzl76">Kate Kamo McHugh: Seeds of Reclamation</a>, and <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/gc3c2nlfe4hwyd735f9cgl6jhrwkmf">Lauren Prousky: When we speak at the same time, we speak the same language</a> in the <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks">X-Camera</a> series to discuss their artistic practice. 
   ☀ I continued to serve on the <a target="_blank" href="https://www.instagram.com/easternblocmtl/">Eastern Bloc</a> programming commitee.
   ☀ I organized a series of workshops called "playsessions" on making experimental games, including <a target="_blank" href="https://interartsmatrix.ca/events/concentric-fictions">Concentric Fictions</a> with <a target="_blank" href="https://oleomingus.com/about-1">Dhruv Jani</a>, exploring magical realism, experimentation, and nonsense verse; <a target="_blank" href="https://interartsmatrix.ca/events/weird-theatre-games">Weird Theatre Games</a>, a workshop about transforming emotionally challenging situations into one-of-a-kind awkward theatre games with <a target="_blank" href="https://squinky.me/">D. Squinkifer</a>, <a target="_blank" href="https://interartsmatrix.ca/events/making-it-work-tools-modes-for-interactive-experiences">Making It Work: Tools & Modes for Interactive Experiences</a>, a workshop about designing playful interactive experiences with <a target="_blank" href="https://jeka.games/">Jess Rowan Marcotte</a>, and <a target="_blank" href="https://interartsmatrix.ca/events/create-your-own-biomorphic-world-in-blender-with-shonee">Create your own biomorphic world in Blender</a> with <a target="_blank" href="https://www.instagram.com/shhonee/?hl=en">Shonee</a>.
@@ -134,7 +134,7 @@ const timelines = [
 I co-hosted a series of conversations with Edith about Ideas 
   ☀ Something called Playful questions? (a casual open discussion series) 
   ☀ 
-I created a <a target="_blank" href="https://artistseekscrowd.com/zine.html">64-page zine</a> (book?!) documenting the entire COVE/COVOX project.  
+I created a <a target="_blank" href="https://artistseekscrowd.com/zine.html">64-page zine</a> (book?!) documenting the entire <a href="https://interartsmatrix.ca/projects/cove-covox">COVE/COVOX</a> project.  
   ☀ 
 I created a <a target="_blank" href="http://www.artistseekscrowd.com">playful site exploring the idea of digital audience engagement</a>, based on the mood-ring project. 
   ☀ 
@@ -147,8 +147,8 @@ I did research on the TouchingYou project, exploring softness, touch and connect
 
   //2021
   `<p> <span class="year">In the generative year of 2021:</span> 
-  ☀ I created Soft Sanctuary for Proyecto Bios in Argentina, a peaceful web space for slow connection, through interactive question prompt, 3D sculptures, and soft sounds with the support of the Canadian Embassy. 
-  ☀ I co-organized the Game Arts International Assembly (GAIA) Online, a 9-session online conference event for 150+ game curators around the world, focused on interconnecting existing game arts organizations and nurturing new structures in emerging regions. 
+  ☀ I created <a href="https://marieflanagan.com/softiee/">Soft Sanctuary</a> for <a href="https://proyectobios.com/">Proyecto Bios</a> in Argentina, a peaceful web space for slow connection, through interactive question prompt, 3D sculptures, and soft sounds with the support of the Canadian Embassy. 
+  ☀ I co-organized the <a href="https://gaiasymposium.net/">Game Arts International Assembly (GAIA)</a> Online, a 9-session online conference event for 150+ game curators around the world, focused on interconnecting existing game arts organizations and nurturing new structures in emerging regions. 
   ☀ I ran <a target="_blank" href="https://milieux.concordia.ca/event/hypo-hyper-presence-workshop-n%CB%9A-1-filters-with-marie-leblanc-flanagan/">HYPO//HYPER PRESENCE N˚ 1: FILTERS</a>, an Augmented Realities workshop at the Milieux Institute.
   ☀ I moderated and hosted AI The End, a conversation with <a target="_blank" href="https://www.ada-x.org/en/activities/ai-the-end-gina-hara-residency-presentation/">Gina Hara</a> at <a target="_blank" href="https://www.ada-x.org/en/">Ada X</a>.
   ☀ I co-ran an edition of the <a target="_blank" href="https://imaginaryresidency.com/">Imaginary Residency</a> (March 6th-April 10th) with <a href="https://memcpy.io/">Robert Foss</a>, <a href="mailto:nick@nanocat.net">Nick Morrison</a>, <a href="https://twitter.com/saganyee">Sagan Yee </a>, <a href="https://kofioduro.myportfolio.com/links">Kofi Oduro</a>, <a href="https://www.are.na/amused-av">Marie Dahlén</a>,  <a href="mailto:tempest@ualberta">eryn</a>, <a href="mailto:dahjac@gmail.com">Jack</a>, <a target="_blank" href="https://www.truekvlt.com/">Jay Palmer</a>, <a target="_blank" href="https://xin-xin.info/">Xin Xin</a>and <a target="_blank" href="https://www.ada-x.org/en/participants/liane-decary-chen/">Liane Décary-Chen</a>. ☀
@@ -169,7 +169,7 @@ around precariousness in the creative community.
 ☀ I gave a talk for the at <a target="_blank" href="https://gutefabrik.com/">Die Gute Fabrik</a> Practice Sessions.
 ☀ I worked with the <a target="_blank" href="https://liveness.milieux.ca/">LIVENESS Research Group</a> exploring the intersections of liveness, game structures and rules, and the digital.
 ☀ I co-led machine learning workshops with <a target="_blank" href="https://genielab.co/en/">GenieLab</a>.
-☀ I ran the 8th edition of Drone Day, an annual celebration of drone, community, and experimental sounds. 
+☀ I ran the 8th edition of <a href="https://droneday.org/">Drone Day</a>, an annual celebration of drone, community, and experimental sounds. 
 ☀ I organized a very unsucessful event called Parallel park play- A tiny gathering for us to play alongside each other.</p>
 ☀ I hosted exploratory sessions called NoWorking, an online series of sessions dedicated to not working, and challenging ideas around labour. 
 ☀ I contributed to the Processing Org 20th Anniversary Community Catalog Contributor, a community catalog to celebrate 20 years of Processing. 
@@ -183,19 +183,19 @@ I did an interview about drone sounds? 2021: Buzz about drones - the aural kind 
   `<p> <span class="year">In the unspeakable year of 2020:</span> 
 I showed Closer in Toronto. I organized an Experimental Gathering. Then the pandemic hit.  
 ☀ 
-  I made Throne Room, a virtual bathroon for people to collaboratively graffiti and deface at A MAZE. Berlin, and for people to consider what they flush away. ☀ 
+  I made Throne Room, a virtual bathroon for people to collaboratively graffiti and deface at <a href="https://2023.amaze-berlin.de/">A MAZE. Berlin</a>, and for people to consider what they flush away. ☀ 
 
   ☀ I co-organized <a target="_blank" href="https://ccfest.rocks/virtual-cc-fest-june-18">Future Tense: Virtual Creative Code Fest (CC Fest)</a>, a free & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and arduino with <a target="_blank" href="https://www.edsaber.info/">Saber Khan</a> 
 
-  I made Mood Ring with Emily, Rachel, and ? for Debaser. ☀ 
+  I made <a target="_blank" href="https://mood-ring.ca/">Mood Ring</a> with Emily, Rachel, and ? for <a target="_blank" href="https://www.debaser.ca/">Debaser/a>. ☀ 
 
   I made Special Guest with a collaborative team of international artists, an experimental marketplace for booking playful guests to improve online meetings, and an invitation to imagine other ways of gathering. ☀ 
 
-  I made Neighbourbot with Julia Evans for !!Con 2020. The idea was to make space for short spontaneous connections with neighbours at online events. ☀ 
+  I made <a target="_blank" href="https://marieflanagan.com/neighbourbot/">Neighbourbot</a> with Julia Evans for <a href="https://bangbangcon.com/index.html">!!Con 2020</a>. The idea was to make space for short spontaneous connections with neighbours at online events. ☀ 
   
   2020 Lungbutter | "Curtain" Music Video, Performer ☀ 
 
-  2020 Sound Games (Web), Collection of playful connections to sound for Drone Day. Conceptual art in the form of tiny games inviting people to get intimate, playful, and curious about their relationship to sound. ☀ 
+  2020 Sound Games (Web), Collection of playful connections to sound for <a target="_blank" href="https://droneday.org/">Drone Day</a>. Conceptual art in the form of tiny games inviting people to get intimate, playful, and curious about their relationship to sound. ☀ 
 
   I worked with the <a target="_blank" href="https://liveness.milieux.ca/">LIVENESS Research Group</a> on Scaling Liveness in Participatory Experiences
 .
@@ -208,7 +208,7 @@ I showed Closer in Toronto. I organized an Experimental Gathering. Then the pand
   
   2020 Experimental Gatherings - Inspiration Show & Tell. ☀ 
 
-I taught a class at <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>, 
+I taught a class at <a target="_blank" href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>, 
 
   2020: Now & Next podcast. ☀ 
 
@@ -250,7 +250,12 @@ timelineSlider.addEventListener("input", () => {
 timelineLabels.forEach((label, index) => {
   label.addEventListener("click", () => {
     timelineSlider.value = index; // Update the slider value
-    setContentAndLabels(timelineText, timelines, timelineSlider, timelineLabels);
+    setContentAndLabels(
+      timelineText,
+      timelines,
+      timelineSlider,
+      timelineLabels
+    );
   });
 });
 
