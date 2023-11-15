@@ -1,17 +1,5 @@
-.content-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
 
-.timeline-container {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch; /* Make both children stretch to the same height */
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
+
 
 /* Update timeline slider styles to match bio slider */
 input[type="range"] {
@@ -255,96 +243,44 @@ input[type="range"]:focus::-ms-fill-upper {
   background: #ff9b87;
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Auto-sized year column, 1fr for description column */
+  gap: 10px; /* Gap between items in each row */
+  align-items: start; /* Align items to the top within each row */
+
+}
+
+.description {
+  /* margin-left: -20px; */
+  padding-left: 10px;
+
+}
+
+
 .year {
-  font-size: 1.6rem;
+  /* margin-left: -20px; */
+  
+  font-size: 1.5rem;
+  color:#4caf50;
+  min-width: 50px; /* Set a minimum width for the year column */
+  text-align: right; /* Align the text to the right within the year column */
+
 }
 
-input[type="range" i] {
+.year-intro {
+  /* margin-left: -20px; */
+  /* font-size: 2rem; */
+  font-weight: 500;
+
+}
+.grid-item {
+  /* padding-top: 10px; */
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
 
-/* input {
-  appearance: auto;
-  cursor: default;
-  color: -internal-light-dark(rgb(255, 208, 208), rgb(255, 255, 255));
-  padding: initial;
-  border: none;
-  margin: 2px;
-  appearance: slider-vertical;
-  /* background-color: rgb(255, 155, 135); */
-  border-bottom-color: rgb(16, 16, 16);
-  border-bottom-style: none;
-  border-bottom-width: 0px;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  border-image-slice: 100%;
-  border-image-source: none;
-  border-image-width: 1;
-  border-left-color: rgb(16, 16, 16);
-  border-left-style: none;
-  border-left-width: 0px;
-  border-right-color: rgb(16, 16, 16);
-  border-right-style: none;
-  border-right-width: 0px;
-  border-top-color: rgb(16, 16, 16);
-  border-top-style: none;
-  border-top-width: 0px;
-  color: rgb(16, 16, 16);
-  cursor: default;
-  display: block;
-  font-family: Arial;
-  font-feature-settings: normal;
-  font-kerning: auto;
-  font-optical-sizing: auto;
-  font-size: 13.3333px;
-  font-stretch: 100%;
-  font-style: normal;
-  font-variant-alternates: normal;
-  font-variant-caps: normal;
-  font-variant-east-asian: normal;
-  font-variant-ligatures: normal;
-  font-variant-numeric: normal;
-  font-variant-position: normal;
-  font-variation-settings: normal;
-  font-weight: 400;
-  height: 160px;
-  letter-spacing: normal;
-  line-height: normal;
-  margin-bottom: 0px;
-  margin-left: 10px;
-  margin-right: 20px;
-  margin-top: 0px;
-  outline-color: rgb(16, 16, 16);
-  outline-style: none;
-  outline-width: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-top: 0px;
-  text-align: start;
-  text-indent: 0px;
-  text-rendering: auto;
-  text-shadow: none;
-  text-transform: none;
-  transform: matrix(-1, 0, 0, -1, 0, 0);
-  width: 20px;
-  word-spacing: 0px;
-  writing-mode: horizontal-tb;
-  -webkit-rtl-ordering: logical;
-} */
 
 
-#timeline-slider::-webkit-slider-thumb {
-  /* -webkit-appearance: none; */
-  /* appearance: none; */
-  /* width: 20px; */
-  /* height: 20px; */
-  /* border-radius: 50%; */
-  /* margin-top: -8px; */
-  /* position: relative; */
-  /* z-index: 2; */
-  /* transform: rotate(180deg);  */
-  /* Rotate the thumb 180 degrees */
-  background: #4caf50; /* Green background */
-  background: salmon;
-  color: red;
-}
+
+
+
