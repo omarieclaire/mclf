@@ -29,11 +29,11 @@ let credits = document.getElementById("credits");
 function renderLoadingPage(lang) {
   if (currentLanguage == 'es') {
     // languageSwitchLink.innerHTML = "english";
-    motto.innerHTML = "Un espacio tranquilo de conexión";
-    initialUsernameInput.placeholder = "Tu nombre";
-    submitUsernameValue.value = "Comenzar";
-    changeNameInput.placeholder = "Nuevo nombre";
-    soundLabel.innerHTML = "Sonido";
+    motto.innerHTML = "A soft space for gentle connection";
+    initialUsernameInput.placeholder = "your name";
+    submitUsernameValue.value = "Change";
+    changeNameInput.placeholder = "New name";
+    soundLabel.innerHTML = "Sound";
     credits.innerHTML = "Desarrollado por Marie Claire LeBlanc Flanagan & friends";
     document.getElementsByName('sendYourBeautifulSelf').forEach((s) => {
       s.value = "Enviar";
@@ -869,7 +869,7 @@ function windowOnLoad() {
       if(currentLanguage == 'en') {
         submitInput.value = "send";
       } else {
-        submitInput.value = "Enviar";
+        submitInput.value = "send";
       }
 
       printFriendNumberDiv.appendChild(friendNumber);
