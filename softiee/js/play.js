@@ -17,7 +17,7 @@ import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/Si
 let currentLanguage = localStorage.getItem('lang') || 'es';
 
 // language
-let languageSwitchLink = document.getElementById("languageSwitchLink");
+// let languageSwitchLink = document.getElementById("languageSwitchLink");
 let motto = document.getElementById("motto");
 let initialUsernameInput = document.getElementsByName('initialUsernameInput')[0];
 let submitUsernameValue = document.getElementsByName('submitInitialUsername')[0];
@@ -28,7 +28,7 @@ let credits = document.getElementById("credits");
 
 function renderLoadingPage(lang) {
   if (currentLanguage == 'es') {
-    languageSwitchLink.innerHTML = "english";
+    // languageSwitchLink.innerHTML = "english";
     motto.innerHTML = "Un espacio tranquilo de conexión";
     initialUsernameInput.placeholder = "Tu nombre";
     submitUsernameValue.value = "Comenzar";
@@ -39,7 +39,7 @@ function renderLoadingPage(lang) {
       s.value = "Enviar";
     });
   } else {
-    languageSwitchLink.innerHTML = "español";
+    // languageSwitchLink.innerHTML = "español";
     motto.innerHTML = "a soft space for gentle connection";
     initialUsernameInput.placeholder = "your name or username";
     submitUsernameValue.value = "begin";
@@ -162,7 +162,7 @@ let mediQuestions = {
   2: "What do you need right now? Can you give it to yourself, even in the smallest way?"
 }
 
-let friendQuestionsS = {
+let friendQuestions = {
   0: "¿Cuál sería un placer sencillo para ti?",
   1: "¿Qué significa eso?",
   2: "¿Quién te inspira?",
@@ -206,48 +206,48 @@ let friendQuestionsS = {
   40: "Describe una planta que ames"
 };
 
-let friendQuestions = {
-  0: "What is a simple pleasure for you?",
-  1: "What does it mean?",
-  2: "Who inspires you?",
-  3: "How do you learn?",
-  4: "Do you wish you had more?",
-  5: "Can you imagine a better way?",
-  6: "What is a surprising thing you’ve learned?",
-  7: "What is at the bottom?",
-  8: "Describe a beautiful morning?",
-  9: "Who do you wish you could speak to?",
-  10: "Describe a beloved soft thing?",
-  11: "If you had an extra hour every day how would you spend it?",
-  12: "What is your earliest memory of play?",
-  13: "How do you know when someone is a true friend?",
-  14: "What song would you like to share here?",
-  15: "What does your favourite place smell like?",
-  16: "What do your hands want to do?",
-  17: "What texture do you like to touch?",
-  18: "What kind thing could you do for yourself right now?",
-  19: "What is outside your window?",
-  20: "What does your body want to do?",
-  21: "What are you curious about?",
-  22: "What makes you laugh uncontrollably?",
-  23: "What book would you give as a gift?",
-  24: "Describe a beloved soft thing",
-  25: "Would you choose peace, love, or joy?",
-  26: "What meal would you like to eat right now?",
-  27: "What is something you shared with someone?",
-  28: "Describe a memorable dream?",
-  29: "What is a place you remember fondly?",
-  30: "Tell a story in 10 words?",
-  31: "What are you looking forward to?",
-  32: "Describe an imaginary peaceful place?",
-  33: "When you turn around, what do you see?",
-  34: "What makes a question good?",
-  35: "What quiet under-noises do your ears hear right now?",
-  36: "What makes you feel connected?",
-  37: "What is home?",
-  38: "What gift would you like to give?",
-  39: "Describe a beloved animal?",
-  40: "Describe a plant that you love?"
+let friendQuestionsS = {
+  0: "What is a simple pleasure for you? // 对你来说，简单的快乐是什么？",
+1: "What does it mean? // 它意味着什么？",
+2: "Who inspires you? // 谁给了你灵感？",
+3: "How do you learn? // 你如何学习？",
+4: "Do you wish you had more? // 你希望自己拥有更多吗？",
+5: "Can you imagine a better way? // 你能想象出更好的方法吗？",
+6: "What is a surprising thing you’ve learned? // 你学到的令人惊讶的事情是什么？",
+7: "What is at the bottom? // 底部是什么？",
+8: "Describe a beautiful morning? // 描述一个美丽的早晨？",
+9: "Who do you wish you could speak to? // 你希望和谁说话？",
+10: "Describe a beloved soft thing? // 描述一个心爱的柔软的东西？",
+11: "If you had an extra hour every day how would you spend it? // 如果每天多出一个小时，你会如何度过？",
+12: "What is your earliest memory of play? // 你最早的游戏记忆是什么？",
+13: "How do you know when someone is a true friend? // 你如何知道一个人是真正的朋友？",
+14: "What song would you like to share here? // 你想在这里分享哪首歌？",
+15: "What does your favourite place smell like? // 你最喜欢的地方是什么味道？",
+16: "What do your hands want to do? // 你的手想做什么？",
+17: "What texture do you like to touch? // 你喜欢触摸什么质地？",
+18: "What kind thing could you do for yourself right now? // 你现在能为自己做什么好事？",
+19: "What is outside your window? // 你的窗外有什么？",
+20: "What does your body want to do? // 你的身体想做什么？",
+21: "What are you curious about? // 你对什么感到好奇？",
+22: "What makes you laugh uncontrollably? // 是什么让你情不自禁地大笑？",
+23: "What book would you give as a gift? // 你会送什么书作为礼物？",
+24: "Describe a beloved soft thing // 描述一件心爱的柔软的东西？",
+25: "Would you choose peace, love, or joy? // 你会选择和平、爱还是快乐？",
+26: "What meal would you like to eat right now? // 你现在想吃什么饭？",
+27: "What is something you shared with someone? // 你与别人分享的是什么？",
+28: "Describe a memorable dream? // 描述一个难忘的梦？",
+29: "What is a place you remember fondly? // 你记忆深刻的地方是哪里？",
+30: "Tell a story in 10 words? // 用 10 个字讲一个故事？",
+31: "What are you looking forward to? // 你期待什么？",
+32: "Describe an imaginary peaceful place? // 描述一个想象中的宁静之地？",
+33: "When you turn around, what do you see? // 当你转身时，你看到了什么？",
+34: "What makes a question good? // 怎样的问题才是好问题？",
+35: "What quiet under-noises do your ears hear right now? // 现在你的耳朵听到了哪些安静的底噪？",
+36: "What makes you feel connected? // 是什么让你感觉心心相连？",
+37: "What is home? // 家是什么？",
+38: "What gift would you like to give? // 你想送什么礼物？",
+39: "Describe a beloved animal? // 描述一种心爱的动物？",
+40: "Describe a plant that you love? // 描述一种你喜爱的植物？"
 };
 
 
@@ -305,7 +305,7 @@ function handleLanguageUpdate(event) {
   updateMediModalLanguages();
 }
 
-languageSwitchLink.addEventListener('click', handleLanguageUpdate)
+// languageSwitchLink.addEventListener('click', handleLanguageUpdate)
 
 
 function playFriendSound() {
