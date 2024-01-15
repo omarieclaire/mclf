@@ -148,6 +148,13 @@ input[type="range"] {
   opacity: 1;
 }
 
+
+#bio-slider {
+  writing-mode: horizontal-tb;
+  -webkit-writing-mode: horizontal-tb;
+}
+
+
 input[type="range"] {
   height: 44px;
   -webkit-appearance: none;
