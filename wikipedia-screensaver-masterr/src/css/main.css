@@ -1,0 +1,84 @@
+html {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  margin: 0;
+  font-size: 1em;
+  overflow: hidden;
+}
+@media (min-width: 600px) {
+  body {
+    font-size: 2em;
+  }
+}
+#tiles-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100vw;
+  height: 100vh;
+}
+.tile {
+  padding: 1em;
+  flex-grow: 1;
+  position: relative;
+}
+.tile > a {
+  color: white;
+  text-decoration: none;
+  text-shadow: 0 0 3px #000, -1px -1px #000, 1px 1px #000;
+  animation: pulse 2s 1;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  100%  {
+    opacity: 1;
+  }
+}
+.flag {
+  position: absolute;
+  width: auto;
+  height: .75em;
+  top: .5em;
+  right: .5em;
+}
+.label {
+  animation: type 2s steps(50, end) 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 1em;
+  width: 100%;
+}
+@keyframes type {
+  from {
+    width: 0;
+  }
+}
+#info {
+  position: absolute;
+  color: white;
+  font-size: .5em;
+  text-shadow: 0 0 3px #000, -1px -1px #000, 1px 1px #000;
+  bottom: 1em;
+  right: 1em;
+  display: flex;
+}
+#logo {
+  width: 3em;
+  height: 3em;
+}
+.settings {
+  font-weight: .3em;
+}
+#keep-awake {
+  display: none;
+}
+label[for="keep-awake"] {
+  display: none;
+}
