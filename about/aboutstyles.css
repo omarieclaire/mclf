@@ -287,6 +287,21 @@ input[type="range"]:focus::-ms-fill-upper {
 }
 
 
+/* Container to center the image */
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Remove this line if you don't need vertical centering */
+  height: 1vh; /* Adjust the height as needed, 100vh for full viewport height */
+}
+
+/* Styling the image to be circular */
+.circle-image {
+  border-radius: 50%; /* Makes the image circular */
+  max-width: 50%; /* Ensures the image is responsive */
+  height: auto; /* Maintains the aspect ratio */
+}
+
 
 
 
