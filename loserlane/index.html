@@ -146,7 +146,7 @@
         GAME: {
           WIDTH: 45,
           HEIGHT: Math.floor(window.innerHeight / 20), // Adjust this divisor to control the height scaling
-          INITIAL_SPEED: 500,
+          INITIAL_SPEED: 20,
           MIN_SPEED: 300,
           SPEED_DECREASE_RATE: 0.995,
           CYCLIST_Y: Math.floor(window.innerHeight / 40), // Adjust this to control the cyclist's starting position
@@ -491,6 +491,27 @@
             oncoming: 8,
             parked: 10,
           };
+
+          this.shopHitboxes = []; // Array to hold shop hitboxes
+        }
+
+        addShopHitbox(hitbox) {
+          this.shopHitboxes.push(hitbox);
+        }
+
+        // Check for collisions with shops
+        checkShopCollision(playerHitbox) {
+          return this.shopHitboxes.some((shop) => this.checkOverlap(playerHitbox, shop));
+        }
+
+        // Utility function to check if two hitboxes overlap
+        checkOverlap(boxA, boxB) {
+          return !(
+            boxA.x + boxA.width <= boxB.x ||
+            boxA.x >= boxB.x + boxB.width ||
+            boxA.y + boxA.height <= boxB.y ||
+            boxA.y >= boxB.y + boxB.height
+          );
         }
 
         // Check if it's safe to spawn a new vehicle
@@ -865,13 +886,20 @@
         }
 
         drawShops() {
-          for (let baseY = 0; baseY < CONFIG.GAME.HEIGHT; baseY += 6) {
+          let currentY = 0; // Track Y position for the next shop
+
+          while (currentY < CONFIG.GAME.HEIGHT) {
             const shop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
             const color = COLORS.BUILDINGS[Math.floor(Math.random() * COLORS.BUILDINGS.length)];
             const shopStyle = `<span style='color: ${color}'>`;
 
+            // Determine shop dimensions
+            const shopHeight = shop.art.length;
+            const shopWidth = shop.art[0].length;
+
+            // Place shop art in grid
             shop.art.forEach((line, i) => {
-              const y = baseY + i;
+              const y = currentY + i;
               if (y < CONFIG.GAME.HEIGHT) {
                 for (let x = 0; x < line.length; x++) {
                   const screenX = CONFIG.LANES.SHOPS + x;
@@ -881,6 +909,18 @@
                 }
               }
             });
+
+            // Create and store shop hitbox based on dimensions
+            const shopHitbox = {
+              x: CONFIG.LANES.SHOPS,
+              y: currentY,
+              width: shopWidth,
+              height: shopHeight,
+            };
+            this.collisionManager.addShopHitbox(shopHitbox); // Store hitbox in collision manager
+
+            // Update currentY to place the next shop below the current one
+            currentY += shopHeight;
           }
         }
 
@@ -1044,6 +1084,14 @@
 
         getRandomDeathMessage(type) {
           const messages = MESSAGES.DEATH[type];
+
+          // Check if messages array exists; if not, use a default message
+          if (!messages || messages.length === 0) {
+            return {
+              reason: "X X!",
+              funny: "Sometimes things just happen",
+            };
+          }
           return messages[Math.floor(Math.random() * messages.length)];
         }
 

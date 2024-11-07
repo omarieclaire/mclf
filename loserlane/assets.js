@@ -161,11 +161,11 @@ const TORONTO_SHOPS = [
     {
         name: "PIZZA_PIZZA",
         art: [
-            "┌────────┐",
-            "│PIZZA   │",
-            "│PIZZA   │",
-            "│ HOT!   │",
-            "└────────┘"
+            "╔════════╗",
+            "║ PIZZA  ║",
+            "║PIZZA!! ║",
+            "║ HOT &  ║",
+            "╚═══██═══╝"
         ]
     },
     {
@@ -184,7 +184,7 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│ LCBO   │",
             "│WINES   │",
-            "│SPIRIT  │",
+            "│ GHOSTS │",
             "└────────┘"
         ]
     },
@@ -201,11 +201,11 @@ const TORONTO_SHOPS = [
     {
         name: "ROTI",
         art: [
-            "┌────────┐",
+            "┌──╦──╦──┐",
             "│ROTI    │",
             "│HOUSE   │",
             "│FRESH!  │",
-            "└────────┘"
+            "└───╩────┘"
         ]
     },
     {
@@ -221,17 +221,23 @@ const TORONTO_SHOPS = [
     {
         name: "ARTSCAPE",
         art: [
-            "┌────────┐",
+            "┌───◊◊───┐",
             "│ART     │",
             "│SCAPE   │",
-            "│ @@@    │",
+            "│  /|\\  │",
             "└────────┘"
         ]
     },
     {
         name: "DISTILLERY_ARTS",
         art: [
-            "┌────────┐",
+            "┌═▲═▼═▼═─┐",
+            "│WEED    │",
+            "│ WEEED  │",
+            "│  WEEEED│",
+            "│WEED    │",
+            "│ WEEED  │",
+            "│  WEEEED│",
             "│WEED    │",
             "│ WEEED  │",
             "│  WEEEED│",
@@ -241,7 +247,7 @@ const TORONTO_SHOPS = [
     {
         name: "THE_LOON",
         art: [
-            "┌────────┐",
+            "┌──(█)───┐",
             "│ THE    │",
             "│ LOON   │",
             "│ SPACE  │",
@@ -249,11 +255,13 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "VIDEOFAG",
+        name: "VIDEOBOO",
         art: [
-            "┌────────┐",
+            "┌─(█)─(█)┐",
             "│VIDEO   │",
-            "│ TAG    │",
+            "│ BOO    │",
+            "│ BOO    │",
+            "│ BOO    │",
             "│ *&*&*  │",
             "└────────┘"
         ]
@@ -264,6 +272,8 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│HONEST  │",
             "│ EDS    │",
+            "│$$$$$$$$│",
+            "│$$$$$$$$│",
             "│$$$$$$$$│",
             "└────────┘"
         ]
@@ -294,7 +304,7 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│COFFEE  │",
             "│ THYME  │",
-            "│        xs│",
+            "│        │",
             "└────────┘"
         ]
     },
