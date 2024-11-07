@@ -133,7 +133,7 @@
             config
           );
           this.collisionManager = collisionManager;
-          console.log(`Creating ${this.type} at position (${this.x}, ${this.y}) with speed ${spawnConfig.speed}`);
+          // console.log(`Creating ${this.type} at position (${this.x}, ${this.y}) with speed ${spawnConfig.speed}`);
         }
 
         update() {
@@ -294,7 +294,7 @@
       }
 
       class ObstacleManager {
-        constructor(config, collisionManager) {
+        constructor(config, collisionManager, entities) {
           this.config = config;
           this.collisionManager = collisionManager;
           this.obstacles = [];
@@ -316,43 +316,43 @@
         spawn() {
           // Streetcar spawn
           if (Math.random() < this.config.SPAWN_RATES.STREETCAR) {
-            console.log("Attempting streetcar spawn...");
+            // console.log("Attempting streetcar spawn...");
             const spawnConfig = this.collisionManager.getSpawnConfig("streetcar");
             if (this.collisionManager.canSpawn("streetcar", spawnConfig.y)) {
-              console.log("Streetcar spawn successful");
+              // console.log("Streetcar spawn successful");
               const streetcar = new Streetcar(this.config, this.collisionManager);
               this.collisionManager.addVehicle("streetcar", streetcar);
               this.obstacles.push(streetcar);
             } else {
-              console.log("Streetcar spawn blocked");
+              // console.log("Streetcar spawn blocked");
             }
           }
 
           // Streetcar lane car spawn
           if (Math.random() < this.config.SPAWN_RATES.STREETCAR_LANE_CAR) {
-            console.log("Attempting streetcar lane car spawn...");
+            // console.log("Attempting streetcar lane car spawn...");
             const spawnConfig = this.collisionManager.getSpawnConfig("streetcarLaneCar");
             if (this.collisionManager.canSpawn("streetcarLaneCar", spawnConfig.y)) {
-              console.log("Streetcar lane car spawn successful");
+              // console.log("Streetcar lane car spawn successful");
               const car = new StreetcarLaneCar(this.config, this.collisionManager);
               this.collisionManager.addVehicle("streetcarLaneCar", car);
               this.obstacles.push(car);
             } else {
-              console.log("Streetcar lane car spawn blocked");
+              // console.log("Streetcar lane car spawn blocked");
             }
           }
 
           // Oncoming car spawn
           if (Math.random() < this.config.SPAWN_RATES.ONCOMING_CAR) {
-            console.log("Attempting oncoming car spawn...");
+            // console.log("Attempting oncoming car spawn...");
             const spawnConfig = this.collisionManager.getSpawnConfig("oncoming");
             if (this.collisionManager.canSpawn("oncoming", spawnConfig.y)) {
-              console.log("Oncoming car spawn successful");
+              // console.log("Oncoming car spawn successful");
               const car = new OncomingCar(this.config, this.collisionManager);
               this.collisionManager.addVehicle("oncoming", car);
               this.obstacles.push(car);
             } else {
-              console.log("Oncoming car spawn blocked");
+              // console.log("Oncoming car spawn blocked");
             }
           }
 
@@ -367,12 +367,10 @@
           }
 
           // Pedestrian spawn
-          // In ObstacleManager's spawn method, modify the pedestrian spawn section:
           if (Math.random() < this.config.SPAWN_RATES.PEDESTRIAN) {
             const isGoingUp = Math.random() > 0.5;
-            console.log(`Spawning ${isGoingUp ? "upward" : "downward"} moving pedestrian`);
             const pedestrian = new Pedestrian(this.config, isGoingUp);
-            this.obstacles.push(pedestrian);
+            this.obstacles.push(pedestrian); // Add pedestrian directly to obstacles
           }
         }
 
@@ -482,30 +480,38 @@
         // Check player collisions (returns collision type or null)
         checkPlayerCollision(playerHitbox, entities, isJumping) {
           if (this.checkCarBodyCollision(playerHitbox, entities.parkedCars)) {
+            console.log("Collision detected with: PARKEDCAR");
             return "PARKEDCAR";
           }
 
           if (this.checkDoorCollision(playerHitbox, entities.parkedCars)) {
+            console.log("Collision detected with: DOOR");
             return "DOOR";
           }
 
-          // Check streetcar collisions
           if (!isJumping && this.checkStreetcarCollision(playerHitbox, entities.obstacles)) {
+            console.log("Collision detected with: STREETCAR");
             return "STREETCAR";
           }
 
-          // Check other vehicle collisions
-          if (this.checkVehicleCollision(playerHitbox, entities.obstacles)) {
-            return "TRAFFIC";
+          // Modify this line to specifically check for pedestrian collisions
+          const obstacleCollision = this.checkObsCollision(playerHitbox, entities.obstacles);
+          if (obstacleCollision) {
+            // console.log(`Collision detected with: ${obstacleCollision}`);
+            return obstacleCollision; // Now this can return "PEDESTRIAN" if it’s a pedestrian
           }
 
-    
-
-          // Check shop collisions
           if (this.checkShopCollision(playerHitbox)) {
+            // console.log("Collision detected with: SHOP");
             return "SHOP";
           }
 
+          if (this.checkTrackCollision(playerHitbox)) {
+            // console.log("Collision detected with: TRACKS");
+            return "TRACKS";
+          }
+
+          console.log("No collision detected");
           return null;
         }
 
@@ -518,46 +524,46 @@
         }
 
         checkStreetcarCollision(playerHitbox, obstacles) {
-          return obstacles
+          const collision = obstacles
             .filter((obs) => obs.type === "STREETCAR")
-            .some((streetcar) =>
-              this.checkOverlap(playerHitbox, {
-                x: streetcar.x,
-                y: streetcar.y,
-                width: streetcar.width,
-                height: streetcar.height,
-              })
-            );
+            .some((streetcar) => this.checkOverlap(playerHitbox, streetcar.hitbox));
+          if (collision) console.log("checkStreetcarCollision: Collision with streetcar");
+          return collision;
         }
 
-        checkVehicleCollision(playerHitbox, obstacles) {
-          return obstacles
-            .filter((obs) => obs.type !== "STREETCAR")
-            .some((vehicle) =>
-              this.checkOverlap(playerHitbox, {
-                x: vehicle.x,
-                y: vehicle.y,
-                width: vehicle.width,
-                height: vehicle.height,
-              })
-            );
-        }
-
-        checkDoorCollision(playerHitbox, parkedCars) {
-          return parkedCars.some((car) => {
-            // Check collision with the door hitbox only if it’s active
-            if (car.doorState > 0 && car.doorHitbox) {
-              return this.checkOverlap(playerHitbox, car.doorHitbox);
+        checkObsCollision(playerHitbox, obstacles) {
+          const collision = obstacles.find((obstacle) => {
+            const isCollision = this.checkOverlap(playerHitbox, obstacle.hitbox);
+            if (isCollision) {
+              // console.log(`Collision detected with: ${obstacle.type}`);
+              return obstacle.type; // Return the obstacle type directly
             }
             return false;
           });
+          return collision ? collision.type : null; // Return null if no collision is found
+        }
+
+        checkPedestrianCollision(playerHitbox, obstacles) {
+          // const collision = obstacles.some((obstacle) => {
+          //   const isCollision = this.checkOverlap(playerHitbox, obstacle.hitbox);
+          //   if (isCollision) {
+          //     console.log(`Collision detected with: ${obstacle.type}`);
+          //   }
+          //   return isCollision;
+          // });
+          // return collision;
+        }
+
+        checkDoorCollision(playerHitbox, parkedCars) {
+          const collision = parkedCars.some((car) => car.doorState > 0 && car.doorHitbox && this.checkOverlap(playerHitbox, car.doorHitbox));
+          if (collision) console.log("checkDoorCollision: Collision with parked car door");
+          return collision;
         }
 
         checkCarBodyCollision(playerHitbox, parkedCars) {
-          return parkedCars.some((car) => {
-            // Only check the main car body hitbox
-            return this.checkOverlap(playerHitbox, car.hitbox);
-          });
+          const collision = parkedCars.some((car) => this.checkOverlap(playerHitbox, car.hitbox));
+          if (collision) console.log("checkCarBodyCollision: Collision with parked car body");
+          return collision;
         }
 
         checkShopCollision(playerHitbox) {
@@ -616,11 +622,6 @@
           this.entities = {
             obstacles: [],
             parkedCars: [],
-            pedestrians: {
-              up: [],
-              down: [],
-              crossing: [],
-            },
           };
         }
 
@@ -935,9 +936,9 @@
           const messageEl = document.getElementById("mainMessageBox");
 
           messageEl.innerHTML = `
-                    <span class="message-reason">${randomMessage.reason}</span><br /><br />
-                    ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
-                  `;
+                          <span class="message-reason">${randomMessage.reason}</span><br /><br />
+                          ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
+                        `;
 
           messageEl.style.display = "block";
 
