@@ -8,6 +8,100 @@
   </head>
   <body>
     <div id="game-container">
+      <!-- Settings Window -->
+      <div id="settings-window">
+        <h3>Game Settings</h3>
+
+        <!-- Pedestrian Speed -->
+        <label for="pedestrian-speed"
+          >Pedestrian Speed
+          <span id="pedestrian-speed-value" class="value-display">0.5</span>
+        </label>
+        <input id="pedestrian-speed" type="range" min="0.1" max="3" step="0.1" value="0.5" />
+
+        <!-- Spawn Rates -->
+        <label for="streetcar-spawn-rate"
+          >Streetcar Spawn Rate
+          <span id="streetcar-spawn-rate-value" class="value-display">0.03</span>
+        </label>
+        <input id="streetcar-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.03" />
+
+        <label for="oncoming-car-spawn-rate"
+          >Oncoming Car Spawn Rate
+          <span id="oncoming-car-spawn-rate-value" class="value-display">0.15</span>
+        </label>
+        <input id="oncoming-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
+
+        <label for="parked-car-spawn-rate"
+          >Parked Car Spawn Rate
+          <span id="parked-car-spawn-rate-value" class="value-display">0.15</span>
+        </label>
+        <input id="parked-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
+
+        <label for="streetcar-lane-car-spawn-rate"
+          >Streetcar Lane Car Spawn Rate
+          <span id="streetcar-lane-car-spawn-rate-value" class="value-display">0.3</span>
+        </label>
+        <input id="streetcar-lane-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.3" />
+
+        <label for="pedestrian-spawn-rate"
+          >Pedestrian Spawn Rate
+          <span id="pedestrian-spawn-rate-value" class="value-display">0.05</span>
+        </label>
+        <input id="pedestrian-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.05" />
+
+        <!-- Game Speed Controls -->
+        <label for="initial-speed"
+          >Initial Game Speed
+          <span id="initial-speed-value" class="value-display">500</span>
+        </label>
+        <input id="initial-speed" type="range" min="100" max="1000" step="10" value="500" />
+
+        <label for="min-speed"
+          >Minimum Game Speed
+          <span id="min-speed-value" class="value-display">300</span>
+        </label>
+        <input id="min-speed" type="range" min="100" max="1000" step="10" value="300" />
+
+        <label for="speed-decrease-rate"
+          >Speed Decrease Rate
+          <span id="speed-decrease-rate-value" class="value-display">0.995</span>
+        </label>
+        <input id="speed-decrease-rate" type="range" min="0.9" max="1" step="0.001" value="0.995" />
+
+        <!-- Gaps Between Vehicles -->
+        <label for="streetcar-gap"
+          >Streetcar Gap
+          <span id="streetcar-gap-value" class="value-display">20</span>
+        </label>
+        <input id="streetcar-gap" type="range" min="10" max="50" step="1" value="20" />
+
+        <label for="lane-car-gap"
+          >Streetcar Lane Car Gap
+          <span id="lane-car-gap-value" class="value-display">12</span>
+        </label>
+        <input id="lane-car-gap" type="range" min="10" max="50" step="1" value="12" />
+
+        <label for="oncoming-car-gap"
+          >Oncoming Car Gap
+          <span id="oncoming-car-gap-value" class="value-display">8</span>
+        </label>
+        <input id="oncoming-car-gap" type="range" min="5" max="30" step="1" value="8" />
+
+        <!-- Lane Widths and Cyclist Speed -->
+        <label for="lane-width"
+          >Lane Width
+          <span id="lane-width-value" class="value-display">45</span>
+        </label>
+        <input id="lane-width" type="range" min="20" max="60" step="1" value="45" />
+
+        <label for="cyclist-speed"
+          >Cyclist Speed
+          <span id="cyclist-speed-value" class="value-display">100</span>
+        </label>
+        <input id="cyclist-speed" type="range" min="50" max="200" step="5" value="100" />
+      </div>
+
       <div id="game-screen"></div>
       <div id="mainMessageBox">
         <!-- <span id="gameTitle">L O S E R ~ L A N E</span><br /><br /> -->
@@ -34,7 +128,7 @@
 
           <div class="title-text">
             <div id="title">L O S E R ~ L A N E</div>
-            <div id="time-alive">STAY ALIVE 0</div>
+            <div id="time-alive">STAY ALIVE? 0</div>
           </div>
 
           <div class="bike-art-right">
@@ -67,7 +161,7 @@
           PEDESTRIAN: 0.05, // Spawn rate for pedestrians
         },
         PEDESTRIAN: {
-          SPEED: 1, // Speed for pedestrians
+          SPEED: 0.5, // Speed for pedestrians
           // ART: ENTITIES.PEDESTRIAN
         },
         LANES: {
@@ -745,9 +839,9 @@
           this.grid = this.createGrid();
           this.drawRoadFeatures();
           this.drawShops();
-          this.drawEntities(); // Then draw entities on top
-          this.drawHitboxes(); // Draw hitboxes FIRST
-          this.drawPlayer(); // Player on top of everything
+          this.drawEntities();
+          // this.drawHitboxes();
+          this.drawPlayer();
 
           const gameScreen = document.getElementById("game-screen");
           gameScreen.innerHTML = this.grid.map((row) => row.map((cell) => `<span class="grid-cell">${cell}</span>`).join("")).join("<br />");
@@ -973,13 +1067,100 @@
 
         updateScore() {
           this.state.score++;
-          document.getElementById("time-alive").textContent = `STAY ALIVE ${this.state.score}`;
+          document.getElementById("time-alive").textContent = `STAY ALIVE? ${this.state.score}`;
           this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
 
           clearInterval(this.gameLoop);
           this.gameLoop = setInterval(() => this.update(), this.state.speed);
         }
       }
+
+      /////////////////////////////////////////
+      /////////////////////////////////////////
+      ///////////SETTINGS WINDOW /////////////
+      ////////////////////////////////////////
+      ////////////////////////////////////////
+
+      // Toggle settings window visibility with "D" key
+      document.addEventListener("keydown", (e) => {
+        if (e.key.toLowerCase() === "d") {
+          const settingsWindow = document.getElementById("settings-window");
+          settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
+        }
+      });
+
+      // Update configuration values and display value on input change
+      document.getElementById("pedestrian-speed").addEventListener("input", (e) => {
+        CONFIG.PEDESTRIAN.SPEED = parseFloat(e.target.value);
+        document.getElementById("pedestrian-speed-value").textContent = e.target.value;
+      });
+
+      document.getElementById("streetcar-spawn-rate").addEventListener("input", (e) => {
+        CONFIG.SPAWN_RATES.STREETCAR = parseFloat(e.target.value);
+        document.getElementById("streetcar-spawn-rate-value").textContent = e.target.value;
+      });
+
+      document.getElementById("oncoming-car-spawn-rate").addEventListener("input", (e) => {
+        CONFIG.SPAWN_RATES.ONCOMING_CAR = parseFloat(e.target.value);
+        document.getElementById("oncoming-car-spawn-rate-value").textContent = e.target.value;
+      });
+
+      document.getElementById("parked-car-spawn-rate").addEventListener("input", (e) => {
+        CONFIG.SPAWN_RATES.PARKED_CAR = parseFloat(e.target.value);
+        document.getElementById("parked-car-spawn-rate-value").textContent = e.target.value;
+      });
+
+      document.getElementById("streetcar-lane-car-spawn-rate").addEventListener("input", (e) => {
+        CONFIG.SPAWN_RATES.STREETCAR_LANE_CAR = parseFloat(e.target.value);
+        document.getElementById("streetcar-lane-car-spawn-rate-value").textContent = e.target.value;
+      });
+
+      document.getElementById("pedestrian-spawn-rate").addEventListener("input", (e) => {
+        CONFIG.SPAWN_RATES.PEDESTRIAN = parseFloat(e.target.value);
+        document.getElementById("pedestrian-spawn-rate-value").textContent = e.target.value;
+      });
+
+      document.getElementById("initial-speed").addEventListener("input", (e) => {
+        CONFIG.GAME.INITIAL_SPEED = parseInt(e.target.value);
+        document.getElementById("initial-speed-value").textContent = e.target.value;
+      });
+
+      document.getElementById("min-speed").addEventListener("input", (e) => {
+        CONFIG.GAME.MIN_SPEED = parseInt(e.target.value);
+        document.getElementById("min-speed-value").textContent = e.target.value;
+      });
+
+      document.getElementById("speed-decrease-rate").addEventListener("input", (e) => {
+        CONFIG.GAME.SPEED_DECREASE_RATE = parseFloat(e.target.value);
+        document.getElementById("speed-decrease-rate-value").textContent = e.target.value;
+      });
+
+      // Vehicle Gap Controls
+      document.getElementById("streetcar-gap").addEventListener("input", (e) => {
+        CONFIG.SAFE_DISTANCE.STREETCAR = parseInt(e.target.value);
+        document.getElementById("streetcar-gap-value").textContent = e.target.value;
+      });
+
+      document.getElementById("lane-car-gap").addEventListener("input", (e) => {
+        CONFIG.SAFE_DISTANCE.STREETCAR_LANE_CAR = parseInt(e.target.value);
+        document.getElementById("lane-car-gap-value").textContent = e.target.value;
+      });
+
+      document.getElementById("oncoming-car-gap").addEventListener("input", (e) => {
+        CONFIG.SAFE_DISTANCE.ONCOMING_CAR = parseInt(e.target.value);
+        document.getElementById("oncoming-car-gap-value").textContent = e.target.value;
+      });
+
+      // Lane Width and Cyclist Speed Controls
+      document.getElementById("lane-width").addEventListener("input", (e) => {
+        CONFIG.GAME.WIDTH = parseInt(e.target.value);
+        document.getElementById("lane-width-value").textContent = e.target.value;
+      });
+
+      document.getElementById("cyclist-speed").addEventListener("input", (e) => {
+        game.state.movementSpeed = parseInt(e.target.value);
+        document.getElementById("cyclist-speed-value").textContent = e.target.value;
+      });
 
       // Initialize game
       const game = new LoserLane();
