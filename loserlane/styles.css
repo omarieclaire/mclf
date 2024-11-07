@@ -1,5 +1,14 @@
-body {
+
+
+html, body {
+  height: 100%;
   margin: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+
+}
+
+body {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,6 +33,10 @@ body {
   }
 }
 
+#gameTitle {
+  font-size: 2rem;
+}
+
 #message {
   position: absolute;
   top: 50%;
@@ -43,13 +56,18 @@ body {
 #game-container {
   /* background: white; */
   width: 100vw;
-  height: 100vh;
+  /* height: 100vh; */
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
-  padding: 2px;
+
+
+
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #game-screen {
@@ -81,7 +99,7 @@ body {
 
 .infoBox{
   position: absolute;
-  bottom: 30px;
+  bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -95,14 +113,14 @@ body {
 }
 
 
-
-
-
 #titleContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color:  rgba(0, 0, 0, 0.8);
+  width: 100vw;
+  background-color:  rgba(45,45, 45, 1);
+  padding: 8px 0;
+
 }
 
 .bikeArtLeft, .bikeArtRight {

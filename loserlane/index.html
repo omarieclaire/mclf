@@ -10,6 +10,8 @@
     <div id="game-container">
       <div id="game-screen"></div>
       <div id="message">
+        <!-- <span id="gameTitle">L O S E R ~ L A N E</span><br /><br /> -->
+
         CLICK or SPACEBAR to start<br /><br />
         LEFT/RIGHT arrow keys or CLICK sides to move<br /><br />
         DOUBLE-TAP to jump tracks!
@@ -49,11 +51,11 @@
       const CONFIG = {
         GAME: {
           WIDTH: 45,
-          HEIGHT: 41,
+          HEIGHT: Math.floor(window.innerHeight / 20), // Adjust this divisor to control the height scaling
           INITIAL_SPEED: 500,
           MIN_SPEED: 300,
           SPEED_DECREASE_RATE: 0.995,
-          CYCLIST_Y: 18,
+          CYCLIST_Y: Math.floor(window.innerHeight / 40), // Adjust this to control the cyclist's starting position
           DOUBLE_TAP_TIME: 350,
         },
         SPAWN_RATES: {
