@@ -8,8 +8,10 @@
   </head>
   <body>
     <div id="game-container">
-      <div id="game-screen"></div>
-      <div id="message">
+      <div id="score">Score: 0</div>
+      <div id="game-screen" style="background-color: #222"></div>
+      <div id="message" style="display: block">
+        <!-- Display set to block initially -->
         CLICK or SPACEBAR to start<br /><br />
         LEFT/RIGHT arrow keys or CLICK sides to move<br /><br />
         DOUBLE-TAP to jump tracks!
@@ -19,15 +21,14 @@
         <div class="control-area" id="move-left"></div>
         <div class="control-area" id="move-right"></div>
       </div>
-      <div id="timeAlive">Time Alive: 0</div>
     </div>
 
     <script>
       // Constants and Configuration
       const CONFIG = {
         GAME: {
-          WIDTH: 45,
-          HEIGHT: 41,
+          WIDTH: 44,
+          HEIGHT: 33,
           INITIAL_SPEED: 500,
           MIN_SPEED: 300,
           SPEED_DECREASE_RATE: 0.995,
@@ -35,8 +36,8 @@
           DOUBLE_TAP_TIME: 350,
         },
         SPAWN_RATES: {
-          STREETCAR: 0.01, // Spawn rate for streetcars
-          STREETCAR_LANE_CAR: 0.3, // Spawn rate for cars in the streetcar lane
+          STREETCAR: 0.05, // Spawn rate for streetcars
+          STREETCAR_LANE_CAR: 0.03, // Spawn rate for cars in the streetcar lane
           ONCOMING_CAR: 0.15,
           PARKED_CAR: 0.15,
           PEDESTRIAN: 0.02,
@@ -46,11 +47,11 @@
           ONCOMING: 2,
           DIVIDER: 8,
           TRACKS: 12,
-          BIKE: 19, // Keep this the same
-          BIKE_RIGHT: 20, // Moved left by 2
-          PARKED: 22, // Moved left by 2
-          SIDEWALK: 30, // Moved left by 2
-          SHOPS: 34, // Moved left by 2
+          BIKE: 19,
+          BIKE_RIGHT: 20, 
+          PARKED: 22, 
+          SIDEWALK: 29,
+          SHOPS: 33, 
         },
       };
 
@@ -70,17 +71,13 @@
         }
       }
 
-      // Function to get a random death message
-      function getRandomDeathMessage(type) {
-        const messages = MESSAGES.DEATH[type];
-        return messages[Math.floor(Math.random() * messages.length)];
-      }
       // Main Game Class
       class TorontoCyclistGame {
         constructor() {
           this.initializeState();
           this.setupControls();
           this.grid = this.createGrid();
+          this.render(); // Render the initial empty game screen immediately on load
         }
 
         createGrid() {
@@ -118,6 +115,7 @@
             if (!this.state.isPlaying) {
               console.log("Game started");
               this.start();
+              document.getElementById("message").style.display = "none"; // Hide message
               return;
             }
 
@@ -140,20 +138,13 @@
           const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
           if (isDoubleTap) {
-            const newLane = Math.max(this.state.currentLane - 2, CONFIG.LANES.ONCOMING);
-            console.log(`[MoveLeft] Double-tap detected! Jumping from lane ${this.state.currentLane} to ${newLane}`);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
-            // Extend the duration of `isJumping`
-            setTimeout(() => {
-              this.state.isJumping = false; // Reset `isJumping` after jump duration
-            }, 200); // Adjust timing as needed to cover the full jump duration
+            // Jump two lanes to the left if double-tap
+            this.state.currentLane = Math.max(this.state.currentLane - 2, CONFIG.LANES.ONCOMING);
+            console.log("Double-tap - Jumped two lanes left to:", this.state.currentLane);
           } else {
-            const newLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-            console.log(`[MoveLeft] Single tap. Moving from lane ${this.state.currentLane} to ${newLane}`);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false; // Ensure isJumping is false on single move
+            // Single tap: Move one lane to the left
+            this.state.currentLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
+            console.log("Single-tap - Moved one lane left to:", this.state.currentLane);
           }
 
           this.state.lastTap = now;
@@ -166,20 +157,13 @@
           const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
           if (isDoubleTap) {
-            const newLane = Math.min(this.state.currentLane + 2, CONFIG.LANES.SHOPS - 1);
-            console.log(`[MoveRight] Double-tap detected! Jumping from lane ${this.state.currentLane} to ${newLane}`);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
-            // Extend the duration of `isJumping`
-            setTimeout(() => {
-              this.state.isJumping = false; // Reset `isJumping` after jump duration
-            }, 200); // Adjust timing as needed to cover the full jump duration
+            // Jump two lanes to the right if double-tap
+            this.state.currentLane = Math.min(this.state.currentLane + 2, CONFIG.LANES.SHOPS - 1);
+            console.log("Double-tap - Jumped two lanes right to:", this.state.currentLane);
           } else {
-            const newLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
-            console.log(`[MoveRight] Single tap. Moving from lane ${this.state.currentLane} to ${newLane}`);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false; // Ensure isJumping is false on single move
+            // Single tap: Move one lane to the right
+            this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
+            console.log("Single-tap - Moved one lane right to:", this.state.currentLane);
           }
 
           this.state.lastTap = now;
@@ -188,9 +172,6 @@
         // Game Loop
         start() {
           if (this.state.isPlaying) return; // Prevent double-starting
-
-          // Hide the start message
-          document.getElementById("message").style.display = "none";
 
           this.state.isPlaying = true;
           this.gameLoop = setInterval(() => this.update(), this.state.speed);
@@ -221,7 +202,6 @@
             const streetcar = this.createObstacle(true, false); // true for isStreetcar
             if (!this.checkEntityOverlap(streetcar, this.entities.obstacles)) {
               this.entities.obstacles.push(streetcar);
-              // console.log("[spawnObstacles] Streetcar spawned at lane:", CONFIG.LANES.TRACKS);
             }
           }
 
@@ -231,44 +211,10 @@
             const streetcarLaneCar = this.createObstacle(false, true);
             if (!this.checkEntityOverlap(streetcarLaneCar, this.entities.obstacles)) {
               this.entities.obstacles.push(streetcarLaneCar);
-              // console.log("[spawnObstacles] Streetcar lane car spawned at lane:", CONFIG.LANES.TRACKS);
+              console.log("Spawned a STREETCAR_LANE_CAR successfully");
             } else {
-              // console.log("Overlap prevented STREETCAR_LANE_CAR spawn");
+              console.log("Overlap prevented STREETCAR_LANE_CAR spawn");
             }
-          }
-
-          // Spawn oncoming cars at their designated rate
-          if (Math.random() < CONFIG.SPAWN_RATES.ONCOMING_CAR) {
-            const oncomingCar = this.createObstacle(false, false); // false for both isStreetcar and isStreetcarLaneCar
-            if (!this.checkEntityOverlap(oncomingCar, this.entities.obstacles)) {
-              this.entities.obstacles.push(oncomingCar);
-              // console.log("[spawnObstacles] Oncoming car spawned at lane:", CONFIG.LANES.ONCOMING, "with y position:", oncomingCar.y);
-            }
-          }
-        }
-
-        updateObstacles() {
-          this.entities.obstacles = this.entities.obstacles
-            .map((obs) => {
-              const updatedObstacle = { ...obs, y: obs.y + obs.speed };
-              // console.log(`[updateObstacles] Obstacle updated - Type: ${obs.type}, Lane: ${obs.x}, New Y Position: ${updatedObstacle.y}`);
-              return updatedObstacle;
-            })
-            .filter((obs) => this.isOnScreen(obs));
-        }
-
-        drawEntity(entity, style) {
-          if (entity.y + entity.height >= 0 && entity.y < CONFIG.GAME.HEIGHT) {
-            entity.art.forEach((line, i) => {
-              if (entity.y + i >= 0 && entity.y + i < CONFIG.GAME.HEIGHT) {
-                for (let x = 0; x < line.length; x++) {
-                  if (line[x] !== " " && entity.x + x >= 0 && entity.x + x < CONFIG.GAME.WIDTH) {
-                    this.grid[Math.floor(entity.y + i)][entity.x + x] = style + line[x] + STYLES.RESET;
-                  }
-                }
-              }
-            });
-            // console.log(`[drawEntity] Rendering entity - Type: ${entity.type}, Lane: ${entity.x}, Y Position: ${entity.y}`);
           }
         }
 
@@ -283,35 +229,36 @@
           let template;
           let speed;
           let yPosition;
-          let xPosition;
 
           if (isStreetcar) {
             template = ENTITIES.STREETCAR;
             speed = -1;
             yPosition = CONFIG.GAME.HEIGHT + 1;
-            xPosition = CONFIG.LANES.TRACKS;
           } else if (isStreetcarLaneCar) {
-            template = ENTITIES.MOVINGCAR;
+            template = ENTITIES.CAR;
             speed = -1;
             yPosition = CONFIG.GAME.HEIGHT + 1;
-            xPosition = CONFIG.LANES.TRACKS + 1; // Shift MOVINGCAR right by 1 to center it
           } else {
             template = ENTITIES.ONCOMINGCAR;
             speed = 2;
             yPosition = -10;
-            xPosition = CONFIG.LANES.ONCOMING;
           }
 
           return {
-            type: isStreetcar ? "STREETCAR" : isStreetcarLaneCar ? "STREETCAR_LANE_CAR" : "CAR",
+            type: isStreetcar ? "STREETCAR" : "CAR",
             art: template.art || [],
             y: yPosition,
-            x: xPosition, // Centered position for MOVINGCAR
-            width: template.width,
-            height: template.height,
+            x: isStreetcar ? CONFIG.LANES.TRACKS : isStreetcarLaneCar ? CONFIG.LANES.TRACKS : CONFIG.LANES.ONCOMING,
+            width: template.width || 1,
+            height: template.height || 1,
             speed: speed,
             color: color,
-            hitbox: this.createHitbox(xPosition, yPosition, template.width, template.height),
+            hitbox: this.createHitbox(
+              isStreetcar ? CONFIG.LANES.TRACKS : isStreetcarLaneCar ? CONFIG.LANES.TRACKS : CONFIG.LANES.ONCOMING,
+              yPosition,
+              template.width || 1,
+              template.height || 1
+            ),
           };
         }
 
@@ -329,6 +276,15 @@
           this.updateParkedCars();
         }
 
+        updateObstacles() {
+          this.entities.obstacles = this.entities.obstacles
+            .map((obs) => ({
+              ...obs,
+              y: obs.y + obs.speed,
+            }))
+            .filter((obs) => this.isOnScreen(obs));
+        }
+
         isOnScreen(entity) {
           return entity.speed > 0 ? entity.y < CONFIG.GAME.HEIGHT + 2 : entity.y + entity.height > -2;
         }
@@ -339,54 +295,13 @@
 
           this.grid = this.createGrid();
           this.drawRoadFeatures();
-          this.drawShops(); // Adds shops
+          this.drawShops(); // Call this to add shops back in
           this.drawEntities();
           this.drawPlayer();
-
-          // Visualize colliders
-          // this.drawTrackColliders();
-          // this.drawBikeCollider();
 
           // Update the game screen
           const gameScreen = document.getElementById("game-screen");
           gameScreen.innerHTML = this.grid.map((row) => row.map((cell) => `<span class="grid-cell">${cell}</span>`).join("")).join("<br />");
-        }
-
-        drawTrackColliders() {
-          // Adjust track colliders to match the visual lanes
-          for (let y = 0; y < CONFIG.GAME.HEIGHT; y++) {
-            this.grid[y][CONFIG.LANES.TRACKS + 1] = "<span style='color: rgba(128, 0, 128, 0.4)'>█</span>";
-            this.grid[y][CONFIG.LANES.TRACKS + 5] = "<span style='color: rgba(128, 0, 128, 0.4)'>█</span>";
-          }
-        }
-
-        drawBikeCollider() {
-          // Get the bike's hitbox based on its current position
-          const playerHitbox = this.getPlayerHitbox();
-
-          // Draw the bike's collider area as a transparent yellow background
-          // for (let y = 0; y < playerHitbox.height; y++) {
-          //   for (let x = 0; x < playerHitbox.width; x++) {
-          //     const gridX = playerHitbox.x + x;
-          //     const gridY = playerHitbox.y + y;
-          //     if (gridY < CONFIG.GAME.HEIGHT && gridX < CONFIG.GAME.WIDTH) {
-          //       this.grid[gridY][gridX] = `<span style='background-color: rgba(255, 255, 0, 0.3)'>${this.grid[gridY][gridX]}</span>`;
-          //     }
-          //   }
-          // }
-        }
-
-        drawStreetcarLaneCarHitbox(entity) {
-          const overlayColor = "rgba(255, 0, 0, 0.3)"; // Semi-transparent red overlay
-          for (let y = 0; y < entity.height; y++) {
-            for (let x = 0; x < entity.width; x++) {
-              const gridX = entity.x + x;
-              const gridY = entity.y + y;
-              if (gridY >= 0 && gridY < CONFIG.GAME.HEIGHT && gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
-                this.grid[gridY][gridX] = `<span style='background-color: ${overlayColor}'>${this.grid[gridY][gridX]}</span>`;
-              }
-            }
-          }
         }
 
         // Then update the drawRoadFeatures method
@@ -433,13 +348,27 @@
         }
 
         drawEntities() {
-          this.entities.obstacles.forEach((obstacle) => {
-            this.drawEntity(obstacle, obstacle.color);
-            if (obstacle.type === "STREETCAR_LANE_CAR") {
-              // Only for streetcar lane cars
-              // this.drawStreetcarLaneCarHitbox(obstacle);
-            }
-          });
+          this.drawObstacles();
+          this.drawParkedCars();
+          this.drawPlayer();
+        }
+
+        drawEntity(entity, style) {
+          if (entity.y + entity.height >= 0 && entity.y < CONFIG.GAME.HEIGHT) {
+            entity.art.forEach((line, i) => {
+              if (entity.y + i >= 0 && entity.y + i < CONFIG.GAME.HEIGHT) {
+                for (let x = 0; x < line.length; x++) {
+                  if (line[x] !== " " && entity.x + x >= 0 && entity.x + x < CONFIG.GAME.WIDTH) {
+                    this.grid[Math.floor(entity.y + i)][entity.x + x] = style + line[x] + STYLES.RESET;
+                  }
+                }
+              }
+            });
+          }
+        }
+
+        drawEntities() {
+          this.entities.obstacles.forEach((obstacle) => this.drawEntity(obstacle, obstacle.color));
           this.entities.parkedCars.forEach((car) => this.drawEntity(car, car.color));
         }
 
@@ -451,31 +380,14 @@
 
         checkCollisions() {
           if (this.state.isDead) return;
-
-          console.log("[checkCollisions] Checking collisions...");
           const playerHitbox = this.getPlayerHitbox();
 
-          if (this.checkTrackCollisions(playerHitbox)) {
-            console.log("[checkCollisions] Collision with track detected");
-            return;
-          }
-          if (this.checkStreetcarCollisions(playerHitbox)) {
-            console.log("[checkCollisions] Collision with streetcar detected");
-            return;
-          }
-          if (this.checkVehicleCollisions(playerHitbox)) {
-            console.log("[checkCollisions] Collision with vehicle detected");
-            return;
-          }
-          if (this.checkDoorCollisions(playerHitbox)) {
-            console.log("[checkCollisions] Collision with door detected");
-            return;
-          }
-          if (this.checkShopCollisions(playerHitbox)) {
-            console.log("[checkCollisions] Collision with shop detected");
-            return;
-          }
-          console.log("[checkCollisions] No collisions detected");
+          // Check each collision type in order of priority
+          if (this.checkTrackCollisions(playerHitbox)) return;
+          if (this.checkStreetcarCollisions(playerHitbox)) return;
+          if (this.checkVehicleCollisions(playerHitbox)) return;
+          if (this.checkDoorCollisions(playerHitbox)) return;
+          if (this.checkShopCollisions(playerHitbox)) return;
         }
 
         checkCollisionWithEntities(playerHitbox, entities, collisionMessage) {
@@ -495,37 +407,20 @@
         }
 
         checkTrackCollisions(playerHitbox) {
-          if (this.state.isJumping) {
-            console.log("[checkTrackCollisions] Skipping track collision check due to jump");
-            return false;
-          }
-
-          const centerX = playerHitbox.x + Math.floor(playerHitbox.width / 2);
-          const trackHitboxes = [
-            { x: CONFIG.LANES.TRACKS + 1, y: playerHitbox.y, width: 1, height: 1 },
-            { x: CONFIG.LANES.TRACKS + 5, y: playerHitbox.y, width: 1, height: 1 },
+          const trackEntities = [
+            { x: CONFIG.LANES.TRACKS, y: playerHitbox.y, width: 1, height: 1 },
+            { x: CONFIG.LANES.TRACKS + 4, y: playerHitbox.y, width: 1, height: 1 },
           ];
 
-          const collisionDetected = trackHitboxes.some(
-            (trackHitbox) => centerX === trackHitbox.x && CollisionSystem.checkCollision(playerHitbox, trackHitbox)
-          );
-
-          if (collisionDetected) {
-            console.log(`[checkTrackCollisions] Collision with track detected`);
-            this.die("TRACKS"); // Trigger death on track collision
-            return true;
-          }
-
-          return false;
+          return this.checkCollisionWithEntities(playerHitbox, trackEntities, "TRACKS");
         }
 
         checkVehicleCollisions(playerHitbox) {
-          const obstacles = this.entities.obstacles.filter((obs) => obs.type !== "STREETCAR" || !this.state.isJumping);
-          console.log(
-            `[checkVehicleCollisions] Checking for vehicle collisions. Obstacles count: ${obstacles.length}, isJumping: ${this.state.isJumping}`
+          return this.checkCollisionWithEntities(
+            playerHitbox,
+            this.entities.obstacles.filter((obs) => obs.type !== "STREETCAR" || !this.state.isJumping),
+            "TRAFFIC"
           );
-
-          return this.checkCollisionWithEntities(playerHitbox, obstacles, "TRAFFIC");
         }
 
         checkStreetcarCollisions(playerHitbox) {
@@ -554,7 +449,6 @@
         }
 
         checkShopCollisions(bikeHitbox) {
-          // Define the hitbox for the shops or buildings
           const shopHitbox = {
             x: CONFIG.LANES.SHOPS,
             y: 0,
@@ -562,7 +456,6 @@
             height: CONFIG.GAME.HEIGHT,
           };
 
-          // Check collision with the shop area
           if (CollisionSystem.checkCollision(bikeHitbox, shopHitbox)) {
             this.die("SHOP");
             return true;
@@ -578,7 +471,6 @@
             const doorWidths = [0, 1, 1, 2, 2];
             doorHitbox = this.createHitbox(carHitbox.x - doorWidths[car.doorState], car.y + 1, doorWidths[car.doorState], 2);
           }
-
           return { carHitbox, doorHitbox };
         }
 
@@ -647,13 +539,6 @@
           }
         }
 
-        // Function to get a random death message
-        getRandomDeathMessage(type) {
-          const messages = MESSAGES.DEATH[type];
-          return messages[Math.floor(Math.random() * messages.length)];
-        }
-
-        // Update the die method to display each part on separate lines
         die(reason) {
           this.state.isDead = true;
           this.deathX = this.state.currentLane;
@@ -665,24 +550,13 @@
             document.getElementById("game-screen").style.backgroundColor = "#222";
           }, 50);
 
-          // Get a random message with reason and funny parts
-          const randomMessage = this.getRandomDeathMessage(reason);
-
-          // Update message with line breaks in the DOM
           const messageEl = document.getElementById("message");
-          messageEl.innerHTML = `<strong>${randomMessage.reason}</strong><br />${randomMessage.funny}`;
+          messageEl.textContent = MESSAGES.DEATH[reason];
           messageEl.style.display = "block"; // Show the message
-
           setTimeout(() => {
             messageEl.style.display = "none"; // Hide the message before restarting
             this.restart();
           }, 3000);
-        }
-
-        // Method to select a random message from MESSAGES.DEATH based on reason
-        getRandomDeathMessage(type) {
-          const messages = MESSAGES.DEATH[type];
-          return messages[Math.floor(Math.random() * messages.length)];
         }
 
         restart() {
@@ -699,15 +573,6 @@
             return;
           }
           this.render();
-        }
-
-        updateScore() {
-          this.state.score++; // Incrementing the score as time alive
-          document.getElementById("timeAlive").textContent = `Time Alive: ${this.state.score}`;
-          this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
-
-          clearInterval(this.gameLoop);
-          this.gameLoop = setInterval(() => this.update(), this.state.speed);
         }
       }
 

@@ -1,7 +1,18 @@
 // Game Entities
+
+// art: 
+// [" o ", 
+// " ╪", 
+// " o "],
+
+
 const ENTITIES = {
     BIKE: {
-        art: [" o ", " ╪", " o "],
+        art: 
+        [" O ", 
+         "^|^", 
+         " O "],
+
         width: 3,
         height: 3
     },
@@ -21,16 +32,28 @@ const ENTITIES = {
         height: 9
     },
 
-    ONCOMINGCAR: {
+    MOVINGCAR: {
         art: [
-            " ┌───┐",
-            " │▀▀▀│",
-            " |   │ ",
-            " │▀▀▀│",
-            " ╰.─.╯",
+            "┌.─.┐",
+            "│▀▀▀│",
+            "|   │ ",
+            "│▀▀▀│",
+            "╰───╯",
             "    "
         ],
-        width: 7,
+        width: 5,
+        height: 6
+    },
+    ONCOMINGCAR: {
+        art: [
+            "┌───┐",
+            "│▀▀▀│",
+            "|   │ ",
+            "│▀▀▀│",
+            "╰.─.╯",
+            "    "
+        ],
+        width: 5,
         height: 6
     },
     CAR: {
@@ -85,7 +108,7 @@ const ENTITIES = {
         // State 4: Fully open
         [
             "  ┌.─.┐ ",
-            "-- ▀▀▀│ ",
+            "── ▀▀▀│ ",
             "  |   │ ",
             "  │▀▀▀│ ",
             "  ╰───╯ ",
@@ -120,101 +143,101 @@ const TORONTO_SHOPS = [
     {
         name: "PIZZA_PIZZA",
         art: [
-            "┌──────┐",
-            "│PIZZA │",
-            "│PIZZA │",
-            "│ HOT! │",
-            "└──────┘"
+            "┌────────┐",
+            "│PIZZA   │",
+            "│PIZZA   │",
+            "│ HOT!   │",
+            "└────────┘"
         ]
     },
     {
         name: "TIM_HORTONS",
         art: [
-            "┌──────┐",
-            "│TIMS  │",
-            "│COFFEE│",
-            "│& FOOD│",
-            "└──────┘"
+            "┌────────┐",
+            "│TIMS    │",
+            "│COFFEE  │",
+            "│& FOOD  │",
+            "└────────┘"
         ]
     },
     {
         name: "LCBO",
         art: [
-            "┌──────┐",
-            "│ LCBO │",
-            "│WINES │",
-            "│SPIRIT│",
-            "└──────┘"
+            "┌────────┐",
+            "│ LCBO   │",
+            "│WINES   │",
+            "│SPIRIT  │",
+            "└────────┘"
         ]
     },
     {
         name: "SHOPPERS",
         art: [
-            "┌──────┐",
-            "│SHOPR │",
-            "│DRUG  │",
-            "│MART  │",
-            "└──────┘"
+            "┌────────┐",
+            "│SHOPR   │",
+            "│DRUG    │",
+            "│MART    │",
+            "└────────┘"
         ]
     },
     {
         name: "ROTI",
         art: [
-            "┌──────┐",
-            "│ROTI  │",
-            "│HOUSE │",
-            "│FRESH!│",
-            "└──────┘"
+            "┌────────┐",
+            "│ROTI    │",
+            "│HOUSE   │",
+            "│FRESH!  │",
+            "└────────┘"
         ]
     },
     {
         name: "DOUBLE_DOUBLE_LAND",
         art: [
-            "┌──────┐",
-            "│DOUBLE│",
-            "│DOUBLE│",
-            "│ LAND │",
-            "└──────┘"
+            "┌────────┐",
+            "│DOUBLE  │",
+            "│DOUBLE  │",
+            "│ LAND   │",
+            "└────────┘"
         ]
     },
     {
         name: "ARTSCAPE",
         art: [
-            "┌──────┐",
-            "│ART   │",
-            "│SCAPE │",
-            "│ HUB  │",
-            "└──────┘"
+            "┌────────┐",
+            "│ART     │",
+            "│SCAPE   │",
+            "│ HUB    │",
+            "└────────┘"
         ]
     },
     {
         name: "DISTILLERY_ARTS",
         art: [
-            "┌──────┐",
-            "│DISTIL│",
-            "│LERY  │",
-            "│ ARTS │",
-            "└──────┘"
+            "┌────────┐",
+            "│DISTIL  │",
+            "│LERY    │",
+            "│ ARTS   │",
+            "└────────┘"
         ]
     },
     {
         name: "THE_LOON",
         art: [
-            "┌──────┐",
-            "│ THE  │",
-            "│ LOON │",
-            "│ SPACE│",
-            "└──────┘"
+            "┌────────┐",
+            "│ THE    │",
+            "│ LOON   │",
+            "│ SPACE  │",
+            "└────────┘"
         ]
     },
     {
         name: "VIDEOFAG",
         art: [
-            "┌──────┐",
-            "│VIDEO │",
-            "│ TAG  │",
-            "│ SPACE│",
-            "└──────┘"
+            "┌────────┐",
+            "│VIDEO   │",
+            "│ TAG    │",
+            "│ SPACE  │",
+            "└────────┘"
         ]
     }
 ];

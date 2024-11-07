@@ -1,76 +1,90 @@
 body {
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: monospace;
-        background: #f0f0f0;
-      }
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: monospace;
+  background: #2d2d2d;
+}
 
-      .grid-cell {
-        display: inline-block;
-        width: 10px; /* Adjust width as needed */
-        height: 20px; /* Adjust height as needed */
-        border: 0.1px solid rgba(255, 255, 255, 0.2); /* Light border for visibility */
-        text-align: center;
-      }
+.grid-cell {
+  display: inline-block;
+  width: 1vw;
+  height: 2vh;
+  border: 0.1px solid rgba(23, 23, 23, 0.2);
+  text-align: center;
+}
 
-      #message {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(0, 0, 0, 0.8);
-        color: #fff;
-        padding: 20px 20px;
-        font-size: 18px;
-        text-align: center;
-        max-width: 80%;
-        display: none;
-        z-index: 100;
-        font-family: "Courier New", monospace;
-      }
+@media (min-height: 600px) {
+  .grid-cell {
+    width: 0.6rem;
+    height: 1rem;
+  }
+}
 
-      #game-container {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 800px;
-      }
+#message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 20px 20px;
+  font-size: 1rem;
+  text-align: center;
+  max-width: 80%;
+  display: block;
+  z-index: 100;
+  font-family: "Courier New", monospace;
+}
 
-      #game-screen {
-        white-space: pre;
-        text-align: left;
-        line-height: 1.2;
-        margin-bottom: 20px;
-        font-family: "Courier New", monospace;
-        font-size: 14px;
-        background: #222;
-        color: #fff;
-        padding: 10px;
-        border-radius: 4px;
-        height: 80vh;
-        overflow: hidden;
-        height: 80vh;
-        min-height: 400px;
-        overflow: hidden;
-        font-size: 16px;
-        line-height: 1.2;
-        transition: background-color 0.1s;
-      }
+#game-container {
+  /* background: white; */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 2px;
+}
 
-      @media (max-height: 600px) {
-        #game-screen {
-          height: 70vh;
-          font-size: 14px;
-        }
-      }
+#game-screen {
+  white-space: pre;
+  text-align: left;
+  line-height: 1.2;
+  font-family: "Courier New", monospace;
+  background: #222;
+  color: #fff;
+  height: 100%;
+  overflow: hidden;
+  min-height: 400px;
+  font-size: 16px;
+  transition: background-color 0.1s;
+}
 
-      .control-area {
-        flex: 1;
-        height: 100%;
-        cursor: pointer;
-      }
+@media (max-height: 600px) {
+  #game-screen {
+    /* height: 70vh; */
+    font-size: 14px;
+  }
+}
+
+.control-area {
+  flex: 1;
+  height: 100%;
+  cursor: pointer;
+}
+
+#timeAlive {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px; /* Larger font */
+  font-weight: bold;
+  text-align: center;
+  color: #fff; /* Adjust as needed for visibility */
+}
+
