@@ -219,7 +219,7 @@
           this.hitbox = {
             x: config.LANES.PARKED + 2, // Offset by 2 if car has leading spaces in art
             y: spawnConfig.y,
-            width: 7, // Width of car body without door
+            width: 4, // Width of car body without door
             height: 5, // Height of car body
           };
 
@@ -744,8 +744,8 @@
           this.grid = this.createGrid();
           this.drawRoadFeatures();
           this.drawShops();
-          this.drawHitboxes(); // Draw hitboxes FIRST
           this.drawEntities(); // Then draw entities on top
+          this.drawHitboxes(); // Draw hitboxes FIRST
           this.drawPlayer(); // Player on top of everything
 
           const gameScreen = document.getElementById("game-screen");

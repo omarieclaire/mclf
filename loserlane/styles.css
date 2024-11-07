@@ -2,7 +2,7 @@
   --background-color: #2d2d2d;
   --text-color: #d1feff;
   --second-text-color: #dfb1ff;
-  --third-text-color: #faffd1;
+  --third-text-color: #ff1cca;
   --secondary-background-color: #222;
   --overlay-background: rgba(0, 0, 0, 0.8);
 }
@@ -117,7 +117,7 @@ body {
 
 .bike-art-left, .bike-art-right {
   color: var(--third-text-color);
-  font-size: 10px;
+  font-size: .9rem;
   line-height: 1;
   text-align: center;
   margin: 0 2rem;
