@@ -16,6 +16,32 @@ const ENTITIES = {
         width: 3,
         height: 3
     },
+    PEDESTRIAN: {
+        UP: {
+            art: [
+                " ○ ", 
+                " ╽ "
+            ],
+            width: 1,
+            height: 2
+        },
+        DOWN: {
+            art: [
+                " ○ ", 
+                " ╿ "
+            ],
+            width: 1,
+            height: 2
+        },
+        CROSSING: {
+            art: [
+                " ○ ", 
+                " ┴ "
+            ],
+            width: 1,
+            height: 2
+        }
+    },
     STREETCAR: {
         art: [
             "┌0--─0┐",
@@ -174,7 +200,7 @@ const TORONTO_SHOPS = [
         name: "SHOPPERS",
         art: [
             "┌────────┐",
-            "│SHOPR   │",
+            "│SHOPPERS│",
             "│DRUG    │",
             "│MART    │",
             "└────────┘"
@@ -206,7 +232,7 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│ART     │",
             "│SCAPE   │",
-            "│ HUB    │",
+            "│ @@@    │",
             "└────────┘"
         ]
     },
@@ -214,9 +240,9 @@ const TORONTO_SHOPS = [
         name: "DISTILLERY_ARTS",
         art: [
             "┌────────┐",
-            "│DISTIL  │",
-            "│LERY    │",
-            "│ ARTS   │",
+            "│WEED    │",
+            "│ WEEED  │",
+            "│  WEEEED│",
             "└────────┘"
         ]
     },
@@ -236,7 +262,167 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│VIDEO   │",
             "│ TAG    │",
-            "│ SPACE  │",
+            "│ *&*&*  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "HONEST_EDS",
+        art: [
+            "┌────────┐",
+            "│HONEST  │",
+            "│ EDS    │",
+            "│$$$$$$$$│",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "CHRISTIE_PITS",
+        art: [
+            "┌────────┐",
+            "│CHRISTIE│",
+            "│  PITS  │",
+            "│PARK    │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "HALO_HALO",
+        art: [
+            "┌────────┐",
+            "│HALO    │",
+            "│ HALO   │",
+            "│DESSERT │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "HONEST_EDS",
+        art: [
+            "┌────────┐",
+            "│COFFEE  │",
+            "│ THYME  │",
+            "│        xs│",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "SOYBOMB",
+        art: [
+            "┌────────┐",
+            "│SOY     │",
+            "│BOMB    │",
+            "│ !!!!!  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "INFINITE_LIBRARY",
+        art: [
+            "┌────────┐",
+            "│INFINITE│",
+            "│LIBRARY │",
+            "│BOOKS   │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "THE_DRAPE",
+        art: [
+            "┌────────┐",
+            "│ THE    │",
+            "│ DRAPE  │",
+            "│ LIVE   │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "SNEAKY_DEES",
+        art: [
+            "┌────────┐",
+            "│SNEAKY  │",
+            "│ DEES   │",
+            "│ NACHOS │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "LEE'S_PALACE",
+        art: [
+            "┌────────┐",
+            "│LEE'S   │",
+            "│ PALACE │",
+            "│ %%%%   │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "TRINITY_BELLWOODS",
+        art: [
+            "┌────────┐",
+            "│TRINITY │",
+            "│BELLWDS │",
+            "│ :::::  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "THE_HO",
+        art: [
+            "┌────────┐",
+            "│ THE    │",
+            "│ HO     │",
+            "│ PUB    │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "THE_REX",
+        art: [
+            "┌────────┐",
+            "│ THE    │",
+            "│ REX    │",
+            "│ JAZZ   │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "QUEENS_PARK",
+        art: [
+            "┌────────┐",
+            "│QUEENS  │",
+            "│ PARK   │",
+            "│ GREEN  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "BOVINE_SEX_CLUB",
+        art: [
+            "┌────────┐",
+            "│ BOVINE │",
+            "│ SEX    │",
+            "│ CLUB   │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "RIVOLI",
+        art: [
+            "┌────────┐",
+            "│ RIVOLI │",
+            "│ FOOD   │",
+            "│ MUSIC  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│ CNE    │",
+            "│EXHIBIT │",
+            "│ FUN    │",
             "└────────┘"
         ]
     }

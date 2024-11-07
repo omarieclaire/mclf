@@ -5,6 +5,8 @@ body {
   align-items: center;
   font-family: monospace;
   background: #2d2d2d;
+  font-family: "Courier New", monospace;
+
 }
 
 .grid-cell {
@@ -30,7 +32,7 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 20px 20px;
-  font-size: 1rem;
+  font-size: 1.5rem;
   text-align: center;
   max-width: 80%;
   display: block;
@@ -77,14 +79,39 @@ body {
   cursor: pointer;
 }
 
-#timeAlive {
+.infoBox{
   position: absolute;
-  bottom: 10px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 24px; /* Larger font */
-  font-weight: bold;
   text-align: center;
-  color: #fff; /* Adjust as needed for visibility */
+  color: #fff;
+  line-height: 1.5rem;
+  font-size: 1rem; 
+}
+
+#timeAlive {
+  font-size: 24px; 
+}
+
+
+
+
+
+#titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bikeArtLeft, .bikeArtRight {
+  font-size: 10px;
+  line-height: 1;
+  text-align: center;
+  margin: 0 2rem; /* Adjust spacing to align bikes with title */
+}
+
+.titleText {
+  text-align: center;
 }
 
