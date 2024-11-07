@@ -636,6 +636,30 @@
           this.deathX = this.state.currentLane;
           this.deathY = CONFIG.GAME.CYCLIST_Y;
 
+          // Add the cute faces array
+          const cuteDeathFaces = [
+            `(×﹏×)`,
+            `(｡×﹏×｡)`,
+            `(✖╭╮✖)`,
+            `(;×_×;)`,
+            `(｡T ω T｡)`,
+            `(✿×﹏×✿)`,
+            `(╥ω╥)`,
+            `( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)`,
+            `(ಥ﹏ಥ)`,
+            `(T⌓T)`,
+            `(｡•́︿•̀｡)`,
+            `(｡╥﹏╥｡)`,
+            `(✖︿✖)`,
+            `(o︵o)`,
+            `(｡•́︵•̀｡)`,
+            `(✿｡︿｡✿)`,
+            `(｡•́_•̀｡)`,
+            `(T_T)`,
+            `(╯︵╰,)`,
+            `(っ- ‸ – ς)`,
+          ];
+
           const flashScreen = () => {
             document.getElementById("game-screen").style.backgroundColor = "#FF0000";
 
@@ -651,9 +675,13 @@
           flashScreen();
 
           const randomMessage = this.getRandomDeathMessage(reason);
+          // Get a random cute face
+          const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
 
           const messageEl = document.getElementById("message");
-          messageEl.innerHTML = `<strong>${randomMessage.reason}</strong><br />${randomMessage.funny}`;
+          messageEl.innerHTML = `<strong>${randomMessage.reason}</strong><br /><br />
+    ${randomMessage.funny}<br /><br /><span style="font-size: 24px;">${randomFace}</span>
+    `;
           messageEl.style.display = "block";
 
           setTimeout(() => {

@@ -1,49 +1,53 @@
 const MESSAGES = {
   DEATH: {
     TRACKS: [
-      { reason: "TRACKS!", funny: "Track smack! Double tap to get past that" },
-      { reason: "TRACKS!", funny: "Stuck on the rails? Give double-tap a sail!" },
-      { reason: "TRACKS!", funny: "Rail fail! Tap twice and prevail!" }
+      { reason: "STREETCAR TRACKS", funny: "Track smack! Double tap to get past that" },
+      { reason: "STREETCAR TRACKS", funny: "Stuck on the rails? Double-tap won't fail" },
+      { reason: "STREETCAR TRACKS", funny: "Rail fail? Tap twice to prevail!" }
     ],
     TRAFFIC: [
-      { reason: "CAR!", funny: "Car crash clash!" },
-      { reason: "CAR!", funny: "Bam! Car jam! Avoid that slam!" },
-      { reason: "CAR!", funny: "Zoomed by doom! Dodge the room!" },
-      { reason: "CAR!", funny: "Traffic smack! Hop back, don’t crack!" },
-      { reason: "CAR!", funny: "Wheels squeal! Keep it real, no deal!" }
+      { reason: "UGH CARS", funny: "Clash crash cash!" },
+      { reason: "UGH CARS", funny: "Bam! Jam! Slam!" },
+      { reason: "UGH CARS", funny: "Zoomed by doom!" },
+      { reason: "UGH CARS", funny: "Chariot smack!" },
+      { reason: "UGH CARS", funny: "Wheel squeal bad deal!" }
     ],
     DOOR: [
-      { reason: "DOOR!", funny: "Doored! Next time, ignore!" },
-      { reason: "DOOR!", funny: "Door score! Avoid that chore!" },
-      { reason: "DOOR!", funny: "Sneak peek door smack! Tap and jump back!" },
-      { reason: "DOOR!", funny: "Bam! Door slam! Avoid the jam!" },
-      { reason: "DOOR!", funny: "Peekaboo – the door got you!" },
-      { reason: "DOOR!", funny: "Door smack! Next time, hop back!" }
+      { reason: "DOORED", funny: "Doored! Ignored!" },
+      { reason: "DOORED", funny: "Door score!" },
+      { reason: "DOORED", funny: "Sneak a peek don't freak!" },
+      { reason: "DOORED", funny: "Bam! Door slam! Avoid the jam!" },
+      { reason: "DOORED", funny: "Peekaboo!" },
+      { reason: "DOORED", funny: "Door smack! Next time, hop back!" },
+      { reason: "DOORED", funny: "Hop back, don’t crack!" },
+
     ],
     PEDESTRIAN: [
-      { reason: "NOOOO!", funny: "Pedestrian mess! Next time, finesse!" },
-      { reason: "NOOOO!", funny: "Crash! Human bash! Try for a flash!" },
-      { reason: "NOOOO!", funny: "Ouch! People pouch! Scoot away, crouch!" },
-      { reason: "NOOOO!", funny: "Human roadblock! Next time, clock!" },
-      { reason: "NOOOO!", funny: "Whoops! People pop – try to stop!" }
+      { reason: "NOOOO", funny: "Pedestrian mess! Next time, finesse!" },
+      { reason: "NOOOO", funny: "Crash! Flash human bash!" },
+      { reason: "NOOOO", funny: "Ouch! Scoot away, pouch!" },
+      { reason: "NOOOO", funny: "Clock! Human roadblock!" },
+      { reason: "NOOOO", funny: "People pop! You gotta stop!" }
     ],
     SHOP: [
-      { reason: "BAD BIKE!", funny: "Shop drop! Street's your stop!" },
-      { reason: "BAD BIKE!", funny: "Oops! Into the shop – back to the prop!" },
-      { reason: "BAD BIKE!", funny: "Retail fail! Stay on the trail!" },
-      { reason: "BAD BIKE!", funny: "Shop smack! Street’s where you pack!" },
-      { reason: "BAD BIKE!", funny: "Crash! Store stash! Stick to your path!" }
+      { reason: "OOPS", funny: "Shop drop! Street's your stop!" },
+      { reason: "OOPS", funny: "Boop! Into the shoop?" },
+      { reason: "OOPS", funny: "Retail fail! Stay on the trail!" },
+      { reason: "OOPS", funny: "Shop smack! Street’s where you pack!" },
+      { reason: "OOPS", funny: "Crash! Store stash!" },
+      { reason: "OOPS", funny: "Do the math! Stick to your path!" }
+
     ],
     STREETCAR: [
-      { reason: "STREETCAR!", funny: "Streetcar zap! That’s a wrap!" },
-      { reason: "STREETCAR!", funny: "Streetcar clash – hop, then dash!" },
-      { reason: "STREETCAR!", funny: "Boom! Streetcar loom! Make some room!" },
-      { reason: "STREETCAR!", funny: "Tracks defend – end of the bend!" },
-      { reason: "STREETCAR!", funny: "Zap! Transit trap! Plan your next lap!" }
+      { reason: "STREETCAR SMOOCH", funny: "Streetcar zap! That’s a wrap!" },
+      { reason: "STREETCAR SMOOCH", funny: "Streetcar clash – hop, dash!" },
+      { reason: "STREETCAR SMOOCH", funny: "Boom! Streetcar in the room!" },
+      { reason: "STREETCAR SMOOCH", funny: "Tracks end! You bend!" },
+      { reason: "STREETCAR SMOOCH", funny: "Zap! Transit trap!" }
     ]
   },
   GAME: {
-    START: "Left/Right to swerve, double-tap to jump the curve!",
+    START: "Left/Right to swerve, double-tap to jump the curve",
     RESTART: (score) => `Out of luck! Alive for ${score} seconds - Tap to try again!`
   }
 };
