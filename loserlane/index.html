@@ -82,6 +82,300 @@
         },
       };
 
+      // Base Obstacle class
+      class BaseObstacle {
+        constructor(x, y, template, config) {
+          this.type = template.type;
+          this.art = template.art;
+          this.x = x;
+          this.y = y;
+          this.width = template.width;
+          this.height = template.height;
+          this.speed = template.speed || 0;
+          this.color = template.color || STYLES.RESET;
+          this.config = config;
+
+          this.hitbox = {
+            x: x,
+            y: y,
+            width: template.width,
+            height: template.height,
+          };
+        }
+
+        update() {
+          // Default update behavior
+          const updatedY = this.y + this.speed;
+          this.y = updatedY;
+          this.hitbox.y = updatedY;
+          return this.isOnScreen();
+        }
+
+        isOnScreen() {
+          return this.speed > 0 ? this.y < this.config.GAME.HEIGHT + 2 : this.y + this.height > -2;
+        }
+      }
+
+      class Streetcar extends BaseObstacle {
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("streetcar");
+          super(
+            spawnConfig.x,
+            spawnConfig.y,
+            {
+              type: "STREETCAR",
+              art: ENTITIES.STREETCAR.art,
+              width: ENTITIES.STREETCAR.width,
+              height: ENTITIES.STREETCAR.height,
+              speed: spawnConfig.speed,
+              color: STYLES.TTC,
+            },
+            config
+          );
+          this.collisionManager = collisionManager;
+          console.log(`Creating ${this.type} at position (${this.x}, ${this.y}) with speed ${spawnConfig.speed}`);
+        }
+
+        update() {
+          const updatedY = this.y - 1;
+          this.y = updatedY;
+          this.hitbox.y = updatedY;
+
+          const vehicle = this.collisionManager.laneOccupancy.streetcar.find((v) => v.y === this.y);
+          if (vehicle) {
+            vehicle.y = updatedY;
+          }
+          return this.y + this.height > -2;
+        }
+      }
+
+      class StreetcarLaneCar extends BaseObstacle {
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("streetcarLaneCar");
+          const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
+
+          super(
+            spawnConfig.x,
+            spawnConfig.y,
+            {
+              type: "STREETCAR_LANE_CAR",
+              art: ENTITIES.MOVINGCAR.art,
+              width: ENTITIES.MOVINGCAR.width,
+              height: ENTITIES.MOVINGCAR.height,
+              speed: spawnConfig.speed,
+              color: `<span style='color: ${vehicleColor}'>`,
+            },
+            config
+          );
+          this.collisionManager = collisionManager;
+        }
+      }
+
+      class OncomingCar extends BaseObstacle {
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("oncoming");
+          const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
+
+          super(
+            spawnConfig.x,
+            spawnConfig.y,
+            {
+              type: "CAR",
+              art: ENTITIES.ONCOMINGCAR.art,
+              width: ENTITIES.ONCOMINGCAR.width,
+              height: ENTITIES.ONCOMINGCAR.height,
+              speed: spawnConfig.speed,
+              color: `<span style='color: ${vehicleColor}'>`,
+            },
+            config
+          );
+          this.collisionManager = collisionManager;
+        }
+      }
+
+      class ParkedCar extends BaseObstacle {
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("parked");
+          const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
+          const state0Art = ENTITIES.PARKED_CAR_STATES[0];
+
+          super(
+            config.LANES.PARKED,
+            spawnConfig.y,
+            {
+              type: "PARKED",
+              art: state0Art,
+              width: state0Art[0].length,
+              height: state0Art.length,
+              speed: 1,
+              color: `<span style='color: ${vehicleColor}'>`,
+            },
+            config
+          );
+
+          // Right-align the hitbox with the car part (excluding spaces)
+          this.hitbox = {
+            x: config.LANES.PARKED + 2, // Offset by 2 leading spaces
+            y: spawnConfig.y,
+            width: 7, // Width of actual car part
+            height: 5, // Height of car
+          };
+
+          this.doorState = 0;
+          this.isDoored = false;
+          this.collisionManager = collisionManager;
+        }
+
+        update() {
+          const updatedY = this.y + 1;
+          this.y = updatedY;
+          this.hitbox.y = updatedY;
+
+          // Update door hitbox if it exists
+          if (this.doorHitbox) {
+            this.doorHitbox.y = updatedY + 1;
+          }
+
+          return this.y < this.config.GAME.HEIGHT + 2;
+        }
+
+        updateDoor() {
+          if (!this.isDoored && this.y > 0 && this.y < this.config.GAME.HEIGHT - 10 && Math.random() < this.config.SPAWN_RATES.DOOR_OPENING) {
+            this.isDoored = true;
+            this.doorState = 0;
+          }
+
+          if (this.isDoored && this.doorState < ENTITIES.PARKED_CAR_STATES.length - 1) {
+            const nextDoorState = this.doorState + 1;
+            this.doorState = nextDoorState;
+            this.art = ENTITIES.PARKED_CAR_STATES[nextDoorState];
+
+            const doorWidths = [0, 0.8, 1, 1.5, 1.8];
+
+            // Maintain door hitbox relative to car hitbox
+            this.doorHitbox = {
+              x: this.hitbox.x - doorWidths[nextDoorState],
+              y: this.y + 1,
+              width: doorWidths[nextDoorState],
+              height: 1.8,
+            };
+          }
+        }
+      }
+
+      class Pedestrian extends BaseObstacle {
+        constructor(config, isGoingUp) {
+          const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
+          super(
+            config.LANES.SIDEWALK,
+            isGoingUp ? config.GAME.HEIGHT : -1,
+            {
+              type: "PEDESTRIAN",
+              art: template.art,
+              width: template.width,
+              height: template.height,
+              speed: config.PEDESTRIAN.SPEED * (isGoingUp ? -1 : 1),
+            },
+            config
+          );
+        }
+
+        update() {
+          const updatedY = this.y + this.speed;
+          this.y = updatedY;
+          this.hitbox.y = updatedY;
+          return this.speed > 0 ? this.y < this.config.GAME.HEIGHT + 2 : this.y + this.height > -2;
+        }
+      }
+
+      class ObstacleManager {
+        constructor(config, collisionManager) {
+          this.config = config;
+          this.collisionManager = collisionManager;
+          this.obstacles = [];
+          this.parkedCars = [];
+        }
+
+        update() {
+          // Update and filter obstacles
+          this.obstacles = this.obstacles.filter((obstacle) => obstacle.update());
+
+          // Update and filter parked cars
+          this.parkedCars = this.parkedCars.filter((car) => {
+            const stillOnScreen = car.update();
+            car.updateDoor();
+            return stillOnScreen;
+          });
+        }
+
+        spawn() {
+          // Streetcar spawn
+          if (Math.random() < this.config.SPAWN_RATES.STREETCAR) {
+            console.log("Attempting streetcar spawn...");
+            const spawnConfig = this.collisionManager.getSpawnConfig("streetcar");
+            if (this.collisionManager.canSpawn("streetcar", spawnConfig.y)) {
+              console.log("Streetcar spawn successful");
+              const streetcar = new Streetcar(this.config, this.collisionManager);
+              this.collisionManager.addVehicle("streetcar", streetcar);
+              this.obstacles.push(streetcar);
+            } else {
+              console.log("Streetcar spawn blocked");
+            }
+          }
+
+          // Streetcar lane car spawn
+          if (Math.random() < this.config.SPAWN_RATES.STREETCAR_LANE_CAR) {
+            console.log("Attempting streetcar lane car spawn...");
+            const spawnConfig = this.collisionManager.getSpawnConfig("streetcarLaneCar");
+            if (this.collisionManager.canSpawn("streetcarLaneCar", spawnConfig.y)) {
+              console.log("Streetcar lane car spawn successful");
+              const car = new StreetcarLaneCar(this.config, this.collisionManager);
+              this.collisionManager.addVehicle("streetcarLaneCar", car);
+              this.obstacles.push(car);
+            } else {
+              console.log("Streetcar lane car spawn blocked");
+            }
+          }
+
+          // Oncoming car spawn
+          if (Math.random() < this.config.SPAWN_RATES.ONCOMING_CAR) {
+            console.log("Attempting oncoming car spawn...");
+            const spawnConfig = this.collisionManager.getSpawnConfig("oncoming");
+            if (this.collisionManager.canSpawn("oncoming", spawnConfig.y)) {
+              console.log("Oncoming car spawn successful");
+              const car = new OncomingCar(this.config, this.collisionManager);
+              this.collisionManager.addVehicle("oncoming", car);
+              this.obstacles.push(car);
+            } else {
+              console.log("Oncoming car spawn blocked");
+            }
+          }
+
+          // Parked car spawn
+          if (Math.random() < this.config.SPAWN_RATES.PARKED_CAR) {
+            const spawnConfig = this.collisionManager.getSpawnConfig("parked");
+            if (this.collisionManager.canSpawn("parked", spawnConfig.y)) {
+              const car = new ParkedCar(this.config, this.collisionManager);
+              this.collisionManager.addVehicle("parked", car);
+              this.parkedCars.push(car);
+            }
+          }
+
+          // Pedestrian spawn
+          // In ObstacleManager's spawn method, modify the pedestrian spawn section:
+          if (Math.random() < this.config.SPAWN_RATES.PEDESTRIAN) {
+            const isGoingUp = Math.random() > 0.5;
+            console.log(`Spawning ${isGoingUp ? "upward" : "downward"} moving pedestrian`);
+            const pedestrian = new Pedestrian(this.config, isGoingUp);
+            this.obstacles.push(pedestrian);
+          }
+        }
+
+        getAllObjects() {
+          return [...this.obstacles, ...this.parkedCars];
+        }
+      }
+
       class CollisionManager {
         constructor(config) {
           this.config = config;
@@ -245,52 +539,52 @@
         }
 
         checkDoorCollision(playerHitbox, parkedCars) {
-  return parkedCars.some((car) => {
-    if (car.doorState > 0 && car.doorHitbox) {
-      // Log collision check for debugging
-      console.log('Checking door collision:', {
-        player: {
-          x: playerHitbox.x,
-          y: playerHitbox.y,
-          width: playerHitbox.width,
-          height: playerHitbox.height
-        },
-        door: car.doorHitbox
-      });
+          return parkedCars.some((car) => {
+            if (car.doorState > 0 && car.doorHitbox) {
+              // Log collision check for debugging
+              console.log("Checking door collision:", {
+                player: {
+                  x: playerHitbox.x,
+                  y: playerHitbox.y,
+                  width: playerHitbox.width,
+                  height: playerHitbox.height,
+                },
+                door: car.doorHitbox,
+              });
 
-      // More precise collision check
-      const playerLeft = playerHitbox.x;
-      const playerRight = playerHitbox.x + playerHitbox.width;
-      const playerTop = playerHitbox.y;
-      const playerBottom = playerHitbox.y + playerHitbox.height;
+              // More precise collision check
+              const playerLeft = playerHitbox.x;
+              const playerRight = playerHitbox.x + playerHitbox.width;
+              const playerTop = playerHitbox.y;
+              const playerBottom = playerHitbox.y + playerHitbox.height;
 
-      const doorLeft = car.doorHitbox.x;
-      const doorRight = car.doorHitbox.x + car.doorHitbox.width;
-      const doorTop = car.doorHitbox.y;
-      const doorBottom = car.doorHitbox.y + car.doorHitbox.height;
+              const doorLeft = car.doorHitbox.x;
+              const doorRight = car.doorHitbox.x + car.doorHitbox.width;
+              const doorTop = car.doorHitbox.y;
+              const doorBottom = car.doorHitbox.y + car.doorHitbox.height;
 
-      // Add small tolerance to prevent false positives
-      const tolerance = 0.3;
-      
-      const collision = !(
-        playerRight < doorLeft + tolerance ||
-        playerLeft > doorRight - tolerance ||
-        playerBottom < doorTop + tolerance ||
-        playerTop > doorBottom - tolerance
-      );
+              // Add small tolerance to prevent false positives
+              const tolerance = 0.3;
 
-      if (collision) {
-        console.log('Door collision detected!', {
-          playerBounds: {left: playerLeft, right: playerRight, top: playerTop, bottom: playerBottom},
-          doorBounds: {left: doorLeft, right: doorRight, top: doorTop, bottom: doorBottom}
-        });
-      }
+              const collision = !(
+                playerRight < doorLeft + tolerance ||
+                playerLeft > doorRight - tolerance ||
+                playerBottom < doorTop + tolerance ||
+                playerTop > doorBottom - tolerance
+              );
 
-      return collision;
-    }
-    return false;
-  });
-}
+              if (collision) {
+                console.log("Door collision detected!", {
+                  playerBounds: { left: playerLeft, right: playerRight, top: playerTop, bottom: playerBottom },
+                  doorBounds: { left: doorLeft, right: doorRight, top: doorTop, bottom: doorBottom },
+                });
+              }
+
+              return collision;
+            }
+            return false;
+          });
+        }
 
         checkShopCollision(playerHitbox) {
           return this.checkOverlap(playerHitbox, {
@@ -316,6 +610,7 @@
       class LoserLane {
         constructor() {
           this.collisionManager = new CollisionManager(CONFIG);
+          this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
           this.initializeState();
           this.setupControls();
           this.grid = this.createGrid();
@@ -444,8 +739,14 @@
           };
 
           // Check for collisions
-          const collision = this.collisionManager.checkPlayerCollision(playerHitbox, this.entities, this.state.isJumping);
-
+          const collision = this.collisionManager.checkPlayerCollision(
+            playerHitbox,
+            {
+              obstacles: this.obstacleManager.obstacles,
+              parkedCars: this.obstacleManager.parkedCars,
+            },
+            this.state.isJumping
+          );
           if (collision) {
             this.die(collision);
           }
@@ -454,238 +755,14 @@
           this.render();
         }
 
-        spawnPedestrians() {
-          if (Math.random() < CONFIG.SPAWN_RATES.PEDESTRIAN) {
-            const isGoingUp = Math.random() > 0.5;
-            const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
-            const pedestrian = {
-              type: "PEDESTRIAN",
-              art: template.art,
-              y: isGoingUp ? CONFIG.GAME.HEIGHT : -1,
-              x: CONFIG.LANES.SIDEWALK,
-              width: template.width,
-              height: template.height,
-              speed: CONFIG.PEDESTRIAN.SPEED * (isGoingUp ? -1 : 1),
-              hitbox: {
-                x: CONFIG.LANES.SIDEWALK,
-                y: 0,
-                width: template.width,
-                height: template.height,
-              },
-            };
-            this.entities.obstacles.push(pedestrian);
-          }
-        }
-
-        spawnObstacles() {
-          // Streetcars
-          if (Math.random() < CONFIG.SPAWN_RATES.STREETCAR) {
-            console.log("Attempting streetcar spawn...");
-            const spawnConfig = this.collisionManager.getSpawnConfig("streetcar");
-            if (this.collisionManager.canSpawn("streetcar", spawnConfig.y)) {
-              console.log("Streetcar spawn successful");
-              const streetcar = this.createObstacle(true, false);
-              this.collisionManager.addVehicle("streetcar", streetcar);
-              this.entities.obstacles.push(streetcar);
-            } else {
-              console.log("Streetcar spawn blocked");
-            }
-          }
-
-          // Cars in streetcar lane
-          if (Math.random() < CONFIG.SPAWN_RATES.STREETCAR_LANE_CAR) {
-            console.log("Attempting streetcar lane car spawn...");
-            const spawnConfig = this.collisionManager.getSpawnConfig("streetcarLaneCar");
-            if (this.collisionManager.canSpawn("streetcarLaneCar", spawnConfig.y)) {
-              console.log("Streetcar lane car spawn successful");
-              const streetcarLaneCar = this.createObstacle(false, true);
-              this.collisionManager.addVehicle("streetcarLaneCar", streetcarLaneCar);
-              this.entities.obstacles.push(streetcarLaneCar);
-            } else {
-              console.log("Streetcar lane car spawn blocked");
-            }
-          }
-
-          // Oncoming cars
-          if (Math.random() < CONFIG.SPAWN_RATES.ONCOMING_CAR) {
-            console.log("Attempting oncoming car spawn...");
-            const spawnConfig = this.collisionManager.getSpawnConfig("oncoming");
-            if (this.collisionManager.canSpawn("oncoming", spawnConfig.y)) {
-              console.log("Oncoming car spawn successful");
-              const oncomingCar = this.createObstacle(false, false);
-              this.collisionManager.addVehicle("oncoming", oncomingCar);
-              this.entities.obstacles.push(oncomingCar);
-            } else {
-              console.log("Oncoming car spawn blocked");
-            }
-          }
-        }
-
         spawnEntities() {
-          this.spawnObstacles();
-          this.spawnParkedCars();
-          this.spawnPedestrians();
-          this.updateDoors();
+          this.obstacleManager.spawn();
         }
 
-        createObstacle(isStreetcar, isStreetcarLaneCar = false) {
-          const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
-          const color = isStreetcar ? STYLES.TTC : `<span style='color: ${vehicleColor}'>`;
-
-          // Determine vehicle type and get corresponding spawn config
-          let type;
-          let template;
-
-          if (isStreetcar) {
-            type = "streetcar";
-            template = ENTITIES.STREETCAR;
-          } else if (isStreetcarLaneCar) {
-            type = "streetcarLaneCar";
-            template = ENTITIES.MOVINGCAR;
-          } else {
-            type = "oncoming";
-            template = ENTITIES.ONCOMINGCAR;
-          }
-
-          // Get spawn configuration for this vehicle type
-          const spawnConfig = this.collisionManager.getSpawnConfig(type);
-
-          const entity = {
-            type: isStreetcar ? "STREETCAR" : isStreetcarLaneCar ? "STREETCAR_LANE_CAR" : "CAR",
-            art: template.art || [],
-            y: spawnConfig.y,
-            x: spawnConfig.x,
-            width: template.width,
-            height: template.height,
-            speed: spawnConfig.speed,
-            color: color,
-            hitbox: {
-              x: spawnConfig.x,
-              y: spawnConfig.y,
-              width: template.width,
-              height: template.height,
-            },
-          };
-
-          console.log(`Creating ${entity.type} at position (${entity.x}, ${entity.y}) with speed ${spawnConfig.speed}`);
-          return entity;
-        }
         updateEntities() {
-          this.updateObstacles();
-          this.updateParkedCars();
-          this.collisionManager.update(); // Add this line
+          this.obstacleManager.update();
+          this.collisionManager.update();
         }
-
-        updateObstacles() {
-          this.entities.obstacles = this.entities.obstacles
-            .map((obs) => {
-              let updatedY;
-              if (obs.type === "PEDESTRIAN") {
-                updatedY = obs.y + obs.speed;
-              } else if (obs.type === "STREETCAR" || obs.type === "STREETCAR_LANE_CAR") {
-                updatedY = obs.y - 1;
-                const type = obs.type === "STREETCAR" ? "streetcar" : "streetcarLaneCar";
-                const vehicle = this.collisionManager.laneOccupancy[type].find((v) => v.y === obs.y);
-                if (vehicle) vehicle.y = updatedY;
-              } else {
-                updatedY = obs.y + 1;
-                const vehicle = this.collisionManager.laneOccupancy.oncoming.find((v) => v.y === obs.y);
-                if (vehicle) vehicle.y = updatedY;
-              }
-              // Update hitbox position
-              return {
-                ...obs,
-                y: updatedY,
-                hitbox: {
-                  ...obs.hitbox,
-                  y: updatedY,
-                },
-              };
-            })
-            .filter((obs) => {
-              if (obs.speed > 0) {
-                return obs.y < CONFIG.GAME.HEIGHT + 2;
-              } else {
-                return obs.y + obs.height > -2;
-              }
-            });
-        }
-
-        spawnParkedCars() {
-  if (Math.random() < CONFIG.SPAWN_RATES.PARKED_CAR) {
-    const spawnConfig = this.collisionManager.getSpawnConfig("parked");
-    if (this.collisionManager.canSpawn("parked", spawnConfig.y)) {
-      const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
-      const newCar = {
-        type: "PARKED",
-        art: ENTITIES.PARKED_CAR_STATES[0],
-        y: spawnConfig.y,
-        x: CONFIG.LANES.PARKED,
-        doorState: 0,
-        isDoored: false,
-        width: ENTITIES.PARKED_CAR_STATES[0][0].length,
-        height: ENTITIES.PARKED_CAR_STATES[0].length,
-        color: `<span style='color: ${vehicleColor}'>`,
-        hitbox: {
-          // Offset x by 2 to skip the door space, and reduce width to match actual car
-          x: CONFIG.LANES.PARKED + 2,  // Add offset to skip door space
-          y: spawnConfig.y,
-          width: 5,  // Actual car width without door space
-          height: ENTITIES.PARKED_CAR_STATES[0].length
-        },
-      };
-
-      this.collisionManager.addVehicle("parked", newCar);
-      this.entities.parkedCars.push(newCar);
-    }
-  }
-}
-
-        updateParkedCars() {
-  this.entities.parkedCars = this.entities.parkedCars
-    .map((car) => {
-      const updatedY = car.y + 1;
-      return {
-        ...car,
-        y: updatedY,
-        hitbox: {
-          ...car.hitbox,
-          y: updatedY,
-        },
-        // Also update the door hitbox if it exists
-        doorHitbox: car.doorHitbox ? {
-          ...car.doorHitbox,
-          y: updatedY + 1  // +1 to maintain the door's offset from car top
-        } : null
-      };
-    })
-    .filter((car) => car.y < CONFIG.GAME.HEIGHT + 2);
-}
-updateDoors() {
-  this.entities.parkedCars.forEach((car) => {
-    if (!car.isDoored && car.y > 0 && car.y < CONFIG.GAME.HEIGHT - 10 && Math.random() < CONFIG.SPAWN_RATES.DOOR_OPENING) {
-      car.isDoored = true;
-      car.doorState = 0;
-    }
-
-    if (car.isDoored && car.doorState < ENTITIES.PARKED_CAR_STATES.length - 1) {
-      const nextDoorState = car.doorState + 1;
-      car.doorState = nextDoorState;
-      car.art = ENTITIES.PARKED_CAR_STATES[nextDoorState];
-
-      // Updated door widths to match visual representation more accurately
-      const doorWidths = [0, 0.8, 1, 1.5, 1.8]; // Adjusted for more precise collision
-      
-      // Update door hitbox with more precise positioning
-      car.doorHitbox = {
-        x: car.hitbox.x - doorWidths[nextDoorState], // Position relative to car's hitbox
-        y: car.y + 1,
-        width: doorWidths[nextDoorState],
-        height: 1.8 // Slightly reduced height for more precise collision
-      };
-    }
-  });
-}
 
         render() {
           if (this.state.isDead && this.deathAnimation >= 10) return;
@@ -753,14 +830,13 @@ updateDoors() {
         }
 
         drawEntities() {
-          this.entities.obstacles.forEach((entity) => {
+          this.obstacleManager.getAllObjects().forEach((entity) => {
             if (entity.type === "PEDESTRIAN") {
               this.drawEntity(entity, STYLES.SIDEWALK);
             } else {
               this.drawEntity(entity, entity.color);
             }
           });
-          this.entities.parkedCars.forEach((car) => this.drawEntity(car, car.color));
         }
 
         drawPlayer() {
@@ -785,62 +861,57 @@ updateDoors() {
         }
 
         drawHitboxes() {
-    // Player hitbox
-    const playerHitbox = {
-        x: this.state.currentLane,
-        y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-        width: ENTITIES.BIKE.width,
-        height: ENTITIES.BIKE.height,
-    };
-    this.drawHitbox(playerHitbox, ' ', 'rgb(255, 0, 0)');
+          // Player hitbox
+          const playerHitbox = {
+            x: this.state.currentLane,
+            y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+            width: ENTITIES.BIKE.width,
+            height: ENTITIES.BIKE.height,
+          };
+          this.drawHitbox(playerHitbox, " ", "rgb(255, 0, 0)");
 
-    // Vehicle hitboxes
-    this.entities.obstacles.forEach(obstacle => {
-        if (obstacle && obstacle.hitbox) {
-            this.drawHitbox(obstacle.hitbox, ' ', 'rgb(0, 255, 0)');
-        }
-    });
+          // Get all obstacles from obstacle manager
+          this.obstacleManager.getAllObjects().forEach((obstacle) => {
+            if (obstacle && obstacle.hitbox) {
+              this.drawHitbox(obstacle.hitbox, " ", "rgb(0, 255, 0)");
 
-    // Parked car hitboxes
-    this.entities.parkedCars.forEach(car => {
-        if (car && car.hitbox) {
-            this.drawHitbox(car.hitbox, ' ', 'rgb(0, 0, 255)');
-
-            if (car.doorState > 0 && car.doorHitbox) {
-                this.drawHitbox(car.doorHitbox, ' ', 'rgb(255, 0, 255)');
+              // Check for door hitbox
+              if (obstacle.type === "PARKED" && obstacle.doorState > 0 && obstacle.doorHitbox) {
+                this.drawHitbox(obstacle.doorHitbox, " ", "rgb(255, 0, 255)");
+              }
             }
+          });
         }
-    });
-}
-
 
         drawHitbox(hitbox, char, color) {
-    // Add safety checks
-    if (!hitbox || 
-        typeof hitbox.x === "undefined" || 
-        typeof hitbox.y === "undefined" || 
-        typeof hitbox.width === "undefined" || 
-        typeof hitbox.height === "undefined") {
-        return;
-    }
+          // Add safety checks
+          if (
+            !hitbox ||
+            typeof hitbox.x === "undefined" ||
+            typeof hitbox.y === "undefined" ||
+            typeof hitbox.width === "undefined" ||
+            typeof hitbox.height === "undefined"
+          ) {
+            return;
+          }
 
-    const yStart = Math.max(0, Math.floor(hitbox.y));
-    const yEnd = Math.min(this.grid.length, Math.floor(hitbox.y + hitbox.height));
-    const xStart = Math.max(0, Math.floor(hitbox.x));
-    const xEnd = Math.min(this.grid[0].length, Math.floor(hitbox.x + hitbox.width));
+          const yStart = Math.max(0, Math.floor(hitbox.y));
+          const yEnd = Math.min(this.grid.length, Math.floor(hitbox.y + hitbox.height));
+          const xStart = Math.max(0, Math.floor(hitbox.x));
+          const xEnd = Math.min(this.grid[0].length, Math.floor(hitbox.x + hitbox.width));
 
-    // Convert color to rgba for transparency
-    const rgba = color.replace(')', ', 0.3)').replace('rgb', 'rgba');
+          // Convert color to rgba for transparency
+          const rgba = color.replace(")", ", 0.3)").replace("rgb", "rgba");
 
-    for (let y = yStart; y < yEnd; y++) {
-        for (let x = xStart; x < xEnd; x++) {
-            if (this.grid[y] && this.grid[y][x]) {
+          for (let y = yStart; y < yEnd; y++) {
+            for (let x = xStart; x < xEnd; x++) {
+              if (this.grid[y] && this.grid[y][x]) {
                 // Create a span with a semi-transparent background color
                 this.grid[y][x] = `<span style='background-color: ${rgba}'>${this.grid[y][x]}</span>`;
+              }
             }
+          }
         }
-    }
-}
         die(reason) {
           this.state.isDead = true;
           this.deathX = this.state.currentLane;
@@ -890,9 +961,9 @@ updateDoors() {
           const messageEl = document.getElementById("mainMessageBox");
 
           messageEl.innerHTML = `
-              <span class="message-reason">${randomMessage.reason}</span><br /><br />
-              ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
-            `;
+                    <span class="message-reason">${randomMessage.reason}</span><br /><br />
+                    ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
+                  `;
 
           messageEl.style.display = "block";
 
@@ -909,7 +980,7 @@ updateDoors() {
 
         restart() {
           this.collisionManager = new CollisionManager(CONFIG);
-
+          this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
           this.initializeState();
           this.start();
           document.getElementById("mainMessageBox").textContent = MESSAGES.GAME.START;
