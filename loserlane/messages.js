@@ -54,6 +54,22 @@ const MESSAGES = {
       { reason: "DOORED", funny: "Door dash! Avoid the clash!" },
       { reason: "DOORED", funny: "Knock knock, door shock!" }
     ],
+    PARKEDCAR: [
+      { reason: "PARKED CAR", funny: "Crash flash! You hit a stash of parked trash!" },
+      { reason: "PARKED CAR", funny: "Boom thud, get out of the mud!" },
+      { reason: "PARKED CAR", funny: "Ka-boom! Parked car zoom!" },
+      { reason: "PARKED CAR", funny: "Bumped a junker! What a clunker!" },
+      { reason: "PARKED CAR", funny: "Not the goal! Dodging’s the role!" },
+      { reason: "PARKED CAR", funny: "A parked car smack! Head back!" },
+      { reason: "PARKED CAR", funny: "Hit the brakes! Parking stakes!" },
+      { reason: "PARKED CAR", funny: "Parked car doom! Clear that room!" },
+      { reason: "PARKED CAR", funny: "Bonk! Dunk! Car Junk!" },
+      { reason: "PARKED CAR", funny: "Crash boom! More road room!" },
+      { reason: "PARKED CAR", funny: "Smack attack! See black!" },
+      { reason: "PARKED CAR", funny: "Junk blunder! Going under!" },
+      { reason: "PARKED CAR", funny: "Gotcha! Parked car splotcha!" },
+      { reason: "PARKED CAR", funny: "Car crunch! Thanks a bunch!" },
+    ],
     PEDESTRIAN: [
       { reason: "NOOOO", funny: "Pedestrian mess! Next time, finesse!" },
       { reason: "NOOOO", funny: "Crash! Flash human bash!" },

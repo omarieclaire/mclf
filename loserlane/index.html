@@ -205,25 +205,28 @@
             {
               type: "PARKED",
               art: state0Art,
-              width: state0Art[0].length,
-              height: state0Art.length,
+              width: 7, // Width of actual car body without spaces
+              height: 5, // Height of car
               speed: 1,
               color: `<span style='color: ${vehicleColor}'>`,
             },
             config
           );
 
-          // Right-align the hitbox with the car part (excluding spaces)
+          this.collisionManager = collisionManager;
+
+          // Define the primary hitbox for the car body without spaces and door
           this.hitbox = {
-            x: config.LANES.PARKED + 2, // Offset by 2 leading spaces
+            x: config.LANES.PARKED + 2, // Offset by 2 if car has leading spaces in art
             y: spawnConfig.y,
-            width: 7, // Width of actual car part
-            height: 5, // Height of car
+            width: 7, // Width of car body without door
+            height: 5, // Height of car body
           };
 
+          // Door hitbox remains undefined until door starts opening
+          this.doorHitbox = null;
           this.doorState = 0;
           this.isDoored = false;
-          this.collisionManager = collisionManager;
         }
 
         update() {
@@ -240,24 +243,26 @@
         }
 
         updateDoor() {
+          // Check if we should start opening the door
           if (!this.isDoored && this.y > 0 && this.y < this.config.GAME.HEIGHT - 10 && Math.random() < this.config.SPAWN_RATES.DOOR_OPENING) {
             this.isDoored = true;
             this.doorState = 0;
           }
 
+          // Only adjust the door hitbox if door is opening
           if (this.isDoored && this.doorState < ENTITIES.PARKED_CAR_STATES.length - 1) {
-            const nextDoorState = this.doorState + 1;
-            this.doorState = nextDoorState;
-            this.art = ENTITIES.PARKED_CAR_STATES[nextDoorState];
+            this.doorState++;
+            this.art = ENTITIES.PARKED_CAR_STATES[this.doorState];
 
-            const doorWidths = [0, 0.8, 1, 1.5, 1.8];
+            // Set door hitbox based on the current door state
+            const doorWidths = [0, 0.8, 1, 1.5, 1.8]; // Define incremental door widths for each state
+            const doorWidth = doorWidths[this.doorState];
 
-            // Maintain door hitbox relative to car hitbox
             this.doorHitbox = {
-              x: this.hitbox.x - doorWidths[nextDoorState],
-              y: this.y + 1,
-              width: doorWidths[nextDoorState],
-              height: 1.8,
+              x: this.hitbox.x - doorWidth, // Position door hitbox next to the car body
+              y: this.y + 1, // Align vertically with car body
+              width: doorWidth,
+              height: 1.8, // Adjust height based on door height in art
             };
           }
         }
@@ -476,9 +481,12 @@
 
         // Check player collisions (returns collision type or null)
         checkPlayerCollision(playerHitbox, entities, isJumping) {
-          // Check track collisions first
-          if (!isJumping && this.checkTrackCollision(playerHitbox)) {
-            return "TRACKS";
+          if (this.checkCarBodyCollision(playerHitbox, entities.parkedCars)) {
+            return "PARKEDCAR";
+          }
+
+          if (this.checkDoorCollision(playerHitbox, entities.parkedCars)) {
+            return "DOOR";
           }
 
           // Check streetcar collisions
@@ -491,10 +499,7 @@
             return "TRAFFIC";
           }
 
-          // Check door collisions
-          if (this.checkDoorCollision(playerHitbox, entities.parkedCars)) {
-            return "DOOR";
-          }
+    
 
           // Check shop collisions
           if (this.checkShopCollision(playerHitbox)) {
@@ -540,49 +545,18 @@
 
         checkDoorCollision(playerHitbox, parkedCars) {
           return parkedCars.some((car) => {
+            // Check collision with the door hitbox only if it’s active
             if (car.doorState > 0 && car.doorHitbox) {
-              // Log collision check for debugging
-              console.log("Checking door collision:", {
-                player: {
-                  x: playerHitbox.x,
-                  y: playerHitbox.y,
-                  width: playerHitbox.width,
-                  height: playerHitbox.height,
-                },
-                door: car.doorHitbox,
-              });
-
-              // More precise collision check
-              const playerLeft = playerHitbox.x;
-              const playerRight = playerHitbox.x + playerHitbox.width;
-              const playerTop = playerHitbox.y;
-              const playerBottom = playerHitbox.y + playerHitbox.height;
-
-              const doorLeft = car.doorHitbox.x;
-              const doorRight = car.doorHitbox.x + car.doorHitbox.width;
-              const doorTop = car.doorHitbox.y;
-              const doorBottom = car.doorHitbox.y + car.doorHitbox.height;
-
-              // Add small tolerance to prevent false positives
-              const tolerance = 0.3;
-
-              const collision = !(
-                playerRight < doorLeft + tolerance ||
-                playerLeft > doorRight - tolerance ||
-                playerBottom < doorTop + tolerance ||
-                playerTop > doorBottom - tolerance
-              );
-
-              if (collision) {
-                console.log("Door collision detected!", {
-                  playerBounds: { left: playerLeft, right: playerRight, top: playerTop, bottom: playerBottom },
-                  doorBounds: { left: doorLeft, right: doorRight, top: doorTop, bottom: doorBottom },
-                });
-              }
-
-              return collision;
+              return this.checkOverlap(playerHitbox, car.doorHitbox);
             }
             return false;
+          });
+        }
+
+        checkCarBodyCollision(playerHitbox, parkedCars) {
+          return parkedCars.some((car) => {
+            // Only check the main car body hitbox
+            return this.checkOverlap(playerHitbox, car.hitbox);
           });
         }
 
