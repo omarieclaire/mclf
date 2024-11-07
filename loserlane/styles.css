@@ -1,28 +1,32 @@
-
+:root {
+  --background-color: #2d2d2d;
+  --text-color: #d1feff;
+  --second-text-color: #dfb1ff;
+  --third-text-color: #faffd1;
+  --secondary-background-color: #222;
+  --overlay-background: rgba(0, 0, 0, 0.8);
+}
 
 html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
   box-sizing: border-box;
-
 }
 
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: monospace;
-  background: #2d2d2d;
   font-family: "Courier New", monospace;
-
+  background: var(--background-color);
 }
 
 .grid-cell {
   display: inline-block;
   width: 1vw;
   height: 2vh;
-  border: 0.1px solid rgba(23, 23, 23, 0.2);
+  /* border: 0.1px solid rgba(23, 23, 23, 0.2); */
   text-align: center;
 }
 
@@ -37,46 +41,36 @@ body {
   font-size: 2rem;
 }
 
-#message {
+#mainMessageBox {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 20px 20px;
+  background-color: var(--overlay-background);
+  color: var(--text-color);
+  padding: 20px;
   font-size: 1.5rem;
   text-align: center;
   max-width: 80%;
-  display: block;
   z-index: 100;
-  font-family: "Courier New", monospace;
 }
 
 #game-container {
-  /* background: white; */
   width: 100vw;
-  /* height: 100vh; */
+  height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-
-
-
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 #game-screen {
   white-space: pre;
   text-align: left;
   line-height: 1.2;
-  font-family: "Courier New", monospace;
-  background: #222;
-  color: #fff;
+  background: var(--secondary-background-color);
+  color: var(--text-color);
   height: 100%;
   overflow: hidden;
   min-height: 400px;
@@ -86,7 +80,6 @@ body {
 
 @media (max-height: 600px) {
   #game-screen {
-    /* height: 70vh; */
     font-size: 14px;
   }
 }
@@ -97,40 +90,48 @@ body {
   cursor: pointer;
 }
 
-.infoBox{
+.info-box {
   position: absolute;
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  color: #fff;
+  color: var(--text-color);
   line-height: 1.5rem;
-  font-size: 1rem; 
+  font-size: 1rem;
 }
 
-#timeAlive {
-  font-size: 24px; 
+#time-alive {
+  font-size: 24px;
 }
 
-
-#titleContainer {
+#title-container {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100vw;
-  background-color:  rgba(45,45, 45, 1);
+  background-color: var(--background-color);
   padding: 8px 0;
-
+  color: var(--text-color);
 }
 
-.bikeArtLeft, .bikeArtRight {
+.bike-art-left, .bike-art-right {
+  color: var(--third-text-color);
   font-size: 10px;
   line-height: 1;
   text-align: center;
-  margin: 0 2rem; /* Adjust spacing to align bikes with title */
+  margin: 0 2rem;
 }
 
-.titleText {
+.title-text {
   text-align: center;
 }
 
+.message-reason {
+  font-size: 2rem;
+  letter-spacing: 10px;
+}
+
+.cute-face {
+  font-size: 24px;
+}

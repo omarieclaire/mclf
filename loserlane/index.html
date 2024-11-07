@@ -9,7 +9,7 @@
   <body>
     <div id="game-container">
       <div id="game-screen"></div>
-      <div id="message">
+      <div id="mainMessageBox">
         <!-- <span id="gameTitle">L O S E R ~ L A N E</span><br /><br /> -->
 
         CLICK or SPACEBAR to start<br /><br />
@@ -21,23 +21,23 @@
         <div class="control-area" id="move-left"></div>
         <div class="control-area" id="move-right"></div>
       </div>
-      <div class="infoBox">
+      <div class="info-box">
         <!-- <div id="title">L O S E R ~ L A N E</div>
-        <div id="timeAlive">STAY ALIVE 0</div> -->
+        <div id="time-alive">STAY ALIVE 0</div> -->
 
-        <div id="titleContainer">
-          <div class="bikeArtLeft">
+        <div id="title-container">
+          <div class="bike-art-left">
             __o <br />
             _ \<_ <br />
             (_)/(_)
           </div>
 
-          <div class="titleText">
+          <div class="title-text">
             <div id="title">L O S E R ~ L A N E</div>
-            <div id="timeAlive">STAY ALIVE 0</div>
+            <div id="time-alive">STAY ALIVE 0</div>
           </div>
 
-          <div class="bikeArtRight">
+          <div class="bike-art-right">
             o__ <br />
             _ >/ _ <br />
             (_) \(_)
@@ -296,7 +296,7 @@
         start() {
           if (this.state.isPlaying) return;
 
-          document.getElementById("message").style.display = "none";
+          document.getElementById("mainMessageBox").style.display = "none";
           this.state.isPlaying = true;
           this.gameLoop = setInterval(() => this.update(), this.state.speed);
         }
@@ -677,17 +677,19 @@
           flashScreen();
 
           const randomMessage = this.getRandomDeathMessage(reason);
-          // Get a random cute face
           const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
 
-          const messageEl = document.getElementById("message");
-          messageEl.innerHTML = `<strong>${randomMessage.reason}</strong><br /><br />
-    ${randomMessage.funny}<br /><br /><span style="font-size: 24px;">${randomFace}</span>
-    `;
+          const messageEl = document.getElementById("mainMessageBox");
+
+          messageEl.innerHTML = `
+  <span class="message-reason">${randomMessage.reason}</span><br /><br />
+  ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
+`;
+
           messageEl.style.display = "block";
 
           setTimeout(() => {
-            messageEl.style.display = "none";
+            messageEl.classList.remove("show-message");
             this.restart();
           }, 3000);
         }
@@ -700,7 +702,7 @@
         restart() {
           this.initializeState();
           this.start();
-          document.getElementById("message").textContent = MESSAGES.GAME.START;
+          document.getElementById("mainMessageBox").textContent = MESSAGES.GAME.START;
         }
 
         handleDeathAnimation() {
@@ -715,7 +717,7 @@
 
         updateScore() {
           this.state.score++;
-          document.getElementById("timeAlive").textContent = `STAY ALIVE ${this.state.score}`;
+          document.getElementById("time-alive").textContent = `STAY ALIVE ${this.state.score}`;
           this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
 
           clearInterval(this.gameLoop);

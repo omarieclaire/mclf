@@ -3,14 +3,37 @@ const MESSAGES = {
     TRACKS: [
       { reason: "STREETCAR TRACKS", funny: "Track smack! Double tap to get past that" },
       { reason: "STREETCAR TRACKS", funny: "Stuck on the rails? Double-tap won't fail" },
-      { reason: "STREETCAR TRACKS", funny: "Rail fail? Tap twice to prevail!" }
+      { reason: "STREETCAR TRACKS", funny: "Rail fail? Tap twice to prevail!" },
+      { reason: "STREETCAR TRACKS", funny: "Rail jail! Two taps to bail!" },
+      { reason: "STREETCAR TRACKS", funny: "Stuck on the groove? Two taps, and move!" },
+      { reason: "STREETCAR TRACKS", funny: "Track attack! Double-tap, bounce back!" },
+      { reason: "STREETCAR TRACKS", funny: "On the rails? Double-tap never fails!" },
+      { reason: "STREETCAR TRACKS", funny: "Tricky track! Double-tap back!" },
+      { reason: "STREETCAR TRACKS", funny: "Rail fail! Double tap to bail!" },
+      { reason: "STREETCAR TRACKS", funny: "Oops, track gap! Double-tap!" },
+      { reason: "STREETCAR TRACKS", funny: "Two taps fast, zoom right past!" },
+      { reason: "STREETCAR SMOOCH", funny: "Watch your back, track attack!" },
     ],
     TRAFFIC: [
       { reason: "UGH CARS", funny: "Clash crash cash!" },
       { reason: "UGH CARS", funny: "Bam! Jam! Slam!" },
       { reason: "UGH CARS", funny: "Zoomed by doom!" },
       { reason: "UGH CARS", funny: "Chariot smack!" },
-      { reason: "UGH CARS", funny: "Wheel squeal bad deal!" }
+      { reason: "UGH CARS", funny: "Wheel squeal bad deal!" },
+      { reason: "UGH CARS", funny: "Road rage! Off the stage!" },
+      { reason: "UGH CARS", funny: "Bang! Avoid a clang!" },
+      { reason: "UGH CARS", funny: "Boom! No room to zoom!" },
+      { reason: "UGH CARS", funny: "Bump thump! Traffic lump!" },
+      { reason: "UGH CARS", funny: "Car slam! Get outta the jam!" },
+      { reason: "UGH CARS", funny: "Traffic track! Watch your back!" },
+      { reason: "UGH CARS", funny: "Steer clear! Car too near!" },
+      { reason: "UGH CARS", funny: "Bash! Dash! Avoid the crash!" },
+      { reason: "UGH CARS", funny: "Wheel peel! That’s the deal!" },
+      { reason: "UGH CARS", funny: "Car crunch! Don’t be lunch!" },
+      { reason: "UGH CARS", funny: "Zoom boom! Traffic doom!" },
+      { reason: "UGH CARS", funny: "Traffic scare! Beware the glare!" },
+      { reason: "UGH CARS", funny: "Yikes! Cars hate bikes!" }
+
     ],
     DOOR: [
       { reason: "DOORED", funny: "Doored! Ignored!" },
@@ -20,14 +43,34 @@ const MESSAGES = {
       { reason: "DOORED", funny: "Peekaboo!" },
       { reason: "DOORED", funny: "Door smack! Next time, hop back!" },
       { reason: "DOORED", funny: "Hop back, don’t crack!" },
-
+      { reason: "DOORED", funny: "Door shock! Time to dock!" },
+      { reason: "DOORED", funny: "Bam! Door slam!" },
+      { reason: "DOORED", funny: "Watch the door, or hit the floor!" },
+      { reason: "DOORED", funny: "Sneak a peek, avoid the streak!" },
+      { reason: "DOORED", funny: "Tap to slide, stay outside!" },
+      { reason: "DOORED", funny: "Bang! Avoid the clang!" },
+      { reason: "DOORED", funny: "Peek first, avoid the burst!" },
+      { reason: "DOORED", funny: "Don’t get floored by the door!" },
+      { reason: "DOORED", funny: "Door dash! Avoid the clash!" },
+      { reason: "DOORED", funny: "Knock knock, door shock!" }
     ],
     PEDESTRIAN: [
       { reason: "NOOOO", funny: "Pedestrian mess! Next time, finesse!" },
       { reason: "NOOOO", funny: "Crash! Flash human bash!" },
       { reason: "NOOOO", funny: "Ouch! Scoot away, pouch!" },
       { reason: "NOOOO", funny: "Clock! Human roadblock!" },
-      { reason: "NOOOO", funny: "People pop! You gotta stop!" }
+      { reason: "NOOOO", funny: "People pop! You gotta stop!" },
+      { reason: "NOOOO", funny: "Oops! Human boops!" },
+      { reason: "NOOOO", funny: "People jam! Don’t get slammed!" },
+      { reason: "NOOOO", funny: "Avoid the greet, dodge the feet!" },
+      { reason: "NOOOO", funny: "Pedestrian shuffle, avoid the scuffle!" },
+      { reason: "NOOOO", funny: "Steer clear! Folks near!" },
+      { reason: "NOOOO", funny: "Hop hop! Pedestrian stop!" },
+      { reason: "NOOOO", funny: "Crowd rush! No room to crush!" },
+      { reason: "NOOOO", funny: "Sidewalk scene, avoid the lean!" },
+      { reason: "NOOOO", funny: "Step light, avoid the fight!" },
+      { reason: "NOOOO", funny: "Human block, avoid the shock!" },
+      { reason: "NOOOO", funny: "Watch that stroll, dodge the roll!" }
     ],
     SHOP: [
       { reason: "OOPS", funny: "Shop drop! Street's your stop!" },
@@ -35,7 +78,16 @@ const MESSAGES = {
       { reason: "OOPS", funny: "Retail fail! Stay on the trail!" },
       { reason: "OOPS", funny: "Shop smack! Street’s where you pack!" },
       { reason: "OOPS", funny: "Crash! Store stash!" },
-      { reason: "OOPS", funny: "Do the math! Stick to your path!" }
+      { reason: "OOPS", funny: "Do the math! Stick to your path!" },
+      { reason: "OOPS", funny: "Shopping splash, that was rash!" },
+      { reason: "OOPS", funny: "Shop thump! Avoid the bump!" },
+      { reason: "OOPS", funny: "Window bump! Time to jump!" },
+      { reason: "OOPS", funny: "Crash the store, explore no more!" },
+      { reason: "OOPS", funny: "No retail trail, stay on the rail!" },
+      { reason: "OOPS", funny: "Store pop! Time to stop!" },
+      { reason: "OOPS", funny: "Oops, retail loops!" },
+      { reason: "OOPS", funny: "Watch that display, stay away!" },
+      { reason: "OOPS", funny: "Storefront smack! Stick to the track!" }
 
     ],
     STREETCAR: [
@@ -43,7 +95,17 @@ const MESSAGES = {
       { reason: "STREETCAR SMOOCH", funny: "Streetcar clash – hop, dash!" },
       { reason: "STREETCAR SMOOCH", funny: "Boom! Streetcar in the room!" },
       { reason: "STREETCAR SMOOCH", funny: "Tracks end! You bend!" },
-      { reason: "STREETCAR SMOOCH", funny: "Zap! Transit trap!" }
+      { reason: "STREETCAR SMOOCH", funny: "Zap! Transit trap!" },
+      { reason: "STREETCAR SMOOCH", funny: "Squash smash! Streetcar crash!" },
+      { reason: "STREETCAR SMOOCH", funny: "Zap and pop! Hard stop!" },
+      { reason: "STREETCAR SMOOCH", funny: "Swoop, time to regroup!" },
+      { reason: "STREETCAR SMOOCH", funny: "You are meat, take a seat!" },
+      { reason: "STREETCAR SMOOCH", funny: "No streetcar greet, move your feet!" },
+      { reason: "STREETCAR SMOOCH", funny: "Ding ding! Watch that swing!" },
+      { reason: "STREETCAR SMOOCH", funny: "Tram bam! Avoid the jam!" },
+      { reason: "STREETCAR SMOOCH", funny: "Clang clang! Streetcar pang!" },
+      { reason: "STREETCAR SMOOCH", funny: "Stop and stare, streetcar flair!" },
+      { reason: "STREETCAR SMOOCH", funny: "Dodge the tram! No more jam!" },
     ]
   },
   GAME: {
