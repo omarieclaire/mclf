@@ -420,6 +420,62 @@ const TORONTO_SHOPS = [
         name: "CNE",
         art: [
             "┌────────┐",
+            "│ CN     │",
+            "│TOWER   │",
+            "│        │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│KENSING │",
+            "│TON     │",
+            "│MARKET  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│ CASA   │",
+            "│LOMA    │",
+            "│        │",
+            "└────────┘"
+        ]
+    },    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│ THE    │",
+            "│MONKEYS │",
+            "│ PAW    │",
+            "└────────┘"
+        ]
+    },    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│BUDDHA'S│",
+            "│VEGAN   │",
+            "│RESTARNT│",
+            "└────────┘"
+        ]
+    },    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
+            "│ CNE    │",
+            "│EXHIBIT │",
+            "│ FUN    │",
+            "└────────┘"
+        ]
+    },    {
+        name: "CNE",
+        art: [
+            "┌────────┐",
             "│ CNE    │",
             "│EXHIBIT │",
             "│ FUN    │",
