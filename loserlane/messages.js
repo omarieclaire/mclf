@@ -1,5 +1,3 @@
-console.log('Messages loaded');
-
 const MESSAGES = {
   DEATH: {
     TRACKS: [

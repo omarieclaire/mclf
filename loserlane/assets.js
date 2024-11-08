@@ -38,7 +38,7 @@ const ENTITIES = {
         CROSSING: {
             art: [
                 " ○ ", 
-                " ┴ "
+                " ╿ "
             ],
             width: 1,
             height: 2
@@ -135,23 +135,7 @@ const ENTITIES = {
             "  ╰───╯ "
         ]
     ],
-    PEDESTRIAN: {
-        UP: {
-            art: ["○", "╽"],
-            width: 1,
-            height: 2
-        },
-        DOWN: {
-            art: ["○", "╿"],
-            width: 1,
-            height: 2
-        },
-        CROSSING: {
-            art: ["○", "┴"],
-            width: 1,
-            height: 2
-        }
-    },
+    
     EXPLOSION: {
         art: ["\\|/", "-X-", "/|\\"],
         width: 4,

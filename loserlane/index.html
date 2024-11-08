@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Toronto Cyclist</title>
+    <title>Loser Lane</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -143,37 +143,14 @@
     <script>
       // Constants and Configuration
 
-      const STYLES = {
-        RESET: "</span>",
-        TRAFFIC: "<span style='color: #FFFF00'>", // Changed to bright yellow for traffic divider
-        TTC: "<span style='color: #FF0000; background-color: #660000'>",
-        BIKE: "<span style='color: #FFAAAA'>",
-        PARKED: "<span style='color: #AAAAAA'>",
-        PEDESTRIAN: "<span style='color: #00FFFF'>",
-        SIDEWALK: "<span style='background-color: #333333'>",
-        SHOPS: "<span style='color: #FFFFFF'>",
-        TRACKS: "<span style='color: #888888'>", // Changed to grey for tracks
-      };
-
-      const TORONTO_SHOPSz = [
-        {
-          name: "PIZZA_PIZZA",
-          art: ["╔════════╗", "║ PIZZA  ║", "║PIZZA!! ║", "║ HOT &  ║", "╚═══██═══╝"],
-        },
-        {
-          name: "TIM_HORTONS",
-          art: ["┌────────┐", "│TIMS    │", "│COFFEE  │", "│& FOOD  │", "└────────┘"],
-        },
-      ];
-
       const CONFIG = {
         GAME: {
           WIDTH: 45,
-          HEIGHT: Math.floor(window.innerHeight / 20), // Adjust this divisor to control the height scaling
-          INITIAL_SPEED: 20,
+          HEIGHT: Math.floor(window.innerHeight / 20),
+          INITIAL_SPEED: 500, // Changed from 20 to match settings window
           MIN_SPEED: 300,
           SPEED_DECREASE_RATE: 0.995,
-          CYCLIST_Y: Math.floor(window.innerHeight / 40), // Adjust this to control the cyclist's starting position
+          CYCLIST_Y: Math.floor(window.innerHeight / 40),
           DOUBLE_TAP_TIME: 350,
         },
         SPAWN_RATES: {
@@ -182,12 +159,20 @@
           ONCOMING_CAR: 0.15,
           PARKED_CAR: 0.15,
           DOOR_OPENING: 0.1,
-          PEDESTRIAN: 0.05, // Spawn rate for pedestrians
-          BUILDING: 0.05, // Adjust this spawn rate as needed
+          PEDESTRIAN: 0.05,
+          BUILDING: 0.05,
+        },
+        SAFE_DISTANCE: {
+          // Added missing configuration section
+          STREETCAR: 15,
+          STREETCAR_LANE_CAR: 8,
+          ONCOMING_CAR: 6,
+          PARKED: 5,
+          PEDESTRIAN: 3,
+          BUILDING: 0,
         },
         PEDESTRIAN: {
-          SPEED: 0.5, // Speed for pedestrians
-          // ART: ENTITIES.PEDESTRIAN
+          SPEED: 0.5,
         },
         LANES: {
           ONCOMING: 2,
@@ -303,42 +288,33 @@
       }
 
       class Building extends BaseObstacle {
-        static nextSpawnY = null;
+  static nextSpawnY = null;
 
-        constructor(config, spawnY = null) {
-          const randomShop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
-          const buildingHeight = randomShop.art.length;
+  constructor(config, spawnY = null) {
+    const randomShop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
+    const buildingHeight = randomShop.art.length;
 
-          // If spawnY is provided, use it directly
-          // Otherwise, place it just above the highest existing building
-          if (spawnY === null) {
-            // Find the current highest building's position
-            const highestY = Building.nextSpawnY || 0;
-            spawnY = highestY - buildingHeight; // Place directly above the highest building
-          }
+    spawnY = spawnY ?? (Building.nextSpawnY ? Building.nextSpawnY - buildingHeight : 0);
 
-          super(
-            config.LANES.SHOPS,
-            spawnY,
-            {
-              type: "BUILDING",
-              art: randomShop.art,
-              width: randomShop.art[0].length,
-              height: buildingHeight,
-              speed: 1,
-              color: `<span style='color: ${COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)]}'>`,
-            },
-            config
-          );
+    super(
+      config.LANES.SHOPS,
+      spawnY,
+      {
+        type: "BUILDING",
+        art: randomShop.art,
+        width: randomShop.art[0].length,
+        height: buildingHeight,
+        speed: 1,
+        color: `<span style='color: ${COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)]}'>`,
+      },
+      config
+    );
 
-          // Update the next spawn position to be at the top of this building
-          Building.nextSpawnY = this.y;
-        }
+    Building.nextSpawnY = this.y;
+  }
+}
 
-        static resetSpawnPosition() {
-          Building.nextSpawnY = null;
-        }
-      }
+
       class ParkedCar extends BaseObstacle {
         constructor(config, collisionManager) {
           const spawnConfig = collisionManager.getSpawnConfig("parked");
@@ -574,16 +550,7 @@
         constructor(config) {
           this.config = config;
           this.entities = [];
-
-          // Spacing config is now simpler and focused on entity types
-          this.minSpacing = {
-            BUILDING: 0,
-            PARKED: 5,
-            PEDESTRIAN: 3,
-            STREETCAR: 15,
-            STREETCAR_LANE_CAR: 8,
-            CAR: 6,
-          };
+          this.minSpacing = config.SAFE_DISTANCE; // Use configuration values
         }
 
         addEntity(entity) {
@@ -696,387 +663,378 @@
       }
       // Main Game Class
       class LoserLane {
-        constructor() {
-          this.collisionManager = new CollisionManager(CONFIG);
-          this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
-          this.initializeState();
-          this.setupControls();
-          this.grid = this.createGrid();
-        }
+  constructor() {
+    this.collisionManager = new CollisionManager(CONFIG);
+    this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
+    this.initializeState();
+    this.setupControls();
+    this.setupTouchControls();
+    this.grid = this.createGrid();
+  }
 
-        createGrid() {
-          return Array(CONFIG.GAME.HEIGHT)
-            .fill()
-            .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
-        }
+  // State Management
+  initializeState() {
+    this.state = {
+      isDead: false,
+      score: 0,
+      currentLane: CONFIG.LANES.BIKE,
+      speed: CONFIG.GAME.INITIAL_SPEED,
+      deathAnimation: 0,
+      lastTap: 0,
+      doubleTapActive: false,
+      isJumping: false,
+      moveInterval: null,
+      movementSpeed: 100,
+      isMovingLeft: false,
+      isMovingRight: false,
+      lastKeyPress: 0,
+      isPlaying: false,
+      isPaused: false
+    };
+    this.entities = {
+      obstacles: [],
+      parkedCars: []
+    };
+  }
 
-        initializeState() {
-          this.state = {
-            isDead: false,
-            score: 0,
-            currentLane: CONFIG.LANES.BIKE,
-            speed: CONFIG.GAME.INITIAL_SPEED,
-            deathAnimation: 0,
-            lastTap: 0,
-            doubleTapActive: false,
-            isJumping: false,
-            moveInterval: null,
-            movementSpeed: 100,
-            isMovingLeft: false,
-            isMovingRight: false,
-            lastKeyPress: 0,
-            isPlaying: false,
-          };
-          this.entities = {
-            obstacles: [],
-            parkedCars: [],
-          };
-        }
-
-        setupControls() {
-          document.addEventListener("keydown", (e) => {
-            if (!this.state.isPlaying) {
-              this.start();
-              return;
-            }
-
-            if (e.key === "ArrowLeft") {
-              this.moveLeft();
-            }
-
-            if (e.key === "ArrowRight") {
-              this.moveRight();
-            }
-          });
-        }
-
-        moveLeft() {
-          if (this.state.isDead) return;
-
-          const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
-
-          if (isDoubleTap) {
-            const newLane = Math.max(this.state.currentLane - 2, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
-            setTimeout(() => {
-              this.state.isJumping = false;
-            }, 200);
-          } else {
-            const newLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
-          }
-
-          this.state.lastTap = now;
-        }
-
-        moveRight() {
-          if (this.state.isDead) return;
-
-          const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
-
-          if (isDoubleTap) {
-            const newLane = Math.min(this.state.currentLane + 2, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
-            setTimeout(() => {
-              this.state.isJumping = false;
-            }, 200);
-          } else {
-            const newLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
-          }
-
-          this.state.lastTap = now;
-        }
-
-        start() {
-          if (this.state.isPlaying) return;
-
-          document.getElementById("mainMessageBox").style.display = "none";
-          this.state.isPlaying = true;
-          this.gameLoop = setInterval(() => this.update(), this.state.speed);
-        }
-
-        update() {
-          if (this.state.isDead) {
-            this.handleDeathAnimation();
-            return;
-          }
-
-          this.spawnEntities();
-          this.updateEntities();
-
-          // Create player hitbox
-          const playerHitbox = {
-            x: this.state.currentLane,
-            y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-            width: ENTITIES.BIKE.width,
-            height: ENTITIES.BIKE.height,
-          };
-
-          // Check for collisions
-          const collision = this.collisionManager.checkPlayerCollision(
-            playerHitbox,
-            {
-              obstacles: this.obstacleManager.obstacles,
-              parkedCars: this.obstacleManager.parkedCars,
-            },
-            this.state.isJumping
-          );
-          if (collision) {
-            this.die(collision);
-          }
-
-          this.updateScore();
-          this.render();
-        }
-
-        spawnEntities() {
-          this.obstacleManager.spawn();
-        }
-
-        updateEntities() {
-          this.obstacleManager.update();
-          this.collisionManager.update();
-        }
-
-        render() {
-          if (this.state.isDead && this.deathAnimation >= 10) return;
-
-          this.grid = this.createGrid();
-          this.drawRoadFeatures();
-          this.drawEntities();
-          this.drawPlayer();
-
-          const gameScreen = document.getElementById("game-screen");
-          gameScreen.innerHTML = this.grid.map((row) => row.map((cell) => `<span class="grid-cell">${cell}</span>`).join("")).join("<br />");
-        }
-
-        drawRoadFeatures() {
-          for (let y = 0; y < CONFIG.GAME.HEIGHT; y++) {
-            this.grid[y][CONFIG.LANES.DIVIDER] = STYLES.TRAFFIC + "║" + STYLES.RESET;
-            this.grid[y][CONFIG.LANES.DIVIDER + 1] = STYLES.TRAFFIC + "║" + STYLES.RESET;
-            this.grid[y][CONFIG.LANES.TRACKS + 1] = STYLES.TRACKS + "║" + STYLES.RESET;
-            this.grid[y][CONFIG.LANES.TRACKS + 5] = STYLES.TRACKS + "║" + STYLES.RESET;
-
-            if (y % 3 === 0) {
-              this.grid[y][CONFIG.LANES.BIKE - 1] = STYLES.TRAFFIC + " " + STYLES.RESET;
-            }
-
-            for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.SHOPS; x++) {
-              this.grid[y][x] = STYLES.SIDEWALK + " " + STYLES.RESET;
-            }
-          }
-        }
-
-        drawEntity(entity, style) {
-          if (entity.y + entity.height >= 0 && entity.y < CONFIG.GAME.HEIGHT) {
-            entity.art.forEach((line, i) => {
-              if (entity.y + i >= 0 && entity.y + i < CONFIG.GAME.HEIGHT) {
-                for (let x = 0; x < line.length; x++) {
-                  if (line[x] !== " " && entity.x + x >= 0 && entity.x + x < CONFIG.GAME.WIDTH) {
-                    this.grid[Math.floor(entity.y + i)][entity.x + x] = style + line[x] + STYLES.RESET;
-                  }
-                }
-              }
-            });
-          }
-        }
-
-        drawEntities() {
-          this.obstacleManager.getAllObjects().forEach((entity) => {
-            if (entity.type === "PEDESTRIAN") {
-              this.drawEntity(entity, STYLES.SIDEWALK);
-            } else {
-              this.drawEntity(entity, entity.color);
-            }
-          });
-        }
-
-        drawPlayer() {
-          if (this.state.isDead && this.state.deathAnimation < 10) {
-            ENTITIES.EXPLOSION.art.forEach((line, i) => {
-              for (let x = 0; x < line.length; x++) {
-                if (this.deathY + i < CONFIG.GAME.HEIGHT) {
-                  this.grid[this.deathY + i][this.deathX + x] = STYLES.TRAFFIC + line[x] + STYLES.RESET;
-                }
-              }
-            });
-          } else if (!this.state.isDead) {
-            const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
-            ENTITIES.BIKE.art.forEach((line, i) => {
-              for (let x = 0; x < line.length; x++) {
-                if (line[x] !== " ") {
-                  this.grid[bikeY + i][this.state.currentLane + x] = STYLES.BIKE + line[x] + STYLES.RESET;
-                }
-              }
-            });
-          }
-        }
-
-        drawHitboxes() {
-          // Player hitbox
-          const playerHitbox = {
-            x: this.state.currentLane,
-            y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-            width: ENTITIES.BIKE.width,
-            height: ENTITIES.BIKE.height,
-          };
-          this.drawHitbox(playerHitbox, " ", "rgb(255, 0, 0)");
-
-          // Get all obstacles from obstacle manager
-          this.obstacleManager.getAllObjects().forEach((obstacle) => {
-            if (obstacle && obstacle.hitbox) {
-              this.drawHitbox(obstacle.hitbox, " ", "rgb(0, 255, 0)");
-
-              // Check for door hitbox
-              if (obstacle.type === "PARKED" && obstacle.doorState > 0 && obstacle.doorHitbox) {
-                this.drawHitbox(obstacle.doorHitbox, " ", "rgb(255, 0, 255)");
-              }
-            }
-          });
-        }
-
-        drawHitbox(hitbox, char, color) {
-          // Add safety checks
-          if (
-            !hitbox ||
-            typeof hitbox.x === "undefined" ||
-            typeof hitbox.y === "undefined" ||
-            typeof hitbox.width === "undefined" ||
-            typeof hitbox.height === "undefined"
-          ) {
-            return;
-          }
-
-          const yStart = Math.max(0, Math.floor(hitbox.y));
-          const yEnd = Math.min(this.grid.length, Math.floor(hitbox.y + hitbox.height));
-          const xStart = Math.max(0, Math.floor(hitbox.x));
-          const xEnd = Math.min(this.grid[0].length, Math.floor(hitbox.x + hitbox.width));
-
-          // Convert color to rgba for transparency
-          const rgba = color.replace(")", ", 0.3)").replace("rgb", "rgba");
-
-          for (let y = yStart; y < yEnd; y++) {
-            for (let x = xStart; x < xEnd; x++) {
-              if (this.grid[y] && this.grid[y][x]) {
-                // Create a span with a semi-transparent background color
-                this.grid[y][x] = `<span style='background-color: ${rgba}'>${this.grid[y][x]}</span>`;
-              }
-            }
-          }
-        }
-        die(reason) {
-          this.state.isDead = true;
-          this.deathX = this.state.currentLane;
-          this.deathY = CONFIG.GAME.CYCLIST_Y;
-
-          // Add the cute faces array
-          const cuteDeathFaces = [
-            `(×﹏×)`,
-            `(｡×﹏×｡)`,
-            `(✖╭╮✖)`,
-            `(;×_×;)`,
-            `(｡T ω T｡)`,
-            `(✿×﹏×✿)`,
-            `(╥ω╥)`,
-            `( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)`,
-            `(ಥ﹏ಥ)`,
-            `(T⌓T)`,
-            `(｡•́︿•̀｡)`,
-            `(｡╥﹏╥｡)`,
-            `(✖︿✖)`,
-            `(o︵o)`,
-            `(｡•́︵•̀｡)`,
-            `(✿｡︿｡✿)`,
-            `(｡•́_•̀｡)`,
-            `(T_T)`,
-            `(╯︵╰,)`,
-            `(っ- ‸ – ς)`,
-          ];
-
-          const flashScreen = () => {
-            document.getElementById("game-screen").style.backgroundColor = "#FF0000";
-
-            setTimeout(() => {
-              document.getElementById("game-screen").style.backgroundColor = "#000000";
-
-              setTimeout(() => {
-                document.getElementById("game-screen").style.backgroundColor = "#222";
-              }, 100);
-            }, 100);
-          };
-
-          flashScreen();
-
-          const randomMessage = this.getRandomDeathMessage(reason);
-          const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
-
-          const messageEl = document.getElementById("mainMessageBox");
-
-          messageEl.innerHTML = `
-                          <span class="message-reason">${randomMessage.reason}</span><br /><br />
-                          ${randomMessage.funny}<br /><br /><span class="cute-face">${randomFace}</span>
-                        `;
-
-          messageEl.style.display = "block";
-
-          setTimeout(() => {
-            messageEl.classList.remove("show-message");
-            this.restart();
-          }, 3000);
-        }
-
-        getRandomDeathMessage(type) {
-          const messages = MESSAGES.DEATH[type];
-
-          // Check if messages array exists; if not, use a default message
-          if (!messages || messages.length === 0) {
-            return {
-              reason: "X X!",
-              funny: "Sometimes things just happen",
-            };
-          }
-          return messages[Math.floor(Math.random() * messages.length)];
-        }
-
-        restart() {
-          Building.resetSpawnPosition();
-          this.collisionManager = new CollisionManager(CONFIG);
-          this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
-          this.initializeState();
-          this.start();
-          document.getElementById("mainMessageBox").textContent = MESSAGES.GAME.START;
-        }
-
-        handleDeathAnimation() {
-          this.state.deathAnimation++;
-          if (this.state.deathAnimation > 10) {
-            this.state.isPlaying = false;
-            clearInterval(this.gameLoop);
-            return;
-          }
-          this.render();
-        }
-
-        updateScore() {
-          this.state.score++;
-          document.getElementById("time-alive").textContent = `STAY ALIVE? ${this.state.score}`;
-          this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
-
-          clearInterval(this.gameLoop);
-          this.gameLoop = setInterval(() => this.update(), this.state.speed);
-        }
+  // Control Setup
+  setupControls() {
+    document.addEventListener("keydown", (e) => {
+      if (!this.state.isPlaying) {
+        this.start();
+        return;
       }
 
-      /////////////////////////////////////////
+      switch (e.key) {
+        case "ArrowLeft":
+          this.moveLeft();
+          break;
+        case "ArrowRight":
+          this.moveRight();
+          break;
+        case "p":
+        case "P":
+          this.togglePause();
+          break;
+      }
+    });
+  }
+
+  setupTouchControls() {
+    const leftControl = document.getElementById('move-left');
+    const rightControl = document.getElementById('move-right');
+    
+    if (leftControl && rightControl) {
+      leftControl.addEventListener('click', () => {
+        const now = Date.now();
+        const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+        this.state.lastTap = now;
+        this.moveLeft(isDoubleTap);
+      });
+
+      rightControl.addEventListener('click', () => {
+        const now = Date.now();
+        const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+        this.state.lastTap = now;
+        this.moveRight(isDoubleTap);
+      });
+    }
+  }
+
+  // Movement Controls
+  moveLeft(isDoubleTap = false) {
+    if (this.state.isDead || this.state.isPaused) return;
+
+    const moveAmount = isDoubleTap ? 2 : 1;
+    const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+    this.state.currentLane = newLane;
+    this.state.isJumping = isDoubleTap;
+
+    if (isDoubleTap) {
+      setTimeout(() => {
+        this.state.isJumping = false;
+      }, 200);
+    }
+  }
+
+  moveRight(isDoubleTap = false) {
+    if (this.state.isDead || this.state.isPaused) return;
+
+    const moveAmount = isDoubleTap ? 2 : 1;
+    const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+    this.state.currentLane = newLane;
+    this.state.isJumping = isDoubleTap;
+
+    if (isDoubleTap) {
+      setTimeout(() => {
+        this.state.isJumping = false;
+      }, 200);
+    }
+  }
+
+  // Game State Management
+  start() {
+    if (this.state.isPlaying) return;
+
+    const messageBox = document.getElementById("mainMessageBox");
+    if (messageBox) {
+      messageBox.style.display = "none";
+    }
+    
+    this.state.isPlaying = true;
+    this.gameLoop = setInterval(() => this.update(), this.state.speed);
+  }
+
+  togglePause() {
+    this.state.isPaused = !this.state.isPaused;
+    
+    const messageBox = document.getElementById("mainMessageBox");
+    if (messageBox) {
+      messageBox.style.display = this.state.isPaused ? "block" : "none";
+      messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
+    }
+
+    if (this.state.isPaused) {
+      clearInterval(this.gameLoop);
+    } else {
+      this.gameLoop = setInterval(() => this.update(), this.state.speed);
+    }
+  }
+
+  update() {
+    if (this.state.isDead) {
+      this.handleDeathAnimation();
+      return;
+    }
+
+    if (this.state.isPaused) return;
+
+    this.spawnEntities();
+    this.updateEntities();
+    this.checkCollisions();
+    this.updateScore();
+    this.render();
+  }
+
+  checkCollisions() {
+    const playerHitbox = {
+      x: this.state.currentLane,
+      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      width: ENTITIES.BIKE.width,
+      height: ENTITIES.BIKE.height,
+    };
+
+    const collision = this.collisionManager.checkPlayerCollision(
+      playerHitbox,
+      {
+        obstacles: this.obstacleManager.obstacles,
+        parkedCars: this.obstacleManager.parkedCars,
+      },
+      this.state.isJumping
+    );
+
+    if (collision) {
+      this.die(collision);
+    }
+  }
+
+  // Entity Management
+  spawnEntities() {
+    this.obstacleManager.spawn();
+  }
+
+  updateEntities() {
+    this.obstacleManager.update();
+    this.collisionManager.update();
+  }
+
+  // Rendering
+  createGrid() {
+    return Array(CONFIG.GAME.HEIGHT)
+      .fill()
+      .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
+  }
+
+  render() {
+    if (this.state.isDead && this.state.deathAnimation >= 10) return;
+
+    this.grid = this.createGrid();
+    this.drawRoadFeatures();
+    this.drawEntities();
+    this.drawPlayer();
+
+    const gameScreen = document.getElementById("game-screen");
+    if (gameScreen) {
+      gameScreen.innerHTML = this.grid
+        .map(row => row.map(cell => `<span class="grid-cell">${cell}</span>`).join(""))
+        .join("<br />");
+    }
+  }
+
+  drawRoadFeatures() {
+    for (let y = 0; y < CONFIG.GAME.HEIGHT; y++) {
+      this.grid[y][CONFIG.LANES.DIVIDER] = STYLES.TRAFFIC + "║" + STYLES.RESET;
+      this.grid[y][CONFIG.LANES.DIVIDER + 1] = STYLES.TRAFFIC + "║" + STYLES.RESET;
+      this.grid[y][CONFIG.LANES.TRACKS + 1] = STYLES.TRACKS + "║" + STYLES.RESET;
+      this.grid[y][CONFIG.LANES.TRACKS + 5] = STYLES.TRACKS + "║" + STYLES.RESET;
+
+      if (y % 3 === 0) {
+        this.grid[y][CONFIG.LANES.BIKE - 1] = STYLES.TRAFFIC + " " + STYLES.RESET;
+      }
+
+      for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.SHOPS; x++) {
+        this.grid[y][x] = STYLES.SIDEWALK + " " + STYLES.RESET;
+      }
+    }
+  }
+
+  drawEntities() {
+    this.obstacleManager.getAllObjects().forEach(entity => {
+      this.drawEntity(entity, entity.type === "PEDESTRIAN" ? STYLES.SIDEWALK : entity.color);
+    });
+  }
+
+  drawEntity(entity, style) {
+    if (entity.y + entity.height >= 0 && entity.y < CONFIG.GAME.HEIGHT) {
+      entity.art.forEach((line, i) => {
+        if (entity.y + i >= 0 && entity.y + i < CONFIG.GAME.HEIGHT) {
+          line.split("").forEach((char, x) => {
+            if (char !== " " && entity.x + x >= 0 && entity.x + x < CONFIG.GAME.WIDTH) {
+              this.grid[Math.floor(entity.y + i)][entity.x + x] = style + char + STYLES.RESET;
+            }
+          });
+        }
+      });
+    }
+  }
+
+  drawPlayer() {
+    if (this.state.isDead && this.state.deathAnimation < 10) {
+      ENTITIES.EXPLOSION.art.forEach((line, i) => {
+        line.split("").forEach((char, x) => {
+          if (this.deathY + i < CONFIG.GAME.HEIGHT) {
+            this.grid[this.deathY + i][this.deathX + x] = STYLES.TRAFFIC + char + STYLES.RESET;
+          }
+        });
+      });
+    } else if (!this.state.isDead) {
+      const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
+      ENTITIES.BIKE.art.forEach((line, i) => {
+        line.split("").forEach((char, x) => {
+          if (char !== " ") {
+            this.grid[bikeY + i][this.state.currentLane + x] = STYLES.BIKE + char + STYLES.RESET;
+          }
+        });
+      });
+    }
+  }
+
+  // Death Handling
+  die(reason) {
+    this.state.isDead = true;
+    this.deathX = this.state.currentLane;
+    this.deathY = CONFIG.GAME.CYCLIST_Y;
+
+    this.flashScreen();
+    this.showDeathMessage(reason);
+
+    setTimeout(() => {
+      const messageEl = document.getElementById("mainMessageBox");
+      if (messageEl) {
+        messageEl.classList.remove("show-message");
+      }
+      this.restart();
+    }, 3000);
+  }
+
+  flashScreen() {
+    const gameScreen = document.getElementById("game-screen");
+    if (!gameScreen) return;
+
+    const colors = ["#FF0000", "#000000", "#222"];
+    let delay = 0;
+
+    colors.forEach(color => {
+      setTimeout(() => {
+        gameScreen.style.backgroundColor = color;
+      }, delay);
+      delay += 100;
+    });
+  }
+
+  showDeathMessage(reason) {
+    const messageEl = document.getElementById("mainMessageBox");
+    if (!messageEl) return;
+
+    const randomMessage = this.getRandomDeathMessage(reason);
+    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
+
+    messageEl.innerHTML = `
+      <span class="message-reason">${randomMessage.reason}</span><br /><br />
+      ${randomMessage.funny}<br /><br />
+      <span class="cute-face">${randomFace}</span>
+    `;
+    messageEl.style.display = "block";
+  }
+
+  getRandomDeathMessage(type) {
+    const messages = MESSAGES.DEATH[type];
+    if (!messages?.length) {
+      return {
+        reason: "X X!",
+        funny: "Sometimes things just happen"
+      };
+    }
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  // Game Reset
+  restart() {
+    Building.resetSpawnPosition();
+    this.collisionManager = new CollisionManager(CONFIG);
+    this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
+    this.initializeState();
+    this.start();
+    
+    const messageBox = document.getElementById("mainMessageBox");
+    if (messageBox) {
+      messageBox.textContent = MESSAGES.GAME.START;
+    }
+  }
+
+  handleDeathAnimation() {
+    this.state.deathAnimation++;
+    if (this.state.deathAnimation > 10) {
+      this.state.isPlaying = false;
+      clearInterval(this.gameLoop);
+      return;
+    }
+    this.render();
+  }
+
+  updateScore() {
+    this.state.score++;
+    
+    const scoreElement = document.getElementById("time-alive");
+    if (scoreElement) {
+      scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
+    }
+
+    this.state.speed = Math.max(
+      this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE,
+      CONFIG.GAME.MIN_SPEED
+    );
+
+    clearInterval(this.gameLoop);
+    this.gameLoop = setInterval(() => this.update(), this.state.speed);
+  }
+
+  // Cleanup
+  cleanup() {
+    clearInterval(this.gameLoop);
+    // Add any additional cleanup needed
+  }
+}      /////////////////////////////////////////
       /////////////////////////////////////////
       ///////////SETTINGS WINDOW /////////////
       ////////////////////////////////////////
@@ -1164,6 +1122,7 @@
       });
     </script>
     <script src="shops.js"></script>
+    <script src="cuteDeathFaces.js"></script>
     <script src="colours.js"></script>
     <script src="assets.js"></script>
     <script src="messages.js"></script>
