@@ -1,4 +1,4 @@
-// import { CONFIG, STYLES, COLORS } from "./config.js";
+// import { CONFIG, STYLES, COLOURS } from "./config.js";
 // import { MESSAGES } from "./messages.js";
 // import { CollisionSystem } from "./collisionSystem.js";
 // import { EntityManager } from "./entityManager.js";

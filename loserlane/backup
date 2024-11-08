@@ -244,7 +244,7 @@
 //         }
 
 //         createObstacle(isStreetcar, isStreetcarLaneCar = false) {
-//           const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
+//           const vehicleColor = COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
 //           const color = isStreetcar ? STYLES.TTC : `<span style='color: ${vehicleColor}'>`;
 //           const label = isStreetcarLaneCar ? "[SLC]" : "";
 
@@ -347,10 +347,10 @@
 //             }
 //           }
 
-//           // Draw shops in a separate pass with colors
+//           // Draw shops in a separate pass with COLOURS
 //           for (let baseY = 0; baseY < CONFIG.GAME.HEIGHT; baseY += 6) {
 //             const shop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
-//             const color = COLORS.BUILDINGS[Math.floor(Math.random() * COLORS.BUILDINGS.length)];
+//             const color = COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
 //             const shopStyle = `<span style='color: ${color}'>`;
 
 //             shop.art.forEach((line, i) => {
@@ -516,7 +516,7 @@
 
 //         spawnParkedCars() {
 //           if (Math.random() < CONFIG.SPAWN_RATES.PARKED_CAR) {
-//             const vehicleColor = COLORS.VEHICLES[Math.floor(Math.random() * COLORS.VEHICLES.length)];
+//             const vehicleColor = COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
 //             const newCar = {
 //               type: "PARKED",
 //               art: ENTITIES.PARKED_CAR_STATES[0],

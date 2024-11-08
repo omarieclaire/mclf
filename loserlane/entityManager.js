@@ -1,4 +1,4 @@
-// import { CONFIG, COLORS } from './config.js';
+// import { CONFIG, COLOURS } from './config.js';
 
 // export class EntityManager {
 //   constructor() {
