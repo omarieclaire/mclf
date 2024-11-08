@@ -232,54 +232,53 @@
           return this.speed > 0 ? this.y < this.config.GAME.HEIGHT + 2 : this.y + this.height > -2;
         }
       }
-      
+
       class Streetcar extends BaseObstacle {
-  constructor(config, collisionManager) {
-    const spawnConfig = collisionManager.getSpawnConfig("streetcar");
-    super(
-      spawnConfig.x,
-      spawnConfig.y,
-      {
-        type: "STREETCAR",
-        art: ENTITIES.STREETCAR.art,
-        width: ENTITIES.STREETCAR.width,
-        height: ENTITIES.STREETCAR.height,
-        speed: spawnConfig.speed,
-        color: STYLES.TTC,
-      },
-      config
-    );
-  }
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("streetcar");
+          super(
+            spawnConfig.x,
+            spawnConfig.y,
+            {
+              type: "STREETCAR",
+              art: ENTITIES.STREETCAR.art,
+              width: ENTITIES.STREETCAR.width,
+              height: ENTITIES.STREETCAR.height,
+              speed: spawnConfig.speed,
+              color: STYLES.TTC,
+            },
+            config
+          );
+        }
 
-  update() {
-    const updatedY = this.y - 1;
-    this.y = updatedY;
-    this.hitbox.y = updatedY;
-    return this.y + this.height > -2;
-  }
-}
+        update() {
+          const updatedY = this.y - 1;
+          this.y = updatedY;
+          this.hitbox.y = updatedY;
+          return this.y + this.height > -2;
+        }
+      }
 
-class StreetcarLaneCar extends BaseObstacle {
-  constructor(config, collisionManager) {
-    const spawnConfig = collisionManager.getSpawnConfig("streetcarLaneCar");
-    const vehicleColor = COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
+      class StreetcarLaneCar extends BaseObstacle {
+        constructor(config, collisionManager) {
+          const spawnConfig = collisionManager.getSpawnConfig("streetcarLaneCar");
+          const vehicleColor = COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
 
-    super(
-      spawnConfig.x,
-      spawnConfig.y,
-      {
-        type: "STREETCAR_LANE_CAR",
-        art: ENTITIES.MOVINGCAR.art,
-        width: ENTITIES.MOVINGCAR.width,
-        height: ENTITIES.MOVINGCAR.height,
-        speed: spawnConfig.speed,
-        color: `<span style='color: ${vehicleColor}'>`,
-      },
-      config
-    );
-  }
-}
-
+          super(
+            spawnConfig.x,
+            spawnConfig.y,
+            {
+              type: "STREETCAR_LANE_CAR",
+              art: ENTITIES.MOVINGCAR.art,
+              width: ENTITIES.MOVINGCAR.width,
+              height: ENTITIES.MOVINGCAR.height,
+              speed: spawnConfig.speed,
+              color: `<span style='color: ${vehicleColor}'>`,
+            },
+            config
+          );
+        }
+      }
 
       class OncomingCar extends BaseObstacle {
         constructor(config, collisionManager) {
@@ -304,13 +303,23 @@ class StreetcarLaneCar extends BaseObstacle {
       }
 
       class Building extends BaseObstacle {
+        static nextSpawnY = null;
+
         constructor(config, spawnY = null) {
           const randomShop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
           const buildingHeight = randomShop.art.length;
 
+          // If spawnY is provided, use it directly
+          // Otherwise, place it just above the highest existing building
+          if (spawnY === null) {
+            // Find the current highest building's position
+            const highestY = Building.nextSpawnY || 0;
+            spawnY = highestY - buildingHeight; // Place directly above the highest building
+          }
+
           super(
             config.LANES.SHOPS,
-            spawnY || 0,
+            spawnY,
             {
               type: "BUILDING",
               art: randomShop.art,
@@ -321,6 +330,13 @@ class StreetcarLaneCar extends BaseObstacle {
             },
             config
           );
+
+          // Update the next spawn position to be at the top of this building
+          Building.nextSpawnY = this.y;
+        }
+
+        static resetSpawnPosition() {
+          Building.nextSpawnY = null;
         }
       }
       class ParkedCar extends BaseObstacle {
@@ -1032,7 +1048,7 @@ class StreetcarLaneCar extends BaseObstacle {
         }
 
         restart() {
-          Building.resetSpawnPosition(); // Add this line
+          Building.resetSpawnPosition();
           this.collisionManager = new CollisionManager(CONFIG);
           this.obstacleManager = new ObstacleManager(CONFIG, this.collisionManager);
           this.initializeState();
