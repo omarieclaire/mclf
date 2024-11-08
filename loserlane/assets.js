@@ -21,24 +21,24 @@ const ENTITIES = {
     PEDESTRIAN: {
         UP: {
             art: [
-                " ○ ", 
-                " ╽ "
+                "○", 
+                "╽"
             ],
             width: 1,
             height: 2
         },
         DOWN: {
             art: [
-                " ○ ", 
-                " ╿ "
+                "○", 
+                "╿"
             ],
             width: 1,
             height: 2
         },
         CROSSING: {
             art: [
-                " ○ ", 
-                " ╿ "
+                "○", 
+                "╿"
             ],
             width: 1,
             height: 2
