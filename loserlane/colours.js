@@ -2,7 +2,7 @@ const STYLES = {
   RESET: "</span>",
   TRAFFIC: "<span style='color: #FFFF00'>", // Yellow
   TTC: "<span style='color: #FF0000; background-color: #660000'>", // Red with Dark Red background
-  BIKE: "<span style='color: #FFAAAA'>", // Light Pink
+  BIKE: "<span style='color: #00FFFF'>", // Cyan
   PARKED: "<span style='color: #AAAAAA'>", // Medium Gray
   PEDESTRIAN: "<span style='color: #00FFFF'>", // Cyan
   SIDEWALK: "<span style='background-color: #333333'>", // Dark Gray
