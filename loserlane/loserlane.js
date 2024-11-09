@@ -52,7 +52,99 @@ const CONFIG = {
   },
 };
 
-// Types and Interfaces
+class GameState {
+  constructor(config) {
+    this.config = config;
+    this.reset();
+  }
+
+  reset() {
+    // Game status
+    this.isDead = false;
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.score = 0;
+
+    // Player position and movement
+    this.currentLane = this.config.LANES.BIKE;
+    this.isJumping = false;
+
+    // Movement controls
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      movementSpeed: this.config.GAME.INITIAL_SPEED,
+      moveInterval: null,
+    };
+
+    // Touch control state
+    this.touchState = {
+      lastTap: 0,
+      doubleTapActive: false,
+    };
+
+    // Death animation state
+    this.deathState = {
+      animation: 0,
+      x: 0,
+      y: 0,
+    };
+
+    // Game speed
+    this.speed = this.config.GAME.INITIAL_SPEED;
+  }
+
+  // Movement state methods
+  startMoving(direction) {
+    this.movementState[`isMoving${direction}`] = true;
+  }
+
+  stopMoving(direction) {
+    this.movementState[`isMoving${direction}`] = false;
+  }
+
+  // Touch control methods
+  updateTapState(timestamp) {
+    this.touchState.lastTap = timestamp;
+  }
+
+  setDoubleTapState(active) {
+    this.touchState.doubleTapActive = active;
+  }
+
+  // Death state methods
+  setDeathState(x, y) {
+    this.isDead = true;
+    this.deathState.x = x;
+    this.deathState.y = y;
+    this.deathState.animation = 0;
+  }
+
+  updateDeathAnimation() {
+    if (this.isDead) {
+      this.deathState.animation++;
+      return this.deathState.animation > 10;
+    }
+    return false;
+  }
+
+  // Game state methods
+  togglePause() {
+    this.isPaused = !this.isPaused;
+    return this.isPaused;
+  }
+
+  updateSpeed() {
+    this.speed = Math.max(this.speed * this.config.GAME.SPEED_DECREASE_RATE, this.config.GAME.MIN_SPEED);
+    return this.speed;
+  }
+
+  incrementScore() {
+    this.score++;
+    return this.score;
+  }
+}
+
 class Position {
   constructor(x, y) {
     this.x = x;
@@ -839,26 +931,11 @@ class PedestrianBehavior extends EntityBehavior {
         const newX = Math.round(this.entity.position.x);
         const newY = Math.round(this.entity.position.y + this.baseSpeed);
 
-        // console.log("Pedestrian Position:", {
-        //   old: { x: oldX, y: oldY },
-        //   new: { x: newX, y: newY },
-        //   baseSpeed: this.baseSpeed,
-        //   rounded: {
-        //     x: Math.round(newX),
-        //     y: Math.round(newY),
-        //   },
-        // });
-
         const newPosition = new Position(newX, newY);
 
         if (this.canMoveTo(newPosition)) {
           this.entity.position.x = Math.round(newPosition.x);
           this.entity.position.y = Math.round(newPosition.y);
-
-          // console.log("Position Updated:", {
-          //   x: this.entity.position.x,
-          //   y: this.entity.position.y,
-          // });
         }
         this.stepCounter = 0;
       }
@@ -1042,16 +1119,16 @@ class Building extends BaseEntity {
 
 class LoserLane {
   constructor() {
+    this.state = new GameState(CONFIG); // This is the key change
     this.spatialManager = new SpatialManager(CONFIG);
     this.eventListeners = new Map();
-    this.initializeState();
     this.setupControls();
     this.setupTouchControls();
     this.grid = this.createGrid();
     this.debug = true;
-
-    // Initialize settings manager with reference to this game instance
+    this.preventDefaultTouchBehaviors();
     this.settingsManager = new SettingsManager(this);
+    this.initializeGameWorld(); // Moved this here
   }
 
   addEventListenerWithTracking(element, type, handler, options = false) {
@@ -1062,28 +1139,48 @@ class LoserLane {
     this.eventListeners.get(element).push({ type, handler, options });
   }
 
-  // State Management
-  initializeState() {
-    this.state = {
-      isDead: false,
-      score: 0,
-      currentLane: CONFIG.LANES.BIKE,
-      speed: CONFIG.GAME.INITIAL_SPEED,
-      deathAnimation: 0,
-      lastTap: 0,
-      doubleTapActive: false,
-      isJumping: false,
-      moveInterval: null,
-      movementSpeed: 100,
-      isMovingLeft: false,
-      isMovingRight: false,
-      lastKeyPress: 0,
-      isPlaying: false,
-      deathX: 0,
-      deathY: 0,
-    };
+  // Add this method if it's missing
+  updatePlayerPosition() {
+    this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
+  }
 
-    this.initializeGameWorld();
+  // Update the existing update() method to match this:
+  update() {
+    if (this.state.isDead) {
+      if (this.state.updateDeathAnimation()) {
+        this.cleanup();
+      }
+      this.render();
+      return;
+    }
+
+    if (this.state.isPaused) return;
+
+    this.spatialManager.update();
+    this.updatePlayerPosition();
+    this.spawnEntities();
+    this.checkPlayerCollisions();
+    this.updateGameState();
+    this.render();
+  }
+
+  // Also add this method if it's missing
+  updateGameState() {
+    this.state.incrementScore();
+    this.state.updateSpeed();
+
+    clearInterval(this.gameLoop);
+    this.gameLoop = setInterval(() => this.update(), this.state.speed);
+
+    this.updateScoreDisplay();
+  }
+
+  // And this helper method
+  updateScoreDisplay() {
+    const scoreElement = document.getElementById("time-alive");
+    if (scoreElement) {
+      scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
+    }
   }
 
   initializeGameWorld() {
@@ -1230,45 +1327,41 @@ class LoserLane {
     if (this.state.isDead) return;
 
     const now = Date.now();
-    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.touchState.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-    // Use smaller movement for touch taps, but keep double-tap jump consistent
+    // Use smaller movement for touch taps
     const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-    const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-    this.state.currentLane = newLane;
-    this.state.isJumping = isDoubleTapJump;
+    this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
 
+    this.state.isJumping = isDoubleTapJump;
     if (isDoubleTapJump) {
       setTimeout(() => {
         this.state.isJumping = false;
       }, 200);
     }
 
-    this.state.lastTap = now;
+    this.state.touchState.lastTap = now;
   }
 
   moveRight(isDoubleTap = false, isTouchMove = false) {
     if (this.state.isDead) return;
 
     const now = Date.now();
-    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.touchState.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-    // Use smaller movement for touch taps, but keep double-tap jump consistent
     const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-    const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
-    this.state.currentLane = newLane;
-    this.state.isJumping = isDoubleTapJump;
+    this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
 
+    this.state.isJumping = isDoubleTapJump;
     if (isDoubleTapJump) {
       setTimeout(() => {
         this.state.isJumping = false;
       }, 200);
     }
 
-    this.state.lastTap = now;
+    this.state.touchState.lastTap = now;
   }
 
-  // Game State Management
   start() {
     if (this.state.isPlaying) return;
 
@@ -1299,28 +1392,23 @@ class LoserLane {
 
   update() {
     if (this.state.isDead) {
-      this.handleDeathAnimation();
+      this.state.deathState.animation++;
+      if (this.state.deathState.animation > 10) {
+        clearInterval(this.gameLoop);
+        this.state.isPlaying = false;
+        return;
+      }
+      this.render();
       return;
     }
 
     if (this.state.isPaused) return;
 
-    // Update spatial management systems
     this.spatialManager.update();
-
-    // Update player position
-    this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
-
-    // Spawn new entities
+    this.updatePlayerPosition();
     this.spawnEntities();
-
-    // Check for collisions with player
     this.checkPlayerCollisions();
-
-    // Update score and speed
-    this.updateScore();
-
-    // Render the game
+    this.updateGameState();
     this.render();
   }
 
@@ -1515,15 +1603,12 @@ class LoserLane {
   }
 
   render() {
-    if (this.state.isDead && this.state.deathAnimation >= 10) return;
+    if (this.state.isDead && this.state.deathState.animation >= 10) return;
 
     this.grid = this.createGrid();
-
     this.drawRoadFeatures();
-    // if (this.debug) this.drawHitboxes();
-
+    if (this.debug) this.drawHitboxes();
     this.drawPlayer();
-
     this.drawEntities();
 
     const gameScreen = document.getElementById("game-screen");
@@ -1579,20 +1664,20 @@ class LoserLane {
   }
 
   drawPlayer() {
-    if (this.state.isDead && this.state.deathAnimation < 10) {
+    if (this.state.isDead && this.state.deathState.animation < 10) {
       ENTITIES.EXPLOSION.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
-          if (this.state.deathY + i < CONFIG.GAME.HEIGHT) {
-            this.grid[this.state.deathY + i][this.state.deathX + x] = STYLES.TRAFFIC + char + STYLES.RESET;
+          if (this.state.deathState.y + i < CONFIG.GAME.HEIGHT) {
+            this.grid[this.state.deathState.y + i][this.state.deathState.x + x] = STYLES.TRAFFIC + char + STYLES.RESET;
           }
         });
       });
     } else if (!this.state.isDead) {
       const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
+
       ENTITIES.BIKE.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
           if (char !== " ") {
-            // Wrap each character with a light yellow background
             this.grid[bikeY + i][this.state.currentLane + x] = `<span class="bike-highlight">${char}</span>`;
           }
         });
@@ -1660,12 +1745,13 @@ class LoserLane {
 
   // Game Reset
   restart() {
-    this.cleanup(); // Add this line
+    this.cleanup();
     Building.nextSpawnY = null;
     this.spatialManager = new SpatialManager(CONFIG);
-    this.initializeState();
-    this.setupControls(); // Add this line
-    this.setupTouchControls(); // Add this line
+    this.state = new GameState(CONFIG); // Use GameState instead of initializeState
+    this.initializeGameWorld();
+    this.setupControls();
+    this.setupTouchControls();
     this.start();
 
     const messageBox = document.getElementById("mainMessageBox");
