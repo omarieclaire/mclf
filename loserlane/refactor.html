@@ -151,10 +151,9 @@
           MIN_SPEED: 300,
           SPEED_DECREASE_RATE: 0.995,
           CYCLIST_Y: Math.floor(window.innerHeight / 40),
-          // DOUBLE_TAP_WINDOW: 500, // Increased from 400ms
-          DOUBLE_TAP_TIME: 350,
-          // TAP_RESET_DELAY: 600, // Increased from 500ms
-          // JUMP_DURATION: 300, // Increased from 200ms
+          DOUBLE_TAP_WINDOW: 500, // Increased from 400ms
+          TAP_RESET_DELAY: 600, // Increased from 500ms
+          JUMP_DURATION: 300, // Increased from 200ms
           lastKeys: {
             left: 0,
             right: 0,
@@ -776,6 +775,7 @@
           this.stopSchedule.push({ position, duration });
         }
       }
+
       class ParkedCarBehavior extends EntityBehavior {
         constructor(entity) {
           super(entity);
@@ -784,25 +784,25 @@
           this.doorTimer = 0;
           this.speed = 1;
           this.doorHitbox = null;
-
-          this.shouldOpenDoor = true;
+          // Only open doors after first 20 cars
+          this.shouldOpenDoor = Math.random() < 0.2 && entity.spatialManager?.entities.size > 20;
           this.doorAnimationActive = false;
           this.lastDoorUpdate = Date.now();
           this.doorOpenDelay = 50;
 
-          // Adjusted target percentage for earlier door opening
-          const targetPercentage = 0.3 + Math.random() * 0.1;
-          this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
-          console.log("Door should open around Y position:", this.doorOpenY);
+          if (this.shouldOpenDoor) {
+            const targetPercentage = 0.4 + Math.random() * 0.2;
+            this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
+          }
         }
 
         update() {
+          // Move the car first
           const newPosition = new Position(this.entity.position.x, this.entity.position.y + this.speed);
+
           this.entity.position = newPosition;
 
-          console.log(`Car at Y position ${this.entity.position.y}`);
-
-          // Check if door should start opening
+          // Handle door animation if needed
           if (
             this.shouldOpenDoor &&
             !this.doorAnimationActive &&
@@ -810,11 +810,9 @@
             this.entity.position.y <= this.doorOpenY + 2
           ) {
             this.doorAnimationActive = true;
-            console.log("Starting door opening animation at Y position:", this.entity.position.y);
-            this.updateDoorState(); // Call to update the door state
+            this.updateDoorState();
           }
 
-          // Continue the door animation if it's active
           if (
             this.doorAnimationActive &&
             this.doorState < ENTITIES.PARKED_CAR_STATES.length - 1 &&
@@ -823,13 +821,12 @@
             this.updateDoorState();
           }
 
+          // Update door hitbox position if it exists
           if (this.doorHitbox) {
             this.doorHitbox.y = this.entity.position.y + 1;
-            console.log("Updated door hitbox:", this.doorHitbox);
           }
         }
 
-        // Define the updateDoorState method within the ParkedCarBehavior class
         updateDoorState() {
           this.doorState++;
           this.lastDoorUpdate = Date.now();
@@ -837,14 +834,13 @@
 
           const doorWidths = [0, 0.8, 1, 1.5, 1.8];
           const doorWidth = doorWidths[this.doorState];
+
           this.doorHitbox = {
-            x: this.entity.position.x,
+            x: this.entity.position.x, // Removed -1 offset
             y: this.entity.position.y + 1,
             width: doorWidth,
             height: 1.8,
           };
-
-          console.log(`Door state updated to ${this.doorState}, new hitbox width: ${doorWidth}`);
         }
       }
 
@@ -1154,16 +1150,7 @@
             isMovingRight: false,
             lastKeyPress: 0,
             isPlaying: false,
-            // lastTap: 0,
-            // doubleTapActive: false,
-            // isJumping: false,
-            // moveInterval: null,
-            // movementSpeed: 100,
-            // isMovingLeft: false,
-            // isMovingRight: false,
-            // lastKeyPress: 0,
-            // isPlaying: false,
-            // isPaused: false,
+            isPaused: false,
             deathX: 0,
             deathY: 0,
           };
@@ -1317,86 +1304,40 @@
         }
 
         // Modify move functions to support double-tap jumping
-        // moveLeft(isDoubleTap = false) {
-        //   if (this.state.isDead || this.state.isPaused) return;
+        moveLeft(isDoubleTap = false) {
+          if (this.state.isDead || this.state.isPaused) return;
 
-        //   const moveAmount = isDoubleTap ? 2 : 1;
-        //   const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-        //   this.state.currentLane = newLane;
-        //   this.state.isJumping = isDoubleTap;
+          const moveAmount = isDoubleTap ? 2 : 1;
+          const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+          this.state.currentLane = newLane;
+          this.state.isJumping = isDoubleTap;
 
-        //   // Update player position
-        //   this.player.position.x = newLane;
-
-        //   if (isDoubleTap) {
-        //     setTimeout(() => {
-        //       this.state.isJumping = false;
-        //     }, 200);
-        //   }
-        // }
-
-        // moveRight(isDoubleTap = false) {
-        //   if (this.state.isDead || this.state.isPaused) return;
-
-        //   const moveAmount = isDoubleTap ? 2 : 1;
-        //   const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
-        //   this.state.currentLane = newLane;
-        //   this.state.isJumping = isDoubleTap;
-
-        //   // Update player position
-        //   this.player.position.x = newLane;
-
-        //   if (isDoubleTap) {
-        //     setTimeout(() => {
-        //       this.state.isJumping = false;
-        //     }, 200);
-        //   }
-        // }
-
-        moveLeft() {
-          if (this.state.isDead) return;
-
-          const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+          // Update player position
+          this.player.position.x = newLane;
 
           if (isDoubleTap) {
-            const newLane = Math.max(this.state.currentLane - 2, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
             setTimeout(() => {
               this.state.isJumping = false;
             }, 200);
-          } else {
-            const newLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
           }
-
-          this.state.lastTap = now;
         }
 
-        moveRight() {
-          if (this.state.isDead) return;
+        moveRight(isDoubleTap = false) {
+          if (this.state.isDead || this.state.isPaused) return;
 
-          const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+          const moveAmount = isDoubleTap ? 2 : 1;
+          const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+          this.state.currentLane = newLane;
+          this.state.isJumping = isDoubleTap;
+
+          // Update player position
+          this.player.position.x = newLane;
 
           if (isDoubleTap) {
-            const newLane = Math.min(this.state.currentLane + 2, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
-
             setTimeout(() => {
               this.state.isJumping = false;
             }, 200);
-          } else {
-            const newLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
           }
-
-          this.state.lastTap = now;
         }
 
         // Game State Management
@@ -1597,8 +1538,8 @@
           this.spatialManager.entities.forEach((entity) => {
             const hitbox = entity.getHitbox();
 
-            if (hitbox && entity.type === EntityType.PEDESTRIAN) {
-              //lol
+            
+            if (hitbox && entity.type === EntityType.PEDESTRIAN) { //lol
               let color;
               if (entity.type === EntityType.PEDESTRIAN) {
                 color = "rgb(255, 45, 45)";
@@ -1637,7 +1578,8 @@
           this.drawPlayer();
 
           this.drawEntities();
-          if (this.debug) this.drawHitboxes();
+          if (this.debug) this.drawHitboxes(); 
+
 
           const gameScreen = document.getElementById("game-screen");
           if (gameScreen) {
@@ -1688,26 +1630,26 @@
         }
 
         drawPlayer() {
-          if (this.state.isDead && this.state.deathAnimation < 10) {
-            ENTITIES.EXPLOSION.art.forEach((line, i) => {
-              line.split("").forEach((char, x) => {
-                if (this.state.deathY + i < CONFIG.GAME.HEIGHT) {
-                  this.grid[this.state.deathY + i][this.state.deathX + x] = STYLES.TRAFFIC + char + STYLES.RESET;
-                }
-              });
-            });
-          } else if (!this.state.isDead) {
-            const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
-            ENTITIES.BIKE.art.forEach((line, i) => {
-              line.split("").forEach((char, x) => {
-                if (char !== " ") {
-                  // Wrap each character with a light yellow background
-                  this.grid[bikeY + i][this.state.currentLane + x] = `<span class="bike-highlight">${char}</span>`;
-                }
-              });
-            });
-          }
+  if (this.state.isDead && this.state.deathAnimation < 10) {
+    ENTITIES.EXPLOSION.art.forEach((line, i) => {
+      line.split("").forEach((char, x) => {
+        if (this.state.deathY + i < CONFIG.GAME.HEIGHT) {
+          this.grid[this.state.deathY + i][this.state.deathX + x] = STYLES.TRAFFIC + char + STYLES.RESET;
         }
+      });
+    });
+  } else if (!this.state.isDead) {
+    const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
+    ENTITIES.BIKE.art.forEach((line, i) => {
+      line.split("").forEach((char, x) => {
+        if (char !== " ") {
+          // Wrap each character with a light yellow background
+          this.grid[bikeY + i][this.state.currentLane + x] = `<span class="bike-highlight">${char}</span>`;
+        }
+      });
+    });
+  }
+}
         // Death Handling
         die(reason) {
           this.state.isDead = true;
