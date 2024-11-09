@@ -290,6 +290,121 @@ class GridSystem {
   }
 }
 
+class OptimizedGridSystem {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+    this.grid = this.createInitialGrid();
+    this.cellPool = [];
+    this.dirtyRegions = new Set(); // Track regions that need updates
+    this.initializeCellPool(100); // Pre-allocate some cells
+  }
+
+  createInitialGrid() {
+    return Array(this.height)
+      .fill()
+      .map(() =>
+        Array(this.width)
+          .fill()
+          .map(() => ({
+            content: " ",
+            style: null,
+            dirty: true,
+          }))
+      );
+  }
+
+  initializeCellPool(size) {
+    for (let i = 0; i < size; i++) {
+      this.cellPool.push({
+        content: " ",
+        style: null,
+        dirty: false,
+      });
+    }
+  }
+
+  getCellFromPool() {
+    if (this.cellPool.length > 0) {
+      return this.cellPool.pop();
+    }
+    return {
+      content: " ",
+      style: null,
+      dirty: false,
+    };
+  }
+
+  returnCellToPool(cell) {
+    cell.content = " ";
+    cell.style = null;
+    cell.dirty = false;
+    this.cellPool.push(cell);
+  }
+
+  markRegionDirty(x1, y1, x2, y2) {
+    for (let y = Math.max(0, y1); y < Math.min(this.height, y2); y++) {
+      for (let x = Math.max(0, x1); x < Math.min(this.width, x2); x++) {
+        this.grid[y][x].dirty = true;
+        this.dirtyRegions.add(`${x},${y}`);
+      }
+    }
+  }
+
+  updateCell(x, y, content, style = null) {
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+      return;
+    }
+
+    const cell = this.grid[y][x];
+    if (cell.content !== content || cell.style !== style) {
+      cell.content = content;
+      cell.style = style;
+      cell.dirty = true;
+      this.dirtyRegions.add(`${x},${y}`);
+    }
+  }
+
+  clear() {
+    // Only clear cells that were used
+    this.dirtyRegions.forEach((key) => {
+      const [x, y] = key.split(",").map(Number);
+      const cell = this.grid[y][x];
+      this.returnCellToPool(cell);
+      this.grid[y][x] = this.getCellFromPool();
+    });
+    this.dirtyRegions.clear();
+  }
+
+  render() {
+    let output = [];
+    let currentRow = [];
+    let lastStyle = null;
+
+    for (let y = 0; y < this.height; y++) {
+      currentRow = [];
+      for (let x = 0; x < this.width; x++) {
+        const cell = this.grid[y][x];
+        if (cell.style !== lastStyle) {
+          if (lastStyle !== null) {
+            currentRow.push(STYLES.RESET);
+          }
+          if (cell.style !== null) {
+            currentRow.push(cell.style);
+          }
+          lastStyle = cell.style;
+        }
+        currentRow.push(cell.content);
+      }
+      if (lastStyle !== null) {
+        currentRow.push(STYLES.RESET);
+      }
+      output.push(currentRow.join(""));
+    }
+    return output.join("\n");
+  }
+}
+
 class SettingsManager {
   constructor(game) {
     this.game = game;
@@ -390,7 +505,6 @@ class CollisionManager {
   }
 
   checkCollision(hitboxA, hitboxB) {
-    // Basic AABB collision detection with hitboxes directly
     return !(
       hitboxA.x + hitboxA.width <= hitboxB.x ||
       hitboxA.x >= hitboxB.x + hitboxB.width ||
@@ -398,7 +512,6 @@ class CollisionManager {
       hitboxA.y >= hitboxB.y + hitboxB.height
     );
   }
-
   checkPlayerCollision(playerHitbox, entities, isJumping) {
     // First check streetcars and other vehicles
     for (const obstacle of entities.obstacles) {
@@ -918,7 +1031,7 @@ class PedestrianBehavior extends EntityBehavior {
     this.baseSpeed = isGoingUp ? -1 : 1;
     this.crossingState = "WALKING";
     this.stepCounter = 0; // Add step counter for slower movement
-    this.moveEveryNFrames = 3; // Only move every 3 frames
+    this.moveEveryNFrames = 3;
   }
 
   update() {
@@ -1124,11 +1237,15 @@ class LoserLane {
     this.eventListeners = new Map();
     this.setupControls();
     this.setupTouchControls();
-    this.grid = this.createGrid();
+    // this.grid = this.createGrid();
+    this.gridSystem = new OptimizedGridSystem(CONFIG.GAME.WIDTH, CONFIG.GAME.HEIGHT);
+
     this.debug = true;
     this.preventDefaultTouchBehaviors();
     this.settingsManager = new SettingsManager(this);
-    this.initializeGameWorld(); // Moved this here
+    this.initializeGameWorld(); 
+    this.lastFrameTime = 0;
+    this.frameId = null;
   }
 
   addEventListenerWithTracking(element, type, handler, options = false) {
@@ -1506,11 +1623,11 @@ class LoserLane {
   }
 
   // Rendering
-  createGrid() {
-    return Array(CONFIG.GAME.HEIGHT)
-      .fill()
-      .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
-  }
+  // createGrid() {
+  //   return Array(CONFIG.GAME.HEIGHT)
+  //     .fill()
+  //     .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
+  // }
 
   drawHitbox(hitbox, char, color) {
     if (
@@ -1556,56 +1673,106 @@ class LoserLane {
   }
 
   drawHitboxes() {
-    this.spatialManager.entities.forEach((entity) => {
-      const hitbox = entity.getHitbox();
-
-      if (hitbox) {
-        let color;
-        switch (entity.type) {
-          case EntityType.PEDESTRIAN:
-            color = "rgb(255, 20, 147)"; // Hot pink
-            break;
-          case EntityType.STREETCAR:
-            color = "rgb(255, 165, 0)"; // Orange
-            break;
-          case EntityType.STREETCAR_LANE_CAR:
-            color = "rgb(0, 191, 255)"; // Deep sky blue
-            break;
-          case EntityType.ONCOMING_CAR:
-            color = "rgb(50, 205, 50)"; // Lime green
-            break;
-          case EntityType.PARKED_CAR:
-            color = "rgb(138, 43, 226)"; // Blue violet
-            break;
-          case EntityType.BUILDING:
-            color = "rgb(255, 215, 0)"; // Gold
-            break;
-          default:
-            color = "rgb(45, 45, 45)"; // Default grey
-        }
-        this.drawHitbox(hitbox, " ", color);
-      }
-
-      // Draw door hitbox for parked cars
-      if (entity.type === EntityType.PARKED_CAR && entity.behavior.doorHitbox) {
-        this.drawHitbox(entity.behavior.doorHitbox, "+", "rgb(255, 0, 0)"); // Keep door hitboxes red
-      }
-    });
-
-    // Draw player hitbox in cyan
+    // Create player hitbox first since we need it
     const playerHitbox = {
       x: this.state.currentLane,
       y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
       width: ENTITIES.BIKE.width,
       height: ENTITIES.BIKE.height,
     };
-    this.drawHitbox(playerHitbox, " ", "rgb(0, 255, 255)");
-  }
 
+    this.spatialManager.entities.forEach((entity) => {
+      const hitbox = entity.getHitbox();
+      if (hitbox) {
+        let color;
+        switch (entity.type) {
+          case EntityType.PEDESTRIAN:
+            color = "rgb(255, 20, 147)";
+            break;
+          case EntityType.STREETCAR:
+            color = "rgb(255, 165, 0)";
+            break;
+          case EntityType.STREETCAR_LANE_CAR:
+            color = "rgb(0, 191, 255)";
+            break;
+          case EntityType.ONCOMING_CAR:
+            color = "rgb(50, 205, 50)";
+            break;
+          case EntityType.PARKED_CAR:
+            color = "rgb(138, 43, 226)";
+            break;
+          case EntityType.BUILDING:
+            color = "rgb(255, 215, 0)";
+            break;
+          default:
+            color = "rgb(45, 45, 45)";
+        }
+
+        // Mark region as dirty and update cells
+        this.gridSystem.markRegionDirty(
+          Math.floor(hitbox.x),
+          Math.floor(hitbox.y),
+          Math.ceil(hitbox.x + hitbox.width),
+          Math.ceil(hitbox.y + hitbox.height)
+        );
+
+        // Draw hitbox using the existing content with background
+        for (let y = Math.floor(hitbox.y); y < Math.ceil(hitbox.y + hitbox.height); y++) {
+          for (let x = Math.floor(hitbox.x); x < Math.ceil(hitbox.x + hitbox.width); x++) {
+            if (y >= 0 && y < CONFIG.GAME.HEIGHT && x >= 0 && x < CONFIG.GAME.WIDTH) {
+              const cell = this.gridSystem.grid[y][x];
+              this.gridSystem.updateCell(
+                x,
+                y,
+                cell.content,
+                `<span style='background-color: ${color.replace("rgb", "rgba").replace(")", ", 0.3)")}'>` + (cell.style || "")
+              );
+            }
+          }
+        }
+      }
+
+      // Handle door hitboxes
+      if (entity.type === EntityType.PARKED_CAR && entity.behavior.doorHitbox) {
+        const doorHitbox = entity.behavior.doorHitbox;
+        this.gridSystem.markRegionDirty(
+          Math.floor(doorHitbox.x),
+          Math.floor(doorHitbox.y),
+          Math.ceil(doorHitbox.x + doorHitbox.width),
+          Math.ceil(doorHitbox.y + doorHitbox.height)
+        );
+      }
+    });
+
+    // Draw player hitbox
+    const playerColor = "rgb(0, 255, 255)"; // Cyan
+    this.gridSystem.markRegionDirty(
+      Math.floor(playerHitbox.x),
+      Math.floor(playerHitbox.y),
+      Math.ceil(playerHitbox.x + playerHitbox.width),
+      Math.ceil(playerHitbox.y + playerHitbox.height)
+    );
+
+    for (let y = Math.floor(playerHitbox.y); y < Math.ceil(playerHitbox.y + playerHitbox.height); y++) {
+      for (let x = Math.floor(playerHitbox.x); x < Math.ceil(playerHitbox.x + playerHitbox.width); x++) {
+        if (y >= 0 && y < CONFIG.GAME.HEIGHT && x >= 0 && x < CONFIG.GAME.WIDTH) {
+          const cell = this.gridSystem.grid[y][x];
+          this.gridSystem.updateCell(
+            x,
+            y,
+            cell.content,
+            `<span style='background-color: ${playerColor.replace("rgb", "rgba").replace(")", ", 0.3)")}'>` + (cell.style || "")
+          );
+        }
+      }
+    }
+  }
   render() {
     if (this.state.isDead && this.state.deathState.animation >= 10) return;
 
-    this.grid = this.createGrid();
+    // this.grid = this.createGrid();
+    this.gridSystem.clear();
+
     this.drawRoadFeatures();
     // if (this.debug) this.drawHitboxes();
     this.drawPlayer();
@@ -1613,23 +1780,24 @@ class LoserLane {
 
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
-      gameScreen.innerHTML = this.grid.map((row) => row.map((cell) => `<span class="grid-cell">${cell}</span>`).join("")).join("<br />");
+      gameScreen.innerHTML = this.gridSystem.render();
     }
   }
 
   drawRoadFeatures() {
     for (let y = 0; y < CONFIG.GAME.HEIGHT; y++) {
-      this.grid[y][CONFIG.LANES.DIVIDER] = STYLES.TRAFFIC + "║" + STYLES.RESET;
-      this.grid[y][CONFIG.LANES.DIVIDER + 1] = STYLES.TRAFFIC + "║" + STYLES.RESET;
-      this.grid[y][CONFIG.LANES.TRACKS + 1] = STYLES.TRACKS + "║" + STYLES.RESET;
-      this.grid[y][CONFIG.LANES.TRACKS + 5] = STYLES.TRACKS + "║" + STYLES.RESET;
+      // Only update road features if they're in dirty regions
+      this.gridSystem.updateCell(CONFIG.LANES.DIVIDER, y, "║", STYLES.TRAFFIC);
+      this.gridSystem.updateCell(CONFIG.LANES.DIVIDER + 1, y, "║", STYLES.TRAFFIC);
+      this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 1, y, "║", STYLES.TRACKS);
+      this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 5, y, "║", STYLES.TRACKS);
 
       if (y % 3 === 0) {
-        this.grid[y][CONFIG.LANES.BIKE - 1] = STYLES.TRAFFIC + " " + STYLES.RESET;
+        this.gridSystem.updateCell(CONFIG.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
       }
 
       for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.SHOPS; x++) {
-        this.grid[y][x] = STYLES.SIDEWALK + " " + STYLES.RESET;
+        this.gridSystem.updateCell(x, y, " ", STYLES.SIDEWALK);
       }
     }
   }
@@ -1646,16 +1814,14 @@ class LoserLane {
     if (!entity || !entity.art) return;
 
     if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+      // Mark the entity's region as dirty
+      this.gridSystem.markRegionDirty(entity.position.x, entity.position.y, entity.position.x + entity.width, entity.position.y + entity.height);
+
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-              // Special handling for pedestrians
-              if (entity.type === EntityType.PEDESTRIAN) {
-                this.grid[Math.floor(entity.position.y + i)][entity.position.x + x] = `<span>${entity.color + char + STYLES.RESET}</span>`;
-              } else {
-                this.grid[Math.floor(entity.position.y + i)][entity.position.x + x] = entity.color + char + STYLES.RESET;
-              }
+              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), char, entity.color);
             }
           });
         }
@@ -1668,7 +1834,7 @@ class LoserLane {
       ENTITIES.EXPLOSION.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
           if (this.state.deathState.y + i < CONFIG.GAME.HEIGHT) {
-            this.grid[this.state.deathState.y + i][this.state.deathState.x + x] = STYLES.TRAFFIC + char + STYLES.RESET;
+            this.gridSystem.updateCell(this.state.deathState.x + x, this.state.deathState.y + i, char, STYLES.TRAFFIC);
           }
         });
       });
@@ -1679,14 +1845,14 @@ class LoserLane {
           if (char !== " ") {
             const gridX = Math.round(this.state.currentLane + x);
             if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
-              this.grid[bikeY + i][gridX] = `<span class="bike-highlight">${char}</span>`;
+              this.gridSystem.updateCell(gridX, bikeY + i, char, STYLES.BIKE);
             }
           }
         });
       });
     }
   }
-  
+
   // Death Handling
   die(reason) {
     this.state.isDead = true;
