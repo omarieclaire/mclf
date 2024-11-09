@@ -106,8 +106,8 @@
       <div id="mainMessageBox">
         <!-- <span id="gameTitle">L O S E R ~ L A N E</span><br /><br /> -->
 
-        CLICK or SPACEBAR to start<br /><br />
-        LEFT/RIGHT arrow keys or CLICK sides to move<br /><br />
+        CLICK/SPACEBAR to play <br /><br />
+        LEFT/RIGHT arrow keys or TAP sides to move<br /><br />
         DOUBLE-TAP to jump tracks!
       </div>
       <br />
@@ -115,11 +115,11 @@
         <div class="control-area" id="move-left"></div>
         <div class="control-area" id="move-right"></div>
       </div>
-      <div class="info-box">
+      <div class="title-box">
         <!-- <div id="title">L O S E R ~ L A N E</div>
         <div id="time-alive">STAY ALIVE 0</div> -->
 
-        <div id="title-container">
+        <div id="title-box-container">
           <div class="bike-art-left">
             __o <br />
             _ \<_ <br />
@@ -776,6 +776,7 @@
           this.stopSchedule.push({ position, duration });
         }
       }
+
       class ParkedCarBehavior extends EntityBehavior {
         constructor(entity) {
           super(entity);
@@ -790,17 +791,14 @@
           this.lastDoorUpdate = Date.now();
           this.doorOpenDelay = 50;
 
-          // Adjusted target percentage for earlier door opening
+          // Target percentage for earlier door opening
           const targetPercentage = 0.3 + Math.random() * 0.1;
           this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
-          console.log("Door should open around Y position:", this.doorOpenY);
         }
 
         update() {
           const newPosition = new Position(this.entity.position.x, this.entity.position.y + this.speed);
           this.entity.position = newPosition;
-
-          console.log(`Car at Y position ${this.entity.position.y}`);
 
           // Check if door should start opening
           if (
@@ -810,8 +808,7 @@
             this.entity.position.y <= this.doorOpenY + 2
           ) {
             this.doorAnimationActive = true;
-            console.log("Starting door opening animation at Y position:", this.entity.position.y);
-            this.updateDoorState(); // Call to update the door state
+            this.updateDoorState();
           }
 
           // Continue the door animation if it's active
@@ -825,11 +822,9 @@
 
           if (this.doorHitbox) {
             this.doorHitbox.y = this.entity.position.y + 1;
-            console.log("Updated door hitbox:", this.doorHitbox);
           }
         }
 
-        // Define the updateDoorState method within the ParkedCarBehavior class
         updateDoorState() {
           this.doorState++;
           this.lastDoorUpdate = Date.now();
@@ -837,14 +832,16 @@
 
           const doorWidths = [0, 0.8, 1, 1.5, 1.8];
           const doorWidth = doorWidths[this.doorState];
+
+          // Adjust hitbox height only for the final door state
+          const hitboxHeight = this.doorState === ENTITIES.PARKED_CAR_STATES.length - 1 ? 0.8 : 1.8;
+
           this.doorHitbox = {
             x: this.entity.position.x,
             y: this.entity.position.y + 1,
             width: doorWidth,
-            height: 1.8,
+            height: hitboxHeight,
           };
-
-          console.log(`Door state updated to ${this.doorState}, new hitbox width: ${doorWidth}`);
         }
       }
 
@@ -1210,7 +1207,7 @@
             }
           });
 
-          // Click to start
+          // Click to play
           document.addEventListener("click", () => {
             if (!this.state.isPlaying) {
               this.start();
@@ -1284,11 +1281,13 @@
         }
 
         preventDefaultTouchBehaviors() {
-          // Prevent default touch behaviors that might interfere with the game
+          // Reference the `game` instance's state to check if it's playing
           document.addEventListener(
             "touchmove",
             (e) => {
-              if (e.touches.length > 1) e.preventDefault();
+              if (game.state.isPlaying && e.touches.length > 1) {
+                e.preventDefault();
+              }
             },
             { passive: false }
           );
@@ -1296,7 +1295,9 @@
           document.addEventListener(
             "touchend",
             (e) => {
-              e.preventDefault();
+              if (game.state.isPlaying) {
+                e.preventDefault();
+              }
             },
             { passive: false }
           );
@@ -1307,7 +1308,7 @@
             "touchend",
             (e) => {
               const now = new Date().getTime();
-              if (now - lastTouchEnd <= 300) {
+              if (game.state.isPlaying && now - lastTouchEnd <= 300) {
                 e.preventDefault();
               }
               lastTouchEnd = now;
@@ -1546,20 +1547,17 @@
             .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
         }
 
-        // In LoserLane class, modify the drawHitbox method:
         drawHitbox(hitbox, char, color) {
-          // Add safety checks
-          if (
-            !hitbox ||
-            typeof hitbox.x === "undefined" ||
-            typeof hitbox.y === "undefined" ||
-            typeof hitbox.width === "undefined" ||
-            typeof hitbox.height === "undefined"
-          ) {
-            return;
-          }
+          // if (
+          //   !hitbox ||
+          //   typeof hitbox.x === "undefined" ||
+          //   typeof hitbox.y === "undefined" ||
+          //   typeof hitbox.width === "undefined" ||
+          //   typeof hitbox.height === "undefined"
+          // ) {
+          //   return;
+          // }
 
-          // Ensure we're using integer positions
           const yStart = Math.max(0, Math.floor(hitbox.y));
           const yEnd = Math.min(this.grid.length, Math.ceil(hitbox.y + hitbox.height));
           const xStart = Math.max(0, Math.floor(hitbox.x));
@@ -1592,7 +1590,6 @@
           }
         }
 
-        // And in drawHitboxes, make pedestrian hitboxes even more distinct:
         drawHitboxes() {
           this.spatialManager.entities.forEach((entity) => {
             const hitbox = entity.getHitbox();
@@ -1776,7 +1773,7 @@
 
           const messageBox = document.getElementById("mainMessageBox");
           if (messageBox) {
-            messageBox.textContent = "CLICK or SPACEBAR to start";
+            messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
           }
         }
 
@@ -1904,8 +1901,9 @@
     <script src="messages.js"></script>
     <script src="config.js"></script>
     <script>
+      let game;
       document.addEventListener("DOMContentLoaded", () => {
-        const game = new LoserLane();
+        game = new LoserLane();
       });
     </script>
   </body>
