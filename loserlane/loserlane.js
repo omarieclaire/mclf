@@ -1082,6 +1082,8 @@ class BaseEntity {
     this.art = null; // Set in child classes
     this.color = null; // Set in child classes
     this.spatialManager = null; // Set when entity is registered
+    this.id = Date.now() + Math.random().toString(36);
+
   }
 
   update() {
@@ -1243,8 +1245,8 @@ class LoserLane {
     this.debug = true;
     this.preventDefaultTouchBehaviors();
     this.settingsManager = new SettingsManager(this);
-    this.initializeGameWorld(); 
-    this.lastFrameTime = 0;
+    this.initializeGameWorld();
+    this.lastFrameTime = performance.now();
     this.frameId = null;
   }
 
@@ -1261,35 +1263,45 @@ class LoserLane {
     this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
   }
 
-  // Update the existing update() method to match this:
-  update() {
-    if (this.state.isDead) {
-      if (this.state.updateDeathAnimation()) {
-        this.cleanup();
-      }
-      this.render();
+  update(timestamp) {
+    if (!timestamp) {
+      // Initial frame request
+      this.frameId = requestAnimationFrame((t) => this.update(t));
       return;
     }
 
-    if (this.state.isPaused) return;
+    // Handle paused state
+    if (this.state.isPaused) {
+      this.frameId = requestAnimationFrame((t) => this.update(t));
+      return;
+    }
 
-    this.spatialManager.update();
-    this.updatePlayerPosition();
-    this.spawnEntities();
-    this.checkPlayerCollisions();
-    this.updateGameState();
-    this.render();
-  }
+    // Calculate delta time
+    const deltaTime = timestamp - this.lastFrameTime;
 
-  // Also add this method if it's missing
-  updateGameState() {
-    this.state.incrementScore();
-    this.state.updateSpeed();
+    // Only update if enough time has passed
+    if (deltaTime >= this.state.speed) {
+      this.lastFrameTime = timestamp;
 
-    clearInterval(this.gameLoop);
-    this.gameLoop = setInterval(() => this.update(), this.state.speed);
+      if (this.state.isDead) {
+        if (this.state.updateDeathAnimation()) {
+          this.cleanup();
+          return;
+        }
+      } else {
+        this.spatialManager.update();
+        this.updatePlayerPosition();
+        this.spawnEntities();
+        this.checkPlayerCollisions();
+        this.state.incrementScore();
+        this.state.updateSpeed();
+        this.updateScoreDisplay();
+      }
+      this.render();
+    }
 
-    this.updateScoreDisplay();
+    // Schedule next frame
+    this.frameId = requestAnimationFrame((t) => this.update(t));
   }
 
   // And this helper method
@@ -1488,7 +1500,8 @@ class LoserLane {
     }
 
     this.state.isPlaying = true;
-    this.gameLoop = setInterval(() => this.update(), this.state.speed);
+    this.lastFrameTime = performance.now();
+    this.frameId = requestAnimationFrame((t) => this.update(t));
   }
 
   togglePause() {
@@ -1499,34 +1512,6 @@ class LoserLane {
       messageBox.style.display = this.state.isPaused ? "block" : "none";
       messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
     }
-
-    if (this.state.isPaused) {
-      clearInterval(this.gameLoop);
-    } else {
-      this.gameLoop = setInterval(() => this.update(), this.state.speed);
-    }
-  }
-
-  update() {
-    if (this.state.isDead) {
-      this.state.deathState.animation++;
-      if (this.state.deathState.animation > 10) {
-        clearInterval(this.gameLoop);
-        this.state.isPlaying = false;
-        return;
-      }
-      this.render();
-      return;
-    }
-
-    if (this.state.isPaused) return;
-
-    this.spatialManager.update();
-    this.updatePlayerPosition();
-    this.spawnEntities();
-    this.checkPlayerCollisions();
-    this.updateGameState();
-    this.render();
   }
 
   createPlayer() {
@@ -1628,49 +1613,6 @@ class LoserLane {
   //     .fill()
   //     .map(() => Array(CONFIG.GAME.WIDTH).fill(" "));
   // }
-
-  drawHitbox(hitbox, char, color) {
-    if (
-      !hitbox ||
-      typeof hitbox.x === "undefined" ||
-      typeof hitbox.y === "undefined" ||
-      typeof hitbox.width === "undefined" ||
-      typeof hitbox.height === "undefined"
-    ) {
-      return;
-    }
-
-    const yStart = Math.max(0, Math.floor(hitbox.y));
-    const yEnd = Math.min(this.grid.length, Math.ceil(hitbox.y + hitbox.height));
-    const xStart = Math.max(0, Math.floor(hitbox.x));
-    const xEnd = Math.min(this.grid[0].length, Math.ceil(hitbox.x + hitbox.width));
-
-    // Semi-transparent background with preserved character
-    const rgba = color.replace(")", ", 0.3)").replace("rgb", "rgba");
-
-    for (let y = yStart; y < yEnd; y++) {
-      for (let x = xStart; x < xEnd; x++) {
-        if (y >= 0 && y < CONFIG.GAME.HEIGHT && x >= 0 && x < CONFIG.GAME.WIDTH) {
-          // Get the existing content (ASCII art) at this position
-          const existingContent = this.grid[y][x];
-          let existingChar = " ";
-
-          // Extract the character from existing content if it's wrapped in a span
-          if (existingContent.includes("</span>")) {
-            const match = existingContent.match(/>([^<]*)</);
-            if (match && match[1]) {
-              existingChar = match[1];
-            }
-          } else {
-            existingChar = existingContent;
-          }
-
-          // Create new element with semi-transparent background and preserved character
-          this.grid[y][x] = `<span style='background-color: ${rgba}'>${existingChar}</span>`;
-        }
-      }
-    }
-  }
 
   drawHitboxes() {
     // Create player hitbox first since we need it
@@ -1774,7 +1716,9 @@ class LoserLane {
     this.gridSystem.clear();
 
     this.drawRoadFeatures();
-    // if (this.debug) this.drawHitboxes();
+    // if (this.debug) {
+    //   this.drawHitboxes();
+    // }
     this.drawPlayer();
     this.drawEntities();
 
@@ -1929,34 +1873,13 @@ class LoserLane {
     }
   }
 
-  handleDeathAnimation() {
-    this.state.deathAnimation++;
-    if (this.state.deathAnimation > 10) {
-      clearInterval(this.gameLoop);
-      this.state.isPlaying = false;
-      return;
-    }
-    this.render();
-  }
-
-  updateScore() {
-    this.state.score++;
-
-    const scoreElement = document.getElementById("time-alive");
-    if (scoreElement) {
-      scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
-    }
-
-    this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
-
-    clearInterval(this.gameLoop);
-    this.gameLoop = setInterval(() => this.update(), this.state.speed);
-  }
-
   // Cleanup
   cleanup() {
-    clearInterval(this.gameLoop);
-    // Remove all tracked event listeners
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
+    }
+
     this.eventListeners.forEach((listeners, element) => {
       listeners.forEach(({ type, handler, options }) => {
         element.removeEventListener(type, handler, options);
