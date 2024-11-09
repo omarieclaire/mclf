@@ -1674,16 +1674,19 @@ class LoserLane {
       });
     } else if (!this.state.isDead) {
       const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
-
       ENTITIES.BIKE.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
           if (char !== " ") {
-            this.grid[bikeY + i][this.state.currentLane + x] = `<span class="bike-highlight">${char}</span>`;
+            const gridX = Math.round(this.state.currentLane + x);
+            if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
+              this.grid[bikeY + i][gridX] = `<span class="bike-highlight">${char}</span>`;
+            }
           }
         });
       });
     }
   }
+  
   // Death Handling
   die(reason) {
     this.state.isDead = true;
