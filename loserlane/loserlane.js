@@ -1607,7 +1607,7 @@ class LoserLane {
 
     this.grid = this.createGrid();
     this.drawRoadFeatures();
-    if (this.debug) this.drawHitboxes();
+    // if (this.debug) this.drawHitboxes();
     this.drawPlayer();
     this.drawEntities();
 
