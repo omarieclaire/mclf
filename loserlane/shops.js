@@ -10,17 +10,17 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "TIM_HORTONS",
+        name: "TIM_HORTONS_1",
         art: [
             "┌────────┐",
-            "│TIMS    │",
-            "│COFFEE  │",
-            "│& FOOD  │",
+            "│SAIGON  │",
+            "│LOTUS   │",
+            "│        │",
             "└────────┘"
         ]
     },
     {
-        name: "TIM_HORTONS",
+        name: "TIM_HORTONS_2",
         art: [
             "    ┌─✺─✺┐",
             "┌───┴┬───┘",
@@ -45,28 +45,28 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "LCBO",
+        name: "LCBO_1",
         art: [
             "┌────────┐",
-            "│ LCBO   │",
-            "│WINES   │",
+            "│ THE    │",
+            "│LITTLE  │",
+            "│ JERRY  │",
+            "└────────┘"
+        ]
+    },
+    {
+        name: "LCBO_2",
+        art: [
+            "   _____  ",
+            "  ╱ ╲╱ ╲  ",
+            "╭╴LCBO   │",
+            "│ WINES  │",
             "│ GHOSTS │",
             "└────────┘"
         ]
     },
     {
-        name: "LCBO",
-        art: [
-            "   _____  ",
-            "  ╱ ╲╱ ╲  ",
-            "╭╴LCBO   |",
-            "│ WINES  |",
-            "│ GHOSTS |",
-            "└────────┘"
-        ]
-    },
-    {
-        name: "LCBO",
+        name: "LCBO_3",
         art: [
             "   ◄o►   ",
             "⸨⎻⎻⎻⎻⎻⎻⎻⎻⸩",
@@ -76,17 +76,17 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "SHOPPERS",
+        name: "SHOPPERS_1",
         art: [
             "┌────────┐",
-            "│SHOPPERS│",
-            "│DRUG    │",
-            "│MART    │",
+            "│BARTLETT│",
+            "│PARKETTE│",
+            "│        │",
             "└────────┘"
         ]
     },
     {
-        name: "SHOPPERS",
+        name: "SHOPPERS_2",
         art: [
             "   ____   ",
             " ╱ ╲╱╲╱╲  ",
@@ -96,17 +96,17 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "ROTI",
+        name: "ROTI_1",
         art: [
             "┌──╦──╦──┐",
-            "│ROTI    │",
-            "│HOUSE   │",
-            "│FRESH!  │",
+            "│THE     │",
+            "│HOLY    │",
+            "│OAK     │",
             "└───╩────┘"
         ]
     },
     {
-        name: "ROTI",
+        name: "ROTI_2",
         art: [
             "   ╱╲╱╲   ",
             " ╱╲╱╲╱╲╱╲ ",
@@ -117,7 +117,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "DOUBLE_DOUBLE_LAND",
+        name: "DOUBLE_DOUBLE_LAND_1",
         art: [
             "╔═══◊◊◊══╗",
             "│MOTHER  │",
@@ -127,7 +127,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "DOUBLE_DOUBLE_LAND",
+        name: "DOUBLE_DOUBLE_LAND_2",
         art: [
             "╒═════╤══╕",
             "│⋰⋱⋰⋱  │",
@@ -154,11 +154,6 @@ const TORONTO_SHOPS = [
             "│WEED    │",
             "│ WEEED  │",
             "│  WEEEED│",
-            "│WEED    │",
-            "│ WEEED  │",
-            "│  WEEEED│",
-            "│WEED    │",
-            "│ WEEED  │",
             "│  WEEEED│",
             "└────────┘"
         ]
@@ -186,7 +181,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "HONEST_EDS",
+        name: "HONEST_EDS_1",
         art: [
             "┌────────┐",
             "│HONEST  │",
@@ -198,7 +193,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "HONEST_EDS",
+        name: "HONEST_EDS_2",
         art: [
             "┌───‡────┐",
             "│COFFEE  │",
@@ -253,29 +248,29 @@ const TORONTO_SHOPS = [
         art: [
             "┌────────┐",
             "│ THE    │",
-            "│ DRAPE  │",
-            "│ LIVE   │",
+            "│ DRAKE  │",
+            "│ <><>   │",
             "└────────┘"
         ]
     },
     {
         name: "SNEAKY_DEES",
         art: [
-            "┌────────┐",
+            "┌─◢───◣──┐",
             "│SNEAKY  │",
             "│ DEES   │",
             "│ NACHOS │",
-            "└────────┘"
+            "└─◥───◤──┘"
         ]
     },
     {
         name: "LEE'S_PALACE",
         art: [
-            "┌────────┐",
+            "┏━━╋━━╋━━┓",
             "│LEE'S   │",
             "│ PALACE │",
             "│ %%%%   │",
-            "└────────┘"
+            "┗━━╋━━╋━━┛"
         ]
     },
     {
@@ -283,9 +278,9 @@ const TORONTO_SHOPS = [
         art: [
             "┌────────┐",
             "│TRINITY │",
-            "│BELLWDS │",
-            "│ ⚘⚘⚘⚘⚘  │",
-            "└────────┘"
+            "│BELL    │",
+            "│   WOODS│",
+            "└─⚘⚘⚘⚘⚘──┘"
         ]
     },
     {
@@ -295,7 +290,7 @@ const TORONTO_SHOPS = [
             "│ THE  ‡ │",
             "│ HO ‡   │",
             "│ PUB  ‡ │",
-            "└────────┘"
+            "└∞──∞∞──∞┘"
         ]
     },
     {
@@ -341,17 +336,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "CNE",
-        art: [
-            "┌────────┐",
-            "│ CN     │",
-            "│TOWER   │",
-            "│        │",
-            "└────────┘"
-        ]
-    },
-    {
-        name: "CNE",
+        name: "KENSINGTON_MARKET",
         art: [
             "┌────────┐",
             "│KENSING │",
@@ -361,7 +346,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "CNE",
+        name: "CASA_LOMA",
         art: [
             "┌────ƒƒƒ─┐",
             "│ CASA ƒ │",
@@ -371,7 +356,7 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "MONKEY",
+        name: "MONKEY_PAW",
         art: [
             "┌────────┐",
             "┌─⚘╱╲⚘╱╲─┐",
@@ -382,17 +367,17 @@ const TORONTO_SHOPS = [
         ]
     },
     {
-        name: "CNE",
+        name: "BUDDHAS_RESTAURANT",
         art: [
             "┌────────┐",
             "│BUDDHA'S│",
             "│VEGAN   │",
-            "│RESTARNT│",
+            "│RESTAURANT│",
             "└────────┘"
         ]
     },
     {
-        name: "CNE",
+        name: "CNE_EXHIBIT",
         art: [
             "┌✕─✕─✕─✕┐",
             "│ CNE    │",
@@ -403,4 +388,4 @@ const TORONTO_SHOPS = [
     }
 ];
 
-console.log('Shops loaded:', TORONTO_SHOPS?.length);
+console.log('Shops loaded:', TORONTO_SHOPS.length);
