@@ -128,7 +128,7 @@
 
           <div class="title-text">
             <div id="title">L O S E R ∞ L A N E</div>
-            <div id="time-alive">STAY ALIVE! 0</div>
+            <div id="time-alive">STAY ALIVE? 0</div>
           </div>
 
           <div class="bike-art-right">
@@ -1348,46 +1348,46 @@
         // }
 
         moveLeft(isDoubleTap = false, isTouchMove = false) {
-          if (this.state.isDead) return;
+  if (this.state.isDead) return;
 
-          const now = Date.now();
-          const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+  const now = Date.now();
+  const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-          // Use smaller movement increment for touch
-          const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-          const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-          this.state.currentLane = newLane;
-          this.state.isJumping = isDoubleTapJump;
+  // Use smaller movement for touch taps, but keep double-tap jump consistent
+  const moveAmount = isDoubleTapJump ? 2 : (isTouchMove ? 0.5 : 1);
+  const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+  this.state.currentLane = newLane;
+  this.state.isJumping = isDoubleTapJump;
 
-          if (isDoubleTapJump) {
-            setTimeout(() => {
-              this.state.isJumping = false;
-            }, 200);
-          }
+  if (isDoubleTapJump) {
+    setTimeout(() => {
+      this.state.isJumping = false;
+    }, 200);
+  }
 
-          this.state.lastTap = now;
-        }
+  this.state.lastTap = now;
+}
 
-        moveRight(isDoubleTap = false, isTouchMove = false) {
-          if (this.state.isDead) return;
+moveRight(isDoubleTap = false, isTouchMove = false) {
+  if (this.state.isDead) return;
 
-          const now = Date.now();
-          const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+  const now = Date.now();
+  const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-          // Use smaller movement increment for touch
-          const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-          const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
-          this.state.currentLane = newLane;
-          this.state.isJumping = isDoubleTapJump;
+  // Use smaller movement for touch taps, but keep double-tap jump consistent
+  const moveAmount = isDoubleTapJump ? 2 : (isTouchMove ? 0.5 : 1);
+  const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+  this.state.currentLane = newLane;
+  this.state.isJumping = isDoubleTapJump;
 
-          if (isDoubleTapJump) {
-            setTimeout(() => {
-              this.state.isJumping = false;
-            }, 200);
-          }
+  if (isDoubleTapJump) {
+    setTimeout(() => {
+      this.state.isJumping = false;
+    }, 200);
+  }
 
-          this.state.lastTap = now;
-        }
+  this.state.lastTap = now;
+}
 
         // Game State Management
         start() {
@@ -1798,7 +1798,7 @@
 
           const scoreElement = document.getElementById("time-alive");
           if (scoreElement) {
-            scoreElement.textContent = `STAY ALIVE! ${this.state.score}`;
+            scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
           }
 
           this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
