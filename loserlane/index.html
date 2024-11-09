@@ -1213,70 +1213,100 @@
         }
 
         // Modify the setupTouchControls method in LoserLane class
-        setupTouchControls() {
-          const leftControl = document.getElementById("move-left");
-          const rightControl = document.getElementById("move-right");
+setupTouchControls() {
+  const leftControl = document.getElementById("move-left");
+  const rightControl = document.getElementById("move-right");
 
-          if (leftControl && rightControl) {
-            // Increase double tap window and add tap tracking per side
-            const tapState = {
-              left: { lastTap: 0, tapCount: 0 },
-              right: { lastTap: 0, tapCount: 0 },
-            };
+  if (leftControl && rightControl) {
+    const tapState = {
+      left: { lastTap: 0, tapCount: 0, touchStartX: 0 },
+      right: { lastTap: 0, tapCount: 0, touchStartX: 0 }
+    };
 
-            const doubleTapDelay = 400; // Increased from 300ms to be more forgiving
-            const tapResetDelay = 500; // Time before tap count resets
+    const doubleTapDelay = 400;
+    const tapResetDelay = 500;
+    const moveThreshold = 10; // Pixels needed to move before registering movement
 
-            const handleTap = (side) => {
-              const currentTime = new Date().getTime();
-              const state = tapState[side];
+    const handleTouchStart = (side, e) => {
+      const touch = e.touches[0];
+      tapState[side].touchStartX = touch.clientX;
+      
+      const currentTime = new Date().getTime();
+      const state = tapState[side];
 
-              // Reset tap count if too much time has passed
-              if (currentTime - state.lastTap > tapResetDelay) {
-                state.tapCount = 0;
-              }
+      // Reset tap count if too much time has passed
+      if (currentTime - state.lastTap > tapResetDelay) {
+        state.tapCount = 0;
+      }
 
-              state.tapCount++;
-
-              if (state.tapCount === 2 && currentTime - state.lastTap <= doubleTapDelay) {
-                // Double tap detected
-                if (side === "left") {
-                  this.moveLeft(true);
-                } else {
-                  this.moveRight(true);
-                }
-                // Reset after successful double tap
-                state.tapCount = 0;
-              } else if (state.tapCount === 1) {
-                // Single tap
-                if (side === "left") {
-                  this.moveLeft(false);
-                } else {
-                  this.moveRight(false);
-                }
-              }
-
-              state.lastTap = currentTime;
-
-              // Reset tap count after delay
-              setTimeout(() => {
-                state.tapCount = 0;
-              }, tapResetDelay);
-            };
-
-            // Handle touch events
-            leftControl.addEventListener("touchstart", (e) => {
-              e.preventDefault();
-              handleTap("left");
-            });
-
-            rightControl.addEventListener("touchstart", (e) => {
-              e.preventDefault();
-              handleTap("right");
-            });
-          }
+      state.tapCount++;
+      
+      // Only handle double-tap for jumping
+      if (state.tapCount === 2 && currentTime - state.lastTap <= doubleTapDelay) {
+        if (side === "left") {
+          this.moveLeft(true);
+        } else {
+          this.moveRight(true);
         }
+        state.tapCount = 0;
+      }
 
+      state.lastTap = currentTime;
+    };
+
+    const handleTouchMove = (side, e) => {
+      if (this.state.isDead || !this.state.isPlaying) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - tapState[side].touchStartX;
+      
+      // Only move if we've exceeded the threshold
+      if (Math.abs(deltaX) > moveThreshold) {
+        if (side === "left" && deltaX < 0) {
+          this.moveLeft(false);
+          // Update start position to require new threshold for next move
+          tapState[side].touchStartX = touch.clientX;
+        } else if (side === "right" && deltaX > 0) {
+          this.moveRight(false);
+          // Update start position to require new threshold for next move
+          tapState[side].touchStartX = touch.clientX;
+        }
+      }
+    };
+
+    // Handle touch events for left control
+    leftControl.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleTouchStart("left", e);
+    });
+
+    leftControl.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      handleTouchMove("left", e);
+    });
+
+    // Handle touch events for right control
+    rightControl.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleTouchStart("right", e);
+    });
+
+    rightControl.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      handleTouchMove("right", e);
+    });
+
+    // Reset after touch ends
+    const handleTouchEnd = (side) => {
+      setTimeout(() => {
+        tapState[side].tapCount = 0;
+      }, tapResetDelay);
+    };
+
+    leftControl.addEventListener("touchend", () => handleTouchEnd("left"));
+    rightControl.addEventListener("touchend", () => handleTouchEnd("right"));
+  }
+}
         preventDefaultTouchBehaviors() {
           // Reference the `game` instance's state to check if it's playing
           document.addEventListener(

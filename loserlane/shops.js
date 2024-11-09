@@ -31,6 +31,20 @@ const TORONTO_SHOPS = [
         ]
     },
     {
+        name: "DEATHFACT",
+        art: [
+            "┌────────┐",
+            "│74      │",
+            "│CYCLISTS│",
+            "│DIE     │",
+            "│EACH    │",
+            "│YEAR    │",
+            "│IN      │",
+            "│CANADA  │",
+            "└────────┘"
+        ]
+    },
+    {
         name: "LCBO",
         art: [
             "┌────────┐",
@@ -54,7 +68,7 @@ const TORONTO_SHOPS = [
     {
         name: "LCBO",
         art: [
-            "   ◄o► ",
+            "   ◄o►   ",
             "⸨⎻⎻⎻⎻⎻⎻⎻⎻⸩",
             "│ MIMI'S │",
             "│⊰PLACE⊱ │",
@@ -106,9 +120,9 @@ const TORONTO_SHOPS = [
         name: "DOUBLE_DOUBLE_LAND",
         art: [
             "┌────────┐",
-            "│DOUBLE  │",
-            "│DOUBLE  │",
-            "│ LAND   │",
+            "│MOTHER  │",
+            "│INDIA   │",
+            "│ ROTI   │",
             "└────────┘"
         ]
     },
@@ -126,7 +140,7 @@ const TORONTO_SHOPS = [
     {
         name: "ARTSCAPE",
         art: [
-            "┌───◊◊───┐",
+            "┌───[]───┐",
             "│ART     │",
             "│SCAPE   │",
             "│  /|\\  │",
@@ -153,9 +167,9 @@ const TORONTO_SHOPS = [
         name: "THE_LOON",
         art: [
             "┌──(█)───┐",
-            "│ THE    │",
-            "│ LOON   │",
-            "│ SPACE  │",
+            "│GHANDIs │",
+            "│ ROTI   │",
+            "│ YUM    │",
             "└────────┘"
         ]
     },
@@ -317,8 +331,8 @@ const TORONTO_SHOPS = [
     {
         name: "RIVOLI",
         art: [
-            "    ┌✷─✷┐",
-            "  ┌─✷─✷─┐",
+            "    ┌✷─✷┐ ",
+            "  ┌─✷─✷─┐ ",
             "┌─✷─✷─✷──┐",
             "│ RIVOLI │",
             "│ FOOD   │",
