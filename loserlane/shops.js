@@ -119,7 +119,7 @@ const TORONTO_SHOPS = [
     {
         name: "DOUBLE_DOUBLE_LAND",
         art: [
-            "┌────────┐",
+            "╔═══◊◊◊══╗",
             "│MOTHER  │",
             "│INDIA   │",
             "│ ROTI   │",
@@ -130,7 +130,7 @@ const TORONTO_SHOPS = [
         name: "DOUBLE_DOUBLE_LAND",
         art: [
             "╒═════╤══╕",
-            "│      │ │",
+            "│⋰⋱⋰⋱  │",
             "│DOUBLE│ │",
             "│DOUBLE│ │",
             "│ LAND │ │",
@@ -176,7 +176,7 @@ const TORONTO_SHOPS = [
     {
         name: "VIDEOBOO",
         art: [
-            "┌─(█)─(█)┐",
+            "┌─(⌒∩∩⌒)─┐",
             "│VIDEO   │",
             "│ BOO    │",
             "│ BOO    │",
@@ -221,17 +221,17 @@ const TORONTO_SHOPS = [
     {
         name: "HALO_HALO",
         art: [
-            "┌────────┐",
-            "│HALO    │",
-            "│ HALO   │",
-            "│RIP     │",
-            "└────────┘"
+            " ╭───────╮ ",
+            "╭││HALO ││╮",
+            "│││HALO  ││",
+            "│││      ││",
+            "╰┴┴──────┴╯"
         ]
     },
     {
         name: "SOYBOMB",
         art: [
-            "┌────────┐",
+            "┌◢╱╲◣◢╱╲◣",
             "│SOY     │",
             "│BOMB    │",
             "│ !!!!!  │",
