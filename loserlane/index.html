@@ -128,7 +128,7 @@
 
           <div class="title-text">
             <div id="title">L O S E R ∞ L A N E</div>
-            <div id="time-alive">STAY ALIVE? 0</div>
+            <div id="time-alive">STAY ALIVE! 0</div>
           </div>
 
           <div class="bike-art-right">
@@ -1213,100 +1213,66 @@
         }
 
         // Modify the setupTouchControls method in LoserLane class
-setupTouchControls() {
-  const leftControl = document.getElementById("move-left");
-  const rightControl = document.getElementById("move-right");
+        setupTouchControls() {
+          const leftControl = document.getElementById("move-left");
+          const rightControl = document.getElementById("move-right");
 
-  if (leftControl && rightControl) {
-    const tapState = {
-      left: { lastTap: 0, tapCount: 0, touchStartX: 0 },
-      right: { lastTap: 0, tapCount: 0, touchStartX: 0 }
-    };
+          if (leftControl && rightControl) {
+            const tapState = {
+              left: { lastTap: 0, tapCount: 0 },
+              right: { lastTap: 0, tapCount: 0 },
+            };
 
-    const doubleTapDelay = 400;
-    const tapResetDelay = 500;
-    const moveThreshold = 10; // Pixels needed to move before registering movement
+            const doubleTapDelay = 400;
+            const tapResetDelay = 500;
 
-    const handleTouchStart = (side, e) => {
-      const touch = e.touches[0];
-      tapState[side].touchStartX = touch.clientX;
-      
-      const currentTime = new Date().getTime();
-      const state = tapState[side];
+            const handleTap = (side) => {
+              const currentTime = new Date().getTime();
+              const state = tapState[side];
 
-      // Reset tap count if too much time has passed
-      if (currentTime - state.lastTap > tapResetDelay) {
-        state.tapCount = 0;
-      }
+              if (currentTime - state.lastTap > tapResetDelay) {
+                state.tapCount = 0;
+              }
 
-      state.tapCount++;
-      
-      // Only handle double-tap for jumping
-      if (state.tapCount === 2 && currentTime - state.lastTap <= doubleTapDelay) {
-        if (side === "left") {
-          this.moveLeft(true);
-        } else {
-          this.moveRight(true);
+              state.tapCount++;
+
+              if (state.tapCount === 2 && currentTime - state.lastTap <= doubleTapDelay) {
+                // Double tap - jump
+                if (side === "left") {
+                  this.moveLeft(true, false);
+                } else {
+                  this.moveRight(true, false);
+                }
+                state.tapCount = 0;
+              } else if (state.tapCount === 1) {
+                // Single tap - small movement
+                if (side === "left") {
+                  this.moveLeft(false, true);
+                } else {
+                  this.moveRight(false, true);
+                }
+              }
+
+              state.lastTap = currentTime;
+
+              setTimeout(() => {
+                state.tapCount = 0;
+              }, tapResetDelay);
+            };
+
+            // Handle touch events
+            leftControl.addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              handleTap("left");
+            });
+
+            rightControl.addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              handleTap("right");
+            });
+          }
         }
-        state.tapCount = 0;
-      }
 
-      state.lastTap = currentTime;
-    };
-
-    const handleTouchMove = (side, e) => {
-      if (this.state.isDead || !this.state.isPlaying) return;
-
-      const touch = e.touches[0];
-      const deltaX = touch.clientX - tapState[side].touchStartX;
-      
-      // Only move if we've exceeded the threshold
-      if (Math.abs(deltaX) > moveThreshold) {
-        if (side === "left" && deltaX < 0) {
-          this.moveLeft(false);
-          // Update start position to require new threshold for next move
-          tapState[side].touchStartX = touch.clientX;
-        } else if (side === "right" && deltaX > 0) {
-          this.moveRight(false);
-          // Update start position to require new threshold for next move
-          tapState[side].touchStartX = touch.clientX;
-        }
-      }
-    };
-
-    // Handle touch events for left control
-    leftControl.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      handleTouchStart("left", e);
-    });
-
-    leftControl.addEventListener("touchmove", (e) => {
-      e.preventDefault();
-      handleTouchMove("left", e);
-    });
-
-    // Handle touch events for right control
-    rightControl.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      handleTouchStart("right", e);
-    });
-
-    rightControl.addEventListener("touchmove", (e) => {
-      e.preventDefault();
-      handleTouchMove("right", e);
-    });
-
-    // Reset after touch ends
-    const handleTouchEnd = (side) => {
-      setTimeout(() => {
-        tapState[side].tapCount = 0;
-      }, tapResetDelay);
-    };
-
-    leftControl.addEventListener("touchend", () => handleTouchEnd("left"));
-    rightControl.addEventListener("touchend", () => handleTouchEnd("right"));
-  }
-}
         preventDefaultTouchBehaviors() {
           // Reference the `game` instance's state to check if it's playing
           document.addEventListener(
@@ -1381,47 +1347,43 @@ setupTouchControls() {
         //   }
         // }
 
-        moveLeft() {
+        moveLeft(isDoubleTap = false, isTouchMove = false) {
           if (this.state.isDead) return;
 
           const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+          const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-          if (isDoubleTap) {
-            const newLane = Math.max(this.state.currentLane - 2, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
+          // Use smaller movement increment for touch
+          const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
+          const newLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+          this.state.currentLane = newLane;
+          this.state.isJumping = isDoubleTapJump;
 
+          if (isDoubleTapJump) {
             setTimeout(() => {
               this.state.isJumping = false;
             }, 200);
-          } else {
-            const newLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
           }
 
           this.state.lastTap = now;
         }
 
-        moveRight() {
+        moveRight(isDoubleTap = false, isTouchMove = false) {
           if (this.state.isDead) return;
 
           const now = Date.now();
-          const isDoubleTap = now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
+          const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
-          if (isDoubleTap) {
-            const newLane = Math.min(this.state.currentLane + 2, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = true;
+          // Use smaller movement increment for touch
+          const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
+          const newLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+          this.state.currentLane = newLane;
+          this.state.isJumping = isDoubleTapJump;
 
+          if (isDoubleTapJump) {
             setTimeout(() => {
               this.state.isJumping = false;
             }, 200);
-          } else {
-            const newLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
-            this.state.currentLane = newLane;
-            this.state.isJumping = false;
           }
 
           this.state.lastTap = now;
@@ -1676,7 +1638,6 @@ setupTouchControls() {
 
           this.drawEntities();
 
-
           const gameScreen = document.getElementById("game-screen");
           if (gameScreen) {
             gameScreen.innerHTML = this.grid.map((row) => row.map((cell) => `<span class="grid-cell">${cell}</span>`).join("")).join("<br />");
@@ -1837,7 +1798,7 @@ setupTouchControls() {
 
           const scoreElement = document.getElementById("time-alive");
           if (scoreElement) {
-            scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
+            scoreElement.textContent = `STAY ALIVE! ${this.state.score}`;
           }
 
           this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);
