@@ -54,7 +54,7 @@ const TORONTO_SHOPS = [
     {
         name: "LCBO",
         art: [
-            "   ◄𐅀𐅀► ",
+            "   ◄o► ",
             "⸨⎻⎻⎻⎻⎻⎻⎻⎻⸩",
             "│ MIMI'S │",
             "│⊰PLACE⊱ │",

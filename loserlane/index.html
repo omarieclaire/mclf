@@ -255,7 +255,7 @@
           this.entities.add(entity);
           this.grid.addEntity(entity);
           if (entity.type === EntityType.PEDESTRIAN) {
-            console.log("Pedestrian registered:", entity);
+            // console.log("Pedestrian registered:", entity);
           }
         }
 
@@ -786,13 +786,15 @@
           this.speed = 1;
           this.doorHitbox = null;
 
-          this.shouldOpenDoor = true;
+          // Only 30% of cars will open their doors
+          this.shouldOpenDoor = Math.random() < 0.3;
           this.doorAnimationActive = false;
           this.lastDoorUpdate = Date.now();
-          this.doorOpenDelay = 50;
+          // Reduce door open delay from 50 to 25 for faster animation
+          this.doorOpenDelay = 25;
 
-          // Target percentage for earlier door opening
-          const targetPercentage = 0.3 + Math.random() * 0.1;
+          // Open doors earlier - between 20-30% of screen height instead of 30-40%
+          const targetPercentage = 0.2 + Math.random() * 0.1;
           this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
         }
 
@@ -910,43 +912,38 @@
           if (this.crossingState === "WALKING") {
             this.stepCounter++;
             if (this.stepCounter >= this.moveEveryNFrames) {
-              const newPosition = new Position(this.entity.position.x, Math.floor(this.entity.position.y + this.baseSpeed));
+              const oldX = this.entity.position.x;
+              const oldY = this.entity.position.y;
+
+              const newX = Math.round(this.entity.position.x);
+              const newY = Math.round(this.entity.position.y + this.baseSpeed);
+
+              // console.log("Pedestrian Position:", {
+              //   old: { x: oldX, y: oldY },
+              //   new: { x: newX, y: newY },
+              //   baseSpeed: this.baseSpeed,
+              //   rounded: {
+              //     x: Math.round(newX),
+              //     y: Math.round(newY),
+              //   },
+              // });
+
+              const newPosition = new Position(newX, newY);
 
               if (this.canMoveTo(newPosition)) {
-                this.entity.position = newPosition;
+                this.entity.position.x = Math.round(newPosition.x);
+                this.entity.position.y = Math.round(newPosition.y);
+
+                // console.log("Position Updated:", {
+                //   x: this.entity.position.x,
+                //   y: this.entity.position.y,
+                // });
               }
               this.stepCounter = 0;
             }
           }
         }
       }
-
-      // class PedestrianBehavior extends EntityBehavior {
-      //   constructor(entity, isGoingUp) {
-      //     super(entity);
-      //     this.isGoingUp = isGoingUp;
-      //     this.baseSpeed = isGoingUp ? -0.5 : 0.5;
-      //     this.crossingState = "WALKING";
-      //   }
-
-      //   update() {
-      //     if (this.crossingState === "WALKING") {
-      //       this.move();
-      //     }
-      //   }
-
-      //   move() {
-      //     const newPosition = new Position(this.entity.position.x, this.entity.position.y + this.baseSpeed);
-
-      //     if (this.canMoveTo(newPosition)) {
-      //       this.entity.position = newPosition;
-      //     }
-      //   }
-
-      //   startCrossing() {
-      //     this.crossingState = "CROSSING";
-      //   }
-      // }
 
       class PlayerBehavior extends EntityBehavior {
         constructor(entity) {
@@ -1548,15 +1545,15 @@
         }
 
         drawHitbox(hitbox, char, color) {
-          // if (
-          //   !hitbox ||
-          //   typeof hitbox.x === "undefined" ||
-          //   typeof hitbox.y === "undefined" ||
-          //   typeof hitbox.width === "undefined" ||
-          //   typeof hitbox.height === "undefined"
-          // ) {
-          //   return;
-          // }
+          if (
+            !hitbox ||
+            typeof hitbox.x === "undefined" ||
+            typeof hitbox.y === "undefined" ||
+            typeof hitbox.width === "undefined" ||
+            typeof hitbox.height === "undefined"
+          ) {
+            return;
+          }
 
           const yStart = Math.max(0, Math.floor(hitbox.y));
           const yEnd = Math.min(this.grid.length, Math.ceil(hitbox.y + hitbox.height));
@@ -1564,7 +1561,7 @@
           const xEnd = Math.min(this.grid[0].length, Math.ceil(hitbox.x + hitbox.width));
 
           // Semi-transparent background with preserved character
-          const rgba = color.replace(")", ", 0.1)").replace("rgb", "rgba");
+          const rgba = color.replace(")", ", 0.3)").replace("rgb", "rgba");
 
           for (let y = yStart; y < yEnd; y++) {
             for (let x = xStart; x < xEnd; x++) {
@@ -1594,34 +1591,47 @@
           this.spatialManager.entities.forEach((entity) => {
             const hitbox = entity.getHitbox();
 
-            if (hitbox && entity.type === EntityType.PEDESTRIAN) {
-              //lol
+            if (hitbox) {
               let color;
-              if (entity.type === EntityType.PEDESTRIAN) {
-                color = "rgb(255, 45, 45)";
-                // color = "rgb(255, 20, 147)"; // Hot pink for better visibility
-              } else {
-                color = "rgb(45, 45, 45)";
-
-                // color = "rgb(0, 255, 0)"; // Default green for other entities
+              switch (entity.type) {
+                case EntityType.PEDESTRIAN:
+                  color = "rgb(255, 20, 147)"; // Hot pink
+                  break;
+                case EntityType.STREETCAR:
+                  color = "rgb(255, 165, 0)"; // Orange
+                  break;
+                case EntityType.STREETCAR_LANE_CAR:
+                  color = "rgb(0, 191, 255)"; // Deep sky blue
+                  break;
+                case EntityType.ONCOMING_CAR:
+                  color = "rgb(50, 205, 50)"; // Lime green
+                  break;
+                case EntityType.PARKED_CAR:
+                  color = "rgb(138, 43, 226)"; // Blue violet
+                  break;
+                case EntityType.BUILDING:
+                  color = "rgb(255, 215, 0)"; // Gold
+                  break;
+                default:
+                  color = "rgb(45, 45, 45)"; // Default grey
               }
               this.drawHitbox(hitbox, " ", color);
             }
 
             // Draw door hitbox for parked cars
             if (entity.type === EntityType.PARKED_CAR && entity.behavior.doorHitbox) {
-              this.drawHitbox(entity.behavior.doorHitbox, "+", "rgb(255, 0, 0)");
+              this.drawHitbox(entity.behavior.doorHitbox, "+", "rgb(255, 0, 0)"); // Keep door hitboxes red
             }
           });
 
-          // Draw player hitbox
-          // const playerHitbox = {
-          //   x: this.state.currentLane,
-          //   y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-          //   width: ENTITIES.BIKE.width,
-          //   height: ENTITIES.BIKE.height,
-          // };
-          // this.drawHitbox(playerHitbox, " ", "rgb(45, 45, 45)");
+          // Draw player hitbox in cyan
+          const playerHitbox = {
+            x: this.state.currentLane,
+            y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+            width: ENTITIES.BIKE.width,
+            height: ENTITIES.BIKE.height,
+          };
+          this.drawHitbox(playerHitbox, " ", "rgb(0, 255, 255)");
         }
 
         render() {
@@ -1630,11 +1640,12 @@
           this.grid = this.createGrid();
 
           this.drawRoadFeatures();
+          // if (this.debug) this.drawHitboxes();
 
           this.drawPlayer();
 
           this.drawEntities();
-          if (this.debug) this.drawHitboxes();
+
 
           const gameScreen = document.getElementById("game-screen");
           if (gameScreen) {
@@ -1668,15 +1679,19 @@
         }
 
         drawEntity(entity) {
-          if (!entity || !entity.art) return; // Add this check
-          // console.log(`Drawing Building ID ${entity.id} at render position: x=${entity.position.x}, y=${entity.position.y}`);
+          if (!entity || !entity.art) return;
 
           if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
             entity.art.forEach((line, i) => {
               if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
                 line.split("").forEach((char, x) => {
                   if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-                    this.grid[Math.floor(entity.position.y + i)][entity.position.x + x] = entity.color + char + STYLES.RESET;
+                    // Special handling for pedestrians
+                    if (entity.type === EntityType.PEDESTRIAN) {
+                      this.grid[Math.floor(entity.position.y + i)][entity.position.x + x] = `<span>${entity.color + char + STYLES.RESET}</span>`;
+                    } else {
+                      this.grid[Math.floor(entity.position.y + i)][entity.position.x + x] = entity.color + char + STYLES.RESET;
+                    }
                   }
                 });
               }
@@ -1810,7 +1825,6 @@
 
       /////////////////////////////////////////
       ///////////SETTINGS WINDOW /////////////
-      ////////////////////////////////////////
       ////////////////////////////////////////
 
       // Toggle settings window visibility with "D" key
