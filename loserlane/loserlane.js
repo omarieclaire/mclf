@@ -252,7 +252,7 @@ class CollisionManager {
 
   update() {
     const pairs = this.getCollisionPairs();
-    
+
     for (const [entityA, entityB] of pairs) {
       // Handle player collisions
       if (entityA.type === EntityType.PLAYER || entityB.type === EntityType.PLAYER) {
@@ -264,11 +264,7 @@ class CollisionManager {
           parkedCars: obstacle.type === EntityType.PARKED_CAR ? [obstacle] : [],
         };
 
-        const collisionType = this.checkPlayerCollision(
-          player.getHitbox(),
-          entitiesForCollision,
-          false
-        );
+        const collisionType = this.checkPlayerCollision(player.getHitbox(), entitiesForCollision, false);
 
         if (collisionType) {
           player.behavior.onCollision(obstacle);
@@ -331,7 +327,7 @@ class CollisionManager {
       [EntityType.ONCOMING_CAR]: 3,
       [EntityType.PARKED_CAR]: 2,
       [EntityType.PEDESTRIAN]: 1,
-      [EntityType.BUILDING]: 0
+      [EntityType.BUILDING]: 0,
     };
 
     return priorities[entity.type] || 0;
@@ -344,27 +340,23 @@ class CollisionManager {
 
     for (let i = 0; i < entities.length; i++) {
       const entityA = entities[i];
-      const nearby = this.spatialManager.grid.getNearbyEntities(
-        entityA.position,
-        Math.max(entityA.width, entityA.height) * 2
-      );
+      const nearby = this.spatialManager.grid.getNearbyEntities(entityA.position, Math.max(entityA.width, entityA.height) * 2);
 
       for (const entityB of nearby) {
         if (entityA === entityB) continue;
 
         // Create a unique key for this pair
-        const pairKey = [entityA.id, entityB.id].sort().join(',');
+        const pairKey = [entityA.id, entityB.id].sort().join(",");
         if (processedPairs.has(pairKey)) continue;
 
-        if (this.shouldCheckCollision(entityA, entityB) && 
-            this.checkCollision(entityA.getHitbox(), entityB.getHitbox())) {
+        if (this.shouldCheckCollision(entityA, entityB) && this.checkCollision(entityA.getHitbox(), entityB.getHitbox())) {
           pairs.push([entityA, entityB]);
           processedPairs.add(pairKey);
 
           if (this.debugLog) {
             console.log(`[CollisionDebug] Detected collision between:`, {
               entityA: { type: entityA.type, position: entityA.position },
-              entityB: { type: entityB.type, position: entityB.position }
+              entityB: { type: entityB.type, position: entityB.position },
             });
           }
         }
@@ -387,7 +379,7 @@ class CollisionManager {
 
     // Check if entities are in adjacent or same lanes
     const xDistance = Math.abs(entityA.position.x - entityB.position.x);
-    
+
     // Special handling for streetcars
     if (entityA.type === EntityType.STREETCAR || entityB.type === EntityType.STREETCAR) {
       return xDistance <= 2;
@@ -411,15 +403,12 @@ class CollisionManager {
 
     let isValid = true;
     for (const other of nearby) {
-      if (other !== entity && 
-          this.shouldCheckCollision(entity, other) && 
-          this.checkCollision(entity.getHitbox(), other.getHitbox())) {
-        
+      if (other !== entity && this.shouldCheckCollision(entity, other) && this.checkCollision(entity.getHitbox(), other.getHitbox())) {
         if (this.debugLog) {
-          console.log(`[CollisionDebug] Movement blocked:`, {
-            entity: { type: entity.type, newPosition },
-            blocker: { type: other.type, position: other.position }
-          });
+          // console.log(`[CollisionDebug] Movement blocked:`, {
+          //   entity: { type: entity.type, newPosition },
+          //   blocker: { type: other.type, position: other.position },
+          // });
         }
 
         isValid = false;
@@ -435,20 +424,18 @@ class CollisionManager {
   getCollisionDirection(entityA, entityB) {
     const centerA = {
       x: entityA.position.x + entityA.width / 2,
-      y: entityA.position.y + entityA.height / 2
+      y: entityA.position.y + entityA.height / 2,
     };
     const centerB = {
       x: entityB.position.x + entityB.width / 2,
-      y: entityB.position.y + entityB.height / 2
+      y: entityB.position.y + entityB.height / 2,
     };
 
     const dx = centerB.x - centerA.x;
     const dy = centerB.y - centerA.y;
 
     // Return the dominant direction of collision
-    return Math.abs(dx) > Math.abs(dy) ? 
-      (dx > 0 ? 'right' : 'left') : 
-      (dy > 0 ? 'down' : 'up');
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
   }
 }
 class MovementCoordinator {
@@ -599,7 +586,6 @@ class MovementCoordinator {
   }
 }
 
-
 class SpawnManager {
   constructor(spatialManager, config) {
     this.spatialManager = spatialManager;
@@ -617,9 +603,9 @@ class SpawnManager {
           randomSpacingRange: { min: 5, max: 15 },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS],
-            spawnPosition: { 
-              x: this.config.LANES.TRACKS, 
-              y: this.config.GAME.HEIGHT + 5 
+            spawnPosition: {
+              x: this.config.LANES.TRACKS,
+              y: this.config.GAME.HEIGHT + 5,
             },
             direction: -1,
           },
@@ -632,9 +618,9 @@ class SpawnManager {
           randomSpacingRange: { min: 3, max: 10 },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS + 1],
-            spawnPosition: { 
-              x: this.config.LANES.TRACKS + 1, 
-              y: this.config.GAME.HEIGHT + 1 
+            spawnPosition: {
+              x: this.config.LANES.TRACKS + 1,
+              y: this.config.GAME.HEIGHT + 1,
             },
             direction: -1,
           },
@@ -647,9 +633,9 @@ class SpawnManager {
           randomSpacingRange: { min: 2, max: 8 },
           laneRules: {
             allowedLanes: [this.config.LANES.ONCOMING],
-            spawnPosition: { 
-              x: this.config.LANES.ONCOMING, 
-              y: -10 
+            spawnPosition: {
+              x: this.config.LANES.ONCOMING,
+              y: -10,
             },
             direction: 1,
           },
@@ -662,9 +648,9 @@ class SpawnManager {
           randomSpacingRange: { min: 2, max: 6 },
           laneRules: {
             allowedLanes: [this.config.LANES.PARKED],
-            spawnPosition: { 
-              x: this.config.LANES.PARKED, 
-              y: -5 
+            spawnPosition: {
+              x: this.config.LANES.PARKED,
+              y: -5,
             },
             direction: 1,
           },
@@ -677,9 +663,9 @@ class SpawnManager {
           randomSpacingRange: { min: 1, max: 4 },
           laneRules: {
             allowedLanes: [this.config.LANES.SIDEWALK],
-            spawnPosition: { 
-              x: this.config.LANES.SIDEWALK, 
-              y: -1 
+            spawnPosition: {
+              x: this.config.LANES.SIDEWALK,
+              y: -1,
             },
             direction: 1,
           },
@@ -688,13 +674,13 @@ class SpawnManager {
     ]);
 
     if (this.debugLog) {
-      console.log('[SpawnDebug] Initialized spawn rules:', {
+      console.log("[SpawnDebug] Initialized spawn rules:", {
         streetcarLane: this.config.LANES.TRACKS,
         allRules: Array.from(this.spawnRules.entries()).map(([type, rules]) => ({
           type,
           allowedLanes: rules.laneRules.allowedLanes,
-          spawnPosition: rules.laneRules.spawnPosition
-        }))
+          spawnPosition: rules.laneRules.spawnPosition,
+        })),
       });
     }
   }
@@ -714,28 +700,27 @@ class SpawnManager {
     }
 
     // Get all entities that could potentially conflict
-    const nearbyEntities = Array.from(this.spatialManager.entities)
-      .filter(entity => {
-        // Check entities in the same lane and adjacent lanes
-        const xDistance = Math.abs(entity.position.x - position.x);
-        const yDistance = Math.abs(entity.position.y - position.y);
-        
-        // Only consider entities within a reasonable vertical distance
-        if (yDistance > 30) return false;
+    const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
+      // Check entities in the same lane and adjacent lanes
+      const xDistance = Math.abs(entity.position.x - position.x);
+      const yDistance = Math.abs(entity.position.y - position.y);
 
-        if (entityType === EntityType.STREETCAR || entity.type === EntityType.STREETCAR) {
-          // Streetcars need more space laterally
-          return xDistance <= 2;
-        }
-        // Other entities only check same lane and immediate adjacent lanes
-        return xDistance <= 1;
-      });
+      // Only consider entities within a reasonable vertical distance
+      if (yDistance > 30) return false;
+
+      if (entityType === EntityType.STREETCAR || entity.type === EntityType.STREETCAR) {
+        // Streetcars need more space laterally
+        return xDistance <= 2;
+      }
+      // Other entities only check same lane and immediate adjacent lanes
+      return xDistance <= 1;
+    });
 
     // Check for minimum spacing between entities
-    const hasEnoughSpace = nearbyEntities.every(entity => {
+    const hasEnoughSpace = nearbyEntities.every((entity) => {
       const distance = Math.abs(entity.position.y - position.y);
       const requiredSpacing = this.getRequiredSpacing(entityType, entity.type);
-      
+
       // Additional check for same-lane entities
       if (Math.abs(entity.position.x - position.x) < 0.1) {
         return distance >= requiredSpacing * 1.5; // 50% more space in same lane
@@ -744,15 +729,15 @@ class SpawnManager {
     });
 
     if (this.debugLog && (entityType === EntityType.STREETCAR || nearbyEntities.length > 0)) {
-      console.log(`[SpawnDebug] Space check for ${entityType}:`, {
-        position: `(${position.x}, ${position.y})`,
-        nearbyCount: nearbyEntities.length,
-        hasEnoughSpace,
-        nearbyPositions: nearbyEntities.map(e => ({
-          type: e.type,
-          pos: `(${e.position.x}, ${e.position.y})`
-        }))
-      });
+      // console.log(`[SpawnDebug] Space check for ${entityType}:`, {
+      //   position: `(${position.x}, ${position.y})`,
+      //   nearbyCount: nearbyEntities.length,
+      //   hasEnoughSpace,
+      //   nearbyPositions: nearbyEntities.map((e) => ({
+      //     type: e.type,
+      //     pos: `(${e.position.x}, ${e.position.y})`,
+      //   })),
+      // });
     }
 
     return hasEnoughSpace;
@@ -766,27 +751,27 @@ class SpawnManager {
         [EntityType.STREETCAR_LANE_CAR]: 15,
         [EntityType.ONCOMING_CAR]: 12,
         [EntityType.PARKED_CAR]: 10,
-        DEFAULT: 12
+        DEFAULT: 12,
       },
       [EntityType.STREETCAR_LANE_CAR]: {
         [EntityType.STREETCAR]: 15,
         [EntityType.STREETCAR_LANE_CAR]: 10,
         [EntityType.ONCOMING_CAR]: 8,
-        DEFAULT: 8
+        DEFAULT: 8,
       },
       [EntityType.ONCOMING_CAR]: {
         [EntityType.STREETCAR]: 12,
         [EntityType.STREETCAR_LANE_CAR]: 8,
         [EntityType.ONCOMING_CAR]: 6,
-        DEFAULT: 5
+        DEFAULT: 5,
       },
       [EntityType.PARKED_CAR]: {
         [EntityType.STREETCAR]: 10,
         [EntityType.PARKED_CAR]: 5,
-        DEFAULT: 4
+        DEFAULT: 4,
       },
       [EntityType.PEDESTRIAN]: {
-        DEFAULT: 3
+        DEFAULT: 3,
       },
       DEFAULT: {
         [EntityType.STREETCAR]: 12,
@@ -794,12 +779,12 @@ class SpawnManager {
         [EntityType.ONCOMING_CAR]: 6,
         [EntityType.PARKED_CAR]: 4,
         [EntityType.PEDESTRIAN]: 3,
-        DEFAULT: 5
-      }
+        DEFAULT: 5,
+      },
     };
 
     const typeASpacing = spacingMatrix[typeA] || spacingMatrix.DEFAULT;
-    return (typeASpacing[typeB] || typeASpacing.DEFAULT);
+    return typeASpacing[typeB] || typeASpacing.DEFAULT;
   }
 
   calculateSpacing(entityType) {
@@ -809,8 +794,7 @@ class SpawnManager {
     const baseSpacing = rules.baseSpacing;
 
     // Add random additional spacing more frequently for streetcars and cars
-    const randomChance = entityType === EntityType.STREETCAR ? 0.4 :
-                        entityType === EntityType.STREETCAR_LANE_CAR ? 0.3 : 0.2;
+    const randomChance = entityType === EntityType.STREETCAR ? 0.4 : entityType === EntityType.STREETCAR_LANE_CAR ? 0.3 : 0.2;
 
     if (Math.random() < randomChance) {
       const { min, max } = rules.randomSpacingRange;
@@ -821,7 +805,7 @@ class SpawnManager {
         console.log(`[SpawnDebug] Calculated spacing for ${entityType}:`, {
           baseSpacing,
           additionalSpacing,
-          finalSpacing: spacing
+          finalSpacing: spacing,
         });
       }
       return spacing;
@@ -838,15 +822,12 @@ class SpawnManager {
     }
 
     const config = {
-      position: new Position(
-        rules.laneRules.spawnPosition.x,
-        rules.laneRules.spawnPosition.y
-      ),
+      position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
       direction: rules.laneRules.direction,
     };
 
     if (this.debugLog && entityType === EntityType.STREETCAR) {
-      console.log(`[SpawnDebug] Got spawn config for ${entityType}:`, config);
+      // console.log(`[SpawnDebug] Got spawn config for ${entityType}:`, config);
     }
 
     return config;
@@ -869,18 +850,18 @@ class SpawnManager {
         }
 
         const entity = new EntityClass(this.config, spawnConfig);
-        
+
         if (this.debugLog && entityType === EntityType.STREETCAR) {
-          console.log(`[SpawnDebug] Successfully spawned ${entityType}:`, {
-            position: `(${entity.position.x}, ${entity.position.y})`,
-            entityId: entity.id
-          });
+          // console.log(`[SpawnDebug] Successfully spawned ${entityType}:`, {
+          //   position: `(${entity.position.x}, ${entity.position.y})`,
+          //   entityId: entity.id,
+          // });
         }
-        
+
         return entity;
       }
     } else if (this.debugLog && entityType === EntityType.STREETCAR) {
-      console.log(`[SpawnDebug] Failed to spawn ${entityType} - canSpawnAt returned false`);
+      // console.log(`[SpawnDebug] Failed to spawn ${entityType} - canSpawnAt returned false`);
     }
 
     return null;
@@ -943,7 +924,7 @@ const DOOR_STATES = {
   OPENING_1: 1,
   OPENING_2: 2,
   OPENING_3: 3,
-  FULLY_OPEN: 4
+  FULLY_OPEN: 4,
 };
 
 class EntityBehavior {
@@ -1041,10 +1022,7 @@ class VehicleBehaviorBase extends EntityBehavior {
   }
 
   calculateNewPosition() {
-    return new Position(
-      this.entity.position.x,
-      this.entity.position.y + this.baseSpeed
-    );
+    return new Position(this.entity.position.x, this.entity.position.y + this.baseSpeed);
   }
 
   handleMovementBlocked() {
@@ -1057,20 +1035,14 @@ class VehicleBehaviorBase extends EntityBehavior {
   getNearbyEntities() {
     if (!this.entity.spatialManager) return [];
 
-    return this.entity.spatialManager.grid.getNearbyEntities(
-      this.entity.position,
-      Math.max(this.entity.width, this.entity.height) * 2
-    ).filter(entity => 
-      entity !== this.entity &&
-      entity.type !== EntityType.PLAYER &&
-      Math.abs(entity.position.x - this.entity.position.x) < 2
-    );
+    return this.entity.spatialManager.grid
+      .getNearbyEntities(this.entity.position, Math.max(this.entity.width, this.entity.height) * 2)
+      .filter((entity) => entity !== this.entity && entity.type !== EntityType.PLAYER && Math.abs(entity.position.x - this.entity.position.x) < 2);
   }
 
   updateAnimation() {
     // Override in child classes that need animation
   }
-
 }
 
 class ParkedCarBehavior extends VehicleBehaviorBase {
@@ -1079,9 +1051,9 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
       baseSpeed: 1,
       minDistance: 2,
       ignoreCollisions: false,
-      hasAnimation: true
+      hasAnimation: true,
     });
-    
+
     this.doorState = DOOR_STATES.CLOSED;
     this.doorOpenDuration = 100;
     this.doorTimer = 0;
@@ -1090,24 +1062,24 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
     this.doorAnimationActive = false;
     this.lastDoorUpdate = Date.now();
     this.doorOpenDelay = 25;
-    
+
     // Calculate target Y position for door opening
     const targetPercentage = 0.2 + Math.random() * 0.1;
     this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
   }
 
   updateAnimation() {
-    if (this.shouldOpenDoor && 
-        !this.doorAnimationActive && 
-        this.entity.position.y >= this.doorOpenY && 
-        this.entity.position.y <= this.doorOpenY + 2) {
+    if (
+      this.shouldOpenDoor &&
+      !this.doorAnimationActive &&
+      this.entity.position.y >= this.doorOpenY &&
+      this.entity.position.y <= this.doorOpenY + 2
+    ) {
       this.doorAnimationActive = true;
       this.updateDoorState();
     }
 
-    if (this.doorAnimationActive && 
-        this.doorState < ENTITIES.PARKED_CAR_STATES.length - 1 && 
-        Date.now() - this.lastDoorUpdate > this.doorOpenDelay) {
+    if (this.doorAnimationActive && this.doorState < ENTITIES.PARKED_CAR_STATES.length - 1 && Date.now() - this.lastDoorUpdate > this.doorOpenDelay) {
       this.updateDoorState();
     }
 
@@ -1156,7 +1128,7 @@ class StreetcarBehavior extends VehicleBehaviorBase {
     super(entity, {
       baseSpeed: -1,
       minDistance: 5,
-      ignoreCollisions: false
+      ignoreCollisions: false,
     });
   }
 
@@ -1170,7 +1142,7 @@ class StreetcarBehavior extends VehicleBehaviorBase {
   }
 
   shouldStop(nearbyEntities) {
-    return nearbyEntities.some(other => {
+    return nearbyEntities.some((other) => {
       const distance = Math.abs(other.position.y - this.entity.position.y);
       return distance < this.minDistance;
     });
@@ -1182,11 +1154,10 @@ class OncomingCarBehavior extends VehicleBehaviorBase {
     super(entity, {
       baseSpeed: 2,
       minDistance: 2,
-      ignoreCollisions: false
+      ignoreCollisions: false,
     });
   }
 }
-
 
 /// oncoming goes here
 
@@ -1195,7 +1166,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     super(entity, {
       baseSpeed: -1,
       minDistance: 2,
-      ignoreCollisions: false
+      ignoreCollisions: false,
     });
   }
 }
@@ -1219,17 +1190,14 @@ class PedestrianBehavior extends EntityBehavior {
     }
 
     const nearbyEntities = this.getNearbyEntities();
-    
+
     if (this.shouldWait(nearbyEntities)) {
       this.stopped = true;
       this.waitTime = 20; // Wait for 20 frames
       return;
     }
 
-    const newPosition = new Position(
-      Math.round(this.entity.position.x),
-      this.entity.position.y + this.baseSpeed
-    );
+    const newPosition = new Position(Math.round(this.entity.position.x), this.entity.position.y + this.baseSpeed);
 
     if (this.canMoveTo(newPosition)) {
       this.entity.position = newPosition;
@@ -1239,19 +1207,19 @@ class PedestrianBehavior extends EntityBehavior {
   getNearbyEntities() {
     if (!this.entity.spatialManager) return [];
 
-    return this.entity.spatialManager.grid.getNearbyEntities(
-      this.entity.position,
-      2
-    ).filter(entity => 
-      entity !== this.entity &&
-      entity.type !== EntityType.PLAYER &&
-      entity.type === EntityType.PEDESTRIAN &&
-      Math.abs(entity.position.x - this.entity.position.x) < 1
-    );
+    return this.entity.spatialManager.grid
+      .getNearbyEntities(this.entity.position, 2)
+      .filter(
+        (entity) =>
+          entity !== this.entity &&
+          entity.type !== EntityType.PLAYER &&
+          entity.type === EntityType.PEDESTRIAN &&
+          Math.abs(entity.position.x - this.entity.position.x) < 1
+      );
   }
 
   shouldWait(nearbyEntities) {
-    return nearbyEntities.some(other => {
+    return nearbyEntities.some((other) => {
       const distance = Math.abs(other.position.y - this.entity.position.y);
       return distance < 2;
     });
@@ -1315,8 +1283,6 @@ class BuildingBehavior extends EntityBehavior {
     }
   }
 }
-
-
 
 class Streetcar extends BaseEntity {
   constructor(config, spawnConfig) {
@@ -1462,12 +1428,12 @@ class GameState {
     this.isJumping = false;
     this.speed = config.GAME.INITIAL_SPEED;
 
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      movementSpeed: config.GAME.INITIAL_SPEED,
-      moveInterval: null,
-    };
+    // this.movementState = {
+    //   isMovingLeft: false,
+    //   isMovingRight: false,
+    //   lastMove: performance.now(),
+    //   moveSpeed: 0.11, // Units per frame (increase/decrease to adjust speed)
+    // };
 
     this.touchState = {
       lastTap: 0,
@@ -1479,7 +1445,6 @@ class GameState {
       x: 0,
       y: 0,
     };
-    
   }
 
   updateDeathAnimation() {
@@ -1618,20 +1583,30 @@ class SettingsManager {
 
 class LoserLane {
   constructor() {
-    this.config = CONFIG; // Add this line
+    this.config = CONFIG;
     this.state = new GameState(this.config);
     this.spatialManager = new SpatialManager(this.config);
     this.eventListeners = new Map();
-    this.setupControls();
-    this.setupTouchControls();
     this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
 
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      lastMove: performance.now(),
+      moveSpeed: 0.15,
+    };
+
     this.debug = true;
-    this.preventDefaultTouchBehaviors();
-    this.settingsManager = new SettingsManager(this);
-    this.initializeGameWorld();
     this.lastFrameTime = performance.now();
     this.frameId = null;
+
+    // Initialize game elements in the correct order
+    this.initializeGameWorld();
+    // this.setupInfoButton(); // Add this line
+    this.setupControls();
+    this.setupTouchControls();
+    this.preventDefaultTouchBehaviors();
+    this.settingsManager = new SettingsManager(this);
   }
 
   addEventListenerWithTracking(element, type, handler, options = false) {
@@ -1641,9 +1616,171 @@ class LoserLane {
     }
     this.eventListeners.get(element).push({ type, handler, options });
   }
+  setupInfoButton() {
+    const infoButton = document.getElementById("info-button");
+    const infoDiv = document.getElementById("info-div");
+    const closeButton = document.getElementById("close-info");
 
-  updatePlayerPosition() {
-    this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
+    console.log("Setting up info button:", { infoButton, infoDiv, closeButton });
+
+    if (infoButton && infoDiv && closeButton) {
+        infoButton.addEventListener("click", (e) => {
+            console.log("Info button clicked - showing info div");
+            e.preventDefault();
+            e.stopPropagation();
+            infoDiv.style.display = "block";
+        });
+
+        closeButton.addEventListener("click", (e) => {
+            console.log("Close button clicked - hiding info div");
+            e.preventDefault();
+            e.stopPropagation();
+            infoDiv.style.display = "none";
+        });
+
+        infoDiv.addEventListener("click", (e) => {
+            console.log("Info div clicked - preventing propagation");
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        console.log("Info button setup complete");
+    } else {
+        console.warn("Could not find all required info elements:", 
+            { infoButton, infoDiv, closeButton });
+    }
+}
+
+  initializeGameWorld() {
+    this.spatialManager.entities.clear();
+    this.initializeBuildings();
+    this.initializeParkedCars();
+    this.player = this.createPlayer();
+    this.spatialManager.registerEntity(this.player);
+  }
+
+  setupControls() {
+    const keydownHandler = (e) => {
+      if (!this.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
+        this.start();
+        document.getElementById("title-box").style.visibility = "visible";
+
+        return;
+      }
+
+      if (this.state.isPlaying) {
+        switch (e.key) {
+          case "ArrowLeft":
+            this.movementState.isMovingLeft = true;
+            break;
+          case "ArrowRight":
+            this.movementState.isMovingRight = true;
+            break;
+          case "p":
+          case "P":
+            this.togglePause();
+            break;
+        }
+      }
+    };
+
+    const keyupHandler = (e) => {
+      if (this.state.isPlaying) {
+        switch (e.key) {
+          case "ArrowLeft":
+            this.movementState.isMovingLeft = false;
+            break;
+          case "ArrowRight":
+            this.movementState.isMovingRight = false;
+            break;
+        }
+      }
+    };
+
+    const clickHandler = (e) => {
+      console.log("Click detected on:", e.target);  
+      console.log("Target classList:", e.target.classList);
+      console.log("Is playing:", this.state.isPlaying);
+  
+      // Check if the click is on control areas or info elements
+      const isExcludedElement = 
+          e.target.id === "info-button" || 
+          e.target.id === "info-div" || 
+          e.target.id === "close-info" || 
+          e.target.closest("#info-div") ||
+          e.target.closest(".title-box") ||
+          e.target.classList.contains("control-area") ||
+          e.target.closest(".control-area");
+  
+      if (isExcludedElement) {
+          console.log("Click on excluded element - not starting game");
+          // e.preventDefault();
+          // e.stopPropagation();
+          return;
+      }
+  
+      if (!this.state.isPlaying) {
+          console.log("Starting game");
+          document.getElementById("title-box").style.visibility = "visible";
+          this.start();
+      }
+  };
+
+    this.addEventListenerWithTracking(document, "keydown", keydownHandler);
+    this.addEventListenerWithTracking(document, "keyup", keyupHandler);
+    // Change from document to game-container
+    const gameContainer = document.getElementById("game-container");
+    if (gameContainer) {
+      this.addEventListenerWithTracking(gameContainer, "click", clickHandler);
+    }
+  }
+
+  setupTouchControls() {
+    const leftControl = document.getElementById("move-left");
+    const rightControl = document.getElementById("move-right");
+
+    if (leftControl && rightControl) {
+      const tapState = {
+        left: { lastTap: 0, tapCount: 0 },
+        right: { lastTap: 0, tapCount: 0 },
+      };
+
+      const handleTouchStart = (side, event) => {
+        event.preventDefault();
+        if (!this.state?.isPlaying) return;
+
+        const currentTime = Date.now();
+        const state = tapState[side];
+
+        if (currentTime - state.lastTap > CONFIG.GAME.TAP_RESET_DELAY) {
+          state.tapCount = 0;
+        }
+
+        state.tapCount++;
+
+        if (state.tapCount === 2 && currentTime - state.lastTap <= CONFIG.GAME.DOUBLE_TAP_TIME) {
+          if (side === "left") {
+            this.moveLeft(true, false);
+          } else {
+            this.moveRight(true, false);
+          }
+          state.tapCount = 0;
+        } else {
+          this.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = true;
+        }
+
+        state.lastTap = currentTime;
+      };
+
+      const handleTouchEnd = (side) => {
+        this.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = false;
+      };
+
+      this.addEventListenerWithTracking(leftControl, "touchstart", (e) => handleTouchStart("left", e));
+      this.addEventListenerWithTracking(rightControl, "touchstart", (e) => handleTouchStart("right", e));
+      this.addEventListenerWithTracking(leftControl, "touchend", () => handleTouchEnd("left"));
+      this.addEventListenerWithTracking(rightControl, "touchend", () => handleTouchEnd("right"));
+    }
   }
 
   update(timestamp) {
@@ -1657,8 +1794,22 @@ class LoserLane {
       return;
     }
 
-    const deltaTime = timestamp - this.lastFrameTime;
+    // Handle continuous movement every frame
+    if (!this.state.isDead) {
+      const moveTime = timestamp - this.movementState.lastMove;
+      const moveAmount = (moveTime / 16.67) * this.movementState.moveSpeed;
 
+      if (this.movementState.isMovingLeft) {
+        this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+      }
+      if (this.movementState.isMovingRight) {
+        this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+      }
+      this.movementState.lastMove = timestamp;
+    }
+
+    // Regular game update at fixed interval
+    const deltaTime = timestamp - this.lastFrameTime;
     if (deltaTime >= this.state.speed) {
       this.lastFrameTime = timestamp;
 
@@ -1682,104 +1833,17 @@ class LoserLane {
     this.frameId = requestAnimationFrame((t) => this.update(t));
   }
 
+  updatePlayerPosition() {
+    if (this.player) {
+      // Add check to ensure player exists
+      this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
+    }
+  }
+
   updateScoreDisplay() {
     const scoreElement = document.getElementById("time-alive");
     if (scoreElement) {
       scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
-    }
-  }
-
-  initializeGameWorld() {
-    this.spatialManager.entities.clear();
-    this.initializeBuildings();
-    this.initializeParkedCars();
-    this.player = this.createPlayer();
-    this.spatialManager.registerEntity(this.player);
-  }
-
-  setupControls() {
-    const keydownHandler = (e) => {
-      if (!this.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
-        this.start();
-        return;
-      }
-
-      if (this.state.isPlaying) {
-        switch (e.key) {
-          case "ArrowLeft":
-            this.moveLeft();
-            break;
-          case "ArrowRight":
-            this.moveRight();
-            break;
-          case "p":
-          case "P":
-            this.togglePause();
-            break;
-        }
-      }
-    };
-
-    const clickHandler = () => {
-      if (!this.state.isPlaying) {
-        this.start();
-      }
-    };
-
-    this.addEventListenerWithTracking(document, "keydown", keydownHandler);
-    this.addEventListenerWithTracking(document, "click", clickHandler);
-  }
-
-  setupTouchControls() {
-    const leftControl = document.getElementById("move-left");
-    const rightControl = document.getElementById("move-right");
-
-    if (leftControl && rightControl) {
-      const tapState = {
-        left: { lastTap: 0, tapCount: 0 },
-        right: { lastTap: 0, tapCount: 0 },
-      };
-
-      const handleTap = (side, event) => {
-        event.preventDefault();
-
-        if (!this.state?.isPlaying) {
-          return;
-        }
-
-        const currentTime = Date.now();
-        const state = tapState[side];
-
-        if (currentTime - state.lastTap > CONFIG.GAME.TAP_RESET_DELAY) {
-          state.tapCount = 0;
-        }
-
-        state.tapCount++;
-
-        if (state.tapCount === 2 && currentTime - state.lastTap <= CONFIG.GAME.DOUBLE_TAP_TIME) {
-          if (side === "left") {
-            this.moveLeft(true, false);
-          } else {
-            this.moveRight(true, false);
-          }
-          state.tapCount = 0;
-        } else if (state.tapCount === 1) {
-          if (side === "left") {
-            this.moveLeft(false, true);
-          } else {
-            this.moveRight(false, true);
-          }
-        }
-
-        state.lastTap = currentTime;
-
-        setTimeout(() => {
-          state.tapCount = 0;
-        }, CONFIG.GAME.TAP_RESET_DELAY);
-      };
-
-      this.addEventListenerWithTracking(leftControl, "touchstart", (e) => handleTap("left", e));
-      this.addEventListenerWithTracking(rightControl, "touchstart", (e) => handleTap("right", e));
     }
   }
 
@@ -1933,30 +1997,30 @@ class LoserLane {
     const shopSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 1;
 
     while (currentY > -20) {
-        // Get all existing buildings for spacing check
-        const existingBuildings = Array.from(this.spatialManager.entities)
-            .filter(e => e.type === EntityType.BUILDING)
-            .sort((a, b) => a.position.y - b.position.y);
+      // Get all existing buildings for spacing check
+      const existingBuildings = Array.from(this.spatialManager.entities)
+        .filter((e) => e.type === EntityType.BUILDING)
+        .sort((a, b) => a.position.y - b.position.y);
 
-        const building = new Building(CONFIG, currentY);
-        
-        // Check if there's overlap with any existing building
-        const hasOverlap = existingBuildings.some(existing => {
-            const topOverlap = currentY <= (existing.position.y + existing.height);
-            const bottomOverlap = (currentY + building.height) >= existing.position.y;
-            return topOverlap && bottomOverlap;
-        });
+      const building = new Building(CONFIG, currentY);
 
-        if (!hasOverlap) {
-            this.spatialManager.registerEntity(building);
-            // Move up by building height plus spacing
-            currentY -= (building.height + shopSpacing);
-        } else {
-            // If overlap detected, move up by smaller increment and try again
-            currentY -= 1;
-        }
+      // Check if there's overlap with any existing building
+      const hasOverlap = existingBuildings.some((existing) => {
+        const topOverlap = currentY <= existing.position.y + existing.height;
+        const bottomOverlap = currentY + building.height >= existing.position.y;
+        return topOverlap && bottomOverlap;
+      });
+
+      if (!hasOverlap) {
+        this.spatialManager.registerEntity(building);
+        // Move up by building height plus spacing
+        currentY -= building.height + shopSpacing;
+      } else {
+        // If overlap detected, move up by smaller increment and try again
+        currentY -= 1;
+      }
     }
-}
+  }
   initializeParkedCars() {
     let currentY = CONFIG.GAME.HEIGHT;
     while (currentY > -5) {
@@ -2128,7 +2192,6 @@ class LoserLane {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
   }
-
   cleanup() {
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);

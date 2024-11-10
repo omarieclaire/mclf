@@ -1,13 +1,16 @@
 :root {
-  --background-color: #2d2d2d;
+  --background-color: #202020;
   --text-color: #d1feff;
   --second-text-color: #dfb1ff;
   --third-text-color: #ff1cca;
+  --fourth-text-color: #7f5fff;
+
   --secondary-background-color: #222;
   --overlay-background: rgba(0, 0, 0, 0.9);
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   overflow: hidden;
@@ -20,6 +23,11 @@ body {
   align-items: center;
   font-family: "Courier New", monospace;
   background: var(--background-color);
+}
+
+a {
+  color: var(--second-text-color);
+  /* text-decoration: none; */
 }
 
 .grid-cell {
@@ -55,6 +63,7 @@ body {
   /* height: 60%; */
   max-width: 90%;
   z-index: 100;
+  color: var(--second-text-color);
 }
 
 @media (min-height: 600px) {
@@ -93,9 +102,9 @@ body {
 }
 
 .control-area {
-  flex: 1;
-  height: 100%;
-  cursor: pointer;
+  position: absolute;
+  top: 80px; /* Start below header */
+  height: calc(100% - 80px); /* Take remaining height */
 }
 
 .title-box {
@@ -111,35 +120,74 @@ body {
   color: var(--text-color);
   line-height: 1.5rem;
   /* font-size: .8rem; */
+  position: relative;
+  z-index: 10; /* Higher than control areas */
+}
+
+#big-title {
+  /* text-align: center;  */
+  font-size: 1rem;
+  color: var(--fourth-text-color);
+}
+
+@media (max-height: 600px) {
+  #big-title {
+    font-size: 2.5rem;
+    color: var(--fourth-text-color);
+  }
+}
+
+#title {
+  /* font-size: 2.5rem; */
+  color: var(--third-text-color);
 }
 
 #time-alive {
-  font-size: 24px;
+  font-size: 1.3rem;
+  color: var(--fourth-text-color);
 }
 
-#title-box-container {
+.title-box-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: 100vw; */
+  /* background-color: var(--background-color); */
+  padding: 8px 0;
+  color: var(--text-color);
+}
+
+#title-box {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100vw;
   background-color: var(--background-color);
   padding: 8px 0;
-  color: var(--text-color); 
+  color: var(--text-color);
+  visibility: hidden;
 }
 
-
-.bike-art-left, .bike-art-right {
+.bike-art-left,
+.bike-art-right {
   color: var(--third-text-color);
-  font-size: .8rem;
+  font-size: 0.8rem;
   line-height: 1;
   text-align: center;
-  margin: 0 1rem;
+  margin: 0 5px;
+}
+
+@media (max-height: 600px) {
+  .bike-art-left,
+  .bike-art-right {
+    font-size: 0.8rem;
+    line-height: 1;
+  }
 }
 
 .title-text {
   text-align: center;
   font-size: 1rem;
-
 }
 
 .message-reason {
@@ -150,7 +198,6 @@ body {
 .cute-face {
   font-size: 24px;
 }
-
 
 #settings-window {
   position: fixed;
@@ -165,7 +212,8 @@ body {
   z-index: 1000;
 }
 
-#settings-window label, #settings-window input {
+#settings-window label,
+#settings-window input {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
@@ -177,8 +225,6 @@ body {
   color: #ccc;
 }
 
-
-
 #controls {
   position: fixed;
   bottom: 0;
@@ -188,6 +234,8 @@ body {
   display: flex;
   z-index: 10;
   touch-action: none;
+  position: absolute;
+  z-index: 5; /* Lower than title-box */
 }
 
 .control-area {
@@ -195,6 +243,9 @@ body {
   height: 100%;
   opacity: 0;
   -webkit-tap-highlight-color: transparent;
+  position: absolute;
+  top: 100px; /* Or whatever space you need to leave for the title area */
+  bottom: 0;
 }
 
 /* Add subtle visual feedback for taps */
@@ -235,11 +286,6 @@ body {
   }
 } */
 
-
-
-
-
-
 /* 
 
 .bike-highlight {
@@ -266,7 +312,6 @@ body {
   100% { left: 150%; }
 } */
 
-
 .bike-highlight {
   background-color: rgba(255, 255, 150, 0.718);
   color: transparent;
@@ -280,7 +325,8 @@ body {
 }
 
 @keyframes wave {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -302,12 +348,13 @@ button {
 
 #info-button {
   background: var(--background-color);
-  color: var(--text-color);
   border: none;
   padding: 5px 5px;
   margin: 2px;
   cursor: pointer;
   font-family: "Courier New", monospace;
+  /* border: 1px solid --fourth-text-color; */
+  text-transform: capitalize;
 }
 
 #start-button {
@@ -331,7 +378,7 @@ button {
 }
 
 #info-div a {
-  color: var(--second-text-color);
+  color: var(--third-text-color);
 }
 
 #close-info {

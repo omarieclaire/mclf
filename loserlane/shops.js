@@ -216,11 +216,11 @@ const TORONTO_SHOPS = [
     {
         name: "HALO_HALO",
         art: [
-            " ╭───────╮ ",
-            "╭││HALO ││╮",
-            "│││HALO  ││",
-            "│││      ││",
-            "╰┴┴──────┴╯"
+            " ╭──────╮ ",
+            "╭││HALO││╮",
+            "│││HALO ││",
+            "│││     ││",
+            "╰┴┴─────┴╯"
         ]
     },
     {
@@ -342,6 +342,7 @@ const TORONTO_SHOPS = [
             "│KENSING │",
             "│TON     │",
             "│MARKET  │",
+            "│MARKET  │",
             "└────────┘"
         ]
     },
@@ -372,7 +373,7 @@ const TORONTO_SHOPS = [
             "┌────────┐",
             "│BUDDHA'S│",
             "│VEGAN   │",
-            "│RESTAURANT│",
+            "│FOOOOOOD│",
             "└────────┘"
         ]
     },
