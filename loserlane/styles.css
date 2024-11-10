@@ -402,3 +402,17 @@ button {
   cursor: pointer;
   line-height: 1;
 }
+
+
+.control-area {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@supports (-webkit-touch-callout: none) {
+  #game-container {
+    height: -webkit-fill-available;
+  }
+}
