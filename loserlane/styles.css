@@ -1,14 +1,31 @@
 :root {
   --vh: 1vh;
 
-  --background-color: #202020;
-  --text-color: #d1feff;
-  --second-text-color: #dfb1ff;
-  --third-text-color: #ff1cca;
-  --fourth-text-color: #7f5fff;
+  --dark-yellow: #c38f00;
 
-  --secondary-background-color: #222;
+  --light-blue: #d1feff;
+  --light-purp: #dfb1ff;
+  --hot-pink: #ff1cca;
+  --med-purp: #b19eff;
+  --dark-grey: #202020;
+  --darker-grey: #222;
+  --black: #141414;
+
   --overlay-background: rgba(0, 0, 0, 0.9);
+}
+
+* Prevent text selection */ * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Ensure proper scaling on iOS */
+@supports (-webkit-touch-callout: none) {
+  #game-container {
+    height: -webkit-fill-available;
+  }
 }
 
 html,
@@ -17,19 +34,16 @@ body {
   margin: 0;
   overflow: hidden;
   box-sizing: border-box;
+  font-family: "Courier New", monospace;
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Courier New", monospace;
-  background: var(--background-color);
+  background: var(--dark-grey);
 }
 
 a {
-  color: var(--second-text-color);
-  /* text-decoration: none; */
+  color: var(--med-purp);
+  text-decoration: none;
 }
 
 .grid-cell {
@@ -47,30 +61,24 @@ a {
   }
 }
 
-#gameTitle {
-  font-size: 2rem;
-}
-
-#mainMessageBox {
+#main-msg-box {
   position: absolute;
   top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--overlay-background);
-  color: var(--text-color);
-  padding: 20px;
   font-size: 1.5rem;
   text-align: center;
   width: 90%;
-  /* height: 60%; */
   max-width: 90%;
   z-index: 100;
-  color: var(--second-text-color);
+  color: var(--light-purp);
+  background-color: var(--black);
+  padding: 1rem;
 }
 
-@media (min-height: 600px) {
-  #mainMessageBox {
-    max-width: 80%;
+@media (min-width: 600px) {
+  #main-msg-box {
+    max-width: 50%;
   }
 }
 
@@ -78,108 +86,141 @@ a {
   width: 100vw;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
-
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  
 }
 
 #game-screen {
   white-space: pre;
-  text-align: left;
-  line-height: 1.2;
-  background: var(--secondary-background-color);
-  color: var(--text-color);
   height: 100%;
   overflow: hidden;
-  min-height: 400px;
-  font-size: 16px;
-  transition: background-color 0.1s;
+  transition: dark-grey 0.1s;
+  color:#dfb1ff
 }
 
 @media (max-height: 600px) {
   #game-screen {
-    font-size: 14px;
+    /* font-size: 14px; */
   }
+}
+
+#controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  z-index: 15;
+  touch-action: manipulation; /* Better touch handling */
+  pointer-events: auto;
+}
+
+#move-left {
+  left: 0;
+}
+
+#move-right {
+  right: 0;
+}
+
+/* Add subtle visual feedback for taps */
+.control-area:active {
+  dark-grey: rgba(255, 255, 255, 0.1);
 }
 
 .control-area {
-  position: absolute;
-  top: 80px; /* Start below header */
-  height: calc(100% - 80px); /* Take remaining height */
+  /* position: absolute; */
+  top: 0;
+  /* height: calc(100% - 90px);  */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* position: relative;  */
+  flex: 1;
+  opacity: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.title-box {
+#title-box-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  position: absolute;
-  bottom: 17px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  color: var(--text-color);
-  line-height: 1.5rem;
-  /* font-size: .8rem; */
-  position: relative;
-  z-index: 10; /* Higher than control areas */
-}
-
-#big-title {
-  /* text-align: center;  */
-  font-size: 1rem;
-  color: var(--fourth-text-color);
-}
-
-@media (max-height: 600px) {
-  #big-title {
-    font-size: 2.5rem;
-    color: var(--fourth-text-color);
-  }
-}
-
-#title {
-  /* font-size: 2.5rem; */
-  color: var(--third-text-color);
-}
-
-#time-alive {
-  font-size: 1.3rem;
-  color: var(--fourth-text-color);
-}
-
-.title-box-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* width: 100vw; */
-  /* background-color: var(--background-color); */
+  width: 100vw;
   padding: 8px 0;
-  color: var(--text-color);
+  color: var(--light-blue);
+  visibility: hidden;
+  margin: auto;
+  flex-direction: column;
+  text-align: center;
+  z-index: 100;
+}
+
+@media (min-height: 600px) {
+  #title-box-container {
+    width: 25rem;
+  }
 }
 
 #title-box {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100vw;
-  background-color: var(--background-color);
+  flex-direction: row;
+  justify-content: space-evenly;
+  /* width: 100vw; */
+  /* dark-grey: var(--dark-grey); */
   padding: 8px 0;
-  color: var(--text-color);
-  visibility: hidden;
+  color: var(--light-blue);
+  width: 100%;
+}
+
+/* .title-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  z-index: 100;
+} */
+
+#big-title {
+  /* text-align: center;  */
+  font-size: 1.8rem;
+  color: var(--med-purp);
+}
+
+@media (max-height: 600px) {
+  #big-title {
+    font-size: 2.7rem;
+    color: var(--med-purp);
+  }
+}
+
+#title {
+  /* font-size: 2.5rem; */
+  color: var(--hot-pink);
+}
+
+#time-alive {
+  font-size: 1.3rem;
+  color: var(--light-purp);
+}
+
+.bike-art-title {
+  color: var(--hot-pink);
 }
 
 .bike-art-left,
 .bike-art-right {
-  color: var(--third-text-color);
+  color: var(--hot-pink);
   font-size: 0.8rem;
   line-height: 1;
   text-align: center;
-  margin: 0 5px;
+  /* margin: 0 5px; */
 }
 
 @media (max-height: 600px) {
@@ -196,12 +237,14 @@ a {
 }
 
 .message-reason {
+  color: var(--hot-pink);
   font-size: 2rem;
   letter-spacing: 10px;
 }
 
 .cute-face {
   font-size: 24px;
+  color: var(--med-purp);
 }
 
 #settings-window {
@@ -230,57 +273,9 @@ a {
   color: #ccc;
 }
 
-#controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  display: flex;
-  z-index: 15; /* Increase z-index to ensure controls are clickable */
-  touch-action: manipulation; /* Better touch handling */
-  pointer-events: auto;
-}
-
-.control-area {
-  position: relative; /* Change from absolute to relative */
-  flex: 1;
-  height: 100%;
-  opacity: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-
-#move-left {
-  left: 0;
-}
-
-#move-right {
-  right: 0;
-}
-
-/* Add subtle visual feedback for taps */
-.control-area:active {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Prevent text selection */
-* {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Ensure proper scaling on iOS */
-@supports (-webkit-touch-callout: none) {
-  #game-container {
-    height: -webkit-fill-available;
-  }
-}
-
 /* 
 .bike-highlight {
-  background-color: rgba(255, 255, 150, 0.1);
+  dark-grey: rgba(255, 255, 150, 0.1);
   background-clip: text;
   color: transparent;
   background-image: linear-gradient(45deg, red, orange, yellow, green, cyan, blue, violet);
@@ -299,7 +294,7 @@ a {
 /* 
 
 .bike-highlight {
-  background-color: rgba(255, 255, 150, 0.1);
+  dark-grey: rgba(255, 255, 150, 0.1);
   color: #ffbb00;
   background-clip: text;
   position: relative;
@@ -323,7 +318,7 @@ a {
 } */
 
 .bike-highlight {
-  background-color: rgba(255, 255, 150, 0.718);
+  dark-grey: rgba(255, 255, 150, 0.718);
   color: transparent;
   background-image: linear-gradient(45deg, #f06, #4a90e2, #50e3c2);
   background-size: 200%;
@@ -345,11 +340,11 @@ a {
 }
 
 button {
-  background: var(--background-color);
-  color: var(--text-color);
+  background: var(--dark-grey);
+  color: var(--light-blue);
   border: none;
-  /* border: 1px solid var(--third-text-color); */
-  /* outline: 1px solid var(--second-text-color); */
+  /* border: 1px solid var(--hot-pink); */
+  /* outline: 1px solid var(--light-purp); */
   padding: 5px 5px;
   margin: 2px;
   cursor: pointer;
@@ -357,19 +352,41 @@ button {
 }
 
 #info-button {
-  background: var(--background-color);
-  border: none;
-  padding: 5px 5px;
-  margin: 2px;
+  background: var(--dark-grey);
   cursor: pointer;
   font-family: "Courier New", monospace;
-  /* border: 1px solid --fourth-text-color; */
   text-transform: capitalize;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.7rem;
 }
 
 #start-button {
   width: 10rem;
-  height: 2rem;
+  height: 2.5rem;
+  border: 2px solid #333;
+  outline: 2px solid #666;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  transition: transform 0.1s, box-shadow 0.1s; /* Simple animation */
+  /* Add a slight 3D effect */
+  box-shadow: 4px 4px #666;
+}
+
+button:hover {
+  background: var(--dark-yellow); /* Darker yellow on hover */
+  color: #fff; /* White text on hover */
+  /* transform: translate(-2px, -2px); Moves slightly upward */
+  box-shadow: 6px 6px #333;
+}
+
+button:active {
+  /* transform: translate(2px, 2px); Creates a pressed effect */
+  box-shadow: 1px 1px #333;
 }
 
 #info-div {
@@ -378,7 +395,7 @@ button {
   left: 50%;
   transform: translate(-50%, -20%);
   background: var(--overlay-background);
-  color: var(--text-color);
+  color: var(--light-blue);
   padding: 20px;
   width: 80%;
   max-width: 300px;
@@ -388,7 +405,7 @@ button {
 }
 
 #info-div a {
-  color: var(--third-text-color);
+  color: var(--hot-pink);
 }
 
 #close-info {
@@ -397,18 +414,10 @@ button {
   left: 5px;
   background: none;
   border: none;
-  color: var(--text-color);
+  color: var(--light-blue);
   font-size: 1.5rem;
   cursor: pointer;
   line-height: 1;
-}
-
-
-.control-area {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
 @supports (-webkit-touch-callout: none) {

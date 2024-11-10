@@ -103,7 +103,7 @@
       </div>
 
       <div id="game-screen"></div>
-      <div id="mainMessageBox">
+      <div id="main-msg-box">
         <!-- <span id="gameTitle">L O S E R ~ L A N E</span><br /><br /> -->
 
         CLICK or SPACEBAR to start<br /><br />
@@ -128,7 +128,7 @@
 
           <div class="title-text">
             <div id="title">L O S E R ∞ L A N E</div>
-            <div id="time-alive">STAY ALIVE? 0</div>
+            <div id="time-alive">STAY ALIVE: 0</div>
           </div>
 
           <div class="bike-art-right">
@@ -1344,7 +1344,7 @@
         start() {
           if (this.state.isPlaying) return;
 
-          const messageBox = document.getElementById("mainMessageBox");
+          const messageBox = document.getElementById("main-msg-box");
           if (messageBox) {
             messageBox.style.display = "none";
           }
@@ -1356,7 +1356,7 @@
         togglePause() {
           this.state.isPaused = !this.state.isPaused;
 
-          const messageBox = document.getElementById("mainMessageBox");
+          const messageBox = document.getElementById("main-msg-box");
           if (messageBox) {
             messageBox.style.display = this.state.isPaused ? "block" : "none";
             messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
@@ -1660,7 +1660,7 @@
           this.showDeathMessage(reason);
 
           setTimeout(() => {
-            const messageEl = document.getElementById("mainMessageBox");
+            const messageEl = document.getElementById("main-msg-box");
             if (messageEl) {
               messageEl.classList.remove("show-message");
             }
@@ -1684,7 +1684,7 @@
         }
 
         showDeathMessage(reason) {
-          const messageEl = document.getElementById("mainMessageBox");
+          const messageEl = document.getElementById("main-msg-box");
           if (!messageEl) return;
 
           const randomMessage = this.getRandomDeathMessage(reason);
@@ -1716,7 +1716,7 @@
           this.initializeState();
           this.start();
 
-          const messageBox = document.getElementById("mainMessageBox");
+          const messageBox = document.getElementById("main-msg-box");
           if (messageBox) {
             messageBox.textContent = "CLICK or SPACEBAR to start";
           }
@@ -1737,7 +1737,7 @@
 
           const scoreElement = document.getElementById("time-alive");
           if (scoreElement) {
-            scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
+            scoreElement.textContent = `STAY ALIVE: ${this.state.score}`;
           }
 
           this.state.speed = Math.max(this.state.speed * CONFIG.GAME.SPEED_DECREASE_RATE, CONFIG.GAME.MIN_SPEED);

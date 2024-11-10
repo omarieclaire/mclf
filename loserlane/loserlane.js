@@ -1595,25 +1595,16 @@ class TouchInputManager {
     this.config = game.config;
     this.touchState = {
       left: {
-        active: false,
-        startTime: 0,
         lastTap: 0,
-        tapCount: 0,
-        identifier: null,
       },
       right: {
-        active: false,
-        startTime: 0,
         lastTap: 0,
-        tapCount: 0,
-        identifier: null,
       },
     };
 
-    // Constants for touch handling
-    this.DOUBLE_TAP_DELAY = 300; // ms between taps to count as double-tap
-    this.TAP_RESET_DELAY = 500; // ms before tap count resets
-    this.LONG_PRESS_DELAY = 500; // ms to count as long press
+    // Very forgiving timing window
+    this.DOUBLE_TAP_WINDOW = 500; // Half a second window for double tap
+    this.JUMP_DURATION = 400; // Longer jump animation
 
     this.setupTouchControls();
   }
@@ -1627,18 +1618,15 @@ class TouchInputManager {
       return;
     }
 
-    // Add touch event listeners with proper options
     const touchOptions = { passive: false };
 
     ["left", "right"].forEach((side) => {
       const element = side === "left" ? leftControl : rightControl;
-
       element.addEventListener("touchstart", (e) => this.handleTouchStart(e, side), touchOptions);
       element.addEventListener("touchend", (e) => this.handleTouchEnd(e, side), touchOptions);
-      element.addEventListener("touchcancel", (e) => this.handleTouchEnd(e, side), touchOptions);
     });
 
-    // Prevent default behaviors that might interfere
+    // Prevent default behaviors
     document.addEventListener(
       "touchmove",
       (e) => {
@@ -1648,145 +1636,76 @@ class TouchInputManager {
       },
       { passive: false }
     );
-
-    // Prevent unwanted browser behaviors
-    document.addEventListener("gesturestart", (e) => e.preventDefault());
-    document.addEventListener("gesturechange", (e) => e.preventDefault());
-    document.addEventListener("gestureend", (e) => e.preventDefault());
   }
-
-  // handleTouchStart(event, side) {
-  //   event.preventDefault();
-
-  //   console.log("Touch start:", {
-  //     side,
-  //     isPlaying: this.game.state?.isPlaying,
-  //     currentTime: performance.now(),
-  //     moveState: { ...this.game.movementState },
-  //   });
-
-  //   if (!this.game.state?.isPlaying) return;
-
-  //   const touch = event.changedTouches[0];
-  //   const state = this.touchState[side];
-  //   const currentTime = performance.now();
-
-  //   // Store touch identifier to track specific touch
-  //   state.identifier = touch.identifier;
-  //   state.active = true;
-  //   state.startTime = currentTime;
-
-  //   // Handle double tap detection
-  //   if (currentTime - state.lastTap <= this.DOUBLE_TAP_DELAY) {
-  //     state.tapCount++;
-  //     if (state.tapCount === 2) {
-  //       this.handleDoubleTap(side);
-  //       state.tapCount = 0;
-  //     }
-  //   } else {
-  //     state.tapCount = 1;
-  //   }
-
-  //   state.lastTap = currentTime;
-
-  //   console.log("Setting movement state:", {
-  //     side,
-  //     movementKey: side === "left" ? "isMovingLeft" : "isMovingRight",
-  //     beforeState: { ...this.game.movementState },
-  //   });
-
-  //   // Start continuous movement
-  //   this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = true;
-
-  //   console.log("After setting movement:", {
-  //     afterState: { ...this.game.movementState },
-  //     timeDiff: performance.now() - this.game.movementState.lastMove,
-  //   });
-  // }
-
-  // handleTouchEnd(event, side) {
-  //   event.preventDefault();
-
-  //   const state = this.touchState[side];
-
-  //   // Only process if this is the touch we're tracking
-  //   const touch = Array.from(event.changedTouches).find((t) => t.identifier === state.identifier);
-  //   if (!touch) return;
-
-  //   state.active = false;
-  //   state.identifier = null;
-
-  //   // Stop continuous movement
-  //   this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = false;
-
-  //   // Reset tap count after delay
-  //   setTimeout(() => {
-  //     if (!state.active) {
-  //       state.tapCount = 0;
-  //     }
-  //   }, this.TAP_RESET_DELAY);
-  // }
 
   handleTouchStart(event, side) {
     event.preventDefault();
-
     if (!this.game.state?.isPlaying) return;
 
-    // Initial single unit movement
-    if (side === 'left') {
-      this.game.state.currentLane = Math.max(
-        this.game.state.currentLane - 1, 
-        CONFIG.LANES.ONCOMING
-      );
+    const currentTime = performance.now();
+    const state = this.touchState[side];
+
+    // Check for double tap with very forgiving timing
+    if (currentTime - state.lastTap < this.DOUBLE_TAP_WINDOW) {
+      // It's a double tap - perform jump
+      this.handleDoubleTap(side);
+      state.lastTap = 0; // Reset tap timer
+      return;
+    }
+
+    // Single tap - regular movement
+    if (side === "left") {
+      this.game.state.currentLane = Math.max(this.game.state.currentLane - 1, this.config.LANES.ONCOMING);
       this.game.movementState.isMovingLeft = true;
     } else {
-      this.game.state.currentLane = Math.min(
-        this.game.state.currentLane + 1, 
-        CONFIG.LANES.SHOPS - 1
-      );
+      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, this.config.LANES.SHOPS - 1);
       this.game.movementState.isMovingRight = true;
     }
 
-    this.game.movementState.holdStartTime = performance.now();
+    state.lastTap = currentTime;
+    this.game.movementState.holdStartTime = currentTime;
     this.game.movementState.isHolding = true;
-}
+  }
 
-handleTouchEnd(event, side) {
+  handleTouchEnd(event, side) {
     event.preventDefault();
 
-    if (side === 'left') {
+    if (side === "left") {
       this.game.movementState.isMovingLeft = false;
     } else {
       this.game.movementState.isMovingRight = false;
     }
     this.game.movementState.isHolding = false;
-}
+  }
 
   handleDoubleTap(side) {
-    // Perform jump action
+    // Perform jump action with a bigger jump
+    const moveAmount = 3; // Increased from 2 to 3 for more forgiving jump distance
     if (side === "left") {
-      this.game.moveLeft(true, false);
+      this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
     } else {
-      this.game.moveRight(true, false);
+      this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, this.config.LANES.SHOPS - 1);
     }
 
-    // Visual feedback for double tap
+    // Set jumping state
+    this.game.state.isJumping = true;
+    setTimeout(() => {
+      this.game.state.isJumping = false;
+    }, this.JUMP_DURATION);
+
+    // Visual feedback
     const element = document.getElementById(`move-${side}`);
     if (element) {
-      element.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+      element.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
       setTimeout(() => {
         element.style.backgroundColor = "";
-      }, 200);
+      }, 300);
     }
   }
 
   cleanup() {
-    // Reset all touch states
-    Object.values(this.touchState).forEach((state) => {
-      state.active = false;
-      state.identifier = null;
-      state.tapCount = 0;
-    });
+    this.touchState.left.lastTap = 0;
+    this.touchState.right.lastTap = 0;
   }
 }
 
@@ -1952,23 +1871,24 @@ class LoserLane {
       console.log("Is playing:", this.state.isPlaying);
 
       // Check if the click is on control areas or info elements
-      const isExcludedElement =
-        e.target.id === "info-button" ||
-        e.target.id === "info-div" ||
-        e.target.id === "close-info" ||
-        e.target.closest("#info-div") ||
-        e.target.closest(".title-box") ||
-        e.target.classList.contains("control-area") ||
-        e.target.closest(".control-area");
+      const isExcludedElement = 
+      e.target.id === "info-button" ||
+      e.target.id === "info-div" ||
+      e.target.id === "close-info" ||
+      e.target.closest("#info-div") ||
+      e.target.closest(".title-box");
 
-      if (isExcludedElement) {
-        console.log("Click on excluded element - not starting game");
-        return;
-      }
-
+        if (isExcludedElement) {
+          console.log("Click on excluded element - not starting game");
+          if (e.target.id === "info-button" || e.target.closest("#info-button")) {
+            window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
+          }
+          return;
+        }
+        
       if (!this.state.isPlaying) {
         console.log("Starting game");
-        document.getElementById("title-box").style.visibility = "visible";
+        document.getElementById("title-box-container").style.visibility = "visible";
         this.start();
       }
     };
@@ -2044,7 +1964,7 @@ class LoserLane {
   updateScoreDisplay() {
     const scoreElement = document.getElementById("time-alive");
     if (scoreElement) {
-      scoreElement.textContent = `STAY ALIVE? ${this.state.score}`;
+      scoreElement.textContent = `STAY ALIVE: ${this.state.score}`;
     }
   }
 
@@ -2111,7 +2031,7 @@ class LoserLane {
   start() {
     if (this.state.isPlaying) return;
 
-    const messageBox = document.getElementById("mainMessageBox");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.style.display = "none";
     }
@@ -2129,7 +2049,7 @@ class LoserLane {
   togglePause() {
     this.state.isPaused = !this.state.isPaused;
 
-    const messageBox = document.getElementById("mainMessageBox");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.style.display = this.state.isPaused ? "block" : "none";
       messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
@@ -2298,10 +2218,14 @@ class LoserLane {
 
   drawPlayer() {
     if (this.state.isDead && this.state.deathState.animation < 10) {
+      // Draw explosion at the stored death position
       ENTITIES.EXPLOSION.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
-          if (this.state.deathState.y + i < CONFIG.GAME.HEIGHT) {
-            this.gridSystem.updateCell(this.state.deathState.x + x, this.state.deathState.y + i, char, STYLES.TRAFFIC);
+          const deathY = this.state.deathState.y + i;
+          const deathX = this.state.deathState.x + x;
+
+          if (deathY < CONFIG.GAME.HEIGHT && deathY >= 0 && deathX < CONFIG.GAME.WIDTH && deathX >= 0 && char !== " ") {
+            this.gridSystem.updateCell(deathX, deathY, char, STYLES.TRAFFIC);
           }
         });
       });
@@ -2322,14 +2246,22 @@ class LoserLane {
 
   die(reason) {
     this.state.isDead = true;
+
     this.state.deathX = this.state.currentLane;
     this.state.deathY = CONFIG.GAME.CYCLIST_Y;
+
+    // Store the death position in the deathState object
+    this.state.deathState = {
+      animation: 0,
+      x: Math.floor(this.state.currentLane), // Ensure integer position
+      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+    };
 
     this.flashScreen();
     this.showDeathMessage(reason);
 
     setTimeout(() => {
-      const messageEl = document.getElementById("mainMessageBox");
+      const messageEl = document.getElementById("main-msg-box");
       if (messageEl) {
         messageEl.classList.remove("show-message");
       }
@@ -2353,7 +2285,7 @@ class LoserLane {
   }
 
   showDeathMessage(reason) {
-    const messageEl = document.getElementById("mainMessageBox");
+    const messageEl = document.getElementById("main-msg-box");
     if (!messageEl) return;
 
     const randomMessage = this.getRandomDeathMessage(reason);
@@ -2388,7 +2320,7 @@ class LoserLane {
     // this.setupTouchControls();
     this.start();
 
-    const messageBox = document.getElementById("mainMessageBox");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
