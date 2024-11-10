@@ -1,3 +1,5 @@
+
+
 const CONFIG = {
   GAME: {
     WIDTH: 45,
@@ -1290,17 +1292,38 @@ class BuildingBehavior extends EntityBehavior {
     this.canMove = true;
     this.speed = 1;
     this.ignoreCollisions = true; // Buildings ignore all collisions
+    this.buildingSpacing = 0; // Adjust spacing between buildings if needed
+    this.topSpawnY = -entity.height; // Fixed spawn point just above the screen
+
   }
 
   update() {
-    // Always move up at constant speed
+    // Move building up at a constant speed
     this.entity.position.y += this.speed;
 
-    // Respawn building when it moves off screen
+    // Check if the building is off-screen and needs to respawn
     if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
+      console.log("Respawning building:", this.entity); // Debug log to track respawns
+
+      // Filter all current buildings and find the highest one on the screen
       const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING);
       const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
-      this.entity.position.y = highestBuilding.position.y - this.entity.height;
+      
+      // Select the next building from availableShops
+      if (Building.shopIndex >= Building.availableShops.length) {
+        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]); // Reshuffle or reset if all have been used
+        Building.shopIndex = 0;
+      }
+      
+      const selectedShop = Building.availableShops[Building.shopIndex++];
+      this.entity.art = selectedShop.art; // Update building appearance
+      this.entity.height = selectedShop.art.length; // Update height to match new building
+
+      // Respawn this building above the highest building with specified spacing
+      this.entity.position.y = highestBuilding.position.y - this.entity.height - this.buildingSpacing;
+
+      // Optional: Log the new position and selected shop for debugging
+      console.log("New building position:", this.entity.position.y, "Selected shop:", selectedShop.name);
     }
   }
 }
@@ -1402,9 +1425,22 @@ class Pedestrian extends BaseEntity {
 
 class Building extends BaseEntity {
   static nextSpawnY = null;
-
+  static availableShops = [...TORONTO_SHOPS]; // Copy the list initially
+  static shopIndex = 0;
+  
   constructor(config, spawnY = null) {
-    const randomShop = TORONTO_SHOPS[Math.floor(Math.random() * TORONTO_SHOPS.length)];
+    // Shuffle availableShops if it's the first build or if all shops have been used
+    if (Building.shopIndex >= Building.availableShops.length) {
+      Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
+      Building.shopIndex = 0;
+      console.log("New shuffled list of buildings:", Building.availableShops.map(shop => shop.name));
+
+    }
+
+    // Select the next shop and increment the index
+    const randomShop = Building.availableShops[Building.shopIndex++];
+    console.log("Selected building:", randomShop.name);
+
     const height = randomShop.art.length;
     const calculatedY = spawnY ?? (Building.nextSpawnY ? Building.nextSpawnY - height : 0);
 
@@ -1421,6 +1457,15 @@ class Building extends BaseEntity {
 
     Building.nextSpawnY = calculatedY;
   }
+
+  static shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
 
   getRandomBuildingColor() {
     return COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
@@ -1687,70 +1732,6 @@ class TouchInputManager {
   handleDoubleTap(side) {
     this.game.handleJump(side);
   }
-
-  // handleDoubleTap(side) {
-  //   // Don't allow new jumps while already jumping
-  //   if (this.game.state.isJumping) {
-  //     return;
-  //   }
-
-  //   // Move player
-  //   const moveAmount = 3;
-  //   if (side === "left") {
-  //     this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
-  //   } else {
-  //     this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, this.config.LANES.SHOPS - 1);
-  //   }
-
-  //   // Start jump
-  //   this.game.state.isJumping = true;
-
-  //   // Visual feedback 1: Control flash
-  //   const element = document.getElementById(`move-${side}`);
-  //   if (element) {
-  //     element.style.transition = "all 0.2s";
-  //     element.style.backgroundColor = "#ff0";
-  //     element.style.boxShadow = "0 0 20px #ff0";
-
-  //     setTimeout(() => {
-  //       element.style.backgroundColor = "";
-  //       element.style.boxShadow = "";
-  //     }, 200);
-  //   }
-
-  //   // Visual feedback 2: Screen scale
-  //   const gameScreen = document.getElementById("game-screen");
-  //   if (gameScreen) {
-  //     gameScreen.style.transition = "transform 0.2s";
-  //     gameScreen.style.transform = "scale(1.02)";
-
-  //     setTimeout(() => {
-  //       gameScreen.style.transform = "";
-  //     }, 200);
-  //   }
-
-  //   // Visual feedback 3: Jump announcement
-  //   const announcement = document.createElement("div");
-  //   announcement.innerHTML = "🚲 JUMP! 🚲";
-  //   announcement.style.cssText = `
-  //     position: fixed;
-  //     top: 50%;
-  //     left: 50%;
-  //     transform: translate(-50%, -50%);
-  //     font-size: 24px;
-  //     color: #ff0;
-  //     text-shadow: 0 0 10px #ff0;
-  //     animation: jumpAnnounce 0.4s forwards;
-  //     pointer-events: none;
-  //   `;
-  //   document.body.appendChild(announcement);
-  //   setTimeout(() => announcement.remove(), 400);
-
-  //   // End jump after duration
-  //   setTimeout(() => {
-  //     this.game.state.isJumping = false;
-  //   }, this.JUMP_DURATION);
-  // }
 
   cleanup() {
     this.touchState.left.lastTap = 0;
@@ -2401,7 +2382,7 @@ class LoserLane {
     messageEl.innerHTML = `
       <span class="message-reason">${randomMessage.reason}</span><br /><br />
       ${randomMessage.funny}<br /><br />
-      <span class="cute-face">${randomFace}</span>
+      <span class="cute-death-face">${randomFace}</span>
     `;
     messageEl.style.display = "block";
   }
@@ -2469,3 +2450,5 @@ class LoserLane {
 
 // Initialize the game
 const game = new LoserLane();
+
+

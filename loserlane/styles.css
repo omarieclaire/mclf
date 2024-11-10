@@ -155,11 +155,16 @@ a {
   flex-direction: column;
   text-align: center;
   z-index: 100;
+  outline: 1px dashed --dark-yellow;
+  width: var(--game-width);
+
 }
 
 @media (min-height: 600px) {
   #title-box-container {
     width: 25rem;
+    width: var(--game-width);
+
   }
 }
 
@@ -215,12 +220,12 @@ a {
 
 .message-reason {
   color: var(--hot-pink);
-  font-size: 2rem;
+  font-size: 1.5rem;
   letter-spacing: 10px;
 }
 
-.cute-face {
-  font-size: 24px;
+.cute-death-face {
+  font-size: 2rem;
   color: var(--med-purp);
 }
 
@@ -357,6 +362,7 @@ button:active {
   margin: 0;
   padding: 0;
   letter-spacing: 0.7rem;
+  padding: 3px 0;
 }
 
 @supports (-webkit-touch-callout: none) {
