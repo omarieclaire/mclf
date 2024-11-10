@@ -379,7 +379,7 @@ const TORONTO_SHOPS = [
     {
         name: "CNE_EXHIBIT",
         art: [
-            "┌✕─✕─✕─✕┐",
+            "┌✕─✕──✕─✕┐",
             "│ CNE    │",
             "│EXHIBIT │",
             "│ FUN    │",

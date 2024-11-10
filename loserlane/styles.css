@@ -99,8 +99,12 @@ body {
 }
 
 .title-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   position: absolute;
-  bottom: 15px;
+  bottom: 17px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -120,8 +124,9 @@ body {
   width: 100vw;
   background-color: var(--background-color);
   padding: 8px 0;
-  color: var(--text-color);
+  color: var(--text-color); 
 }
+
 
 .bike-art-left, .bike-art-right {
   color: var(--third-text-color);
@@ -281,4 +286,62 @@ body {
   50% {
     background-position: 100% 50%;
   }
+}
+
+button {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: none;
+  /* border: 1px solid var(--third-text-color); */
+  /* outline: 1px solid var(--second-text-color); */
+  padding: 5px 5px;
+  margin: 2px;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+}
+
+#info-button {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: none;
+  padding: 5px 5px;
+  margin: 2px;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+}
+
+#start-button {
+  width: 10rem;
+  height: 2rem;
+}
+
+#info-div {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background: var(--overlay-background);
+  color: var(--text-color);
+  padding: 20px;
+  width: 80%;
+  max-width: 300px;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-family: "Courier New", monospace;
+}
+
+#info-div a {
+  color: var(--second-text-color);
+}
+
+#close-info {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
 }
