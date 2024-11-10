@@ -1448,18 +1448,6 @@ class GameState {
     this.isJumping = false;
     this.speed = config.GAME.INITIAL_SPEED;
 
-    // this.movementState = {
-    //   isMovingLeft: false,
-    //   isMovingRight: false,
-    //   lastMove: performance.now(),
-    //   moveSpeed: 0.11, // Units per frame (increase/decrease to adjust speed)
-    // };
-
-    // this.touchState = {
-    //   lastTap: 0,
-    //   doubleTapActive: false,
-    // };
-
     this.deathState = {
       animation: 0,
       x: 0,
@@ -1667,59 +1655,112 @@ class TouchInputManager {
     document.addEventListener("gestureend", (e) => e.preventDefault());
   }
 
+  // handleTouchStart(event, side) {
+  //   event.preventDefault();
+
+  //   console.log("Touch start:", {
+  //     side,
+  //     isPlaying: this.game.state?.isPlaying,
+  //     currentTime: performance.now(),
+  //     moveState: { ...this.game.movementState },
+  //   });
+
+  //   if (!this.game.state?.isPlaying) return;
+
+  //   const touch = event.changedTouches[0];
+  //   const state = this.touchState[side];
+  //   const currentTime = performance.now();
+
+  //   // Store touch identifier to track specific touch
+  //   state.identifier = touch.identifier;
+  //   state.active = true;
+  //   state.startTime = currentTime;
+
+  //   // Handle double tap detection
+  //   if (currentTime - state.lastTap <= this.DOUBLE_TAP_DELAY) {
+  //     state.tapCount++;
+  //     if (state.tapCount === 2) {
+  //       this.handleDoubleTap(side);
+  //       state.tapCount = 0;
+  //     }
+  //   } else {
+  //     state.tapCount = 1;
+  //   }
+
+  //   state.lastTap = currentTime;
+
+  //   console.log("Setting movement state:", {
+  //     side,
+  //     movementKey: side === "left" ? "isMovingLeft" : "isMovingRight",
+  //     beforeState: { ...this.game.movementState },
+  //   });
+
+  //   // Start continuous movement
+  //   this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = true;
+
+  //   console.log("After setting movement:", {
+  //     afterState: { ...this.game.movementState },
+  //     timeDiff: performance.now() - this.game.movementState.lastMove,
+  //   });
+  // }
+
+  // handleTouchEnd(event, side) {
+  //   event.preventDefault();
+
+  //   const state = this.touchState[side];
+
+  //   // Only process if this is the touch we're tracking
+  //   const touch = Array.from(event.changedTouches).find((t) => t.identifier === state.identifier);
+  //   if (!touch) return;
+
+  //   state.active = false;
+  //   state.identifier = null;
+
+  //   // Stop continuous movement
+  //   this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = false;
+
+  //   // Reset tap count after delay
+  //   setTimeout(() => {
+  //     if (!state.active) {
+  //       state.tapCount = 0;
+  //     }
+  //   }, this.TAP_RESET_DELAY);
+  // }
+
   handleTouchStart(event, side) {
     event.preventDefault();
 
     if (!this.game.state?.isPlaying) return;
 
-    const touch = event.changedTouches[0];
-    const state = this.touchState[side];
-    const currentTime = performance.now();
-
-    // Store touch identifier to track specific touch
-    state.identifier = touch.identifier;
-    state.active = true;
-    state.startTime = currentTime;
-
-    // Handle double tap detection
-    if (currentTime - state.lastTap <= this.DOUBLE_TAP_DELAY) {
-      state.tapCount++;
-      if (state.tapCount === 2) {
-        this.handleDoubleTap(side);
-        state.tapCount = 0;
-      }
+    // Initial single unit movement
+    if (side === 'left') {
+      this.game.state.currentLane = Math.max(
+        this.game.state.currentLane - 1, 
+        CONFIG.LANES.ONCOMING
+      );
+      this.game.movementState.isMovingLeft = true;
     } else {
-      state.tapCount = 1;
+      this.game.state.currentLane = Math.min(
+        this.game.state.currentLane + 1, 
+        CONFIG.LANES.SHOPS - 1
+      );
+      this.game.movementState.isMovingRight = true;
     }
 
-    state.lastTap = currentTime;
+    this.game.movementState.holdStartTime = performance.now();
+    this.game.movementState.isHolding = true;
+}
 
-    // Start continuous movement
-    this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = true;
-  }
-
-  handleTouchEnd(event, side) {
+handleTouchEnd(event, side) {
     event.preventDefault();
 
-    const state = this.touchState[side];
-
-    // Only process if this is the touch we're tracking
-    const touch = Array.from(event.changedTouches).find((t) => t.identifier === state.identifier);
-    if (!touch) return;
-
-    state.active = false;
-    state.identifier = null;
-
-    // Stop continuous movement
-    this.game.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = false;
-
-    // Reset tap count after delay
-    setTimeout(() => {
-      if (!state.active) {
-        state.tapCount = 0;
-      }
-    }, this.TAP_RESET_DELAY);
-  }
+    if (side === 'left') {
+      this.game.movementState.isMovingLeft = false;
+    } else {
+      this.game.movementState.isMovingRight = false;
+    }
+    this.game.movementState.isHolding = false;
+}
 
   handleDoubleTap(side) {
     // Perform jump action
@@ -1757,12 +1798,42 @@ class LoserLane {
     this.eventListeners = new Map();
     this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
 
+    const now = performance.now();
+    this.initialLastMove = now; // Track when we first created the movement state
+
     this.movementState = {
       isMovingLeft: false,
       isMovingRight: false,
       lastMove: performance.now(),
-      moveSpeed: 0.15,
+      moveSpeed: 9,
+      holdDelay: 200, // ms to wait before starting continuous movement
+      holdStartTime: 0,
+      isHolding: false,
     };
+
+    // this.lastFrameTime = performance.now();
+    // this.frameId = null;
+    // this.accumulator = 0;
+    // this.fixedTimeStep = 1000 / 60; // 60 FPS in milliseconds
+
+    // this.movementState = {
+    //   isMovingLeft: false,
+    //   isMovingRight: false,
+    //   lastMove: performance.now(),
+    //   moveSpeed: 0.15 * 60,
+    // };
+
+    // console.log("Initial movement state:", {
+    //   ...this.movementState,
+    //   initialTime: performance.now(),
+    // });
+
+    // this.movementState = {
+    //   isMovingLeft: false,
+    //   isMovingRight: false,
+    //   lastMove: performance.now(),
+    //   moveSpeed: 0.15 * 60, // Convert to units per second
+    // };
 
     this.debug = true;
     this.lastFrameTime = performance.now();
@@ -1770,12 +1841,8 @@ class LoserLane {
 
     this.touchInputManager = new TouchInputManager(this);
 
-    // Initialize game elements in the correct order
     this.initializeGameWorld();
-    // this.setupInfoButton(); // Add this line
     this.setupControls();
-    // this.setupTouchControls();
-    // this.preventDefaultTouchBehaviors();
     this.settingsManager = new SettingsManager(this);
   }
 
@@ -1833,17 +1900,28 @@ class LoserLane {
       if (!this.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
         this.start();
         document.getElementById("title-box").style.visibility = "visible";
-
         return;
       }
 
       if (this.state.isPlaying) {
         switch (e.key) {
           case "ArrowLeft":
-            this.movementState.isMovingLeft = true;
+            if (!this.movementState.isMovingLeft) {
+              // Initial single unit movement
+              this.state.currentLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
+              this.movementState.isMovingLeft = true;
+              this.movementState.holdStartTime = performance.now();
+              this.movementState.isHolding = true;
+            }
             break;
           case "ArrowRight":
-            this.movementState.isMovingRight = true;
+            if (!this.movementState.isMovingRight) {
+              // Initial single unit movement
+              this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
+              this.movementState.isMovingRight = true;
+              this.movementState.holdStartTime = performance.now();
+              this.movementState.isHolding = true;
+            }
             break;
           case "p":
           case "P":
@@ -1858,9 +1936,11 @@ class LoserLane {
         switch (e.key) {
           case "ArrowLeft":
             this.movementState.isMovingLeft = false;
+            this.movementState.isHolding = false;
             break;
           case "ArrowRight":
             this.movementState.isMovingRight = false;
+            this.movementState.isHolding = false;
             break;
         }
       }
@@ -1883,8 +1963,6 @@ class LoserLane {
 
       if (isExcludedElement) {
         console.log("Click on excluded element - not starting game");
-        // e.preventDefault();
-        // e.stopPropagation();
         return;
       }
 
@@ -1897,60 +1975,11 @@ class LoserLane {
 
     this.addEventListenerWithTracking(document, "keydown", keydownHandler);
     this.addEventListenerWithTracking(document, "keyup", keyupHandler);
-    // Change from document to game-container
     const gameContainer = document.getElementById("game-container");
     if (gameContainer) {
       this.addEventListenerWithTracking(gameContainer, "click", clickHandler);
     }
   }
-
-  // setupTouchControls() {
-  //   const leftControl = document.getElementById("move-left");
-  //   const rightControl = document.getElementById("move-right");
-
-  //   if (leftControl && rightControl) {
-  //     const tapState = {
-  //       left: { lastTap: 0, tapCount: 0 },
-  //       right: { lastTap: 0, tapCount: 0 },
-  //     };
-
-  //     const handleTouchStart = (side, event) => {
-  //       event.preventDefault();
-  //       if (!this.state?.isPlaying) return;
-
-  //       const currentTime = Date.now();
-  //       const state = tapState[side];
-
-  //       if (currentTime - state.lastTap > CONFIG.GAME.TAP_RESET_DELAY) {
-  //         state.tapCount = 0;
-  //       }
-
-  //       state.tapCount++;
-
-  //       if (state.tapCount === 2 && currentTime - state.lastTap <= CONFIG.GAME.DOUBLE_TAP_TIME) {
-  //         if (side === "left") {
-  //           this.moveLeft(true, false);
-  //         } else {
-  //           this.moveRight(true, false);
-  //         }
-  //         state.tapCount = 0;
-  //       } else {
-  //         this.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = true;
-  //       }
-
-  //       state.lastTap = currentTime;
-  //     };
-
-  //     const handleTouchEnd = (side) => {
-  //       this.movementState[side === "left" ? "isMovingLeft" : "isMovingRight"] = false;
-  //     };
-
-  //     this.addEventListenerWithTracking(leftControl, "touchstart", (e) => handleTouchStart("left", e));
-  //     this.addEventListenerWithTracking(rightControl, "touchstart", (e) => handleTouchStart("right", e));
-  //     this.addEventListenerWithTracking(leftControl, "touchend", () => handleTouchEnd("left"));
-  //     this.addEventListenerWithTracking(rightControl, "touchend", () => handleTouchEnd("right"));
-  //   }
-  // }
 
   update(timestamp) {
     if (!timestamp) {
@@ -1963,16 +1992,19 @@ class LoserLane {
       return;
     }
 
-    // Handle continuous movement every frame
+    // Handle continuous movement only after hold delay
     if (!this.state.isDead) {
-      const moveTime = timestamp - this.movementState.lastMove;
-      const moveAmount = (moveTime / 16.67) * this.movementState.moveSpeed;
+      if (this.movementState.isHolding && timestamp - this.movementState.holdStartTime > this.movementState.holdDelay) {
+        const moveTime = timestamp - this.movementState.lastMove;
+        const cappedMoveTime = Math.min(moveTime, 16.67);
+        const moveAmount = (cappedMoveTime / 1000) * this.movementState.moveSpeed * 60;
 
-      if (this.movementState.isMovingLeft) {
-        this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-      }
-      if (this.movementState.isMovingRight) {
-        this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+        if (this.movementState.isMovingLeft) {
+          this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+        }
+        if (this.movementState.isMovingRight) {
+          this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+        }
       }
       this.movementState.lastMove = timestamp;
     }
@@ -2038,33 +2070,6 @@ class LoserLane {
     document.addEventListener("gestureend", (e) => e.preventDefault());
   }
 
-  // preventDefaultTouchBehaviors() {
-  //   const touchMoveHandler = (e) => {
-  //     if (this.state?.isPlaying && e.touches.length > 1) {
-  //       e.preventDefault();
-  //     }
-  //   };
-
-  //   const touchEndHandler = (e) => {
-  //     if (this.state?.isPlaying) {
-  //       e.preventDefault();
-  //     }
-  //   };
-
-  //   let lastTouchEnd = 0;
-  //   const doubleTapPreventHandler = (e) => {
-  //     const now = Date.now();
-  //     if (this.state?.isPlaying && now - lastTouchEnd <= 300) {
-  //       e.preventDefault();
-  //     }
-  //     lastTouchEnd = now;
-  //   };
-
-  //   this.addEventListenerWithTracking(document, "touchmove", touchMoveHandler, { passive: false });
-  //   this.addEventListenerWithTracking(document, "touchend", touchEndHandler, { passive: false });
-  //   this.addEventListenerWithTracking(document, "touchend", doubleTapPreventHandler, false);
-  // }
-
   moveLeft(isDoubleTap = false, isTouchMove = false) {
     if (this.state.isDead) return;
 
@@ -2110,6 +2115,11 @@ class LoserLane {
     if (messageBox) {
       messageBox.style.display = "none";
     }
+
+    console.log("Game starting, movement state:", {
+      ...this.movementState,
+      currentTime: performance.now(),
+    });
 
     this.state.isPlaying = true;
     this.lastFrameTime = performance.now();
@@ -2384,19 +2394,29 @@ class LoserLane {
     }
   }
   cleanup() {
-    // Current
+    console.log("Cleanup called, old movement state:", {
+      ...this.movementState,
+    });
+
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
     this.spatialManager.entities.clear();
     this.gridSystem.clear();
+    const now = performance.now();
     this.movementState = {
       isMovingLeft: false,
       isMovingRight: false,
-      lastMove: performance.now(),
-      moveSpeed: 0.15,
+      lastMove: now,
+      moveSpeed: 9,
+      isFirstMovement: true, // Reset this flag on cleanup
     };
+
+    console.log("New movement state after cleanup:", {
+      ...this.movementState,
+    });
+
     this.preventDefaultTouchBehaviors();
 
     this.eventListeners.forEach((listeners, element) => {
