@@ -206,35 +206,50 @@ class CollisionManager {
       }
 
       if (this.checkCollision(playerHitbox, obstacle.getHitbox())) {
-        switch (obstacle.type) {
-          case EntityType.STREETCAR:
-            return "STREETCAR";
-          case EntityType.STREETCAR_LANE_CAR:
-            return "TRAFFIC";
-          case EntityType.ONCOMING_CAR:
-            return "TRAFFIC";
-          case EntityType.PEDESTRIAN:
-            return "PEDESTRIAN";
-          case EntityType.BUILDING:
-            return "SHOP";
-          case EntityType.PARKED_CAR:
-            return "PARKEDCAR";
-          default:
-            if (this.debugLog) {
-              console.warn("Unknown collision entity type:", obstacle.type);
-            }
-            return "TRAFFIC";
+        const obstacleHitbox = obstacle.getHitbox();
+        const collisionDirection = this.getCollisionDirection(playerHitbox, obstacleHitbox);
+
+        // If obstacle is moving and hits player from behind, trigger collision
+        if (obstacle.behavior?.baseSpeed > 0 && collisionDirection === "up") {
+          switch (obstacle.type) {
+            case EntityType.STREETCAR:
+              return "STREETCAR";
+            case EntityType.STREETCAR_LANE_CAR:
+            case EntityType.ONCOMING_CAR:
+              return "TRAFFIC";
+            case EntityType.PEDESTRIAN:
+              return "PEDESTRIAN";
+            case EntityType.BUILDING:
+              return "SHOP";
+            default:
+              return "TRAFFIC";
+          }
+        }
+
+        // If player runs into obstacle or obstacle hits from front
+        if (obstacle.behavior?.baseSpeed <= 0 || collisionDirection !== "up") {
+          switch (obstacle.type) {
+            case EntityType.STREETCAR:
+              return "STREETCAR";
+            case EntityType.STREETCAR_LANE_CAR:
+            case EntityType.ONCOMING_CAR:
+              return "TRAFFIC";
+            case EntityType.PEDESTRIAN:
+              return "PEDESTRIAN";
+            case EntityType.BUILDING:
+              return "SHOP";
+            default:
+              return "TRAFFIC";
+          }
         }
       }
     }
 
     // Then check parked cars and doors separately
     for (const car of entities.parkedCars) {
-      // First check the car hitbox
       if (this.checkCollision(playerHitbox, car.getHitbox())) {
         return "PARKEDCAR";
       }
-      // Then check door hitbox if it exists
       if (car.behavior.doorHitbox && this.checkCollision(playerHitbox, car.behavior.doorHitbox)) {
         return "DOOR";
       }
@@ -397,45 +412,45 @@ class CollisionManager {
     const tempPosition = entity.position;
     entity.position = newPosition;
 
-    // Get nearby entities to check for collisions
     const radius = Math.max(entity.width, entity.height) * 2;
     const nearby = this.spatialManager.grid.getNearbyEntities(newPosition, radius);
 
     let isValid = true;
     for (const other of nearby) {
-      if (other !== entity && this.shouldCheckCollision(entity, other) && this.checkCollision(entity.getHitbox(), other.getHitbox())) {
-        if (this.debugLog) {
-          // console.log(`[CollisionDebug] Movement blocked:`, {
-          //   entity: { type: entity.type, newPosition },
-          //   blocker: { type: other.type, position: other.position },
-          // });
-        }
+      // Allow movement if colliding with player
+      if (other.type === EntityType.PLAYER) {
+        continue;
+      }
 
+      if (other !== entity && this.shouldCheckCollision(entity, other) && this.checkCollision(entity.getHitbox(), other.getHitbox())) {
         isValid = false;
         break;
       }
     }
 
-    // Restore original position
     entity.position = tempPosition;
     return isValid;
   }
 
-  getCollisionDirection(entityA, entityB) {
+  getCollisionDirection(hitboxA, hitboxB) {
     const centerA = {
-      x: entityA.position.x + entityA.width / 2,
-      y: entityA.position.y + entityA.height / 2,
+      x: hitboxA.x + hitboxA.width / 2,
+      y: hitboxA.y + hitboxA.height / 2,
     };
     const centerB = {
-      x: entityB.position.x + entityB.width / 2,
-      y: entityB.position.y + entityB.height / 2,
+      x: hitboxB.x + hitboxB.width / 2,
+      y: hitboxB.y + hitboxB.height / 2,
     };
 
     const dx = centerB.x - centerA.x;
     const dy = centerB.y - centerA.y;
 
     // Return the dominant direction of collision
-    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
+    if (Math.abs(dx) > Math.abs(dy)) {
+      return dx > 0 ? "right" : "left";
+    } else {
+      return dy > 0 ? "down" : "up";
+    }
   }
 }
 class MovementCoordinator {
@@ -445,7 +460,7 @@ class MovementCoordinator {
   }
 
   validateMove(entity, newPosition) {
-    if (entity.behavior.ignoreCollisions) {
+    if (entity.behavior?.ignoreCollisions) {
       return true;
     }
 
@@ -456,9 +471,14 @@ class MovementCoordinator {
 
     let isValid = true;
     for (const other of nearby) {
+      // Allow movement if colliding with player
+      if (other.type === EntityType.PLAYER) {
+        continue;
+      }
+
       if (
         other !== entity &&
-        !other.behavior.ignoreCollisions &&
+        !other.behavior?.ignoreCollisions &&
         this.spatialManager.collisionManager.checkCollision(entity.getHitbox(), other.getHitbox())
       ) {
         isValid = false;
