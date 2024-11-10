@@ -1624,32 +1624,31 @@ class LoserLane {
     console.log("Setting up info button:", { infoButton, infoDiv, closeButton });
 
     if (infoButton && infoDiv && closeButton) {
-        infoButton.addEventListener("click", (e) => {
-            console.log("Info button clicked - showing info div");
-            e.preventDefault();
-            e.stopPropagation();
-            infoDiv.style.display = "block";
-        });
+      infoButton.addEventListener("click", (e) => {
+        console.log("Info button clicked - showing info div");
+        e.preventDefault();
+        e.stopPropagation();
+        infoDiv.style.display = "block";
+      });
 
-        closeButton.addEventListener("click", (e) => {
-            console.log("Close button clicked - hiding info div");
-            e.preventDefault();
-            e.stopPropagation();
-            infoDiv.style.display = "none";
-        });
+      closeButton.addEventListener("click", (e) => {
+        console.log("Close button clicked - hiding info div");
+        e.preventDefault();
+        e.stopPropagation();
+        infoDiv.style.display = "none";
+      });
 
-        infoDiv.addEventListener("click", (e) => {
-            console.log("Info div clicked - preventing propagation");
-            e.preventDefault();
-            e.stopPropagation();
-        });
+      infoDiv.addEventListener("click", (e) => {
+        console.log("Info div clicked - preventing propagation");
+        e.preventDefault();
+        e.stopPropagation();
+      });
 
-        console.log("Info button setup complete");
+      console.log("Info button setup complete");
     } else {
-        console.warn("Could not find all required info elements:", 
-            { infoButton, infoDiv, closeButton });
+      console.warn("Could not find all required info elements:", { infoButton, infoDiv, closeButton });
     }
-}
+  }
 
   initializeGameWorld() {
     this.spatialManager.entities.clear();
@@ -1698,33 +1697,33 @@ class LoserLane {
     };
 
     const clickHandler = (e) => {
-      console.log("Click detected on:", e.target);  
+      console.log("Click detected on:", e.target);
       console.log("Target classList:", e.target.classList);
       console.log("Is playing:", this.state.isPlaying);
-  
+
       // Check if the click is on control areas or info elements
-      const isExcludedElement = 
-          e.target.id === "info-button" || 
-          e.target.id === "info-div" || 
-          e.target.id === "close-info" || 
-          e.target.closest("#info-div") ||
-          e.target.closest(".title-box") ||
-          e.target.classList.contains("control-area") ||
-          e.target.closest(".control-area");
-  
+      const isExcludedElement =
+        e.target.id === "info-button" ||
+        e.target.id === "info-div" ||
+        e.target.id === "close-info" ||
+        e.target.closest("#info-div") ||
+        e.target.closest(".title-box") ||
+        e.target.classList.contains("control-area") ||
+        e.target.closest(".control-area");
+
       if (isExcludedElement) {
-          console.log("Click on excluded element - not starting game");
-          // e.preventDefault();
-          // e.stopPropagation();
-          return;
+        console.log("Click on excluded element - not starting game");
+        // e.preventDefault();
+        // e.stopPropagation();
+        return;
       }
-  
+
       if (!this.state.isPlaying) {
-          console.log("Starting game");
-          document.getElementById("title-box").style.visibility = "visible";
-          this.start();
+        console.log("Starting game");
+        document.getElementById("title-box").style.visibility = "visible";
+        this.start();
       }
-  };
+    };
 
     this.addEventListenerWithTracking(document, "keydown", keydownHandler);
     this.addEventListenerWithTracking(document, "keyup", keyupHandler);

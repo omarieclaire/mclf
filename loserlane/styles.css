@@ -1,4 +1,6 @@
 :root {
+  --vh: 1vh;
+
   --background-color: #202020;
   --text-color: #d1feff;
   --second-text-color: #dfb1ff;
@@ -75,11 +77,17 @@ a {
 #game-container {
   width: 100vw;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  position: fixed; /* Prevent bouncing */
+  top: 0;
+  left: 0;
+
 }
 
 #game-screen {
@@ -93,6 +101,11 @@ a {
   min-height: 400px;
   font-size: 16px;
   transition: background-color 0.1s;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
 }
 
 @media (max-height: 600px) {
@@ -122,6 +135,11 @@ a {
   /* font-size: .8rem; */
   position: relative;
   z-index: 10; /* Higher than control areas */
+  bottom: env(safe-area-inset-bottom, 17px); /* Support iPhone notch */
+  z-index: 20; /* Keep above controls */
+  background-color: var(--background-color);
+  width: 100%;
+  padding: 8px 0;
 }
 
 #big-title {
@@ -232,20 +250,25 @@ a {
   right: 0;
   height: 100%;
   display: flex;
-  z-index: 10;
-  touch-action: none;
-  position: absolute;
-  z-index: 5; /* Lower than title-box */
+  z-index: 15; /* Increase z-index to ensure controls are clickable */
+  touch-action: manipulation; /* Better touch handling */
+  pointer-events: auto;
 }
 
 .control-area {
+  position: relative; /* Change from absolute to relative */
   flex: 1;
   height: 100%;
   opacity: 0;
   -webkit-tap-highlight-color: transparent;
-  position: absolute;
-  top: 100px; /* Or whatever space you need to leave for the title area */
-  bottom: 0;
+}
+
+#move-left {
+  left: 0;
+}
+
+#move-right {
+  right: 0;
 }
 
 /* Add subtle visual feedback for taps */
