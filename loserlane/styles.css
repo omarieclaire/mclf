@@ -1,6 +1,5 @@
 :root {
   --vh: 1vh;
-  
 
   --background-color: #202020;
   --text-color: #d1feff;
@@ -85,10 +84,7 @@ a {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  position: fixed; /* Prevent bouncing */
-  top: 0;
-  left: 0;
-
+  
 }
 
 #game-screen {
@@ -102,11 +98,6 @@ a {
   min-height: 400px;
   font-size: 16px;
   transition: background-color 0.1s;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-  width: 100vw;
-  overflow: hidden;
-  position: relative;
 }
 
 @media (max-height: 600px) {
@@ -136,11 +127,6 @@ a {
   /* font-size: .8rem; */
   position: relative;
   z-index: 10; /* Higher than control areas */
-  bottom: env(safe-area-inset-bottom, 17px); /* Support iPhone notch */
-  z-index: 20; /* Keep above controls */
-  background-color: var(--background-color);
-  width: 100%;
-  padding: 8px 0;
 }
 
 #big-title {
@@ -254,15 +240,6 @@ a {
   z-index: 15; /* Increase z-index to ensure controls are clickable */
   touch-action: manipulation; /* Better touch handling */
   pointer-events: auto;
-
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  display: flex;
-  z-index: 15;
-  pointer-events: auto;
 }
 
 .control-area {
@@ -270,12 +247,6 @@ a {
   flex: 1;
   height: 100%;
   opacity: 0;
-  -webkit-tap-highlight-color: transparent;
-
-  flex: 1;
-  height: 100%;
-  opacity: 0;
-  position: relative; /* Change from absolute */
   -webkit-tap-highlight-color: transparent;
 }
 
