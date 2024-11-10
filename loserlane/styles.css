@@ -133,14 +133,11 @@ a {
 }
 
 .control-area {
-  /* position: absolute; */
   top: 0;
-  /* height: calc(100% - 90px);  */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  /* position: relative;  */
   flex: 1;
   opacity: 0;
   -webkit-tap-highlight-color: transparent;
@@ -178,17 +175,7 @@ a {
   width: 100%;
 }
 
-/* .title-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  z-index: 100;
-} */
-
 #big-title {
-  /* text-align: center;  */
   font-size: 1.8rem;
   color: var(--med-purp);
 }
@@ -201,7 +188,6 @@ a {
 }
 
 #title {
-  /* font-size: 2.5rem; */
   color: var(--hot-pink);
 }
 
@@ -220,15 +206,6 @@ a {
   font-size: 0.8rem;
   line-height: 1;
   text-align: center;
-  /* margin: 0 5px; */
-}
-
-@media (max-height: 600px) {
-  .bike-art-left,
-  .bike-art-right {
-    font-size: 0.8rem;
-    line-height: 1;
-  }
 }
 
 .title-text {
@@ -318,13 +295,15 @@ a {
 } */
 
 .bike-highlight {
-  dark-grey: rgba(255, 255, 150, 0.718);
+  background-color: var(--dark-grey);
   color: transparent;
   background-image: linear-gradient(45deg, #f06, #4a90e2, #50e3c2);
   background-size: 200%;
   background-clip: text;
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: bold;
+  display: inline-block;
 
   animation: wave 1.5s ease-in-out infinite;
 }
@@ -339,29 +318,10 @@ a {
   }
 }
 
+
 button {
   background: var(--dark-grey);
   color: var(--light-blue);
-  border: none;
-  /* border: 1px solid var(--hot-pink); */
-  /* outline: 1px solid var(--light-purp); */
-  padding: 5px 5px;
-  margin: 2px;
-  cursor: pointer;
-  font-family: "Courier New", monospace;
-}
-
-#info-button {
-  background: var(--dark-grey);
-  cursor: pointer;
-  font-family: "Courier New", monospace;
-  text-transform: capitalize;
-  margin: 0;
-  padding: 0;
-  letter-spacing: 0.7rem;
-}
-
-#start-button {
   width: 10rem;
   height: 2.5rem;
   border: 2px solid #333;
@@ -389,35 +349,14 @@ button:active {
   box-shadow: 1px 1px #333;
 }
 
-#info-div {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -20%);
-  background: var(--overlay-background);
-  color: var(--light-blue);
-  padding: 20px;
-  width: 80%;
-  max-width: 300px;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  font-family: "Courier New", monospace;
-}
-
-#info-div a {
-  color: var(--hot-pink);
-}
-
-#close-info {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  background: none;
-  border: none;
-  color: var(--light-blue);
-  font-size: 1.5rem;
+#add-art-link {
+  background: var(--dark-grey);
   cursor: pointer;
-  line-height: 1;
+  font-family: "Courier New", monospace;
+  text-transform: capitalize;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.7rem;
 }
 
 @supports (-webkit-touch-callout: none) {

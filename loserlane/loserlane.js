@@ -6,8 +6,8 @@ const CONFIG = {
     MIN_SPEED: 300,
     SPEED_DECREASE_RATE: 0.995,
     CYCLIST_Y: Math.floor(window.innerHeight / 40),
-    // DOUBLE_TAP_TIME: 350,
-    // TAP_RESET_DELAY: 500,
+    DOUBLE_TAP_TIME: 350,
+    TAP_RESET_DELAY: 500,
     lastKeys: {
       left: 0,
       right: 0,
@@ -369,10 +369,10 @@ class CollisionManager {
           processedPairs.add(pairKey);
 
           if (this.debugLog) {
-            console.log(`[CollisionDebug] Detected collision between:`, {
-              entityA: { type: entityA.type, position: entityA.position },
-              entityB: { type: entityB.type, position: entityB.position },
-            });
+            // console.log(`[CollisionDebug] Detected collision between:`, {
+            //   entityA: { type: entityA.type, position: entityA.position },
+            //   entityB: { type: entityB.type, position: entityB.position },
+            // });
           }
         }
       }
@@ -453,6 +453,7 @@ class CollisionManager {
     }
   }
 }
+
 class MovementCoordinator {
   constructor(spatialManager) {
     this.spatialManager = spatialManager;
@@ -694,14 +695,14 @@ class SpawnManager {
     ]);
 
     if (this.debugLog) {
-      console.log("[SpawnDebug] Initialized spawn rules:", {
-        streetcarLane: this.config.LANES.TRACKS,
-        allRules: Array.from(this.spawnRules.entries()).map(([type, rules]) => ({
-          type,
-          allowedLanes: rules.laneRules.allowedLanes,
-          spawnPosition: rules.laneRules.spawnPosition,
-        })),
-      });
+      // console.log("[SpawnDebug] Initialized spawn rules:", {
+      //   streetcarLane: this.config.LANES.TRACKS,
+      //   allRules: Array.from(this.spawnRules.entries()).map(([type, rules]) => ({
+      //     type,
+      //     allowedLanes: rules.laneRules.allowedLanes,
+      //     spawnPosition: rules.laneRules.spawnPosition,
+      //   })),
+      // });
     }
   }
 
@@ -822,11 +823,11 @@ class SpawnManager {
       const spacing = baseSpacing + additionalSpacing;
 
       if (this.debugLog && entityType === EntityType.STREETCAR) {
-        console.log(`[SpawnDebug] Calculated spacing for ${entityType}:`, {
-          baseSpacing,
-          additionalSpacing,
-          finalSpacing: spacing,
-        });
+        // console.log(`[SpawnDebug] Calculated spacing for ${entityType}:`, {
+        //   baseSpacing,
+        //   additionalSpacing,
+        //   finalSpacing: spacing,
+        // });
       }
       return spacing;
     }
@@ -1588,23 +1589,28 @@ class SettingsManager {
     }
   }
 }
-
 class TouchInputManager {
   constructor(game) {
     this.game = game;
     this.config = game.config;
     this.touchState = {
-      left: {
-        lastTap: 0,
-      },
-      right: {
-        lastTap: 0,
-      },
+      left: { lastTap: 0 },
+      right: { lastTap: 0 },
     };
 
-    // Very forgiving timing window
-    this.DOUBLE_TAP_WINDOW = 500; // Half a second window for double tap
-    this.JUMP_DURATION = 400; // Longer jump animation
+    this.DOUBLE_TAP_WINDOW = 500; // Half second window for double tap
+    this.JUMP_DURATION = 400; // Jump animation duration
+
+    // Add animation styles
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes jumpAnnounce {
+        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
 
     this.setupTouchControls();
   }
@@ -1626,7 +1632,6 @@ class TouchInputManager {
       element.addEventListener("touchend", (e) => this.handleTouchEnd(e, side), touchOptions);
     });
 
-    // Prevent default behaviors
     document.addEventListener(
       "touchmove",
       (e) => {
@@ -1645,9 +1650,8 @@ class TouchInputManager {
     const currentTime = performance.now();
     const state = this.touchState[side];
 
-    // Check for double tap with very forgiving timing
+    // Check for double tap
     if (currentTime - state.lastTap < this.DOUBLE_TAP_WINDOW) {
-      // It's a double tap - perform jump
       this.handleDoubleTap(side);
       state.lastTap = 0; // Reset tap timer
       return;
@@ -1678,30 +1682,75 @@ class TouchInputManager {
     this.game.movementState.isHolding = false;
   }
 
+
+
   handleDoubleTap(side) {
-    // Perform jump action with a bigger jump
-    const moveAmount = 3; // Increased from 2 to 3 for more forgiving jump distance
-    if (side === "left") {
-      this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
-    } else {
-      this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, this.config.LANES.SHOPS - 1);
-    }
-
-    // Set jumping state
-    this.game.state.isJumping = true;
-    setTimeout(() => {
-      this.game.state.isJumping = false;
-    }, this.JUMP_DURATION);
-
-    // Visual feedback
-    const element = document.getElementById(`move-${side}`);
-    if (element) {
-      element.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
-      setTimeout(() => {
-        element.style.backgroundColor = "";
-      }, 300);
-    }
+    this.game.handleJump(side);
   }
+
+  // handleDoubleTap(side) {
+  //   // Don't allow new jumps while already jumping
+  //   if (this.game.state.isJumping) {
+  //     return;
+  //   }
+
+  //   // Move player
+  //   const moveAmount = 3;
+  //   if (side === "left") {
+  //     this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
+  //   } else {
+  //     this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, this.config.LANES.SHOPS - 1);
+  //   }
+
+  //   // Start jump
+  //   this.game.state.isJumping = true;
+
+  //   // Visual feedback 1: Control flash
+  //   const element = document.getElementById(`move-${side}`);
+  //   if (element) {
+  //     element.style.transition = "all 0.2s";
+  //     element.style.backgroundColor = "#ff0";
+  //     element.style.boxShadow = "0 0 20px #ff0";
+
+  //     setTimeout(() => {
+  //       element.style.backgroundColor = "";
+  //       element.style.boxShadow = "";
+  //     }, 200);
+  //   }
+
+  //   // Visual feedback 2: Screen scale
+  //   const gameScreen = document.getElementById("game-screen");
+  //   if (gameScreen) {
+  //     gameScreen.style.transition = "transform 0.2s";
+  //     gameScreen.style.transform = "scale(1.02)";
+
+  //     setTimeout(() => {
+  //       gameScreen.style.transform = "";
+  //     }, 200);
+  //   }
+
+  //   // Visual feedback 3: Jump announcement
+  //   const announcement = document.createElement("div");
+  //   announcement.innerHTML = "🚲 JUMP! 🚲";
+  //   announcement.style.cssText = `
+  //     position: fixed;
+  //     top: 50%;
+  //     left: 50%;
+  //     transform: translate(-50%, -50%);
+  //     font-size: 24px;
+  //     color: #ff0;
+  //     text-shadow: 0 0 10px #ff0;
+  //     animation: jumpAnnounce 0.4s forwards;
+  //     pointer-events: none;
+  //   `;
+  //   document.body.appendChild(announcement);
+  //   setTimeout(() => announcement.remove(), 400);
+
+  //   // End jump after duration
+  //   setTimeout(() => {
+  //     this.game.state.isJumping = false;
+  //   }, this.JUMP_DURATION);
+  // }
 
   cleanup() {
     this.touchState.left.lastTap = 0;
@@ -1730,30 +1779,6 @@ class LoserLane {
       isHolding: false,
     };
 
-    // this.lastFrameTime = performance.now();
-    // this.frameId = null;
-    // this.accumulator = 0;
-    // this.fixedTimeStep = 1000 / 60; // 60 FPS in milliseconds
-
-    // this.movementState = {
-    //   isMovingLeft: false,
-    //   isMovingRight: false,
-    //   lastMove: performance.now(),
-    //   moveSpeed: 0.15 * 60,
-    // };
-
-    // console.log("Initial movement state:", {
-    //   ...this.movementState,
-    //   initialTime: performance.now(),
-    // });
-
-    // this.movementState = {
-    //   isMovingLeft: false,
-    //   isMovingRight: false,
-    //   lastMove: performance.now(),
-    //   moveSpeed: 0.15 * 60, // Convert to units per second
-    // };
-
     this.debug = true;
     this.lastFrameTime = performance.now();
     this.frameId = null;
@@ -1772,8 +1797,9 @@ class LoserLane {
     }
     this.eventListeners.get(element).push({ type, handler, options });
   }
+
   setupInfoButton() {
-    const infoButton = document.getElementById("info-button");
+    const infoButton = document.getElementById("add-art-link");
     const infoDiv = document.getElementById("info-div");
     const closeButton = document.getElementById("close-info");
 
@@ -1814,7 +1840,68 @@ class LoserLane {
     this.spatialManager.registerEntity(this.player);
   }
 
+
+  handleJump(direction) {
+    // Don't allow new jumps while already jumping
+    if (this.state.isJumping) {
+      return;
+    }
+
+    // Move player
+    const moveAmount = 3;
+    if (direction === "left") {
+      this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+    } else {
+      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+    }
+
+    // Start jump
+    this.state.isJumping = true;
+
+    // Visual feedback 1: Screen flash
+    // const gameScreen = document.getElementById("game-screen");
+    // if (gameScreen) {
+    //   gameScreen.style.transition = "transform 0.2s, background-color 0.2s";
+    //   gameScreen.style.transform = "scale(1.02)";
+    //   gameScreen.style.backgroundColor = "#333";
+
+    //   setTimeout(() => {
+    //     gameScreen.style.transform = "";
+    //     gameScreen.style.backgroundColor = "";
+    //   }, 200);
+    // }
+
+    // Visual feedback 2: Jump announcement
+    // const announcement = document.createElement("div");
+    // announcement.innerHTML = "🚲 JUMP! 🚲";
+    // announcement.style.cssText = `
+    //     position: fixed;
+    //     top: 50%;
+    //     left: 50%;
+    //     transform: translate(-50%, -50%);
+    //     font-size: 24px;
+    //     color: #ff0;
+    //     text-shadow: 0 0 10px #ff0;
+    //     animation: jumpAnnounce 0.4s forwards;
+    //     pointer-events: none;
+    //     z-index: 1000;
+    // `;
+    // document.body.appendChild(announcement);
+    // setTimeout(() => announcement.remove(), 400);
+
+    // End jump after duration
+    setTimeout(() => {
+      this.state.isJumping = false;
+    }, this.JUMP_DURATION || 400);
+  }
+
+  // Add to setupControls in LoserLane class:
   setupControls() {
+    // Track last keypress time for double-tap detection
+    let lastLeftPress = 0;
+    let lastRightPress = 0;
+    const DOUBLE_PRESS_WINDOW = 500; // 500ms window for double press
+
     const keydownHandler = (e) => {
       if (!this.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
         this.start();
@@ -1823,25 +1910,45 @@ class LoserLane {
       }
 
       if (this.state.isPlaying) {
+        const now = performance.now();
+
         switch (e.key) {
           case "ArrowLeft":
-            if (!this.movementState.isMovingLeft) {
-              // Initial single unit movement
-              this.state.currentLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-              this.movementState.isMovingLeft = true;
-              this.movementState.holdStartTime = performance.now();
-              this.movementState.isHolding = true;
+            // Check for double press
+            if (now - lastLeftPress < DOUBLE_PRESS_WINDOW) {
+              // It's a double press - perform jump
+              this.handleJump("left");
+              lastLeftPress = 0; // Reset timer
+            } else {
+              // Regular movement
+              if (!this.movementState.isMovingLeft) {
+                this.state.currentLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
+                this.movementState.isMovingLeft = true;
+                this.movementState.holdStartTime = now;
+                this.movementState.isHolding = true;
+              }
+              lastLeftPress = now;
             }
             break;
+
           case "ArrowRight":
-            if (!this.movementState.isMovingRight) {
-              // Initial single unit movement
-              this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
-              this.movementState.isMovingRight = true;
-              this.movementState.holdStartTime = performance.now();
-              this.movementState.isHolding = true;
+            // Check for double press
+            if (now - lastRightPress < DOUBLE_PRESS_WINDOW) {
+              // It's a double press - perform jump
+              this.handleJump("right");
+              lastRightPress = 0; // Reset timer
+            } else {
+              // Regular movement
+              if (!this.movementState.isMovingRight) {
+                this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
+                this.movementState.isMovingRight = true;
+                this.movementState.holdStartTime = now;
+                this.movementState.isHolding = true;
+              }
+              lastRightPress = now;
             }
             break;
+
           case "p":
           case "P":
             this.togglePause();
@@ -1866,26 +1973,26 @@ class LoserLane {
     };
 
     const clickHandler = (e) => {
-      console.log("Click detected on:", e.target);
-      console.log("Target classList:", e.target.classList);
-      console.log("Is playing:", this.state.isPlaying);
+      // console.log("Click detected on:", e.target);
+      // console.log("Target classList:", e.target.classList);
+      // console.log("Is playing:", this.state.isPlaying);
 
       // Check if the click is on control areas or info elements
-      const isExcludedElement = 
-      e.target.id === "info-button" ||
-      e.target.id === "info-div" ||
-      e.target.id === "close-info" ||
-      e.target.closest("#info-div") ||
-      e.target.closest(".title-box");
+      const isExcludedElement =
+        e.target.id === "add-art-link" ||
+        e.target.id === "info-div" ||
+        e.target.id === "close-info" ||
+        e.target.closest("#info-div") ||
+        e.target.closest(".title-box");
 
-        if (isExcludedElement) {
-          console.log("Click on excluded element - not starting game");
-          if (e.target.id === "info-button" || e.target.closest("#info-button")) {
-            window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
-          }
-          return;
+      if (isExcludedElement) {
+        // console.log("Click on excluded element - not starting game");
+        if (e.target.id === "add-art-link" || e.target.closest("#add-art-link")) {
+          window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
         }
-        
+        return;
+      }
+
       if (!this.state.isPlaying) {
         console.log("Starting game");
         document.getElementById("title-box-container").style.visibility = "visible";
@@ -2345,9 +2452,9 @@ class LoserLane {
       isFirstMovement: true, // Reset this flag on cleanup
     };
 
-    console.log("New movement state after cleanup:", {
-      ...this.movementState,
-    });
+    // console.log("New movement state after cleanup:", {
+    //   ...this.movementState,
+    // });
 
     this.preventDefaultTouchBehaviors();
 
