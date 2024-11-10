@@ -2212,17 +2212,19 @@ class LoserLane {
     }
   }
   cleanup() {
+    // Current
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
-
-    this.eventListeners.forEach((listeners, element) => {
-      listeners.forEach(({ type, handler, options }) => {
-        element.removeEventListener(type, handler, options);
-      });
-    });
-    this.eventListeners.clear();
+    this.spatialManager.entities.clear();
+    this.gridSystem.clear();
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      lastMove: performance.now(),
+      moveSpeed: 0.15,
+    };
   }
 }
 
