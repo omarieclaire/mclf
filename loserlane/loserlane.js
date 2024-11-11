@@ -18,10 +18,10 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    STREETCAR: 0.1,
-    STREETCAR_LANE_CAR: 0.4,
+    STREETCAR: 0.000001,
+    STREETCAR_LANE_CAR: 0.8,
     ONCOMING_CAR: 0.15,
-    PARKED_CAR: 0.15,
+    PARKED_CAR: 0.00005,
     DOOR_OPENING: 0.1,
     PEDESTRIAN: 0.05,
     BUILDING: 0.05,
@@ -40,12 +40,12 @@ const CONFIG = {
   LANES: {
     ONCOMING: 1,
     DIVIDER: 6,
-    TRACKS: 9,
-    BIKE: 16,
-    BIKE_RIGHT: 17,
-    PARKED: 19,
-    SIDEWALK: 27,
-    SHOPS: 31,
+    TRACKS: 8,
+    BIKE: 15,
+    BIKE_RIGHT: 16,
+    PARKED: 18,
+    SIDEWALK: 26,
+    SHOPS: 30,
   },
 };
 
@@ -1194,8 +1194,206 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       minDistance: 2,
       ignoreCollisions: false,
     });
+    
+    this.willPark = Math.random() < 0.9;
+    this.isParking = false;
+    this.targetLane = entity.config.LANES.PARKED;
+    this.originalSpeed = this.baseSpeed;
+    this.parkingAttempts = 0;
+
+    console.log('New StreetcarLaneCar created:', {
+      willPark: this.willPark,
+      startPosition: {
+        x: entity.position.x,  // Fixed
+        y: entity.position.y   // Fixed
+      },
+      targetLane: this.targetLane
+    });
+  }
+
+  onCollision(other) {
+    // If we're parking and hit another streetcar lane car, abort parking
+    if (this.isParking && other.type === EntityType.STREETCAR_LANE_CAR) {
+      console.log('Parking car collided with another car, aborting parking');
+      this.isParking = false;
+      // Move back to original lane
+      const newPosition = new Position(
+        this.entity.config.LANES.TRACKS + 1,
+        this.entity.position.y
+      );
+      if (this.entity.spatialManager.validateMove(this.entity, newPosition)) {
+        this.entity.position = newPosition;
+      }
+      return;
+    }
+
+    // If we're not parking, handle normal collision
+    if (!this.isParking) {
+      // If the other car is parking, let it continue
+      if (other.behavior?.isParking) {
+        this.stopped = true;
+        setTimeout(() => {
+          this.stopped = false;
+        }, 1000);
+      } else {
+        // Normal collision handling - match speeds if going same direction
+        const moveDirection = Math.sign(this.baseSpeed);
+        const otherDirection = Math.sign(other.behavior?.baseSpeed || 0);
+        
+        if (moveDirection * otherDirection > 0) {
+          if (Math.abs(this.baseSpeed) < Math.abs(other.behavior.baseSpeed)) {
+            this.baseSpeed = other.behavior.baseSpeed;
+          }
+        }
+      }
+    }
+  }
+
+  update() {
+    if (this.isParking) {
+      this.handleParking();
+    } else if (this.willPark) {
+      if (Math.floor(this.entity.position.y) % 10 === 0) {
+        console.log('Car checking for parking:', {
+          position: {
+            x: this.entity.position.x,
+            y: this.entity.position.y
+          },
+          targetLane: this.targetLane
+        });
+      }
+      
+      if (this.canParkSafely()) {
+        console.log('Found parking space, starting parking maneuver', {
+          at: {
+            x: this.entity.position.x,
+            y: this.entity.position.y
+          }
+        });
+        this.isParking = true;
+        this.parkingAttempts = 0;
+      }
+      super.update();
+    } else {
+      super.update();
+    }
+  }
+
+  canParkSafely() {
+    const nearbyEntities = this.entity.spatialManager.grid.getNearbyEntities(
+      new Position(this.targetLane, this.entity.position.y),
+      6
+    );
+
+    const nearbyParkedCars = nearbyEntities.filter(e => 
+      e.type === EntityType.PARKED_CAR || 
+      (e.type === EntityType.STREETCAR_LANE_CAR && e.behavior.isParking && e !== this.entity)
+    );
+    
+    // More lenient space check when already parking
+    const requiredSpace = this.isParking ? 5 : 6;
+    const hasSpace = !nearbyParkedCars.some(car => 
+      Math.abs(car.position.y - this.entity.position.y) < requiredSpace
+    );
+
+    console.log('Checking parking safety:', {
+      position: {
+        x: this.entity.position.x,
+        y: this.entity.position.y
+      },
+      nearbyParkedCars: nearbyParkedCars.length,
+      hasSpace: hasSpace,
+      isParking: this.isParking,
+      parkedCarPositions: nearbyParkedCars.map(car => ({
+        x: car.position.x,
+        y: car.position.y
+      }))
+    });
+
+    return hasSpace;
+  }
+
+  handleParking() {
+    this.parkingAttempts++;
+    
+    // Only check safety every few attempts to allow for movement
+    if (this.parkingAttempts % 3 === 0 && !this.canParkSafely()) {
+      console.log('Lost safe parking path, aborting');
+      this.isParking = false;
+      return;
+    }
+
+    const currentX = this.entity.position.x;
+    const distanceToLane = Math.abs(currentX - this.targetLane);
+    
+    // More gradual movement speeds
+    let moveDirection;
+    if (distanceToLane > 6) {
+      moveDirection = Math.sign(this.targetLane - currentX) * 1.0;
+    } else if (distanceToLane > 3) {
+      moveDirection = Math.sign(this.targetLane - currentX) * 0.5;
+    } else {
+      moveDirection = Math.sign(this.targetLane - currentX) * 0.25;
+    }
+    
+    // Keep steady vertical speed
+    const verticalSpeed = this.baseSpeed * 0.75;
+    
+    // Try multiple positions if the first one fails
+    for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
+      const newPosition = new Position(
+        currentX + (moveDirection * speedMultiplier),
+        this.entity.position.y + verticalSpeed
+      );
+
+      console.log('Attempting parking movement:', {
+        from: {x: currentX, y: this.entity.position.y},
+        to: {x: newPosition.x, y: newPosition.y},
+        distanceToLane,
+        moveDirection: moveDirection * speedMultiplier,
+        verticalSpeed,
+        attempt: speedMultiplier
+      });
+
+      if (this.entity.spatialManager.validateMove(this.entity, newPosition)) {
+        this.entity.spatialManager.movementCoordinator.moveEntity(
+          this.entity,
+          newPosition
+        );
+
+        if (distanceToLane < 0.5) {
+          console.log('At parking position, transforming');
+          this.transformToParkedCar();
+        }
+        return;
+      }
+    }
+
+    console.log('All parking movements blocked');
+  }
+
+  transformToParkedCar() {
+    const spatialManager = this.entity.spatialManager;
+    const currentPos = this.entity.position;
+    
+    console.log('Creating parked car at:', {
+      x: currentPos.x,
+      y: currentPos.y
+    });
+
+    const parkedCar = new ParkedCar(this.entity.config, {
+      position: new Position(this.targetLane, currentPos.y)
+    });
+
+    parkedCar.behavior.baseSpeed = 1;
+    
+    spatialManager.unregisterEntity(this.entity);
+    spatialManager.registerEntity(parkedCar);
+    
+    console.log('Successfully transformed to parked car');
   }
 }
+
 
 class PedestrianBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
