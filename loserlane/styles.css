@@ -91,6 +91,7 @@ a {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  border: 2px solid red;
 }
 
 #game-screen {
@@ -99,6 +100,8 @@ a {
   overflow: hidden;
   transition: dark-grey 0.1s;
   color: #dfb1ff;
+  border: 3px solid green;
+
 }
 
 @media (max-height: 600px) {
