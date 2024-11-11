@@ -39,14 +39,15 @@ const CONFIG = {
   },
   LANES: {
     ONCOMING: 2,
-    DIVIDER: 8,
-    TRACKS: 12,
-    BIKE: 19,
-    BIKE_RIGHT: 20,
-    PARKED: 22,
-    SIDEWALK: 30,
-    SHOPS: 34,
+    DIVIDER: 7,
+    TRACKS: 11,
+    BIKE: 18,
+    BIKE_RIGHT: 19,
+    PARKED: 21,
+    SIDEWALK: 29,
+    SHOPS: 33,
   },
+  
 };
 
 class EntityType {
