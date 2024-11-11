@@ -98,7 +98,7 @@ a {
   height: 100%;
   overflow: hidden;
   transition: dark-grey 0.1s;
-  color:#dfb1ff
+  color: #dfb1ff;
 }
 
 @media (max-height: 600px) {
@@ -157,14 +157,12 @@ a {
   z-index: 100;
   outline: 1px dashed --dark-yellow;
   width: var(--game-width);
-
 }
 
 @media (min-height: 600px) {
   #title-box-container {
     width: 25rem;
     width: var(--game-width);
-
   }
 }
 
@@ -323,7 +321,6 @@ a {
   }
 }
 
-
 button {
   background: var(--dark-grey);
   color: var(--light-blue);
@@ -369,4 +366,203 @@ button:active {
   #game-container {
     height: -webkit-fill-available;
   }
+}
+
+/* Subtle animation keyframes */
+@keyframes slowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes gentleWiggle {
+  0%,
+  100% {
+    /* letter-spacing: 1px; */
+    /* font-size: 1rem; */
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(0.5deg);
+  }
+  75% {
+    /* letter-spacing: 2px; */
+    /* font-size: 3rem; */
+
+    transform: rotate(-0.5deg);
+  }
+}
+
+@keyframes softFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes tinyBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.5px);
+  }
+}
+
+/* Base entity styles */
+.entity {
+  transition: text-shadow 0.3s ease;
+  display: inline-block; /* Needed for transforms */
+  will-change: transform, text-shadow;
+}
+
+/* Streetcar - subtle red danger glow + slow pulse */
+.streetcar {
+  text-shadow: 0 0 1px rgba(255, 0, 0, 0.2);
+  animation: slowPulse 4s ease-in-out infinite;
+}
+.streetcar:hover {
+  text-shadow: 0 0 3px rgba(255, 0, 0, 3);
+}
+
+/* Cars - slight headlight effect + gentle wiggle */
+.car {
+  text-shadow: 1px 1px 1px rgb(255, 190, 190);
+  animation: gentleWiggle 6s ease-in-out infinite;
+  /* background-color: rgba(19, 16, 83, 0.25); */
+}
+
+/* Opening doors - warning effect + soft float */
+.door-opening {
+  text-shadow: 0 0 1px rgba(255, 165, 0, 1);
+  /* animation: softFloat 3s ease-in-out infinite; */
+}
+
+/* Buildings - ambient light + very slow pulse */
+.building {
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.474);
+  animation: slowPulse 8s ease-in-out infinite;
+  background-color: rgba(19, 16, 83, 0.25);
+}
+
+/* Pedestrians - make them pop slightly + tiny bounce */
+.pedestrian {
+  text-shadow: 0 0 1px rgba(24, 233, 167, 0.1);
+  animation: tinyBounce 2s ease-in-out infinite;
+}
+
+/* Danger state - more noticeable but not overwhelming */
+.danger {
+  text-shadow: 0 0 1px rgba(255, 0, 0, 0.698);
+  animation: gentleWiggle 1s ease-in-out infinite;
+}
+
+/* Performance optimization */
+.entity {
+  will-change: transform, text-shadow;
+  backface-visibility: hidden;
+}
+
+
+
+
+
+
+
+/* Death animation keyframes */
+@keyframes deathExpand {
+  0% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  30% { 
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes deathRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); }
+}
+
+@keyframes deathShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-2px, 2px) rotate(-1deg); }
+  50% { transform: translate(2px, -2px) rotate(1deg); }
+  75% { transform: translate(-2px, -2px) rotate(-1deg); }
+}
+
+@keyframes deathFlash {
+  0% { text-shadow: 0 0 4px rgba(255, 0, 0, 0.8); }
+  50% { text-shadow: 0 0 20px rgba(255, 0, 0, 1); }
+  100% { text-shadow: 0 0 4px rgba(255, 0, 0, 0); }
+}
+
+/* Death state class */
+.death-state {
+  display: inline-block;
+  animation: 
+    deathExpand 1.2s ease-out,
+    deathRotate 1.2s ease-in,
+    deathShake 0.6s ease-in-out,
+    deathFlash 1.2s ease-in;
+  animation-fill-mode: forwards;
+  transform-origin: center;
+}
+
+/* Game over overlay effect */
+@keyframes gameOverPulse {
+  0%, 100% { background-color: rgba(255, 0, 0, 0.2); }
+  50% { background-color: rgba(255, 0, 0, 0.3); }
+}
+
+.game-over {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  animation: gameOverPulse 3s ease-in-out infinite;
+  z-index: 1000;
+}
+
+/* Screen shake on death */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-5px, 5px); }
+  50% { transform: translate(5px, -5px); }
+  75% { transform: translate(-5px, -5px); }
+}
+
+.screen-shake {
+  animation: screenShake 0.8s ease-in-out;
+}
+
+/* Death message styling */
+#main-msg-box {
+  transition: all 0.5s ease-in-out;
+}
+
+#main-msg-box.show-message {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#main-msg-box.hide-message {
+  opacity: 0;
+  transform: scale(0.8);
 }

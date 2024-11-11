@@ -1112,6 +1112,13 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
     this.lastDoorUpdate = Date.now();
     this.entity.art = ENTITIES.PARKED_CAR_STATES[this.doorState];
 
+    // Add door-opening animation class when door is opening
+    if (this.doorState > 0) {
+      this.entity.animationClass = "parked-car door-opening animated";
+    } else {
+      this.entity.animationClass = "parked-car animated";
+    }
+
     const doorWidths = [0, 0.8, 1, 1.5, 1.8];
     const doorWidth = doorWidths[this.doorState];
     const hitboxHeight = this.doorState === ENTITIES.PARKED_CAR_STATES.length - 1 ? 0.8 : 1.8;
@@ -2247,18 +2254,37 @@ class LoserLane {
       }
     });
   }
-
   drawEntity(entity) {
     if (!entity || !entity.art) return;
 
     if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-      this.gridSystem.markRegionDirty(entity.position.x, entity.position.y, entity.position.x + entity.width, entity.position.y + entity.height);
-
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), char, entity.color);
+              // Get appropriate shadow class while keeping original colors
+              let effectClass = "entity ";
+              switch (entity.type) {
+                case EntityType.STREETCAR:
+                  effectClass += "streetcar";
+                  break;
+                case EntityType.STREETCAR_LANE_CAR:
+                case EntityType.ONCOMING_CAR:
+                  effectClass += "car";
+                  break;
+                case EntityType.PARKED_CAR:
+                  effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "car";
+                  break;
+                case EntityType.PEDESTRIAN:
+                  effectClass += "pedestrian";
+                  break;
+                case EntityType.BUILDING:
+                  effectClass += "building";
+                  break;
+              }
+
+              const wrappedChar = `<span class="${effectClass}">${char}</span>`;
+              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
             }
           });
         }
@@ -2297,15 +2323,36 @@ class LoserLane {
   die(reason) {
     this.state.isDead = true;
 
-    this.state.deathX = this.state.currentLane;
-    this.state.deathY = CONFIG.GAME.CYCLIST_Y;
+    // Add death animation class to player
+    if (this.player && this.player.art) {
+      this.player.art.forEach((line, i) => {
+        line.split("").forEach((char, x) => {
+          if (char !== " ") {
+            const gridX = Math.round(this.state.currentLane + x);
+            if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
+              this.gridSystem.updateCell(gridX, this.state.deathState.y + i, `<span class="death-state">${char}</span>`, STYLES.BIKE);
+            }
+          }
+        });
+      });
+    }
 
-    // Store the death position in the deathState object
-    this.state.deathState = {
-      animation: 0,
-      x: Math.floor(this.state.currentLane), // Ensure integer position
-      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-    };
+    // Add screen shake effect
+    const gameScreen = document.getElementById("game-screen");
+    if (gameScreen) {
+      gameScreen.classList.add("screen-shake");
+
+      // Create game over overlay
+      const overlay = document.createElement("div");
+      overlay.className = "game-over";
+      document.body.appendChild(overlay);
+
+      // Clean up effects after animation
+      setTimeout(() => {
+        gameScreen.classList.remove("screen-shake");
+        overlay.remove();
+      }, 1000);
+    }
 
     this.flashScreen();
     this.showDeathMessage(reason);
@@ -2318,7 +2365,6 @@ class LoserLane {
       this.restart();
     }, 1000);
   }
-
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
@@ -2330,7 +2376,7 @@ class LoserLane {
       setTimeout(() => {
         gameScreen.style.backgroundColor = color;
       }, delay);
-      delay += 100;
+      delay += 200;
     });
   }
 
