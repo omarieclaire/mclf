@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 42,
+    WIDTH: 40,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
