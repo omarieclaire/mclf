@@ -54,7 +54,7 @@ a {
   display: inline-block;
   width: 1vw;
   height: 2vh;
-  /* border: 0.1px solid rgba(23, 23, 23, 0.2); */
+  /* border: 0.1px solid rgba(146, 124, 124, 0.2); */
   text-align: center;
 }
 
@@ -95,30 +95,14 @@ a {
 }
 
 
-/* @viewport {
+@viewport {
   width: device-width;
   initial-scale: 1.0;
   maximum-scale: 1.0;
   user-scalable: no;
-} */
+}
 
-/* #game-container {
-  width: 100vw;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  border: 2px solid red;
 
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  box-sizing: border-box;
-} */
 
 #game-container {
   width: 100%;
@@ -135,21 +119,11 @@ a {
   overflow: hidden;
   box-sizing: border-box;
   background: var(--dark-grey);
-  border: 5px solid red;
+  /* border: 5px solid red; */
   margin: 0;
   padding: 0;
-
 }
-/* 
-#game-screen {
-  white-space: pre;
-  height: 100%;
-  overflow: hidden;
-  transition: dark-grey 0.1s;
-  color: #dfb1ff;
-  border: 3px solid green;
 
-} */
 
 #game-screen {
   width: 100vw;
@@ -157,11 +131,11 @@ a {
   overflow: hidden;
   white-space: pre;
   box-sizing: border-box;
+  transition: dark-grey 0.1s;
   /* font-family: monospace; */
   /* line-height: 1; */
   padding: 0;
   margin: 0;
-  border: 5px solid green;
 
 }
 
@@ -531,14 +505,14 @@ button:active {
 
 /* Buildings - ambient light + very slow pulse */
 .building {
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.474);
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.585);
   animation: slowPulse 8s ease-in-out infinite;
-  background-color: rgba(19, 16, 83, 0.25);
+  background-color: rgba(19, 16, 83, 0.15);
 }
 
 /* Pedestrians - make them pop slightly + tiny bounce */
 .pedestrian {
-  text-shadow: 0 0 1px rgba(24, 233, 167, 0.1);
+  text-shadow: 0 0 1px rgba(24, 233, 167, 0.476);
   animation: tinyBounce 2s ease-in-out infinite;
 }
 

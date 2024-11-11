@@ -38,14 +38,14 @@ const CONFIG = {
     SPEED: 0.5,
   },
   LANES: {
-    ONCOMING: 2,
-    DIVIDER: 7,
-    TRACKS: 10,
-    BIKE: 17,
-    BIKE_RIGHT: 18,
-    PARKED: 20,
-    SIDEWALK: 28,
-    SHOPS: 32,
+    ONCOMING: 1,
+    DIVIDER: 6,
+    TRACKS: 9,
+    BIKE: 16,
+    BIKE_RIGHT: 17,
+    PARKED: 19,
+    SIDEWALK: 27,
+    SHOPS: 31,
   },
   
 };
@@ -1508,6 +1508,7 @@ class GameState {
       animation: 0,
       x: 0,
       y: 0,
+      reason: null
     };
   }
 
@@ -1653,8 +1654,8 @@ class TouchInputManager {
       right: { lastTap: 0 },
     };
 
-    this.DOUBLE_TAP_WINDOW = 500; // Half second window for double tap
-    this.JUMP_DURATION = 400; // Jump animation duration
+    this.DOUBLE_TAP_WINDOW = 300; // Half second window for double tap
+    this.JUMP_DURATION = 100; // Jump animation duration
 
     // Add animation styles
     const style = document.createElement("style");
@@ -1836,7 +1837,7 @@ class LoserLane {
     }
 
     // Move player
-    const moveAmount = 3;
+    const moveAmount = 2;
     if (direction === "left") {
       this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
     } else {
@@ -2298,6 +2299,7 @@ class LoserLane {
       // Draw explosion at the stored death position
       ENTITIES.EXPLOSION.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
+          // Use the stored death position
           const deathY = this.state.deathState.y + i;
           const deathX = this.state.deathState.x + x;
 
@@ -2323,6 +2325,13 @@ class LoserLane {
 
   die(reason) {
     this.state.isDead = true;
+
+    this.state.deathState = {
+      animation: 0,
+      x: Math.round(this.state.currentLane),
+      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      reason: reason
+    };
 
     // Add death animation class to player
     if (this.player && this.player.art) {
@@ -2366,6 +2375,7 @@ class LoserLane {
       this.restart();
     }, 1000);
   }
+
 
 
   flashScreen() {
