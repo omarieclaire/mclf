@@ -58,12 +58,33 @@ const COLOURS = {
   ],
 };
 
+// const EXPLOSION_COLORS = [
+//   STYLES.TRAFFIC, // Default red
+//   STYLES.BIKE, // Player color
+//   STYLES.TRACKS, // Track color
+//   "<span style='color: #FFA500'>", // Orange
+//   // "<span style='color: #FF69B4'>", // Pink
+//   "<span style='color: #FF4500'>", // Orange Red
+// ];
 const EXPLOSION_COLORS = [
-  STYLES.TRAFFIC, // Default red
-  STYLES.BIKE, // Player color
-  STYLES.TRACKS, // Track color
-  "<span style='color: #FFA500'>", // Orange
-  "<span style='color: #FFD700'>", // Gold
-  "<span style='color: #FF69B4'>", // Pink
+  STYLES.TRAFFIC,     // Default red
+  // STYLES.BIKE,        // Player color
+  STYLES.TRACKS,      // Track color
   "<span style='color: #FF4500'>", // Orange Red
+  "<span style='color: #FF5722'>", // Deep Orange
+  "<span style='color: #FF6347'>", // Tomato
+  "<span style='color: #FF7043'>", // Deep Orange 400
+  "<span style='color: #FF7F50'>", // Coral
+  "<span style='color: #FF8C00'>", // Dark Orange
+  "<span style='color: #FFA07A'>", // Light Salmon
+  "<span style='color: #E65100'>", // Deep Orange 900
+  "<span style='color: #FF5252'>", // Red Accent 200
+  "<span style='color: #FF6E40'>", // Deep Orange Accent 200
+  "<span style='color: #FF3D00'>", // Deep Orange Accent 400
+  "<span style='color: #DD2C00'>", // Deep Orange Accent 700
+  "<span style='color: #BF360C'>", // Deep Orange 900
+  "<span style='color: #FF6B6B'>", // Reddish
+  "<span style='color: #FF7043'>", // Warm Orange
+  "<span style='color: #F4511E'>", // Deep Orange 600
+  "<span style='color: #FF5722'>", // Material Deep Orange
 ];
