@@ -1180,8 +1180,6 @@ class OncomingCarBehavior extends VehicleBehaviorBase {
   }
 }
 
-/// oncoming goes here
-
 class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1251,6 +1249,52 @@ class PlayerBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
     this.canMove = true;
+  }
+}
+
+class BuildingBehavior extends EntityBehavior {
+  constructor(entity) {
+    super(entity);
+    this.canMove = true;
+    this.speed = 1;
+    this.ignoreCollisions = true;
+    this.lastRespawnTime = 0;
+    this.RESPAWN_COOLDOWN = 100;
+  }
+
+  update() {
+    this.entity.position.y += this.speed;
+
+    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
+      // Select new shop FIRST so we know its height
+      if (Building.shopIndex >= Building.availableShops.length) {
+        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
+        console.log("yo shuff");
+
+        Building.shopIndex = 0;
+      }
+
+      const selectedShop = Building.availableShops[Building.shopIndex++];
+      const newHeight = selectedShop.art.length;
+
+      // Get all buildings
+      const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING && e !== this.entity);
+
+      // Find highest building and place new one above it
+      let newY;
+      if (buildings.length > 0) {
+        const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
+        newY = Math.min(0, highestBuilding.position.y) - newHeight; // Force it to be at or above screen top
+      } else {
+        newY = -newHeight;
+      }
+
+      // Update entity
+      this.entity.position.y = newY;
+      this.entity.art = selectedShop.art;
+      this.entity.height = newHeight;
+      this.entity.name = selectedShop.name;
+    }
   }
 }
 
@@ -1386,14 +1430,14 @@ class Building extends BaseEntity {
 
   constructor(config, spawnY = null) {
     // Shuffle availableShops if it's the first build or if all shops have been used
-    if (Building.shopIndex >= Building.availableShops.length) {
-      Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
-      Building.shopIndex = 0;
-      console.log(
-        "New shuffled list of buildings:",
-        Building.availableShops.map((shop) => shop.name)
-      );
-    }
+    // if (Building.shopIndex >= Building.availableShops.length) {
+    Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
+    Building.shopIndex = 0;
+    console.log(
+      "yo New shuffled list of buildings:",
+      Building.availableShops.map((shop) => shop.name)
+    );
+    // }
 
     const selectedShop = Building.availableShops[Building.shopIndex++];
     console.log("Selected building:", selectedShop.name);
@@ -1427,50 +1471,6 @@ class Building extends BaseEntity {
 
   getRandomBuildingColor() {
     return COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
-  }
-}
-
-class BuildingBehavior extends EntityBehavior {
-  constructor(entity) {
-    super(entity);
-    this.canMove = true;
-    this.speed = 1;
-    this.ignoreCollisions = true;
-    this.lastRespawnTime = 0;
-    this.RESPAWN_COOLDOWN = 100;
-  }
-
-  update() {
-    this.entity.position.y += this.speed;
-
-    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
-      // Select new shop FIRST so we know its height
-      if (Building.shopIndex >= Building.availableShops.length) {
-        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
-        Building.shopIndex = 0;
-      }
-
-      const selectedShop = Building.availableShops[Building.shopIndex++];
-      const newHeight = selectedShop.art.length;
-
-      // Get all buildings
-      const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING && e !== this.entity);
-
-      // Find highest building and place new one above it
-      let newY;
-      if (buildings.length > 0) {
-        const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
-        newY = highestBuilding.position.y - newHeight;
-      } else {
-        newY = -newHeight;
-      }
-
-      // Update entity
-      this.entity.position.y = newY;
-      this.entity.art = selectedShop.art;
-      this.entity.height = newHeight;
-      this.entity.name = selectedShop.name;
-    }
   }
 }
 
@@ -1838,44 +1838,12 @@ class LoserLane {
     // Start jump
     this.state.isJumping = true;
 
-    // Visual feedback 1: Screen flash
-    // const gameScreen = document.getElementById("game-screen");
-    // if (gameScreen) {
-    //   gameScreen.style.transition = "transform 0.2s, background-color 0.2s";
-    //   gameScreen.style.transform = "scale(1.02)";
-    //   gameScreen.style.backgroundColor = "#333";
-
-    //   setTimeout(() => {
-    //     gameScreen.style.transform = "";
-    //     gameScreen.style.backgroundColor = "";
-    //   }, 200);
-    // }
-
-    // Visual feedback 2: Jump announcement
-    // const announcement = document.createElement("div");
-    // announcement.innerHTML = "🚲 JUMP! 🚲";
-    // announcement.style.cssText = `
-    //     position: fixed;
-    //     top: 50%;
-    //     left: 50%;
-    //     transform: translate(-50%, -50%);
-    //     font-size: 24px;
-    //     color: #ff0;
-    //     text-shadow: 0 0 10px #ff0;
-    //     animation: jumpAnnounce 0.4s forwards;
-    //     pointer-events: none;
-    //     z-index: 1000;
-    // `;
-    // document.body.appendChild(announcement);
-    // setTimeout(() => announcement.remove(), 400);
-
     // End jump after duration
     setTimeout(() => {
       this.state.isJumping = false;
     }, this.JUMP_DURATION || 400);
   }
 
-  // Add to setupControls in LoserLane class:
   setupControls() {
     // Track last keypress time for double-tap detection
     let lastLeftPress = 0;
@@ -1953,11 +1921,6 @@ class LoserLane {
     };
 
     const clickHandler = (e) => {
-      // console.log("Click detected on:", e.target);
-      // console.log("Target classList:", e.target.classList);
-      // console.log("Is playing:", this.state.isPlaying);
-
-      // Check if the click is on control areas or info elements
       const isExcludedElement =
         e.target.id === "add-art-link" ||
         e.target.id === "info-div" ||
