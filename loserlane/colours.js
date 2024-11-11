@@ -67,9 +67,9 @@ const COLOURS = {
 //   "<span style='color: #FF4500'>", // Orange Red
 // ];
 const EXPLOSION_COLORS = [
-  STYLES.TRAFFIC,     // Default red
+  STYLES.TRAFFIC, // Default red
   // STYLES.BIKE,        // Player color
-  STYLES.TRACKS,      // Track color
+  STYLES.TRACKS, // Track color
   "<span style='color: #FF4500'>", // Orange Red
   "<span style='color: #FF5722'>", // Deep Orange
   "<span style='color: #FF6347'>", // Tomato
