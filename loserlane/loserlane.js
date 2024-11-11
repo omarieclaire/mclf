@@ -2498,9 +2498,9 @@ class LoserLane {
   drawDeathParticles() {
     // const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
 
-        const particleChars = ['x', 'x', 'x'];
+        const particleChars = ['', '⚡', '⚡'];
 
-    const numParticles = Math.min(20, this.state.deathState.animation * 15);
+    const numParticles = Math.min(20, this.state.deathState.animation * 2);
 
     for (let i = 0; i < numParticles; i++) {
       const angle = (Math.PI * 2 * i) / numParticles;
