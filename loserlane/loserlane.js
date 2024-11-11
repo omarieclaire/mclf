@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 39,
+    WIDTH: 40,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
@@ -20,7 +20,7 @@ const CONFIG = {
     STREETCAR: 0.1,
     STREETCAR_LANE_CAR: 0.9,
     ONCOMING_CAR: 0.15,
-    PARKED_CAR: 0.5,
+    PARKED_CAR: 0.00005,
     DOOR_OPENING: 0.1,
     PEDESTRIAN: 0.05,
     BUILDING: 0.05,
@@ -44,7 +44,7 @@ const CONFIG = {
     BIKE_RIGHT: 15,
     PARKED: 17,
     SIDEWALK: 25,
-    SHOPS: 29,
+    BUILDINGS: 29,
   },
 };
 
@@ -55,7 +55,7 @@ class EntityType {
   static PARKED_CAR = "PARKED_CAR";
   static PEDESTRIAN = "PEDESTRIAN";
   static BUILDING = "BUILDING";
-  static PLAYER = "PLAYER";
+  static BIKE = "BIKE";
 }
 
 class SpatialManager {
@@ -191,24 +191,24 @@ class CollisionManager {
     );
   }
 
-  checkPlayerCollision(playerHitbox, entities, isJumping) {
+  checkBikeCollision(bikeHitbox, entities, isJumping) {
     // First check streetcars and other vehicles
     for (const obstacle of entities.obstacles) {
       // Skip checking streetcar collision only when jumping over tracks and it's a streetcar
       if (isJumping && obstacle.type === EntityType.STREETCAR) {
-        const playerCenter = playerHitbox.x + playerHitbox.width / 2;
+        const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
         const streetcarCenter = obstacle.position.x + obstacle.width / 2;
-        // Only skip if player is directly above the streetcar
-        if (Math.abs(playerCenter - streetcarCenter) < 2) {
+        // Only skip if bike is directly above the streetcar
+        if (Math.abs(bikeCenter - streetcarCenter) < 2) {
           continue;
         }
       }
 
-      if (this.checkCollision(playerHitbox, obstacle.getHitbox())) {
+      if (this.checkCollision(bikeHitbox, obstacle.getHitbox())) {
         const obstacleHitbox = obstacle.getHitbox();
-        const collisionDirection = this.getCollisionDirection(playerHitbox, obstacleHitbox);
+        const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
 
-        // If obstacle is moving and hits player from behind, trigger collision
+        // If obstacle is moving and hits bike from behind, trigger collision
         if (obstacle.behavior?.baseSpeed > 0 && collisionDirection === "up") {
           switch (obstacle.type) {
             case EntityType.STREETCAR:
@@ -225,7 +225,7 @@ class CollisionManager {
           }
         }
 
-        // If player runs into obstacle or obstacle hits from front
+        // If bike runs into obstacle or obstacle hits from front
         if (obstacle.behavior?.baseSpeed <= 0 || collisionDirection !== "up") {
           switch (obstacle.type) {
             case EntityType.STREETCAR:
@@ -246,18 +246,18 @@ class CollisionManager {
 
     // Then check parked cars and doors separately
     for (const car of entities.parkedCars) {
-      if (this.checkCollision(playerHitbox, car.getHitbox())) {
+      if (this.checkCollision(bikeHitbox, car.getHitbox())) {
         return "PARKEDCAR";
       }
-      if (car.behavior.doorHitbox && this.checkCollision(playerHitbox, car.behavior.doorHitbox)) {
+      if (car.behavior.doorHitbox && this.checkCollision(bikeHitbox, car.behavior.doorHitbox)) {
         return "DOOR";
       }
     }
 
     // Finally check track collisions when not jumping
     const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
-    const playerCenter = playerHitbox.x + playerHitbox.width / 2;
-    if (!isJumping && trackPositions.includes(Math.floor(playerCenter))) {
+    const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
+    if (!isJumping && trackPositions.includes(Math.floor(bikeCenter))) {
       return "TRACKS";
     }
 
@@ -268,23 +268,23 @@ class CollisionManager {
     const pairs = this.getCollisionPairs();
 
     for (const [entityA, entityB] of pairs) {
-      // Handle player collisions
-      if (entityA.type === EntityType.PLAYER || entityB.type === EntityType.PLAYER) {
-        const player = entityA.type === EntityType.PLAYER ? entityA : entityB;
-        const obstacle = entityA.type === EntityType.PLAYER ? entityB : entityA;
+      // Handle bike collisions
+      if (entityA.type === EntityType.BIKE || entityB.type === EntityType.BIKE) {
+        const bike = entityA.type === EntityType.BIKE ? entityA : entityB;
+        const obstacle = entityA.type === EntityType.BIKE ? entityB : entityA;
 
         const entitiesForCollision = {
           obstacles: [obstacle],
           parkedCars: obstacle.type === EntityType.PARKED_CAR ? [obstacle] : [],
         };
 
-        const collisionType = this.checkPlayerCollision(player.getHitbox(), entitiesForCollision, false);
+        const collisionType = this.checkBikeCollision(bike.getHitbox(), entitiesForCollision, false);
 
         if (collisionType) {
-          player.behavior.onCollision(obstacle);
+          bike.behavior.onCollision(obstacle);
         }
       } else {
-        // Handle non-player entity collisions
+        // Handle non-bike entity collisions
         this.handleEntityCollision(entityA, entityB);
       }
     }
@@ -386,8 +386,8 @@ class CollisionManager {
       return false;
     }
 
-    // Always check collisions with the player
-    if (entityA.type === EntityType.PLAYER || entityB.type === EntityType.PLAYER) {
+    // Always check collisions with the bike
+    if (entityA.type === EntityType.BIKE || entityB.type === EntityType.BIKE) {
       return true;
     }
 
@@ -416,8 +416,8 @@ class CollisionManager {
 
     let isValid = true;
     for (const other of nearby) {
-      // Allow movement if colliding with player
-      if (other.type === EntityType.PLAYER) {
+      // Allow movement if colliding with bike
+      if (other.type === EntityType.BIKE) {
         continue;
       }
 
@@ -471,8 +471,8 @@ class MovementCoordinator {
 
     let isValid = true;
     for (const other of nearby) {
-      // Allow movement if colliding with player
-      if (other.type === EntityType.PLAYER) {
+      // Allow movement if colliding with bike
+      if (other.type === EntityType.BIKE) {
         continue;
       }
 
@@ -530,7 +530,7 @@ class MovementCoordinator {
     // Priority based on entity type and current situation
     const priorities = {
       [EntityType.STREETCAR]: 10,
-      [EntityType.PLAYER]: 9,
+      [EntityType.BIKE]: 9,
       [EntityType.STREETCAR_LANE_CAR]: 8,
       [EntityType.ONCOMING_CAR]: 7,
       [EntityType.PARKED_CAR]: 6,
@@ -625,9 +625,9 @@ class SpawnManager {
       maxGapSize: 6,
       // Larger clusters
       minClusterSize: 4,
-      maxClusterSize: 7
+      maxClusterSize: 7,
     };
-    
+
     this.initializeSpawnRules();
   }
 
@@ -682,9 +682,9 @@ class SpawnManager {
         EntityType.PARKED_CAR,
         {
           baseSpacing: this.parkedCarConfig?.minClusterSpacing || 2, // Default tight spacing
-          randomSpacingRange: { 
-            min: 0,  // Minimal variation within clusters
-            max: 1
+          randomSpacingRange: {
+            min: 0, // Minimal variation within clusters
+            max: 1,
           },
           laneRules: {
             allowedLanes: [this.config.LANES.PARKED],
@@ -717,16 +717,15 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.BUILDING || 5, // Default or configured spacing
           randomSpacingRange: { min: 3, max: 7 }, // Add some randomness to spacing if desired
           laneRules: {
-            allowedLanes: [this.config.LANES.SHOPS], // Set lane specifically for buildings
+            allowedLanes: [this.config.LANES.BUILDINGS], // Set lane specifically for buildings
             spawnPosition: {
-              x: this.config.LANES.SHOPS,
+              x: this.config.LANES.BUILDINGS,
               y: this.config.GAME.HEIGHT, // Start at the screen height for initial placement
             },
             direction: -1, // Move downwards as buildings scroll off-screen
           },
         },
       ],
-
     ]);
 
     if (this.debugLog) {
@@ -1093,7 +1092,7 @@ class VehicleBehaviorBase extends EntityBehavior {
 
     return this.entity.spatialManager.grid
       .getNearbyEntities(this.entity.position, Math.max(this.entity.width, this.entity.height) * 2)
-      .filter((entity) => entity !== this.entity && entity.type !== EntityType.PLAYER && Math.abs(entity.position.x - this.entity.position.x) < 2);
+      .filter((entity) => entity !== this.entity && entity.type !== EntityType.BIKE && Math.abs(entity.position.x - this.entity.position.x) < 2);
   }
 
   updateAnimation() {
@@ -1174,7 +1173,7 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
 
   // Override base collision handling for parked cars
   onCollision(other) {
-    if (other.type === EntityType.PLAYER) {
+    if (other.type === EntityType.BIKE) {
       return;
     }
 
@@ -1228,28 +1227,28 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       minDistance: 2,
       ignoreCollisions: false,
     });
-    
+
     this.willPark = Math.random() < 0.9;
     this.isParking = false;
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
     this.parkingAttempts = 0;
-    this.maxAttempts = 5;  // Add max attempts limit
+    this.maxAttempts = 5; // Add max attempts limit
   }
 
   handleParking() {
     this.parkingAttempts++;
-    
+
     // If we've tried too many times, force transform
     if (this.parkingAttempts > this.maxAttempts) {
-      console.log('Max parking attempts reached, forcing transformation');
+      console.log("Max parking attempts reached, forcing transformation");
       this.transformToParkedCar();
       return;
     }
 
     const currentX = this.entity.position.x;
     const distanceToLane = Math.abs(currentX - this.targetLane);
-    
+
     let moveDirection;
     if (distanceToLane > 6) {
       moveDirection = Math.sign(this.targetLane - currentX) * 1.0;
@@ -1258,59 +1257,50 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     } else {
       moveDirection = Math.sign(this.targetLane - currentX) * 0.25;
     }
-    
+
     const verticalSpeed = this.baseSpeed * 0.75;
-    
+
     // Try multiple positions if the first one fails
     for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
-      const newPosition = new Position(
-        currentX + (moveDirection * speedMultiplier),
-        this.entity.position.y + verticalSpeed
-      );
+      const newPosition = new Position(currentX + moveDirection * speedMultiplier, this.entity.position.y + verticalSpeed);
 
       if (this.entity.spatialManager.validateMove(this.entity, newPosition)) {
-        this.entity.spatialManager.movementCoordinator.moveEntity(
-          this.entity,
-          newPosition
-        );
+        this.entity.spatialManager.movementCoordinator.moveEntity(this.entity, newPosition);
 
         if (distanceToLane < 0.5) {
-          console.log('At parking position, transforming');
+          console.log("At parking position, transforming");
           this.transformToParkedCar();
         }
         return;
       }
     }
 
-    console.log('All parking movements blocked');
+    console.log("All parking movements blocked");
     // If we get here, movement was blocked - force transform after a few attempts
     if (this.parkingAttempts > 3) {
-      console.log('Movement blocked too many times, forcing transformation');
+      console.log("Movement blocked too many times, forcing transformation");
       this.transformToParkedCar();
     }
   }
 
   transformToParkedCar() {
     const spatialManager = this.entity.spatialManager;
-    
+
     // Create parked car at current position but in parking lane
     const parkedCar = new ParkedCar(this.entity.config, {
-      position: new Position(
-        this.targetLane,
-        this.entity.position.y
-      )
+      position: new Position(this.targetLane, this.entity.position.y),
     });
 
     // Ensure it moves down
     parkedCar.behavior.baseSpeed = 1;
-    
+
     // Add new car first, then remove old one
     spatialManager.registerEntity(parkedCar);
     spatialManager.unregisterEntity(this.entity);
-    
-    console.log('Successfully transformed to parked car at:', {
+
+    console.log("Successfully transformed to parked car at:", {
       x: parkedCar.position.x,
-      y: parkedCar.position.y
+      y: parkedCar.position.y,
     });
   }
 
@@ -1319,7 +1309,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       this.handleParking();
     } else if (this.willPark) {
       if (this.canStartParkingManeuver()) {
-        console.log('Starting parking maneuver');
+        console.log("Starting parking maneuver");
         this.isParking = true;
         this.parkingAttempts = 0;
       }
@@ -1330,25 +1320,17 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   }
 
   canStartParkingManeuver() {
-    const nearbyEntities = this.entity.spatialManager.grid.getNearbyEntities(
-      new Position(this.targetLane, this.entity.position.y),
-      6
+    const nearbyEntities = this.entity.spatialManager.grid.getNearbyEntities(new Position(this.targetLane, this.entity.position.y), 6);
+
+    const nearbyParkedCars = nearbyEntities.filter(
+      (e) => e.type === EntityType.PARKED_CAR || (e.type === EntityType.STREETCAR_LANE_CAR && e.behavior.isParking)
     );
 
-    const nearbyParkedCars = nearbyEntities.filter(e => 
-      e.type === EntityType.PARKED_CAR || 
-      (e.type === EntityType.STREETCAR_LANE_CAR && e.behavior.isParking)
-    );
-    
-    const hasSpace = !nearbyParkedCars.some(car => 
-      Math.abs(car.position.y - this.entity.position.y) < 6
-    );
+    const hasSpace = !nearbyParkedCars.some((car) => Math.abs(car.position.y - this.entity.position.y) < 6);
 
     return hasSpace;
   }
 }
-
-
 
 class PedestrianBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
@@ -1391,7 +1373,7 @@ class PedestrianBehavior extends EntityBehavior {
       .filter(
         (entity) =>
           entity !== this.entity &&
-          entity.type !== EntityType.PLAYER &&
+          entity.type !== EntityType.BIKE &&
           entity.type === EntityType.PEDESTRIAN &&
           Math.abs(entity.position.x - this.entity.position.x) < 1
       );
@@ -1405,7 +1387,7 @@ class PedestrianBehavior extends EntityBehavior {
   }
 }
 
-class PlayerBehavior extends EntityBehavior {
+class BikeBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
     this.canMove = true;
@@ -1589,7 +1571,7 @@ class Building extends BaseEntity {
   static buildingIndex = 0;
 
   constructor(config, spawnY = null) {
-    // Shuffle availableBuildings if it's the first build or if all shops have been used
+    // Shuffle availableBuildings if it's the first build or if all buildings have been used
     // if (Building.buildingIndex >= Building.availableBuildings.length) {
     Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
     Building.buildingIndex = 0;
@@ -1606,7 +1588,7 @@ class Building extends BaseEntity {
     const calculatedY = spawnY ?? (Building.nextSpawnY !== null ? Building.nextSpawnY - height : 0);
 
     const spawnConfig = {
-      position: new Position(config.LANES.SHOPS, calculatedY),
+      position: new Position(config.LANES.BUILDINGS, calculatedY),
     };
 
     super(config, spawnConfig, EntityType.BUILDING);
@@ -1883,7 +1865,7 @@ class TouchInputManager {
       this.game.state.currentLane = Math.max(this.game.state.currentLane - 1, this.config.LANES.ONCOMING);
       this.game.movementState.isMovingLeft = true;
     } else {
-      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, this.config.LANES.SHOPS - 1);
+      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, this.config.LANES.BUILDINGS - 1);
       this.game.movementState.isMovingRight = true;
     }
 
@@ -1991,8 +1973,8 @@ class LoserLane {
     this.spatialManager.entities.clear();
     this.initializeBuildings();
     this.initializeParkedCars();
-    this.player = this.createPlayer();
-    this.spatialManager.registerEntity(this.player);
+    this.bike = this.updateBike();
+    this.spatialManager.registerEntity(this.bike);
   }
 
   handleJump(direction) {
@@ -2001,12 +1983,12 @@ class LoserLane {
       return;
     }
 
-    // Move player
+    // Move bike
     const moveAmount = 2;
     if (direction === "left") {
       this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
     } else {
-      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
     }
 
     // Start jump
@@ -2062,7 +2044,7 @@ class LoserLane {
             } else {
               // Regular movement
               if (!this.movementState.isMovingRight) {
-                this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.SHOPS - 1);
+                this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
                 this.movementState.isMovingRight = true;
                 this.movementState.holdStartTime = now;
                 this.movementState.isHolding = true;
@@ -2114,9 +2096,9 @@ class LoserLane {
         console.log("Starting game");
 
         let titleBox = document.getElementById("title-box-container");
-         let gameWidth = this.config.GAME.WIDTH;
+        let gameWidth = this.config.GAME.WIDTH;
         //  console.log(gameWidth);
-         
+
         titleBox.style.width = gameWidth;
         titleBox.style.visibility = "visible";
         this.start();
@@ -2153,7 +2135,7 @@ class LoserLane {
           this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
         }
         if (this.movementState.isMovingRight) {
-          this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+          this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
         }
       }
       this.movementState.lastMove = timestamp;
@@ -2171,9 +2153,9 @@ class LoserLane {
         }
       } else {
         this.spatialManager.update();
-        this.updatePlayerPosition();
+        this.updateBikePosition();
         this.spawnEntities();
-        this.checkPlayerCollisions();
+        this.checkBikeCollisions();
         this.state.incrementScore();
         this.state.updateSpeed();
         this.updateScoreDisplay();
@@ -2184,10 +2166,10 @@ class LoserLane {
     this.frameId = requestAnimationFrame((t) => this.update(t));
   }
 
-  updatePlayerPosition() {
-    if (this.player) {
-      // Add check to ensure player exists
-      this.player.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
+  updateBikePosition() {
+    if (this.bike) {
+      // Add check to ensure bike exists
+      this.bike.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
     }
   }
 
@@ -2246,7 +2228,7 @@ class LoserLane {
     const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.touchState.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
 
     const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-    this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.SHOPS - 1);
+    this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
 
     this.state.isJumping = isDoubleTapJump;
     if (isDoubleTapJump) {
@@ -2286,26 +2268,26 @@ class LoserLane {
     }
   }
 
-  createPlayer() {
-    const playerEntity = new BaseEntity(
+  updateBike() {
+    const bikeEntity = new BaseEntity(
       this.config,
       {
         position: new Position(this.state.currentLane, CONFIG.GAME.CYCLIST_Y),
       },
-      EntityType.PLAYER
+      EntityType.BIKE
     );
 
-    playerEntity.width = ENTITIES.BIKE.width;
-    playerEntity.height = ENTITIES.BIKE.height;
-    playerEntity.art = ENTITIES.BIKE.art;
-    playerEntity.color = STYLES.BIKE;
-    playerEntity.behavior = new PlayerBehavior(playerEntity);
+    bikeEntity.width = ENTITIES.BIKE.width;
+    bikeEntity.height = ENTITIES.BIKE.height;
+    bikeEntity.art = ENTITIES.BIKE.art;
+    bikeEntity.color = STYLES.BIKE;
+    bikeEntity.behavior = new BikeBehavior(bikeEntity);
 
-    return playerEntity;
+    return bikeEntity;
   }
 
-  checkPlayerCollisions() {
-    const playerHitbox = {
+  checkBikeCollisions() {
+    const bikeHitbox = {
       x: this.state.currentLane,
       y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
       width: ENTITIES.BIKE.width,
@@ -2313,11 +2295,11 @@ class LoserLane {
     };
 
     const entitiesForCollision = {
-      obstacles: Array.from(this.spatialManager.entities).filter((e) => e.type !== EntityType.PLAYER && e.type !== EntityType.PARKED_CAR),
+      obstacles: Array.from(this.spatialManager.entities).filter((e) => e.type !== EntityType.BIKE && e.type !== EntityType.PARKED_CAR),
       parkedCars: Array.from(this.spatialManager.entities).filter((e) => e.type === EntityType.PARKED_CAR),
     };
 
-    const collision = this.spatialManager.collisionManager.checkPlayerCollision(playerHitbox, entitiesForCollision, this.state.isJumping);
+    const collision = this.spatialManager.collisionManager.checkBikeCollision(bikeHitbox, entitiesForCollision, this.state.isJumping);
 
     if (collision) {
       this.die(collision);
@@ -2373,7 +2355,6 @@ class LoserLane {
     }
   }
 
-
   initializeParkedCars() {
     let currentY = CONFIG.GAME.HEIGHT;
     while (currentY > -5) {
@@ -2396,7 +2377,7 @@ class LoserLane {
 
     this.gridSystem.clear();
     this.drawRoadFeatures();
-    this.drawPlayer();
+    this.drawBike();
     this.drawEntities();
 
     const gameScreen = document.getElementById("game-screen");
@@ -2416,7 +2397,7 @@ class LoserLane {
         this.gridSystem.updateCell(CONFIG.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
       }
 
-      for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.SHOPS; x++) {
+      for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.BUILDINGS; x++) {
         this.gridSystem.updateCell(x, y, " ", STYLES.SIDEWALK);
       }
     }
@@ -2424,7 +2405,7 @@ class LoserLane {
 
   drawEntities() {
     this.spatialManager.entities.forEach((entity) => {
-      if (entity.type !== EntityType.PLAYER) {
+      if (entity.type !== EntityType.BIKE) {
         this.drawEntity(entity);
       }
     });
@@ -2467,7 +2448,7 @@ class LoserLane {
     }
   }
 
-  drawPlayer() {
+  drawBike() {
     if (this.state.isDead && this.state.deathState.animation < 15) {
       // Get current animation frame
       const frameIndex = Math.min(4, Math.floor(this.state.deathState.animation / 3));
@@ -2495,16 +2476,18 @@ class LoserLane {
       });
 
       // Add additional particle effects
-      // this.drawDeathParticles();
+      this.drawDeathParticles();
     } else if (!this.state.isDead) {
-      // Regular player drawing code remains the same
+      // Regular bike drawing code remains the same
       const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
       ENTITIES.BIKE.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
           if (char !== " ") {
             const gridX = Math.round(this.state.currentLane + x);
             if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
-              this.gridSystem.updateCell(gridX, bikeY + i, char, STYLES.BIKE);
+              // Add a CSS class to bike elements
+              const bikeChar = `<span class="bike">${char}</span>`; 
+              this.gridSystem.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE); 
             }
           }
         });
@@ -2512,30 +2495,32 @@ class LoserLane {
     }
   }
 
-  // drawDeathParticles() {
-  //   const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
+  drawDeathParticles() {
+    // const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
 
-  //   const numParticles = Math.min(20, this.state.deathState.animation * 2);
+        const particleChars = ['x', 'x', 'x'];
 
-  //   for (let i = 0; i < numParticles; i++) {
-  //     const angle = (Math.PI * 2 * i) / numParticles;
-  //     const radius = (this.state.deathState.animation / 2) + Math.random() * 2;
+    const numParticles = Math.min(20, this.state.deathState.animation * 15);
 
-  //     const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
-  //     const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
+    for (let i = 0; i < numParticles; i++) {
+      const angle = (Math.PI * 2 * i) / numParticles;
+      const radius = (this.state.deathState.animation / 2) + Math.random() * 2;
 
-  //     if (y < CONFIG.GAME.HEIGHT && y >= 0 && x < CONFIG.GAME.WIDTH && x >= 0) {
-  //       const char = particleChars[Math.floor(Math.random() * particleChars.length)];
-  //       const particleColor = EXPLOSION_COLORS[Math.floor(Math.random() * EXPLOSION_COLORS.length)];
-  //       this.gridSystem.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
-  //     }
-  //   }
-  // }
+      const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
+      const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
+
+      if (y < CONFIG.GAME.HEIGHT && y >= 0 && x < CONFIG.GAME.WIDTH && x >= 0) {
+        const char = particleChars[Math.floor(Math.random() * particleChars.length)];
+        const particleColor = EXPLOSION_COLORS[Math.floor(Math.random() * EXPLOSION_COLORS.length)];
+        this.gridSystem.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
+      }
+    }
+  }
 
   die(reason) {
     this.state.isDead = true;
 
-    // Store the death position using the current player position
+    // Store the death position using the current bike position
     this.state.deathState = {
       animation: 0,
       x: Math.round(this.state.currentLane),

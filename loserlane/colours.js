@@ -6,7 +6,7 @@ const STYLES = {
   PARKED: "<span style='color: #AAAAAA'>", // Medium Gray
   PEDESTRIAN: "<span style='color: #00FFFF'>", // Cyan
   SIDEWALK: "<span style='background-color: #333333'>", // Dark Gray
-  SHOPS: "<span style='color: #FFFFFF'>", // White
+  BUILDINGS: "<span style='color: #FFFFFF'>", // White
   TRACKS: "<span style='color: #444444'>", // Dark Gray
 };
 
@@ -60,7 +60,7 @@ const COLOURS = {
 
 // const EXPLOSION_COLORS = [
 //   STYLES.TRAFFIC, // Default red
-//   STYLES.BIKE, // Player color
+//   STYLES.BIKE, // Bike color
 //   STYLES.TRACKS, // Track color
 //   "<span style='color: #FFA500'>", // Orange
 //   // "<span style='color: #FF69B4'>", // Pink
@@ -68,7 +68,7 @@ const COLOURS = {
 // ];
 const EXPLOSION_COLORS = [
   STYLES.TRAFFIC, // Default red
-  // STYLES.BIKE,        // Player color
+  // STYLES.BIKE,        // Bike color
   STYLES.TRACKS, // Track color
   "<span style='color: #FF4500'>", // Orange Red
   "<span style='color: #FF5722'>", // Deep Orange

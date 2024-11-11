@@ -316,12 +316,14 @@ a {
   color: #ccc;
 }
 
-/* 
-.bike-highlight {
-  dark-grey: rgba(255, 255, 150, 0.1);
+
+
+.bike {
+  font-weight: bolder;
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  background-image: linear-gradient(45deg, red, orange, yellow, green, cyan, blue, violet);
+  background-image: linear-gradient(45deg, red, orange, cyan, violet);
   animation: rainbow 3s linear infinite;
 }
 
@@ -332,9 +334,8 @@ a {
   to {
     filter: hue-rotate(360deg);
   }
-} */
+}
 
-/* 
 
 .bike-highlight {
   dark-grey: rgba(255, 255, 150, 0.1);
@@ -451,7 +452,7 @@ button:active {
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(0.5deg);
+    transform: rotate(15deg);
   }
   75% {
     /* letter-spacing: 2px; */
@@ -467,7 +468,7 @@ button:active {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-1px);
+    transform: translateY(-10px);
   }
 }
 
@@ -499,7 +500,7 @@ button:active {
 
 /* Cars - slight headlight effect + gentle wiggle */
 .car {
-  /* text-shadow: 1px 1px 1px rgb(255, 190, 190); */
+  text-shadow: 1px 1px 0 rgb(255, 181, 181);
   animation: gentleWiggle 6s ease-in-out infinite;
   /* background-color: rgba(19, 16, 83, 0.25); */
 }
@@ -512,14 +513,14 @@ button:active {
 
 /* Buildings - ambient light + very slow pulse */
 .building {
-  /* text-shadow: 0 0 1px rgba(255, 255, 255, 0.585); */
+  /* text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.585); */
   animation: slowPulse 8s ease-in-out infinite;
   background-color: rgba(19, 16, 83, 0.15);
 }
 
 /* Pedestrians - make them pop slightly + tiny bounce */
 .pedestrian {
-  /* text-shadow: 0 0 1px rgba(24, 233, 167, 0.476); */
+  text-shadow: 0 0 0 rgba(24, 233, 167, 0.476);
   animation: tinyBounce 2s ease-in-out infinite;
 }
 
@@ -627,3 +628,7 @@ button:active {
   opacity: 0;
   transform: scale(0.8);
 }
+
+
+
+

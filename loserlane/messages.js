@@ -87,7 +87,7 @@ const MESSAGES = {
       { reason: "NOOOO", funny: "Human block, avoid the shock!" },
       { reason: "NOOOO", funny: "Watch your stroll, dodge the roll!" }
     ],
-    SHOP: [
+    BUILDING: [
       { reason: "OOPS", funny: "Shop drop! Street's your stop!" },
       { reason: "OOPS", funny: "Boop! Into the shoop?" },
       { reason: "OOPS", funny: "Retail fail! Stay on the trail!" },

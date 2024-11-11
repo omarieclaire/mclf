@@ -2,11 +2,8 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Loser Lane</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -26,7 +23,7 @@
         </div>
         <p>LEFT/RIGHT arrow keys or TAP screen to move</p>
         <p>DOUBLE-TAP to jump tracks</p>
-        <button id="start-button">RIDE</button>
+        <button id="start-button" aria-label="Start the game">RIDE</button>
       </div>
 
       <div id="controls">
@@ -156,15 +153,12 @@
     </div>
     <script>
       const infoButton = document.getElementById("add-art-link");
-
-      infoButton.addEventListener("click", () => {});
     </script>
-    <script src="shops.js"></script>
+    <script src="buildings.js"></script>
     <script src="cuteDeathFaces.js"></script>
     <script src="colours.js"></script>
     <script src="assets.js"></script>
     <script src="messages.js"></script>
-    <!-- <script src="config.js"></script> -->
     <script src="loserlane.js"></script>
   </body>
 </html>
