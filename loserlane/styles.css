@@ -75,7 +75,7 @@ a {
 
 #main-msg-box {
   position: absolute;
-  top: 45%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.5rem;

@@ -10,7 +10,6 @@ const STYLES = {
   TRACKS: "<span style='color: #444444'>", // Dark Gray
 };
 
-
 const COLOURS = {
   BUILDINGS: [
     "#FF9999", // Soft Pink
@@ -34,7 +33,7 @@ const COLOURS = {
     "#FF9966", // Warm Peach
     "#99CCFF", // Light Sky Blue
   ],
-  
+
   VEHICLES: [
     "#A07A7A", // Muted Pink
     "#7AA07A", // Muted Mint Green
@@ -56,6 +55,15 @@ const COLOURS = {
     "#4F7AA0", // Muted Cyan
     "#A07A6D", // Muted Warm Peach
     "#7A96A0", // Muted Light Sky Blue
-],
-
+  ],
 };
+
+const EXPLOSION_COLORS = [
+  STYLES.TRAFFIC, // Default red
+  STYLES.BIKE, // Player color
+  STYLES.TRACKS, // Track color
+  "<span style='color: #FFA500'>", // Orange
+  "<span style='color: #FFD700'>", // Gold
+  "<span style='color: #FF69B4'>", // Pink
+  "<span style='color: #FF4500'>", // Orange Red
+];

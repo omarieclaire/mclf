@@ -1508,17 +1508,31 @@ class GameState {
       animation: 0,
       x: 0,
       y: 0,
-      reason: null
+      reason: null,
+      frameCounter: 0,
+      colorIndex: 0
     };
   }
 
   updateDeathAnimation() {
     if (this.isDead) {
-      this.deathState.animation++;
-      return this.deathState.animation > 10;
+      this.deathState.frameCounter++;
+      
+      // Change color every 2 frames
+      if (this.deathState.frameCounter % 2 === 0) {
+        this.deathState.colorIndex = (this.deathState.colorIndex + 1) % EXPLOSION_COLORS.length;
+      }
+      
+      // Update animation frame every 3 frames
+      if (this.deathState.frameCounter % 3 === 0) {
+        this.deathState.animation++;
+      }
+      
+      return this.deathState.animation > 15; // Extended animation duration
     }
     return false;
   }
+
 
   incrementScore() {
     this.score++;
@@ -2295,20 +2309,35 @@ class LoserLane {
   }
 
   drawPlayer() {
-    if (this.state.isDead && this.state.deathState.animation < 10) {
-      // Draw explosion at the stored death position
-      ENTITIES.EXPLOSION.art.forEach((line, i) => {
-        line.split("").forEach((char, x) => {
-          // Use the stored death position
-          const deathY = this.state.deathState.y + i;
-          const deathX = this.state.deathState.x + x;
+    if (this.state.isDead && this.state.deathState.animation < 15) {
+      // Get current animation frame
+      const frameIndex = Math.min(4, Math.floor(this.state.deathState.animation / 3));
+      const frames = Object.values(EXPLOSION_FRAMES);
+      const currentFrame = frames[frameIndex];
+      
+      // Get current color
+      const currentColor = EXPLOSION_COLORS[this.state.deathState.colorIndex];
 
-          if (deathY < CONFIG.GAME.HEIGHT && deathY >= 0 && deathX < CONFIG.GAME.WIDTH && deathX >= 0 && char !== " ") {
-            this.gridSystem.updateCell(deathX, deathY, char, STYLES.TRAFFIC);
+      // Draw explosion with current frame and color
+      currentFrame.forEach((line, i) => {
+        line.split("").forEach((char, x) => {
+          const deathY = this.state.deathState.y + i - 1; // Offset slightly up
+          const deathX = this.state.deathState.x + x - 2; // Center the explosion
+
+          if (deathY < CONFIG.GAME.HEIGHT && deathY >= 0 && 
+              deathX < CONFIG.GAME.WIDTH && deathX >= 0 && 
+              char !== " ") {
+            // Add animation class and current color
+            const animatedChar = `<span class="death-particle">${char}</span>`;
+            this.gridSystem.updateCell(deathX, deathY, animatedChar, currentColor);
           }
         });
       });
+
+      // Add additional particle effects
+      this.drawDeathParticles();
     } else if (!this.state.isDead) {
+      // Regular player drawing code remains the same
       const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
       ENTITIES.BIKE.art.forEach((line, i) => {
         line.split("").forEach((char, x) => {
@@ -2323,34 +2352,64 @@ class LoserLane {
     }
   }
 
+  drawDeathParticles() {
+    // Add random particles around the explosion
+    const particleChars = ['*', '•', '°', '⚡', '✦', '✺'];
+    const numParticles = Math.min(20, this.state.deathState.animation * 2);
+    
+    for (let i = 0; i < numParticles; i++) {
+      const angle = (Math.PI * 2 * i) / numParticles;
+      const radius = (this.state.deathState.animation / 2) + Math.random() * 2;
+      
+      const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
+      const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
+      
+      if (y < CONFIG.GAME.HEIGHT && y >= 0 && x < CONFIG.GAME.WIDTH && x >= 0) {
+        const char = particleChars[Math.floor(Math.random() * particleChars.length)];
+        const particleColor = EXPLOSION_COLORS[Math.floor(Math.random() * EXPLOSION_COLORS.length)];
+        this.gridSystem.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
+      }
+    }
+  }
+
   die(reason) {
     this.state.isDead = true;
-
+    
+    // Store the death position using the current player position
     this.state.deathState = {
       animation: 0,
       x: Math.round(this.state.currentLane),
       y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-      reason: reason
+      reason: reason,
+      frameCounter: 0,
+      colorIndex: 0
     };
-
-    // Add death animation class to player
-    if (this.player && this.player.art) {
-      this.player.art.forEach((line, i) => {
-        line.split("").forEach((char, x) => {
-          if (char !== " ") {
-            const gridX = Math.round(this.state.currentLane + x);
-            if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
-              this.gridSystem.updateCell(gridX, this.state.deathState.y + i, `<span class="death-state">${char}</span>`, STYLES.BIKE);
-            }
-          }
-        });
-      });
-    }
 
     // Add screen shake effect
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
       gameScreen.classList.add("screen-shake");
+      
+      // Add CSS for new particle animations
+      const style = document.createElement('style');
+      style.textContent = `
+        .death-particle {
+          animation: particle-pulse 0.3s infinite;
+        }
+        .death-particle-outer {
+          animation: particle-float 0.5s ease-out;
+        }
+        @keyframes particle-pulse {
+          0% { opacity: 1; }
+          50% { opacity: 0.5; }
+          100% { opacity: 1; }
+        }
+        @keyframes particle-float {
+          0% { transform: translate(0, 0); opacity: 1; }
+          100% { transform: translate(var(--float-x, 5px), var(--float-y, -5px)); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
 
       // Create game over overlay
       const overlay = document.createElement("div");
@@ -2361,6 +2420,7 @@ class LoserLane {
       setTimeout(() => {
         gameScreen.classList.remove("screen-shake");
         overlay.remove();
+        style.remove();
       }, 1000);
     }
 
@@ -2373,7 +2433,7 @@ class LoserLane {
         messageEl.classList.remove("show-message");
       }
       this.restart();
-    }, 1000);
+    }, 1500); // Slightly longer delay to show full animation
   }
 
 
@@ -2389,7 +2449,7 @@ class LoserLane {
       setTimeout(() => {
         gameScreen.style.backgroundColor = color;
       }, delay);
-      delay += 200;
+      delay += 100;
     });
   }
 
@@ -2400,8 +2460,9 @@ class LoserLane {
     const randomMessage = this.getRandomDeathMessage(reason);
     const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
 
+    // <span class="message-reason">${randomMessage.reason}</span>
+
     messageEl.innerHTML = `
-      <span class="message-reason">${randomMessage.reason}</span><br /><br />
       ${randomMessage.funny}<br /><br />
       <span class="cute-death-face">${randomFace}</span>
     `;

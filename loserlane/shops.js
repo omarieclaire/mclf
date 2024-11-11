@@ -35,12 +35,8 @@ const TORONTO_SHOPS = [
         art: [
             "┌────────┐",
             "│74      │",
-            "│CYCLISTS│",
-            "│DIE     │",
-            "│EACH    │",
+            "│A       │",
             "│YEAR    │",
-            "│IN      │",
-            "│CANADA  │",
             "└────────┘"
         ]
     },
