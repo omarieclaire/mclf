@@ -38,6 +38,7 @@ html, body {
   position: fixed;
   box-sizing: border-box;
   font-family: "Courier New", monospace;
+  color: var(--light-purp);
 }
 
 
@@ -483,7 +484,7 @@ button:active {
 
 /* Streetcar - subtle red danger glow + slow pulse */
 .streetcar {
-  text-shadow: 0 0 1px rgba(255, 0, 0, 0.2);
+  /* text-shadow: 0 0 1px rgba(255, 0, 0, 0.2); */
   animation: slowPulse 4s ease-in-out infinite;
 }
 .streetcar:hover {
@@ -492,7 +493,7 @@ button:active {
 
 /* Cars - slight headlight effect + gentle wiggle */
 .car {
-  text-shadow: 1px 1px 1px rgb(255, 190, 190);
+  /* text-shadow: 1px 1px 1px rgb(255, 190, 190); */
   animation: gentleWiggle 6s ease-in-out infinite;
   /* background-color: rgba(19, 16, 83, 0.25); */
 }
@@ -505,14 +506,14 @@ button:active {
 
 /* Buildings - ambient light + very slow pulse */
 .building {
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.585);
+  /* text-shadow: 0 0 1px rgba(255, 255, 255, 0.585); */
   animation: slowPulse 8s ease-in-out infinite;
   background-color: rgba(19, 16, 83, 0.15);
 }
 
 /* Pedestrians - make them pop slightly + tiny bounce */
 .pedestrian {
-  text-shadow: 0 0 1px rgba(24, 233, 167, 0.476);
+  /* text-shadow: 0 0 1px rgba(24, 233, 167, 0.476); */
   animation: tinyBounce 2s ease-in-out infinite;
 }
 
