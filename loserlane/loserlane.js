@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 45,
+    WIDTH: 42,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
@@ -40,12 +40,12 @@ const CONFIG = {
   LANES: {
     ONCOMING: 2,
     DIVIDER: 7,
-    TRACKS: 11,
-    BIKE: 18,
-    BIKE_RIGHT: 19,
-    PARKED: 21,
-    SIDEWALK: 29,
-    SHOPS: 33,
+    TRACKS: 10,
+    BIKE: 17,
+    BIKE_RIGHT: 18,
+    PARKED: 20,
+    SIDEWALK: 28,
+    SHOPS: 32,
   },
   
 };
