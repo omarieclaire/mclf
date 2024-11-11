@@ -2365,6 +2365,8 @@ class LoserLane {
       this.restart();
     }, 1000);
   }
+
+
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
