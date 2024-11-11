@@ -5,7 +5,7 @@
 
   --light-blue: #d1feff;
   --light-purp: #dfb1ff;
-  --hot-pink: #ff1cca;
+  --hot-pink: #ff77df;
   --med-purp: #b19eff;
   --dark-grey: #202020;
   --darker-grey: #222;
@@ -47,8 +47,9 @@ body {
 }
 
 a {
-  color: var(--med-purp);
+  color: var(--dark-yellow);
   text-decoration: none;
+  margin: 0;
 }
 
 .grid-cell {
@@ -204,16 +205,15 @@ a {
 #title-box-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100vw;
   padding: 8px 0;
   color: var(--light-blue);
   visibility: hidden;
-  margin: auto;
   flex-direction: column;
   text-align: center;
   z-index: 100;
-  outline: 1px dashed --dark-yellow;
+  /* border: 1px double var(--dark-yellow); */
   width: var(--game-width);
 }
 
@@ -239,6 +239,8 @@ a {
 #big-title {
   font-size: 1.8rem;
   color: var(--med-purp);
+  font-weight: bolder;
+
 }
 
 @media (max-height: 600px) {
@@ -259,6 +261,8 @@ a {
 
 .bike-art-title {
   color: var(--hot-pink);
+  font-weight: bolder;
+
 }
 
 .bike-art-left,
@@ -267,6 +271,7 @@ a {
   font-size: 0.8rem;
   line-height: 1;
   text-align: center;
+  font-weight: bolder;
 }
 
 .title-text {
@@ -418,6 +423,7 @@ button:active {
   padding: 0;
   letter-spacing: 0.7rem;
   padding: 3px 0;
+  /* color: #d1feff; */
 }
 
 @supports (-webkit-touch-callout: none) {

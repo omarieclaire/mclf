@@ -1,13 +1,12 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 40,
+    WIDTH: 39,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
     SPEED_DECREASE_RATE: 0.995,
     CYCLIST_Y: Math.floor(window.innerHeight / 40),
     DOUBLE_TAP_TIME: 350,
-    TAP_RESET_DELAY: 500,
     lastKeys: {
       left: 0,
       right: 0,
@@ -220,7 +219,7 @@ class CollisionManager {
             case EntityType.PEDESTRIAN:
               return "PEDESTRIAN";
             case EntityType.BUILDING:
-              return "SHOP";
+              return "BUILDING";
             default:
               return "TRAFFIC";
           }
@@ -237,7 +236,7 @@ class CollisionManager {
             case EntityType.PEDESTRIAN:
               return "PEDESTRIAN";
             case EntityType.BUILDING:
-              return "SHOP";
+              return "BUILDING";
             default:
               return "TRAFFIC";
           }
@@ -612,7 +611,8 @@ class SpawnManager {
     this.spatialManager = spatialManager;
     this.config = config;
     this.debugLog = true;
-    
+    // this.lastBuildingY = config.GAME.HEIGHT; // Track last Y position for buildings
+
     // Adjusted cluster configuration for parked cars
     this.parkedCarConfig = {
       // Much tighter spacing within clusters
@@ -711,6 +711,22 @@ class SpawnManager {
           },
         },
       ],
+      [
+        EntityType.BUILDING,
+        {
+          baseSpacing: this.config.SAFE_DISTANCE.BUILDING || 5, // Default or configured spacing
+          randomSpacingRange: { min: 3, max: 7 }, // Add some randomness to spacing if desired
+          laneRules: {
+            allowedLanes: [this.config.LANES.SHOPS], // Set lane specifically for buildings
+            spawnPosition: {
+              x: this.config.LANES.SHOPS,
+              y: this.config.GAME.HEIGHT, // Start at the screen height for initial placement
+            },
+            direction: -1, // Move downwards as buildings scroll off-screen
+          },
+        },
+      ],
+
     ]);
 
     if (this.debugLog) {
@@ -1410,16 +1426,16 @@ class BuildingBehavior extends EntityBehavior {
     this.entity.position.y += this.speed;
 
     if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
-      // Select new shop FIRST so we know its height
-      if (Building.shopIndex >= Building.availableShops.length) {
-        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
+      // Select new building FIRST so we know its height
+      if (Building.buildingIndex >= Building.availableBuildings.length) {
+        Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
         // console.log("yo shuff");
 
-        Building.shopIndex = 0;
+        Building.buildingIndex = 0;
       }
 
-      const selectedShop = Building.availableShops[Building.shopIndex++];
-      const newHeight = selectedShop.art.length;
+      const selectedBuilding = Building.availableBuildings[Building.buildingIndex++];
+      const newHeight = selectedBuilding.art.length;
 
       // Get all buildings
       const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING && e !== this.entity);
@@ -1435,9 +1451,9 @@ class BuildingBehavior extends EntityBehavior {
 
       // Update entity
       this.entity.position.y = newY;
-      this.entity.art = selectedShop.art;
+      this.entity.art = selectedBuilding.art;
       this.entity.height = newHeight;
-      this.entity.name = selectedShop.name;
+      this.entity.name = selectedBuilding.name;
     }
   }
 }
@@ -1569,24 +1585,24 @@ class Pedestrian extends BaseEntity {
 
 class Building extends BaseEntity {
   static nextSpawnY = null;
-  static availableShops = [...TORONTO_SHOPS];
-  static shopIndex = 0;
+  static availableBuildings = [...TORONTO_BUILDINGS];
+  static buildingIndex = 0;
 
   constructor(config, spawnY = null) {
-    // Shuffle availableShops if it's the first build or if all shops have been used
-    // if (Building.shopIndex >= Building.availableShops.length) {
-    Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
-    Building.shopIndex = 0;
+    // Shuffle availableBuildings if it's the first build or if all shops have been used
+    // if (Building.buildingIndex >= Building.availableBuildings.length) {
+    Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
+    Building.buildingIndex = 0;
     // console.log(
     //   "yo New shuffled list of buildings:",
-    //   Building.availableShops.map((shop) => shop.name)
+    //   Building.availableBuildings.map((building) => building.name)
     // );
     // }
 
-    const selectedShop = Building.availableShops[Building.shopIndex++];
-    // console.log("Selected building:", selectedShop.name);
+    const selectedBuilding = Building.availableBuildings[Building.buildingIndex++];
+    // console.log("Selected building:", selectedBuilding.name);
 
-    const height = selectedShop.art.length;
+    const height = selectedBuilding.art.length;
     const calculatedY = spawnY ?? (Building.nextSpawnY !== null ? Building.nextSpawnY - height : 0);
 
     const spawnConfig = {
@@ -1594,12 +1610,12 @@ class Building extends BaseEntity {
     };
 
     super(config, spawnConfig, EntityType.BUILDING);
-    this.width = selectedShop.art[0].length;
+    this.width = selectedBuilding.art[0].length;
     this.height = height;
-    this.art = selectedShop.art;
+    this.art = selectedBuilding.art;
     this.color = `<span style='color: ${this.getRandomBuildingColor()}'>`;
     this.behavior = new BuildingBehavior(this);
-    this.name = selectedShop.name;
+    this.name = selectedBuilding.name;
 
     Building.nextSpawnY = calculatedY;
   }
@@ -2096,7 +2112,13 @@ class LoserLane {
 
       if (!this.state.isPlaying) {
         console.log("Starting game");
-        document.getElementById("title-box-container").style.visibility = "visible";
+
+        let titleBox = document.getElementById("title-box-container");
+         let gameWidth = this.config.GAME.WIDTH;
+        //  console.log(gameWidth);
+         
+        titleBox.style.width = gameWidth;
+        titleBox.style.visibility = "visible";
         this.start();
       }
     };
@@ -2323,7 +2345,7 @@ class LoserLane {
 
   initializeBuildings() {
     let currentY = CONFIG.GAME.HEIGHT;
-    const shopSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 1;
+    const buildingSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
 
     while (currentY > -20) {
       // Get all existing buildings for spacing check
@@ -2343,13 +2365,15 @@ class LoserLane {
       if (!hasOverlap) {
         this.spatialManager.registerEntity(building);
         // Move up by building height plus spacing
-        currentY -= building.height + shopSpacing;
+        currentY -= building.height + buildingSpacing;
       } else {
         // If overlap detected, move up by smaller increment and try again
         currentY -= 1;
       }
     }
   }
+
+
   initializeParkedCars() {
     let currentY = CONFIG.GAME.HEIGHT;
     while (currentY > -5) {
