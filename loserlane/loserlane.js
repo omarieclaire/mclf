@@ -40,12 +40,12 @@ const CONFIG = {
   LANES: {
     ONCOMING: 1,
     DIVIDER: 6,
-    TRACKS: 8,
-    BIKE: 15,
-    BIKE_RIGHT: 16,
-    PARKED: 18,
-    SIDEWALK: 26,
-    SHOPS: 30,
+    TRACKS: 9,
+    BIKE: 14,
+    BIKE_RIGHT: 15,
+    PARKED: 17,
+    SIDEWALK: 25,
+    SHOPS: 29,
   },
 };
 
@@ -1205,7 +1205,6 @@ class OncomingCarBehavior extends VehicleBehaviorBase {
     });
   }
 }
-
 class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1214,7 +1213,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       ignoreCollisions: false,
     });
     
-    this.willPark = Math.random() < 0.4;
+    this.willPark = Math.random() < 0.9;
     this.isParking = false;
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
@@ -1332,8 +1331,6 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     return hasSpace;
   }
 }
-
-
 
 
 
