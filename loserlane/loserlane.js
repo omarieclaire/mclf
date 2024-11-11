@@ -1,5 +1,3 @@
-
-
 const CONFIG = {
   GAME: {
     WIDTH: 45,
@@ -858,7 +856,7 @@ class SpawnManager {
 
   spawnEntity(entityType) {
     if (this.debugLog && entityType === EntityType.STREETCAR) {
-      console.log(`[SpawnDebug] Attempting to spawn ${entityType}`);
+      // console.log(`[SpawnDebug] Attempting to spawn ${entityType}`);
     }
 
     const spawnConfig = this.getSpawnConfig(entityType);
@@ -1286,48 +1284,6 @@ class BaseEntity {
   }
 }
 
-class BuildingBehavior extends EntityBehavior {
-  constructor(entity) {
-    super(entity);
-    this.canMove = true;
-    this.speed = 1;
-    this.ignoreCollisions = true; // Buildings ignore all collisions
-    this.buildingSpacing = 0; // Adjust spacing between buildings if needed
-    this.topSpawnY = -entity.height; // Fixed spawn point just above the screen
-
-  }
-
-  update() {
-    // Move building up at a constant speed
-    this.entity.position.y += this.speed;
-
-    // Check if the building is off-screen and needs to respawn
-    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
-      console.log("Respawning building:", this.entity); // Debug log to track respawns
-
-      // Filter all current buildings and find the highest one on the screen
-      const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING);
-      const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
-      
-      // Select the next building from availableShops
-      if (Building.shopIndex >= Building.availableShops.length) {
-        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]); // Reshuffle or reset if all have been used
-        Building.shopIndex = 0;
-      }
-      
-      const selectedShop = Building.availableShops[Building.shopIndex++];
-      this.entity.art = selectedShop.art; // Update building appearance
-      this.entity.height = selectedShop.art.length; // Update height to match new building
-
-      // Respawn this building above the highest building with specified spacing
-      this.entity.position.y = highestBuilding.position.y - this.entity.height - this.buildingSpacing;
-
-      // Optional: Log the new position and selected shop for debugging
-      console.log("New building position:", this.entity.position.y, "Selected shop:", selectedShop.name);
-    }
-  }
-}
-
 class Streetcar extends BaseEntity {
   constructor(config, spawnConfig) {
     super(config, spawnConfig, EntityType.STREETCAR);
@@ -1425,50 +1381,96 @@ class Pedestrian extends BaseEntity {
 
 class Building extends BaseEntity {
   static nextSpawnY = null;
-  static availableShops = [...TORONTO_SHOPS]; // Copy the list initially
+  static availableShops = [...TORONTO_SHOPS];
   static shopIndex = 0;
-  
+
   constructor(config, spawnY = null) {
     // Shuffle availableShops if it's the first build or if all shops have been used
     if (Building.shopIndex >= Building.availableShops.length) {
       Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
       Building.shopIndex = 0;
-      console.log("New shuffled list of buildings:", Building.availableShops.map(shop => shop.name));
-
+      console.log(
+        "New shuffled list of buildings:",
+        Building.availableShops.map((shop) => shop.name)
+      );
     }
 
-    // Select the next shop and increment the index
-    const randomShop = Building.availableShops[Building.shopIndex++];
-    console.log("Selected building:", randomShop.name);
+    const selectedShop = Building.availableShops[Building.shopIndex++];
+    console.log("Selected building:", selectedShop.name);
 
-    const height = randomShop.art.length;
-    const calculatedY = spawnY ?? (Building.nextSpawnY ? Building.nextSpawnY - height : 0);
+    const height = selectedShop.art.length;
+    const calculatedY = spawnY ?? (Building.nextSpawnY !== null ? Building.nextSpawnY - height : 0);
 
     const spawnConfig = {
       position: new Position(config.LANES.SHOPS, calculatedY),
     };
 
     super(config, spawnConfig, EntityType.BUILDING);
-    this.width = randomShop.art[0].length;
+    this.width = selectedShop.art[0].length;
     this.height = height;
-    this.art = randomShop.art;
+    this.art = selectedShop.art;
     this.color = `<span style='color: ${this.getRandomBuildingColor()}'>`;
     this.behavior = new BuildingBehavior(this);
+    this.name = selectedShop.name;
 
     Building.nextSpawnY = calculatedY;
   }
 
   static shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    return array;
+    return newArray;
   }
-
 
   getRandomBuildingColor() {
     return COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
+  }
+}
+
+class BuildingBehavior extends EntityBehavior {
+  constructor(entity) {
+    super(entity);
+    this.canMove = true;
+    this.speed = 1;
+    this.ignoreCollisions = true;
+    this.lastRespawnTime = 0;
+    this.RESPAWN_COOLDOWN = 100;
+  }
+
+  update() {
+    this.entity.position.y += this.speed;
+
+    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
+      // Select new shop FIRST so we know its height
+      if (Building.shopIndex >= Building.availableShops.length) {
+        Building.availableShops = Building.shuffleArray([...TORONTO_SHOPS]);
+        Building.shopIndex = 0;
+      }
+
+      const selectedShop = Building.availableShops[Building.shopIndex++];
+      const newHeight = selectedShop.art.length;
+
+      // Get all buildings
+      const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING && e !== this.entity);
+
+      // Find highest building and place new one above it
+      let newY;
+      if (buildings.length > 0) {
+        const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
+        newY = highestBuilding.position.y - newHeight;
+      } else {
+        newY = -newHeight;
+      }
+
+      // Update entity
+      this.entity.position.y = newY;
+      this.entity.art = selectedShop.art;
+      this.entity.height = newHeight;
+      this.entity.name = selectedShop.name;
+    }
   }
 }
 
@@ -1727,8 +1729,6 @@ class TouchInputManager {
     this.game.movementState.isHolding = false;
   }
 
-
-
   handleDoubleTap(side) {
     this.game.handleJump(side);
   }
@@ -1820,7 +1820,6 @@ class LoserLane {
     this.player = this.createPlayer();
     this.spatialManager.registerEntity(this.player);
   }
-
 
   handleJump(direction) {
     // Don't allow new jumps while already jumping
@@ -2450,5 +2449,3 @@ class LoserLane {
 
 // Initialize the game
 const game = new LoserLane();
-
-
