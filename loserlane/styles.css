@@ -28,14 +28,18 @@
   }
 }
 
-html,
-body {
+/* Reset base styles */
+html, body {
+  width: 100%;
   height: 100%;
   margin: 0;
+  padding: 0;
   overflow: hidden;
+  position: fixed;
   box-sizing: border-box;
   font-family: "Courier New", monospace;
 }
+
 
 body {
   background: var(--dark-grey);
@@ -54,11 +58,19 @@ a {
   text-align: center;
 }
 
-@media (min-height: 600px) {
+/* @media (min-height: 600px) {
   .grid-cell {
     width: 0.6rem;
     height: 1rem;
   }
+} */
+
+.grid-cell {
+  display: inline-block;
+  width: calc(100vw / 42); /* 42 is your CONFIG.GAME.WIDTH */
+  height: calc(2vh);
+  text-align: center;
+  box-sizing: border-box;
 }
 
 #main-msg-box {
@@ -82,7 +94,15 @@ a {
   }
 }
 
-#game-container {
+
+/* @viewport {
+  width: device-width;
+  initial-scale: 1.0;
+  maximum-scale: 1.0;
+  user-scalable: no;
+} */
+
+/* #game-container {
   width: 100vw;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
@@ -98,8 +118,29 @@ a {
   left: 0;
   right: 0;
   box-sizing: border-box;
-}
+} */
 
+#game-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; */
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--dark-grey);
+  border: 5px solid red;
+  margin: 0;
+  padding: 0;
+
+}
+/* 
 #game-screen {
   white-space: pre;
   height: 100%;
@@ -108,11 +149,44 @@ a {
   color: #dfb1ff;
   border: 3px solid green;
 
+} */
+
+#game-screen {
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
+  white-space: pre;
+  box-sizing: border-box;
+  /* font-family: monospace; */
+  /* line-height: 1; */
+  padding: 0;
+  margin: 0;
+  border: 5px solid green;
+
 }
 
 @media (max-height: 600px) {
   #game-screen {
     /* font-size: 14px; */
+  }
+}
+
+@media (min-width: 600px) {
+  #game-screen {
+    /* margin: auto; */
+    width: auto;
+  }
+}
+
+
+@media screen and (max-width: 600px) {
+  #game-screen {
+    /* font-size: 0.7em; Adjust this value based on testing */
+  }
+  
+  .grid-cell {
+    width: calc(100vw / 42);
+    height: 1.5vh;
   }
 }
 
