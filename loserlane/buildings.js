@@ -16,6 +16,8 @@ const TORONTO_BUILDINGS = [
             "│SAIGON  │",
             "│LOTUS   │",
             "│        │",
+            "│        │",
+            "│        │",
             "└────────┘"
         ]
     },

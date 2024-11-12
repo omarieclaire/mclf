@@ -11,17 +11,22 @@ const CONFIG = {
       left: 0,
       right: 0,
     },
+    ANIMATION_FRAMES: {
+      PEDESTRIAN_WAIT: 20,
+      DEATH_SEQUENCE: 15,
+    },
     keyPressCount: {
       left: 0,
       right: 0,
     },
   },
+
   SPAWN_RATES: {
-    STREETCAR: 0.1,
+    STREETCAR: 0.00001,
     STREETCAR_LANE_CAR: 0.9,
     ONCOMING_CAR: 0.15,
     PARKED_CAR: 0.00005,
-    DOOR_OPENING: 0.1,
+    DOOR_OPENING: 0.9,
     PEDESTRIAN: 0.05,
     BUILDING: 0.05,
   },
@@ -31,14 +36,14 @@ const CONFIG = {
     ONCOMING_CAR: 6,
     PARKED: 5,
     PEDESTRIAN: 3,
-    BUILDING: 0,
-    STREETCAR_TO_STREETCAR: 20, // Special case for streetcar-to-streetcar
-    STREETCAR_TO_CAR: 15, // Special case for streetcar-to-car interactions
-    CLUSTER_MIN: 1, // Minimum spacing within clusters
-    CLUSTER_MAX: 2, // Maximum spacing within clusters
-    CLUSTER_GAP_MIN: 4, // Minimum gap between clusters
-    CLUSTER_GAP_MAX: 6, // Maximum gap between clusters
-    DEFAULT: 5, // Default safe distance if no specific rule
+    BUILDING: 1,
+    STREETCAR_TO_STREETCAR: 20,
+    STREETCAR_TO_CAR: 15,
+    CLUSTER_MIN: 1,
+    CLUSTER_MAX: 2,
+    CLUSTER_GAP_MIN: 4,
+    CLUSTER_GAP_MAX: 6,
+    DEFAULT: 5,
   },
   PEDESTRIAN: {
     SPEED: 0.5,
@@ -52,6 +57,109 @@ const CONFIG = {
     PARKED: 17,
     SIDEWALK: 25,
     BUILDINGS: 29,
+  },
+  ANIMATIONS: {
+    DOOR_OPEN_DURATION: 100,
+    DOOR_OPEN_DELAY: 25,
+    DEATH_DURATION: 1500,
+    SCREEN_SHAKE_DURATION: 1000,
+    FLASH_DELAY: 100,
+    PARTICLE_DURATION: 500,
+  },
+  MOVEMENT: {
+    JUMP_AMOUNT: 2,
+    JUMP_DURATION: 400,
+    HOLD_DELAY: 200,
+    BASE_MOVE_SPEED: 9,
+    CONTINUOUS_MOVE_SPEED: 0.5,
+    FRAME_CAP: 16.67,
+  },
+  MOVEMENT_SPEEDS: {
+    STREETCAR: -1,
+    PARKED_CAR: 1,
+    ONCOMING_CAR: 2,
+    PEDESTRIAN: 0.5,
+  },
+  COLLISION: {
+    ADJACENT_LANE_THRESHOLD: 1,
+    NEARBY_ENTITY_RADIUS: 2,
+    BUILDING_OVERLAP_THRESHOLD: 0.1,
+  },
+  SPAWNING: {
+    PARKED_CAR_DOOR_CHANCE: 0.3,
+    PARKED_CAR_MIN_Y: 0.2,
+    PARKED_CAR_MAX_Y: 0.3,
+    BUILDING_RESPAWN_COOLDOWN: 100,
+    MIN_BUILDING_HEIGHT: -20,
+  },
+  PARTICLES: {
+    MAX_DEATH_PARTICLES: 20,
+    PARTICLE_SPREAD: 2,
+    PARTICLE_SPEED: 0.5,
+  },
+  PROBABILITIES: {
+    PARKING: 0.9,
+    GAP: 0.1,
+    DOOR_OPENING: 0.3,
+  },
+  DIMENSIONS: {
+    DOOR: {
+      WIDTHS: [0, 0.8, 1, 1.5, 1.8],
+      HEIGHTS: [0.8, 1.8],
+    },
+    CLUSTERS: {
+      MIN: 4,
+      MAX: 7,
+    },
+  },
+  INPUT: {
+    TOUCH: {
+      SENSITIVITY: 1.0,
+      DRAG_THRESHOLD: 10,
+      TAP_DURATION: 200,
+    },
+    KEYBOARD: {
+      REPEAT_DELAY: 200,
+      REPEAT_RATE: 50,
+    },
+  },
+  DIFFICULTY: {
+    LEVELS: {
+      EASY: { speedMultiplier: 0.8, spawnRateMultiplier: 0.7 },
+      NORMAL: { speedMultiplier: 1.0, spawnRateMultiplier: 1.0 },
+      HARD: { speedMultiplier: 1.2, spawnRateMultiplier: 1.3 },
+    },
+  },
+  AUDIO: {
+    VOLUME: {
+      MASTER: 1.0,
+      EFFECTS: 0.8,
+      MUSIC: 0.6,
+    },
+    EFFECTS: {
+      JUMP_DURATION: 200,
+      COLLISION_DURATION: 300,
+    },
+  },
+  TIMINGS: {
+    ANIMATION_FRAME: 1000 / 60, // ~16.67ms for 60fps
+    MESSAGE_DISPLAY: 1500,
+    SPAWN_CHECK_INTERVAL: 100,
+  },
+
+  BOUNDARIES: {
+    MIN_X: 0,
+    MAX_X: 40,
+    MIN_Y: -10,
+    MAX_Y: null, // Set dynamically based on window height
+    OFFSCREEN_BUFFER: 5,
+  },
+
+  GAMEPLAY: {
+    SCORE_MULTIPLIER: 1,
+    BASE_DIFFICULTY: 1.0,
+    DIFFICULTY_INCREASE_RATE: 0.01,
+    MAX_DIFFICULTY: 2.0,
   },
 };
 
@@ -191,7 +299,6 @@ class CollisionManager {
   constructor(spatialManager) {
     this.spatialManager = spatialManager;
     this.config = spatialManager.config;
-    this.debugLog = true;
   }
 
   checkCollision(hitboxA, hitboxB) {
@@ -378,13 +485,6 @@ class CollisionManager {
         if (this.shouldCheckCollision(entityA, entityB) && this.checkCollision(entityA.getHitbox(), entityB.getHitbox())) {
           pairs.push([entityA, entityB]);
           processedPairs.add(pairKey);
-
-          if (this.debugLog) {
-            // console.log(`[CollisionDebug] Detected collision between:`, {
-            //   entityA: { type: entityA.type, position: entityA.position },
-            //   entityB: { type: entityB.type, position: entityB.position },
-            // });
-          }
         }
       }
     }
@@ -469,6 +569,8 @@ class MovementCoordinator {
   constructor(spatialManager) {
     this.spatialManager = spatialManager;
     this.activeMovements = new Map();
+    this.moveSpeed = CONFIG.MOVEMENT.BASE_MOVE_SPEED;
+    this.holdDelay = CONFIG.MOVEMENT.HOLD_DELAY;
   }
 
   validateMove(entity, newPosition) {
@@ -479,11 +581,13 @@ class MovementCoordinator {
     const tempPosition = entity.position;
     entity.position = newPosition;
 
-    const nearby = this.spatialManager.grid.getNearbyEntities(newPosition, Math.max(entity.width, entity.height) * 2);
+    const nearby = this.spatialManager.grid.getNearbyEntities(
+      newPosition,
+      Math.max(entity.width, entity.height) * CONFIG.COLLISION.NEARBY_ENTITY_RADIUS
+    );
 
     let isValid = true;
     for (const other of nearby) {
-      // Allow movement if colliding with bike
       if (other.type === EntityType.BIKE) {
         continue;
       }
@@ -539,18 +643,18 @@ class MovementCoordinator {
   }
 
   calculatePriority(entity) {
-    // Priority based on entity type and current situation
+    // These priorities could be moved to CONFIG
     const priorities = {
-      [EntityType.STREETCAR]: 10,
-      [EntityType.BIKE]: 9,
-      [EntityType.STREETCAR_LANE_CAR]: 8,
-      [EntityType.ONCOMING_CAR]: 7,
-      [EntityType.PARKED_CAR]: 6,
-      [EntityType.PEDESTRIAN]: 5,
-      [EntityType.BUILDING]: 0,
+      [EntityType.STREETCAR]: CONFIG.MOVEMENT.PRIORITIES.STREETCAR || 10,
+      [EntityType.BIKE]: CONFIG.MOVEMENT.PRIORITIES.BIKE || 9,
+      [EntityType.STREETCAR_LANE_CAR]: CONFIG.MOVEMENT.PRIORITIES.STREETCAR_LANE_CAR || 8,
+      [EntityType.ONCOMING_CAR]: CONFIG.MOVEMENT.PRIORITIES.ONCOMING_CAR || 7,
+      [EntityType.PARKED_CAR]: CONFIG.MOVEMENT.PRIORITIES.PARKED_CAR || 6,
+      [EntityType.PEDESTRIAN]: CONFIG.MOVEMENT.PRIORITIES.PEDESTRIAN || 5,
+      [EntityType.BUILDING]: CONFIG.MOVEMENT.PRIORITIES.BUILDING || 0,
     };
 
-    return priorities[entity.type] || 0;
+    return priorities[entity.type] || CONFIG.MOVEMENT.PRIORITIES.DEFAULT || 0;
   }
 
   validateLaneChange(entity, newLane) {
@@ -561,16 +665,16 @@ class MovementCoordinator {
   }
 
   calculateSafeDistance(entity) {
-    // Safe distances by entity type
+    // Replace these with CONFIG.SAFE_DISTANCE values
     const safeDistances = {
-      [EntityType.STREETCAR]: 15,
-      [EntityType.STREETCAR_LANE_CAR]: 8,
-      [EntityType.ONCOMING_CAR]: 6,
-      [EntityType.PARKED_CAR]: 5,
-      [EntityType.PEDESTRIAN]: 3,
+      [EntityType.STREETCAR]: CONFIG.SAFE_DISTANCE.STREETCAR,
+      [EntityType.STREETCAR_LANE_CAR]: CONFIG.SAFE_DISTANCE.STREETCAR_LANE_CAR,
+      [EntityType.ONCOMING_CAR]: CONFIG.SAFE_DISTANCE.ONCOMING_CAR,
+      [EntityType.PARKED_CAR]: CONFIG.SAFE_DISTANCE.PARKED,
+      [EntityType.PEDESTRIAN]: CONFIG.SAFE_DISTANCE.PEDESTRIAN,
     };
 
-    return safeDistances[entity.type] || 5;
+    return safeDistances[entity.type] || CONFIG.SAFE_DISTANCE.DEFAULT;
   }
 
   moveEntity(entity, newPos) {
@@ -622,7 +726,6 @@ class SpawnManager {
   constructor(spatialManager, config) {
     this.spatialManager = spatialManager;
     this.config = config;
-    this.debugLog = true;
 
     // Update parked car configuration to use CONFIG values
     this.parkedCarConfig = {
@@ -644,19 +747,19 @@ class SpawnManager {
         EntityType.STREETCAR,
         {
           baseSpacing: this.config.SAFE_DISTANCE.STREETCAR,
-          randomSpacingRange: { 
-            min: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.3), 
-            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.8) 
+          randomSpacingRange: {
+            min: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.3),
+            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.8),
           },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS],
             spawnPosition: {
               x: this.config.LANES.TRACKS,
-              y: this.config.GAME.HEIGHT + 5
+              y: this.config.GAME.HEIGHT + 5,
             },
-            direction: -1
-          }
-        }
+            direction: -1,
+          },
+        },
       ],
       [
         EntityType.STREETCAR_LANE_CAR,
@@ -664,17 +767,17 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR,
           randomSpacingRange: {
             min: Math.floor(this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR * 0.8)
+            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR * 0.8),
           },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS + 1],
             spawnPosition: {
               x: this.config.LANES.TRACKS + 1,
-              y: this.config.GAME.HEIGHT + 1
+              y: this.config.GAME.HEIGHT + 1,
             },
-            direction: -1
-          }
-        }
+            direction: -1,
+          },
+        },
       ],
       [
         EntityType.ONCOMING_CAR,
@@ -682,17 +785,17 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_CAR,
           randomSpacingRange: {
             min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_CAR * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_CAR * 0.8)
+            max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_CAR * 0.8),
           },
           laneRules: {
             allowedLanes: [this.config.LANES.ONCOMING],
             spawnPosition: {
               x: this.config.LANES.ONCOMING,
-              y: -10
+              y: -10,
             },
-            direction: 1
-          }
-        }
+            direction: 1,
+          },
+        },
       ],
       [
         EntityType.PARKED_CAR,
@@ -700,17 +803,17 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.PARKED,
           randomSpacingRange: {
             min: 0,
-            max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2)
+            max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
           },
           laneRules: {
             allowedLanes: [this.config.LANES.PARKED],
             spawnPosition: {
               x: this.config.LANES.PARKED,
-              y: -5
+              y: -5,
             },
-            direction: 1
-          }
-        }
+            direction: 1,
+          },
+        },
       ],
       [
         EntityType.PEDESTRIAN,
@@ -718,17 +821,17 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.PEDESTRIAN,
           randomSpacingRange: {
             min: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.8)
+            max: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.8),
           },
           laneRules: {
             allowedLanes: [this.config.LANES.SIDEWALK],
             spawnPosition: {
               x: this.config.LANES.SIDEWALK,
-              y: -1
+              y: -1,
             },
-            direction: 1
-          }
-        }
+            direction: 1,
+          },
+        },
       ],
       [
         EntityType.BUILDING,
@@ -736,18 +839,18 @@ class SpawnManager {
           baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
           randomSpacingRange: {
             min: 3,
-            max: 7
+            max: 7,
           },
           laneRules: {
             allowedLanes: [this.config.LANES.BUILDINGS],
             spawnPosition: {
               x: this.config.LANES.BUILDINGS,
-              y: this.config.GAME.HEIGHT
+              y: this.config.GAME.HEIGHT,
             },
-            direction: -1
-          }
-        }
-      ]
+            direction: -1,
+          },
+        },
+      ],
     ]);
   }
 
@@ -756,30 +859,26 @@ class SpawnManager {
     if (entityTypeA === EntityType.STREETCAR && entityTypeB === EntityType.STREETCAR) {
       return this.config.SAFE_DISTANCE.STREETCAR_TO_STREETCAR;
     }
-    if (entityTypeA === EntityType.STREETCAR && 
-       (entityTypeB === EntityType.STREETCAR_LANE_CAR || entityTypeB === EntityType.ONCOMING_CAR)) {
+    if (entityTypeA === EntityType.STREETCAR && (entityTypeB === EntityType.STREETCAR_LANE_CAR || entityTypeB === EntityType.ONCOMING_CAR)) {
       return this.config.SAFE_DISTANCE.STREETCAR_TO_CAR;
     }
 
     // Get base safe distances from CONFIG
     const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
-  
+
     // Add 50% more space for same-lane entities
     return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
   }
 
-
   canSpawnAt(entityType, position) {
     const rules = this.spawnRules.get(entityType);
     if (!rules) {
-      if (this.debugLog) console.log(`[SpawnDebug] No rules found for entity type: ${entityType}`);
       return false;
     }
 
     // Check if the lane is allowed
     const isLaneAllowed = rules.laneRules.allowedLanes.includes(Math.floor(position.x));
     if (!isLaneAllowed) {
-      if (this.debugLog) console.log(`[SpawnDebug] Lane ${position.x} not allowed for ${entityType}`);
       return false;
     }
 
@@ -829,14 +928,6 @@ class SpawnManager {
         }
 
         const entity = new EntityClass(this.config, spawnConfig);
-
-        if (this.debugLog && entityType === EntityType.STREETCAR) {
-          // console.log(`[SpawnDebug] Successfully spawned ${entityType}:`, {
-          //   position: `(${entity.position.x}, ${entity.position.y})`,
-          //   entityId: entity.id,
-          // });
-        }
-
         return entity;
       }
     }
@@ -872,7 +963,6 @@ class SpawnManager {
     return entityClasses[entityType];
   }
 }
-
 
 const DOOR_STATES = {
   CLOSED: 0,
@@ -950,7 +1040,6 @@ class VehicleBehaviorBase extends EntityBehavior {
     this.minDistance = options.minDistance || this.entity.config.SAFE_DISTANCE.DEFAULT;
     this.stopped = false;
     this.ignoreCollisions = options.ignoreCollisions || false;
-    this.animationState = 0;
     this.hasAnimation = options.hasAnimation || false;
   }
 
@@ -1005,22 +1094,21 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
       baseSpeed: 1,
-      minDistance: 2,
+      minDistance: entity.config.SAFE_DISTANCE.PARKED,
       ignoreCollisions: false,
       hasAnimation: true,
     });
 
     this.doorState = DOOR_STATES.CLOSED;
-    this.doorOpenDuration = 100;
     this.doorTimer = 0;
     this.doorHitbox = null;
-    this.shouldOpenDoor = Math.random() < 0.3;
+    this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_CAR_DOOR_CHANCE;
     this.doorAnimationActive = false;
     this.lastDoorUpdate = Date.now();
-    this.doorOpenDelay = 25;
+    this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
 
-    // Calculate target Y position for door opening
-    const targetPercentage = 0.2 + Math.random() * 0.1;
+    const targetPercentage =
+      entity.config.SPAWNING.PARKED_CAR_MIN_Y + Math.random() * (entity.config.SPAWNING.PARKED_CAR_MAX_Y - entity.config.SPAWNING.PARKED_CAR_MIN_Y);
     this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
   }
 
@@ -1236,18 +1324,18 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
 class PedestrianBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
+    this.entity = entity; // Ensure we have a reference to the entity
+    this.config = entity.config; // Get config from the entity
     this.isGoingUp = isGoingUp;
-    this.baseSpeed = isGoingUp ? -0.5 : 0.5;
+    this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
     this.stopped = false;
     this.waitTime = 0;
-    // Add minDistance using config
-    this.minDistance = entity.config.SAFE_DISTANCE.PEDESTRIAN;
+    this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
   }
 
   shouldWait(nearbyEntities) {
     return nearbyEntities.some((other) => {
       const distance = Math.abs(other.position.y - this.entity.position.y);
-      // Use configured minDistance instead of hardcoded value
       return distance < this.minDistance;
     });
   }
@@ -1265,14 +1353,14 @@ class PedestrianBehavior extends EntityBehavior {
 
     if (this.shouldWait(nearbyEntities)) {
       this.stopped = true;
-      this.waitTime = 20; // Wait for 20 frames
+      this.waitTime = this.config.GAME.ANIMATION_FRAMES.PEDESTRIAN_WAIT;
       return;
     }
 
     const newPosition = new Position(Math.round(this.entity.position.x), this.entity.position.y + this.baseSpeed);
 
     if (this.canMoveTo(newPosition)) {
-      this.entity.position = newPosition;
+      this.move(newPosition);
     }
   }
 
@@ -1280,21 +1368,14 @@ class PedestrianBehavior extends EntityBehavior {
     if (!this.entity.spatialManager) return [];
 
     return this.entity.spatialManager.grid
-      .getNearbyEntities(this.entity.position, 2)
+      .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
       .filter(
         (entity) =>
           entity !== this.entity &&
           entity.type !== EntityType.BIKE &&
           entity.type === EntityType.PEDESTRIAN &&
-          Math.abs(entity.position.x - this.entity.position.x) < 1
+          Math.abs(entity.position.x - this.entity.position.x) < this.config.COLLISION.ADJACENT_LANE_THRESHOLD
       );
-  }
-
-  shouldWait(nearbyEntities) {
-    return nearbyEntities.some((other) => {
-      const distance = Math.abs(other.position.y - this.entity.position.y);
-      return distance < 2;
-    });
   }
 }
 
@@ -1302,52 +1383,6 @@ class BikeBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
     this.canMove = true;
-  }
-}
-
-class BuildingBehavior extends EntityBehavior {
-  constructor(entity) {
-    super(entity);
-    this.canMove = true;
-    this.speed = 1;
-    this.ignoreCollisions = true;
-    this.lastRespawnTime = 0;
-    this.RESPAWN_COOLDOWN = 100;
-  }
-
-  update() {
-    this.entity.position.y += this.speed;
-
-    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
-      // Select new building FIRST so we know its height
-      if (Building.buildingIndex >= Building.availableBuildings.length) {
-        Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
-        // console.log("yo shuff");
-
-        Building.buildingIndex = 0;
-      }
-
-      const selectedBuilding = Building.availableBuildings[Building.buildingIndex++];
-      const newHeight = selectedBuilding.art.length;
-
-      // Get all buildings
-      const buildings = Array.from(this.entity.spatialManager.entities).filter((e) => e.type === EntityType.BUILDING && e !== this.entity);
-
-      // Find highest building and place new one above it
-      let newY;
-      if (buildings.length > 0) {
-        const highestBuilding = buildings.reduce((highest, current) => (current.position.y < highest.position.y ? current : highest));
-        newY = Math.min(0, highestBuilding.position.y) - newHeight; // Force it to be at or above screen top
-      } else {
-        newY = -newHeight;
-      }
-
-      // Update entity
-      this.entity.position.y = newY;
-      this.entity.art = selectedBuilding.art;
-      this.entity.height = newHeight;
-      this.entity.name = selectedBuilding.name;
-    }
   }
 }
 
@@ -1476,39 +1511,296 @@ class Pedestrian extends BaseEntity {
   }
 }
 
+
+
+class BuildingManager {
+  constructor(config) {
+    this.config = config;
+    this.buildingQueue = [];
+    this.activeBuildings = new Set();
+    this.minSpacing = 1;
+    this.shuffledBuildings = [...TORONTO_BUILDINGS];
+    this.buildingIndex = 0;
+    this.initializeBuildingQueue();
+  }
+
+  initializeBuildingQueue() {
+    let buildings = [...TORONTO_BUILDINGS];
+    buildings = this.shuffleArray(buildings);
+    const screenHeight = this.config.GAME.HEIGHT;
+    const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0;  // Ensures no spacing
+    let currentY = screenHeight;
+
+    while (currentY > -10) {
+        if (buildings.length === 0) {
+            buildings = this.shuffleArray([...TORONTO_BUILDINGS]);  // Refill if out of buildings
+        }
+        const building = buildings.pop();
+        currentY -= building.art.length;
+
+        // Push the building into the queue at current position
+        this.buildingQueue.push({
+            building: building,
+            y: currentY
+        });
+
+        // Subtract buildingSpacing for the next placement, ensuring no gaps initially
+        currentY -= buildingSpacing;
+    }
+}
+
+
+  getNextBuilding() {
+    if (this.buildingQueue.length === 0) {
+      // Find the highest (smallest Y value) building
+      const highestY = this.getHighestBuildingY();
+      this.refillQueue(highestY);
+    }
+
+    return this.buildingQueue.shift();
+  }
+
+  refillQueue(startY) {
+    console.log(`Refilling queue starting at Y=${startY}`);
+    let currentY = startY;
+
+    // Always add buildings slightly above the highest current building
+    for (let i = 0; i < 5; i++) {
+      if (this.buildingIndex >= this.shuffledBuildings.length) {
+        this.shuffleBuildings();
+      }
+
+      const nextBuilding = this.shuffledBuildings[this.buildingIndex++];
+      const buildingHeight = nextBuilding.art.length;
+
+      // Place building just above current position
+      currentY -= buildingHeight;
+      
+      console.log(`Adding ${nextBuilding.name} at Y=${currentY} (height=${buildingHeight})`);
+
+      this.buildingQueue.push({
+        building: nextBuilding,
+        y: currentY,
+        height: buildingHeight
+      });
+
+      // Add minimum spacing after building
+      currentY -= this.minSpacing;
+    }
+  }
+
+  getHighestBuildingY() {
+    if (this.activeBuildings.size === 0) {
+      return this.config.GAME.HEIGHT;
+    }
+
+    // Find building with lowest Y value (highest on screen)
+    const highestY = Math.min(...Array.from(this.activeBuildings)
+      .map(building => building.position.y));
+    
+    console.log(`Highest building Y position: ${highestY}`);
+    return highestY;
+  }
+
+  validatePosition(y, height) {
+    if (typeof y !== 'number' || isNaN(y)) {
+      return false;
+    }
+
+    // Check if this position would overlap with any existing buildings
+    return !Array.from(this.activeBuildings).some(building => {
+      const topOverlap = y < (building.position.y + building.height + this.minSpacing);
+      const bottomOverlap = (y + height + this.minSpacing) > building.position.y;
+      const sameColumn = Math.abs(building.position.x - this.config.LANES.BUILDINGS) < 0.1;
+      
+      if (sameColumn && topOverlap && bottomOverlap) {
+        console.log(`Position invalid - overlap with ${building.name} at Y=${building.position.y}`);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  registerBuilding(building) {
+    console.log(`Registering ${building.name} at Y=${building.position.y}`);
+    this.activeBuildings.add(building);
+  }
+
+  unregisterBuilding(building) {
+    console.log(`Unregistering ${building.name} from Y=${building.position.y}`);
+    this.activeBuildings.delete(building);
+  }
+
+  shuffleBuildings() {
+    console.log('Shuffling building list');
+    for (let i = this.shuffledBuildings.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.shuffledBuildings[i], this.shuffledBuildings[j]] = 
+      [this.shuffledBuildings[j], this.shuffledBuildings[i]];
+    }
+    this.buildingIndex = 0;
+  }
+}
+
+class BuildingBehavior extends EntityBehavior {
+  constructor(entity) {
+    super(entity);
+    this.canMove = true;
+    this.speed = 1;
+    this.ignoreCollisions = true;
+    this.minSpacing = 1;
+    console.log('\n=== Building Behavior Created ===', {
+      name: entity.name,
+      y: entity.position.y,
+      height: entity.height
+    });
+  }
+
+  update() {
+    // Move the building down
+    this.entity.position.y += this.speed;
+
+    // Handle respawning when building goes off screen
+    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
+      console.log('\n=== Building Respawn Attempt ===');
+      
+      // Get existing buildings sorted by Y position
+      const buildings = Array.from(this.entity.spatialManager.entities)
+        .filter(e => e.type === EntityType.BUILDING && e !== this.entity)
+        .sort((a, b) => a.position.y - b.position.y);
+
+      console.log('Current buildings positions:');
+      buildings.forEach(b => console.log(`${b.name}: Y=${b.position.y}, height=${b.height}`));
+
+      // Select new building first since we need its height
+      if (Building.buildingIndex >= Building.availableBuildings.length) {
+        Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
+        Building.buildingIndex = 0;
+        console.log('Reshuffled buildings array');
+      }
+      
+      const newBuilding = Building.availableBuildings[Building.buildingIndex];
+      const newHeight = newBuilding.art.length;
+      console.log(`Selected building: ${newBuilding.name} (height: ${newHeight})`);
+
+      // Find position for new building
+      let newY;
+      if (buildings.length === 0) {
+        newY = this.entity.config.SPAWNING.MIN_BUILDING_HEIGHT;
+        console.log(`No existing buildings, starting at Y=${newY}`);
+      } else {
+        // Place above highest building with spacing
+        const highestBuilding = buildings[0]; // Already sorted by Y position
+        newY = highestBuilding.position.y - newHeight - this.minSpacing;
+        console.log(`Placing above ${highestBuilding.name} at Y=${newY}`);
+        console.log(`Calculation: ${highestBuilding.position.y} - ${newHeight} - ${this.minSpacing}`);
+      }
+
+      // Validate position
+      if (this.validatePosition(newY, newHeight, buildings)) {
+        console.log(`Position valid at Y=${newY}`);
+        
+        // Update building properties
+        this.entity.position.y = newY;
+        this.entity.art = newBuilding.art;
+        this.entity.height = newHeight;
+        this.entity.name = newBuilding.name;
+        Building.buildingIndex++;
+        
+        console.log(`=== Respawn Complete ===\n`);
+      } else {
+        console.log(`Failed to find valid position at Y=${newY}`);
+        // Move up until we find valid position
+        let attempts = 0;
+        while (!this.validatePosition(newY, newHeight, buildings) && attempts < 10) {
+          newY -= this.minSpacing;
+          attempts++;
+          console.log(`Attempt ${attempts}: Trying Y=${newY}`);
+        }
+        
+        if (this.validatePosition(newY, newHeight, buildings)) {
+          this.entity.position.y = newY;
+          this.entity.art = newBuilding.art;
+          this.entity.height = newHeight;
+          this.entity.name = newBuilding.name;
+          Building.buildingIndex++;
+          console.log(`Found valid position at Y=${newY} after ${attempts} attempts`);
+        } else {
+          console.log(`Failed to find valid position after ${attempts} attempts`);
+        }
+      }
+    }
+  }
+
+  validatePosition(y, height, existingBuildings) {
+    if (typeof y !== 'number' || isNaN(y)) {
+      console.error('Invalid Y position:', y);
+      return false;
+    }
+
+    return !existingBuildings.some(building => {
+      const topOverlap = y < (building.position.y + building.height + this.minSpacing);
+      const bottomOverlap = (y + height + this.minSpacing) > building.position.y;
+      const sameColumn = Math.abs(building.position.x - this.entity.config.LANES.BUILDINGS) < 0.1;
+      
+      if (sameColumn && topOverlap && bottomOverlap) {
+        console.log(`Collision with ${building.name} at Y=${building.position.y}:`);
+        console.log(`- Top overlap: ${topOverlap}`);
+        console.log(`- Bottom overlap: ${bottomOverlap}`);
+        return true;
+      }
+      return false;
+    });
+  }
+}
 class Building extends BaseEntity {
   static nextSpawnY = null;
   static availableBuildings = [...TORONTO_BUILDINGS];
   static buildingIndex = 0;
 
   constructor(config, spawnY = null) {
-    // Shuffle availableBuildings if it's the first build or if all buildings have been used
-    // if (Building.buildingIndex >= Building.availableBuildings.length) {
-    Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
-    Building.buildingIndex = 0;
-    // console.log(
-    //   "yo New shuffled list of buildings:",
-    //   Building.availableBuildings.map((building) => building.name)
-    // );
-    // }
+    // Shuffle buildings if needed
+    if (Building.buildingIndex >= Building.availableBuildings.length) {
+      Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
+      Building.buildingIndex = 0;
+    }
 
     const selectedBuilding = Building.availableBuildings[Building.buildingIndex++];
-    // console.log("Selected building:", selectedBuilding.name);
-
     const height = selectedBuilding.art.length;
-    const calculatedY = spawnY ?? (Building.nextSpawnY !== null ? Building.nextSpawnY - height : 0);
+
+    // Calculate spawn position using same logic as respawn
+    const minSpacing = config.SAFE_DISTANCE.BUILDING || 0;
+    let calculatedY;
+    
+    if (spawnY !== null) {
+      calculatedY = spawnY;
+    } else if (Building.nextSpawnY !== null) {
+      // Use same formula as respawn: previous_y - height - minSpacing
+      calculatedY = Building.nextSpawnY - height - minSpacing;
+    } else {
+      calculatedY = config.GAME.HEIGHT - height - minSpacing;
+    }
+
+    console.log(`Spawning ${selectedBuilding.name}:`, {
+      height,
+      calculatedY,
+      nextSpawnY: Building.nextSpawnY,
+      providedY: spawnY,
+      spacing: minSpacing
+    });
 
     const spawnConfig = {
       position: new Position(config.LANES.BUILDINGS, calculatedY),
     };
 
     super(config, spawnConfig, EntityType.BUILDING);
+
     this.width = selectedBuilding.art[0].length;
     this.height = height;
     this.art = selectedBuilding.art;
+    this.name = selectedBuilding.name;
     this.color = `<span style='color: ${this.getRandomBuildingColor()}'>`;
     this.behavior = new BuildingBehavior(this);
-    this.name = selectedBuilding.name;
 
     Building.nextSpawnY = calculatedY;
   }
@@ -1526,6 +1818,7 @@ class Building extends BaseEntity {
     return COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
   }
 }
+
 
 class Position {
   constructor(x, y) {
@@ -1568,12 +1861,11 @@ class GameState {
         this.deathState.colorIndex = (this.deathState.colorIndex + 1) % EXPLOSION_COLORS.length;
       }
 
-      // Update animation frame every 3 frames
       if (this.deathState.frameCounter % 3 === 0) {
         this.deathState.animation++;
       }
 
-      return this.deathState.animation > 15; // Extended animation duration
+      return this.deathState.animation > this.config.GAME.ANIMATION_FRAMES.DEATH_SEQUENCE;
     }
     return false;
   }
@@ -1712,7 +2004,6 @@ class TouchInputManager {
       right: { lastTap: 0 },
     };
 
-    this.DOUBLE_TAP_WINDOW = 300; // Half second window for double tap
     this.JUMP_DURATION = 100; // Jump animation duration
 
     // Add animation styles
@@ -1765,7 +2056,7 @@ class TouchInputManager {
     const state = this.touchState[side];
 
     // Check for double tap
-    if (currentTime - state.lastTap < this.DOUBLE_TAP_WINDOW) {
+    if (currentTime - state.lastTap < this.config.DOUBLE_TAP_WINDOW) {
       this.handleDoubleTap(side);
       state.lastTap = 0; // Reset tap timer
       return;
@@ -1821,8 +2112,8 @@ class LoserLane {
       isMovingLeft: false,
       isMovingRight: false,
       lastMove: performance.now(),
-      moveSpeed: 9,
-      holdDelay: 200, // ms to wait before starting continuous movement
+      moveSpeed: this.config.MOVEMENT.BASE_MOVE_SPEED,
+      holdDelay: this.config.MOVEMENT.HOLD_DELAY,
       holdStartTime: 0,
       isHolding: false,
     };
@@ -2238,32 +2529,52 @@ class LoserLane {
 
   initializeBuildings() {
     let currentY = CONFIG.GAME.HEIGHT;
-    const buildingSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
+    const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0; // Ensure minimum spacing
 
-    while (currentY > -20) {
-      // Get all existing buildings for spacing check
+    while (currentY > CONFIG.SPAWNING.MIN_BUILDING_HEIGHT) {
+      // Get current buildings sorted by Y position
       const existingBuildings = Array.from(this.spatialManager.entities)
         .filter((e) => e.type === EntityType.BUILDING)
         .sort((a, b) => a.position.y - b.position.y);
 
-      const building = new Building(CONFIG, currentY);
+      const newBuilding = new Building(CONFIG, currentY);
 
-      // Check if there's overlap with any existing building
-      const hasOverlap = existingBuildings.some((existing) => {
-        const topOverlap = currentY <= existing.position.y + existing.height;
-        const bottomOverlap = currentY + building.height >= existing.position.y;
-        return topOverlap && bottomOverlap;
+      // Check for collisions with proper hitbox calculations
+      const hasCollision = existingBuildings.some((existing) => {
+        // Calculate overlap bounds
+        const topOverlap = currentY < existing.position.y + existing.height + minSpacing;
+        const bottomOverlap = currentY + newBuilding.height + minSpacing > existing.position.y;
+
+        // Check x-axis alignment (buildings are in same column)
+        const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
+
+        return sameColumn && topOverlap && bottomOverlap;
       });
 
-      if (!hasOverlap) {
-        this.spatialManager.registerEntity(building);
-        // Move up by building height plus spacing
-        currentY -= building.height + buildingSpacing;
+      if (!hasCollision) {
+        this.spatialManager.registerEntity(newBuilding);
+        // Move up by building height plus minimum spacing
+        currentY -= newBuilding.height + minSpacing;
       } else {
-        // If overlap detected, move up by smaller increment and try again
-        currentY -= 1;
+        // If collision detected, move up by a smaller increment
+        currentY -= minSpacing;
       }
     }
+  }
+
+  validateBuildingPlacement(position, height, existingBuildings) {
+    const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
+
+    return !existingBuildings.some((existing) => {
+      // Check vertical overlap with spacing
+      const verticalOverlap =
+        position.y < existing.position.y + existing.height + minSpacing && position.y + height + minSpacing > existing.position.y;
+
+      // Buildings must be in same column to collide
+      const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
+
+      return sameColumn && verticalOverlap;
+    });
   }
 
   initializeParkedCars() {
@@ -2321,11 +2632,34 @@ class LoserLane {
       }
     });
   }
+
+
   drawEntity(entity) {
     if (!entity || !entity.art) return;
 
-    if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-      entity.art.forEach((line, i) => {
+  if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+
+    // Add debug markers for building boundaries
+    if (entity.type === EntityType.BUILDING) {
+      // Mark top boundary
+      this.gridSystem.updateCell(
+        Math.floor(entity.position.x), 
+        Math.floor(entity.position.y), 
+        '▲',
+        '<span style="color: black">'
+      );
+      
+      // Mark bottom boundary
+      this.gridSystem.updateCell(
+        Math.floor(entity.position.x), 
+        Math.floor(entity.position.y + entity.height), 
+        '▼',
+        '<span style="color: black">'
+      );
+    }
+
+
+    entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
@@ -2411,12 +2745,11 @@ class LoserLane {
 
     const particleChars = ["", "⚡", "⚡"];
 
-    const numParticles = Math.min(20, this.state.deathState.animation * 2);
+    const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, this.state.deathState.animation * 2);
 
     for (let i = 0; i < numParticles; i++) {
       const angle = (Math.PI * 2 * i) / numParticles;
-      const radius = this.state.deathState.animation / 2 + Math.random() * 2;
-
+      const radius = this.state.deathState.animation / 2 + Math.random() * this.config.PARTICLES.PARTICLE_SPREAD;
       const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
       const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
 
@@ -2477,7 +2810,7 @@ class LoserLane {
         gameScreen.classList.remove("screen-shake");
         overlay.remove();
         style.remove();
-      }, 1000);
+      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
     }
 
     this.flashScreen();
@@ -2489,7 +2822,7 @@ class LoserLane {
         messageEl.classList.remove("show-message");
       }
       this.restart();
-    }, 1500); // Slightly longer delay to show full animation
+    }, this.config.ANIMATIONS.DEATH_DURATION);
   }
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
@@ -2542,6 +2875,9 @@ class LoserLane {
     this.setupControls();
     // this.setupTouchControls();
     this.start();
+
+    Building.buildingManager = null; // This will force a new BuildingManager to be created
+
 
     const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
