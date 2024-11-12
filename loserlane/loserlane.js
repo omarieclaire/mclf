@@ -32,6 +32,13 @@ const CONFIG = {
     PARKED: 5,
     PEDESTRIAN: 3,
     BUILDING: 0,
+    STREETCAR_TO_STREETCAR: 20, // Special case for streetcar-to-streetcar
+    STREETCAR_TO_CAR: 15, // Special case for streetcar-to-car interactions
+    CLUSTER_MIN: 1, // Minimum spacing within clusters
+    CLUSTER_MAX: 2, // Maximum spacing within clusters
+    CLUSTER_GAP_MIN: 4, // Minimum gap between clusters
+    CLUSTER_GAP_MAX: 6, // Maximum gap between clusters
+    DEFAULT: 5, // Default safe distance if no specific rule
   },
   PEDESTRIAN: {
     SPEED: 0.5,
@@ -57,6 +64,11 @@ class EntityType {
   static BUILDING = "BUILDING";
   static BIKE = "BIKE";
 }
+
+/**
+ * Central manager class handling spatial relationships between game entities
+ * Coordinates collision detection, movement, and entity spawning
+ */
 
 class SpatialManager {
   constructor(config) {
@@ -611,134 +623,151 @@ class SpawnManager {
     this.spatialManager = spatialManager;
     this.config = config;
     this.debugLog = true;
-    // this.lastBuildingY = config.GAME.HEIGHT; // Track last Y position for buildings
 
-    // Adjusted cluster configuration for parked cars
+    // Update parked car configuration to use CONFIG values
     this.parkedCarConfig = {
-      // Much tighter spacing within clusters
-      minClusterSpacing: 1,
-      maxClusterSpacing: 2,
-      // Lower chance of creating a gap between clusters
+      minClusterSpacing: this.config.SAFE_DISTANCE.CLUSTER_MIN,
+      maxClusterSpacing: this.config.SAFE_DISTANCE.CLUSTER_MAX,
       gapChance: 0.1,
-      // Smaller gaps between clusters
-      minGapSize: 4,
-      maxGapSize: 6,
-      // Larger clusters
+      minGapSize: this.config.SAFE_DISTANCE.CLUSTER_GAP_MIN,
+      maxGapSize: this.config.SAFE_DISTANCE.CLUSTER_GAP_MAX,
       minClusterSize: 4,
       maxClusterSize: 7,
     };
 
-    this.initializeSpawnRules();
+    this.spawnRules = this.createSpawnRules();
   }
 
-  initializeSpawnRules() {
-    this.spawnRules = new Map([
+  createSpawnRules() {
+    return new Map([
       [
         EntityType.STREETCAR,
         {
-          baseSpacing: 20,
-          randomSpacingRange: { min: 5, max: 15 },
+          baseSpacing: this.config.SAFE_DISTANCE.STREETCAR,
+          randomSpacingRange: { 
+            min: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.3), 
+            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR * 0.8) 
+          },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS],
             spawnPosition: {
               x: this.config.LANES.TRACKS,
-              y: this.config.GAME.HEIGHT + 5,
+              y: this.config.GAME.HEIGHT + 5
             },
-            direction: -1,
-          },
-        },
+            direction: -1
+          }
+        }
       ],
       [
         EntityType.STREETCAR_LANE_CAR,
         {
-          baseSpacing: 12,
-          randomSpacingRange: { min: 3, max: 10 },
+          baseSpacing: this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR,
+          randomSpacingRange: {
+            min: Math.floor(this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR * 0.3),
+            max: Math.floor(this.config.SAFE_DISTANCE.STREETCAR_LANE_CAR * 0.8)
+          },
           laneRules: {
             allowedLanes: [this.config.LANES.TRACKS + 1],
             spawnPosition: {
               x: this.config.LANES.TRACKS + 1,
-              y: this.config.GAME.HEIGHT + 1,
+              y: this.config.GAME.HEIGHT + 1
             },
-            direction: -1,
-          },
-        },
+            direction: -1
+          }
+        }
       ],
       [
         EntityType.ONCOMING_CAR,
         {
-          baseSpacing: 8,
-          randomSpacingRange: { min: 2, max: 8 },
+          baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_CAR,
+          randomSpacingRange: {
+            min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_CAR * 0.3),
+            max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_CAR * 0.8)
+          },
           laneRules: {
             allowedLanes: [this.config.LANES.ONCOMING],
             spawnPosition: {
               x: this.config.LANES.ONCOMING,
-              y: -10,
+              y: -10
             },
-            direction: 1,
-          },
-        },
+            direction: 1
+          }
+        }
       ],
       [
         EntityType.PARKED_CAR,
         {
-          baseSpacing: this.parkedCarConfig?.minClusterSpacing || 2, // Default tight spacing
+          baseSpacing: this.config.SAFE_DISTANCE.PARKED,
           randomSpacingRange: {
-            min: 0, // Minimal variation within clusters
-            max: 1,
+            min: 0,
+            max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2)
           },
           laneRules: {
             allowedLanes: [this.config.LANES.PARKED],
             spawnPosition: {
               x: this.config.LANES.PARKED,
-              y: -5,
+              y: -5
             },
-            direction: 1,
-          },
-        },
+            direction: 1
+          }
+        }
       ],
       [
         EntityType.PEDESTRIAN,
         {
-          baseSpacing: 3,
-          randomSpacingRange: { min: 1, max: 4 },
+          baseSpacing: this.config.SAFE_DISTANCE.PEDESTRIAN,
+          randomSpacingRange: {
+            min: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.3),
+            max: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.8)
+          },
           laneRules: {
             allowedLanes: [this.config.LANES.SIDEWALK],
             spawnPosition: {
               x: this.config.LANES.SIDEWALK,
-              y: -1,
+              y: -1
             },
-            direction: 1,
-          },
-        },
+            direction: 1
+          }
+        }
       ],
       [
         EntityType.BUILDING,
         {
-          baseSpacing: this.config.SAFE_DISTANCE.BUILDING || 5, // Default or configured spacing
-          randomSpacingRange: { min: 3, max: 7 }, // Add some randomness to spacing if desired
+          baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
+          randomSpacingRange: {
+            min: 3,
+            max: 7
+          },
           laneRules: {
-            allowedLanes: [this.config.LANES.BUILDINGS], // Set lane specifically for buildings
+            allowedLanes: [this.config.LANES.BUILDINGS],
             spawnPosition: {
               x: this.config.LANES.BUILDINGS,
-              y: this.config.GAME.HEIGHT, // Start at the screen height for initial placement
+              y: this.config.GAME.HEIGHT
             },
-            direction: -1, // Move downwards as buildings scroll off-screen
-          },
-        },
-      ],
+            direction: -1
+          }
+        }
+      ]
     ]);
-
-    if (this.debugLog) {
-      // console.log("[SpawnDebug] Initialized spawn rules:", {
-      //   streetcarLane: this.config.LANES.TRACKS,
-      //   allRules: Array.from(this.spawnRules.entries()).map(([type, rules]) => ({
-      //     type,
-      //     allowedLanes: rules.laneRules.allowedLanes,
-      //     spawnPosition: rules.laneRules.spawnPosition,
-      //   })),
-      // });
-    }
   }
+
+  getRequiredSpacing(entityTypeA, entityTypeB) {
+    // Special cases first
+    if (entityTypeA === EntityType.STREETCAR && entityTypeB === EntityType.STREETCAR) {
+      return this.config.SAFE_DISTANCE.STREETCAR_TO_STREETCAR;
+    }
+    if (entityTypeA === EntityType.STREETCAR && 
+       (entityTypeB === EntityType.STREETCAR_LANE_CAR || entityTypeB === EntityType.ONCOMING_CAR)) {
+      return this.config.SAFE_DISTANCE.STREETCAR_TO_CAR;
+    }
+
+    // Get base safe distances from CONFIG
+    const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
+  
+    // Add 50% more space for same-lane entities
+    return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
+  }
+
 
   canSpawnAt(entityType, position) {
     const rules = this.spawnRules.get(entityType);
@@ -756,18 +785,14 @@ class SpawnManager {
 
     // Get all entities that could potentially conflict
     const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
-      // Check entities in the same lane and adjacent lanes
       const xDistance = Math.abs(entity.position.x - position.x);
       const yDistance = Math.abs(entity.position.y - position.y);
 
-      // Only consider entities within a reasonable vertical distance
       if (yDistance > 30) return false;
 
       if (entityType === EntityType.STREETCAR || entity.type === EntityType.STREETCAR) {
-        // Streetcars need more space laterally
         return xDistance <= 2;
       }
-      // Other entities only check same lane and immediate adjacent lanes
       return xDistance <= 1;
     });
 
@@ -783,111 +808,10 @@ class SpawnManager {
       return distance >= requiredSpacing;
     });
 
-    if (this.debugLog && (entityType === EntityType.STREETCAR || nearbyEntities.length > 0)) {
-      // console.log(`[SpawnDebug] Space check for ${entityType}:`, {
-      //   position: `(${position.x}, ${position.y})`,
-      //   nearbyCount: nearbyEntities.length,
-      //   hasEnoughSpace,
-      //   nearbyPositions: nearbyEntities.map((e) => ({
-      //     type: e.type,
-      //     pos: `(${e.position.x}, ${e.position.y})`,
-      //   })),
-      // });
-    }
-
     return hasEnoughSpace;
   }
 
-  getRequiredSpacing(typeA, typeB) {
-    // Define minimum spacing requirements between different entity types
-    const spacingMatrix = {
-      [EntityType.STREETCAR]: {
-        [EntityType.STREETCAR]: 20,
-        [EntityType.STREETCAR_LANE_CAR]: 15,
-        [EntityType.ONCOMING_CAR]: 12,
-        [EntityType.PARKED_CAR]: 10,
-        DEFAULT: 12,
-      },
-      [EntityType.STREETCAR_LANE_CAR]: {
-        [EntityType.STREETCAR]: 15,
-        [EntityType.STREETCAR_LANE_CAR]: 10,
-        [EntityType.ONCOMING_CAR]: 8,
-        DEFAULT: 8,
-      },
-      [EntityType.ONCOMING_CAR]: {
-        [EntityType.STREETCAR]: 12,
-        [EntityType.STREETCAR_LANE_CAR]: 8,
-        [EntityType.ONCOMING_CAR]: 6,
-        DEFAULT: 5,
-      },
-      [EntityType.PARKED_CAR]: {
-        [EntityType.STREETCAR]: 10,
-        [EntityType.PARKED_CAR]: 5,
-        DEFAULT: 4,
-      },
-      [EntityType.PEDESTRIAN]: {
-        DEFAULT: 3,
-      },
-      DEFAULT: {
-        [EntityType.STREETCAR]: 12,
-        [EntityType.STREETCAR_LANE_CAR]: 8,
-        [EntityType.ONCOMING_CAR]: 6,
-        [EntityType.PARKED_CAR]: 4,
-        [EntityType.PEDESTRIAN]: 3,
-        DEFAULT: 5,
-      },
-    };
-
-    const typeASpacing = spacingMatrix[typeA] || spacingMatrix.DEFAULT;
-    return typeASpacing[typeB] || typeASpacing.DEFAULT;
-  }
-
-  calculateSpacing(entityType) {
-    const rules = this.spawnRules.get(entityType);
-    if (!rules) return 0;
-
-    const baseSpacing = rules.baseSpacing;
-
-    // Add random additional spacing more frequently for streetcars and cars
-    const randomChance = entityType === EntityType.STREETCAR ? 0.4 : entityType === EntityType.STREETCAR_LANE_CAR ? 0.3 : 0.2;
-
-    if (Math.random() < randomChance) {
-      const { min, max } = rules.randomSpacingRange;
-      const additionalSpacing = Math.random() * (max - min) + min;
-      const spacing = baseSpacing + additionalSpacing;
-
-      if (this.debugLog && entityType === EntityType.STREETCAR) {
-        // console.log(`[SpawnDebug] Calculated spacing for ${entityType}:`, {
-        //   baseSpacing,
-        //   additionalSpacing,
-        //   finalSpacing: spacing,
-        // });
-      }
-      return spacing;
-    }
-
-    return baseSpacing;
-  }
-
-  getSpawnConfig(entityType) {
-    const rules = this.spawnRules.get(entityType);
-    if (!rules) {
-      if (this.debugLog) console.log(`[SpawnDebug] No spawn config found for ${entityType}`);
-      return null;
-    }
-
-    const config = {
-      position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
-      direction: rules.laneRules.direction,
-    };
-
-    if (this.debugLog && entityType === EntityType.STREETCAR) {
-      // console.log(`[SpawnDebug] Got spawn config for ${entityType}:`, config);
-    }
-
-    return config;
-  }
-
+  // Keep all other existing SpawnManager methods the same...
   spawnEntity(entityType) {
     if (this.debugLog && entityType === EntityType.STREETCAR) {
       // console.log(`[SpawnDebug] Attempting to spawn ${entityType}`);
@@ -915,11 +839,24 @@ class SpawnManager {
 
         return entity;
       }
-    } else if (this.debugLog && entityType === EntityType.STREETCAR) {
-      // console.log(`[SpawnDebug] Failed to spawn ${entityType} - canSpawnAt returned false`);
     }
 
     return null;
+  }
+
+  getSpawnConfig(entityType) {
+    const rules = this.spawnRules.get(entityType);
+    if (!rules) {
+      if (this.debugLog) console.log(`[SpawnDebug] No spawn config found for ${entityType}`);
+      return null;
+    }
+
+    const config = {
+      position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
+      direction: rules.laneRules.direction,
+    };
+
+    return config;
   }
 
   getEntityClass(entityType) {
@@ -934,45 +871,8 @@ class SpawnManager {
 
     return entityClasses[entityType];
   }
-
-  updateSpawnRates(newRates) {
-    Object.entries(newRates).forEach(([entityType, rate]) => {
-      if (this.config.SPAWN_RATES[entityType] !== undefined) {
-        this.config.SPAWN_RATES[entityType] = rate;
-        if (this.debugLog) {
-          console.log(`[SpawnDebug] Updated spawn rate for ${entityType}:`, rate);
-        }
-      }
-    });
-  }
-
-  getSpawnRate(entityType) {
-    return this.config.SPAWN_RATES[entityType] || 0;
-  }
-
-  setSpawnRate(entityType, rate) {
-    if (this.config.SPAWN_RATES[entityType] !== undefined) {
-      this.config.SPAWN_RATES[entityType] = Math.max(0, Math.min(1, rate));
-      if (this.debugLog) {
-        console.log(`[SpawnDebug] Set spawn rate for ${entityType}:`, this.config.SPAWN_RATES[entityType]);
-      }
-    }
-  }
-
-  getSpawnRules(entityType) {
-    return this.spawnRules.get(entityType);
-  }
-
-  updateSpawnRule(entityType, newRule) {
-    const currentRule = this.spawnRules.get(entityType);
-    if (currentRule) {
-      this.spawnRules.set(entityType, { ...currentRule, ...newRule });
-      if (this.debugLog) {
-        console.log(`[SpawnDebug] Updated spawn rules for ${entityType}:`, this.spawnRules.get(entityType));
-      }
-    }
-  }
 }
+
 
 const DOOR_STATES = {
   CLOSED: 0,
@@ -1046,7 +946,8 @@ class VehicleBehaviorBase extends EntityBehavior {
   constructor(entity, options = {}) {
     super(entity);
     this.baseSpeed = options.baseSpeed || 0;
-    this.minDistance = options.minDistance || 2;
+    // Remove hardcoded value, use config or default
+    this.minDistance = options.minDistance || this.entity.config.SAFE_DISTANCE.DEFAULT;
     this.stopped = false;
     this.ignoreCollisions = options.ignoreCollisions || false;
     this.animationState = 0;
@@ -1189,7 +1090,7 @@ class StreetcarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
       baseSpeed: -1,
-      minDistance: 5,
+      minDistance: entity.config.SAFE_DISTANCE.STREETCAR,
       ignoreCollisions: false,
     });
   }
@@ -1215,7 +1116,7 @@ class OncomingCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
       baseSpeed: 2,
-      minDistance: 2,
+      minDistance: entity.config.SAFE_DISTANCE.ONCOMING_CAR,
       ignoreCollisions: false,
     });
   }
@@ -1224,7 +1125,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
       baseSpeed: -1,
-      minDistance: 2,
+      minDistance: entity.config.SAFE_DISTANCE.STREETCAR_LANE_CAR,
       ignoreCollisions: false,
     });
 
@@ -1339,6 +1240,16 @@ class PedestrianBehavior extends EntityBehavior {
     this.baseSpeed = isGoingUp ? -0.5 : 0.5;
     this.stopped = false;
     this.waitTime = 0;
+    // Add minDistance using config
+    this.minDistance = entity.config.SAFE_DISTANCE.PEDESTRIAN;
+  }
+
+  shouldWait(nearbyEntities) {
+    return nearbyEntities.some((other) => {
+      const distance = Math.abs(other.position.y - this.entity.position.y);
+      // Use configured minDistance instead of hardcoded value
+      return distance < this.minDistance;
+    });
   }
 
   update() {
@@ -2486,8 +2397,8 @@ class LoserLane {
             const gridX = Math.round(this.state.currentLane + x);
             if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
               // Add a CSS class to bike elements
-              const bikeChar = `<span class="bike">${char}</span>`; 
-              this.gridSystem.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE); 
+              const bikeChar = `<span class="bike">${char}</span>`;
+              this.gridSystem.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
             }
           }
         });
@@ -2498,13 +2409,13 @@ class LoserLane {
   drawDeathParticles() {
     // const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
 
-        const particleChars = ['', '⚡', '⚡'];
+    const particleChars = ["", "⚡", "⚡"];
 
     const numParticles = Math.min(20, this.state.deathState.animation * 2);
 
     for (let i = 0; i < numParticles; i++) {
       const angle = (Math.PI * 2 * i) / numParticles;
-      const radius = (this.state.deathState.animation / 2) + Math.random() * 2;
+      const radius = this.state.deathState.animation / 2 + Math.random() * 2;
 
       const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
       const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
