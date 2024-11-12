@@ -88,3 +88,14 @@ const EXPLOSION_COLORS = [
   "<span style='color: #F4511E'>", // Deep Orange 600
   "<span style='color: #FF5722'>", // Material Deep Orange
 ];
+
+const peopleCol = [
+  '#FFE0BD', // Light
+  '#FF7F50', // Coral
+
+  '#FFD1AA', // Light medium
+  '#EEB38D', // Medium
+  '#C68642', // Medium dark
+  '#8D5524', // Dark
+  '#4C3024', // Very dark
+];

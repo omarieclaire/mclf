@@ -25,9 +25,9 @@ const CONFIG = {
     STREETCAR: 0.1,
     STREETCAR_LANE_CAR: 0.6,
     ONCOMING_CAR: 0.15,
-    PARKED_CAR: 0.5,
+    PARKED_CAR: 0.2,
     DOOR_OPENING: 0.4,
-    PEDESTRIAN: 0.05,
+    PEDESTRIAN: 0.9,
     BUILDING: 0.9,
   },
   SAFE_DISTANCE: {
@@ -665,7 +665,6 @@ class MovementCoordinator {
   }
 
   calculateSafeDistance(entity) {
-    // Replace these with CONFIG.SAFE_DISTANCE values
     const safeDistances = {
       [EntityType.STREETCAR]: CONFIG.SAFE_DISTANCE.STREETCAR,
       [EntityType.STREETCAR_LANE_CAR]: CONFIG.SAFE_DISTANCE.STREETCAR_LANE_CAR,
@@ -726,6 +725,7 @@ class SpawnManager {
   constructor(spatialManager, config) {
     this.spatialManager = spatialManager;
     this.config = config;
+    this.debugLog = false; // Set to true to debug pedestrian spawning
 
     // Update parked car configuration to use CONFIG values
     this.parkedCarConfig = {
@@ -740,6 +740,7 @@ class SpawnManager {
 
     this.spawnRules = this.createSpawnRules();
   }
+
 
   createSpawnRules() {
     return new Map([
@@ -824,7 +825,7 @@ class SpawnManager {
             max: Math.floor(this.config.SAFE_DISTANCE.PEDESTRIAN * 0.8),
           },
           laneRules: {
-            allowedLanes: [this.config.LANES.SIDEWALK],
+            allowedLanes: [this.config.LANES.SIDEWALK, this.config.LANES.SIDEWALK + 3],
             spawnPosition: {
               x: this.config.LANES.SIDEWALK,
               y: -1,
@@ -872,17 +873,25 @@ class SpawnManager {
 
   canSpawnAt(entityType, position) {
     const rules = this.spawnRules.get(entityType);
-    if (!rules) {
-      return false;
+    if (!rules) return false;
+
+    // Special handling for pedestrians - only check their specific lane
+    if (entityType === EntityType.PEDESTRIAN) {
+      const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
+        if (entity.type !== EntityType.PEDESTRIAN) return false;
+        // Only check pedestrians in the same lane
+        const sameX = Math.abs(entity.position.x - position.x) < 0.1;
+        const closeY = Math.abs(entity.position.y - position.y) < this.config.SAFE_DISTANCE.PEDESTRIAN;
+        return sameX && closeY;
+      });
+
+      return nearbyEntities.length === 0;
     }
 
-    // Check if the lane is allowed
+    // Regular entity spawning logic
     const isLaneAllowed = rules.laneRules.allowedLanes.includes(Math.floor(position.x));
-    if (!isLaneAllowed) {
-      return false;
-    }
+    if (!isLaneAllowed) return false;
 
-    // Get all entities that could potentially conflict
     const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
       const xDistance = Math.abs(entity.position.x - position.x);
       const yDistance = Math.abs(entity.position.y - position.y);
@@ -895,40 +904,47 @@ class SpawnManager {
       return xDistance <= 1;
     });
 
-    // Check for minimum spacing between entities
-    const hasEnoughSpace = nearbyEntities.every((entity) => {
+    return nearbyEntities.every((entity) => {
       const distance = Math.abs(entity.position.y - position.y);
       const requiredSpacing = this.getRequiredSpacing(entityType, entity.type);
-
-      // Additional check for same-lane entities
-      if (Math.abs(entity.position.x - position.x) < 0.1) {
-        return distance >= requiredSpacing * 1.5; // 50% more space in same lane
-      }
       return distance >= requiredSpacing;
     });
-
-    return hasEnoughSpace;
   }
 
-  // Keep all other existing SpawnManager methods the same...
   spawnEntity(entityType) {
-    if (this.debugLog && entityType === EntityType.STREETCAR) {
-      // console.log(`[SpawnDebug] Attempting to spawn ${entityType}`);
+    if (this.debugLog) console.log(`Attempting to spawn ${entityType}`);
+
+    if (entityType === EntityType.PEDESTRIAN) {
+      const isGoingUp = Math.random() < 0.5;
+      if (this.debugLog) console.log(`Spawning pedestrian going ${isGoingUp ? 'up' : 'down'}`);
+
+      // Configure spawn position based on direction
+      const spawnConfig = {
+        position: new Position(
+          isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK,
+          isGoingUp ? this.config.GAME.HEIGHT + 1 : -1
+        )
+      };
+
+      if (this.canSpawnAt(entityType, spawnConfig.position)) {
+        if (this.debugLog) console.log(`Spawning pedestrian at position:`, spawnConfig.position);
+        return new Pedestrian(this.config, spawnConfig, isGoingUp);
+      }
+      if (this.debugLog) console.log(`Failed to spawn pedestrian - position occupied`);
+      return null;
     }
 
+    // Handle other entity types
     const spawnConfig = this.getSpawnConfig(entityType);
-    if (!spawnConfig) return null;
+    if (!spawnConfig) {
+      if (this.debugLog) console.log(`No spawn config for ${entityType}`);
+      return null;
+    }
 
     if (this.canSpawnAt(entityType, spawnConfig.position)) {
       const EntityClass = this.getEntityClass(entityType);
       if (EntityClass) {
-        if (entityType === EntityType.PEDESTRIAN) {
-          const isGoingUp = Math.random() < 0.5;
-          return new Pedestrian(this.config, spawnConfig, isGoingUp);
-        }
-
-        const entity = new EntityClass(this.config, spawnConfig);
-        return entity;
+        return new EntityClass(this.config, spawnConfig);
       }
     }
 
@@ -937,10 +953,7 @@ class SpawnManager {
 
   getSpawnConfig(entityType) {
     const rules = this.spawnRules.get(entityType);
-    if (!rules) {
-      if (this.debugLog) console.log(`[SpawnDebug] No spawn config found for ${entityType}`);
-      return null;
-    }
+    if (!rules) return null;
 
     const config = {
       position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
@@ -1490,20 +1503,153 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   }
 }
 
+
+// class PedestrianBehavior extends EntityBehavior {
+//   constructor(entity, isGoingUp) {
+//     super(entity);
+//     this.entity = entity;
+//     this.config = entity.config;
+//     this.isGoingUp = isGoingUp;
+//     this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
+//     this.stopped = false;
+//     this.waitTime = 0;
+//     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
+    
+//     // Assign lane based on direction
+//     this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK;
+//     this.entity.position.x = this.lane; // Set initial x position based on lane
+//   }
+
+//   shouldWait(nearbyEntities) {
+//     return nearbyEntities.some((other) => {
+//       // Only check for pedestrians in the same lane
+//       if (Math.abs(other.position.x - this.entity.position.x) > 0.1) {
+//         return false;
+//       }
+//       const distance = Math.abs(other.position.y - this.entity.position.y);
+//       return distance < this.minDistance;
+//     });
+//   }
+
+//   update() {
+//     if (this.stopped) {
+//       this.waitTime--;
+//       if (this.waitTime <= 0) {
+//         this.stopped = false;
+//       }
+//       return;
+//     }
+
+//     const nearbyEntities = this.getNearbyEntities();
+
+//     if (this.shouldWait(nearbyEntities)) {
+//       this.stopped = true;
+//       this.waitTime = this.config.GAME.ANIMATION_FRAMES.PEDESTRIAN_WAIT;
+//       return;
+//     }
+
+//     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
+
+//     if (this.canMoveTo(newPosition)) {
+//       this.move(newPosition);
+//     }
+//   }
+
+//   getNearbyEntities() {
+//     if (!this.entity.spatialManager) return [];
+
+//     return this.entity.spatialManager.grid
+//       .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
+//       .filter(
+//         (entity) =>
+//           entity !== this.entity &&
+//           entity.type !== EntityType.BIKE &&
+//           entity.type === EntityType.PEDESTRIAN &&
+//           Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider pedestrians in same lane
+//       );
+//   }
+// }
+
+// class PedestrianBehavior extends EntityBehavior {
+//   constructor(entity, isGoingUp) {
+//     super(entity);
+//     this.entity = entity; // Ensure we have a reference to the entity
+//     this.config = entity.config; // Get config from the entity
+//     this.isGoingUp = isGoingUp;
+//     this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
+//     this.stopped = false;
+//     this.waitTime = 0;
+//     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
+//   }
+
+//   shouldWait(nearbyEntities) {
+//     return nearbyEntities.some((other) => {
+//       const distance = Math.abs(other.position.y - this.entity.position.y);
+//       return distance < this.minDistance;
+//     });
+//   }
+
+//   update() {
+//     if (this.stopped) {
+//       this.waitTime--;
+//       if (this.waitTime <= 0) {
+//         this.stopped = false;
+//       }
+//       return;
+//     }
+
+//     const nearbyEntities = this.getNearbyEntities();
+
+//     if (this.shouldWait(nearbyEntities)) {
+//       this.stopped = true;
+//       this.waitTime = this.config.GAME.ANIMATION_FRAMES.PEDESTRIAN_WAIT;
+//       return;
+//     }
+
+//     const newPosition = new Position(Math.round(this.entity.position.x), this.entity.position.y + this.baseSpeed);
+
+//     if (this.canMoveTo(newPosition)) {
+//       this.move(newPosition);
+//     }
+//   }
+
+//   getNearbyEntities() {
+//     if (!this.entity.spatialManager) return [];
+
+//     return this.entity.spatialManager.grid
+//       .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
+//       .filter(
+//         (entity) =>
+//           entity !== this.entity &&
+//           entity.type !== EntityType.BIKE &&
+//           entity.type === EntityType.PEDESTRIAN &&
+//           Math.abs(entity.position.x - this.entity.position.x) < this.config.COLLISION.ADJACENT_LANE_THRESHOLD
+//       );
+//   }
+// }
+
 class PedestrianBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
-    this.entity = entity; // Ensure we have a reference to the entity
-    this.config = entity.config; // Get config from the entity
+    this.entity = entity;
+    this.config = entity.config;
     this.isGoingUp = isGoingUp;
     this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
     this.stopped = false;
     this.waitTime = 0;
     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
+    
+    // Assign lane based on direction
+    this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK;
+    this.entity.position.x = this.lane; // Set initial x position based on lane
   }
 
   shouldWait(nearbyEntities) {
     return nearbyEntities.some((other) => {
+      // Only check for pedestrians in the same lane
+      if (Math.abs(other.position.x - this.entity.position.x) > 0.1) {
+        return false;
+      }
       const distance = Math.abs(other.position.y - this.entity.position.y);
       return distance < this.minDistance;
     });
@@ -1526,7 +1672,7 @@ class PedestrianBehavior extends EntityBehavior {
       return;
     }
 
-    const newPosition = new Position(Math.round(this.entity.position.x), this.entity.position.y + this.baseSpeed);
+    const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
 
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
@@ -1543,7 +1689,7 @@ class PedestrianBehavior extends EntityBehavior {
           entity !== this.entity &&
           entity.type !== EntityType.BIKE &&
           entity.type === EntityType.PEDESTRIAN &&
-          Math.abs(entity.position.x - this.entity.position.x) < this.config.COLLISION.ADJACENT_LANE_THRESHOLD
+          Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider pedestrians in same lane
       );
   }
 }
@@ -1668,19 +1814,48 @@ class ParkedCar extends BaseEntity {
   }
 }
 
+// class Pedestrian extends BaseEntity {
+//   constructor(config, spawnConfig, isGoingUp) {
+//     super(config, spawnConfig, EntityType.PEDESTRIAN);
+//     const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
+//     this.width = template.width;
+//     this.height = template.height;
+//     this.art = template.art;
+//     this.color = STYLES.RESET;
+//     this.behavior = new PedestrianBehavior(this, isGoingUp);
+//   }
+// }
+
+
 class Pedestrian extends BaseEntity {
   constructor(config, spawnConfig, isGoingUp) {
     super(config, spawnConfig, EntityType.PEDESTRIAN);
+    
+    const pedestrianColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
+
+
+    // Choose art based on direction
     const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
     this.width = template.width;
     this.height = template.height;
     this.art = template.art;
-    this.color = STYLES.RESET;
+    this.color = `<span style='color: ${pedestrianColor}'>`;
+
+    // this.color = STYLES.RESET;
+    
+    // Modify spawn position based on direction
+    if (isGoingUp) {
+      spawnConfig.position.y = config.GAME.HEIGHT + 1;  // Spawn at bottom for upward
+      spawnConfig.position.x = config.LANES.SIDEWALK + 3;  // Right side of sidewalk
+    } else {
+      spawnConfig.position.y = -1;  // Spawn at top for downward
+      spawnConfig.position.x = config.LANES.SIDEWALK;  // Left side of sidewalk
+    }
+    
+    this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
     this.behavior = new PedestrianBehavior(this, isGoingUp);
   }
 }
-
-
 
 class BuildingManager {
   constructor(config) {
