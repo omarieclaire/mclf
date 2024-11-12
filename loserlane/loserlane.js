@@ -2520,7 +2520,7 @@ class LoserLane {
   die(reason) {
     this.state.isDead = true;
 
-    // Store the death position using the current bike position
+    // Store the death position using the current player position
     this.state.deathState = {
       animation: 0,
       x: Math.round(this.state.currentLane),
@@ -2580,7 +2580,6 @@ class LoserLane {
       this.restart();
     }, 1500); // Slightly longer delay to show full animation
   }
-
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
