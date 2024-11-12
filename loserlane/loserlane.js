@@ -33,7 +33,7 @@ const CONFIG = {
   SAFE_DISTANCE: {
     STREETCAR: 2,
     STREETCAR_LANE_CAR: 8,
-    ONCOMING_CAR: 6,
+    ONCOMING_CAR: 1,
     PARKED: 1,
     PEDESTRIAN: 3,
     BUILDING: 1,
@@ -98,8 +98,8 @@ const CONFIG = {
     PARTICLE_SPEED: 0.5,
   },
   PROBABILITIES: {
-    PARKING: 0.2,
-    GAP: 0.1,
+    PARKING: 0.1,
+    GAP: 0.6,
     DOOR_OPENING: 0.3,
   },
   DIMENSIONS: {
@@ -1347,7 +1347,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
     this.parkingAttempts = 0;
-    this.maxAttempts = 5; // Add max attempts limit
+    this.maxAttempts = 7; // Add max attempts limit
   }
 
   handleParking() {
@@ -1375,7 +1375,9 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     const verticalSpeed = this.baseSpeed * 0.75;
 
     // Try multiple positions if the first one fails
-    for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
+    // for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
+        for (let speedMultiplier of [1, 1.25, 1.5, 1.75]) {
+
       const newPosition = new Position(currentX + moveDirection * speedMultiplier, this.entity.position.y + verticalSpeed);
 
       if (this.entity.spatialManager.validateMove(this.entity, newPosition)) {
