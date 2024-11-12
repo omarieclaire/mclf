@@ -13,6 +13,11 @@ const MESSAGES = {
       { reason: "STREETCAR TRACKS", funny: "Oops, track gap! Double-tap!" },
       { reason: "STREETCAR TRACKS", funny: "Two taps fast, sail on past!" },
     ],
+    ONCOMING_CAR: [
+      { reason: "OH COME ON!", funny: "Clash crash cash!" },
+      { reason: "OH COME ON!", funny: "Clash crash cash!" },
+      { reason: "OH COME ON!", funny: "Clash crash cash!" },
+    ],
     TRAFFIC: [
       { reason: "UGH CARS", funny: "Clash crash cash!" },
       { reason: "UGH CARS", funny: "Bam! Jam! Slam!" },
@@ -30,8 +35,7 @@ const MESSAGES = {
       { reason: "UGH CARS", funny: "Zoom boom! Traffic doom!" },
       { reason: "UGH CARS", funny: "Horn blare! Scare! Glare!" },
       { reason: "UGH CARS", funny: "Watch your back, car attack!" },
-      { reason: "UGH CARS", funny: "Yikes! Cars hate bikes!" }
-
+      { reason: "UGH CARS", funny: "Yikes! Cars hate bikes!" },
     ],
     DOOR: [
       { reason: "DOORED", funny: "Doored! Ignored!" },
@@ -50,7 +54,7 @@ const MESSAGES = {
       { reason: "DOORED", funny: "Bang! Avoid the clang!" },
       { reason: "DOORED", funny: "Don’t get floored by the door!" },
       { reason: "DOORED", funny: "Door dash! Avoid the clash!" },
-      { reason: "DOORED", funny: "Knock knock, door shock!" }
+      { reason: "DOORED", funny: "Knock knock, door shock!" },
     ],
     PARKEDCAR: [
       { reason: "PARKED CAR", funny: "Crash flash! You hit a stash of parked trash!" },
@@ -75,7 +79,7 @@ const MESSAGES = {
       { reason: "NOOOO", funny: "Clock! Human roadblock!" },
       { reason: "NOOOO", funny: "People pop! You gotta stop!" },
       { reason: "NOOOO", funny: "Oops! Human boops!" },
-      { reason: "NOOOO", funny: "Sad, wow bad" },      
+      { reason: "NOOOO", funny: "Sad, wow bad" },
       { reason: "NOOOO", funny: "People jam! Don’t get slammed!" },
       { reason: "NOOOO", funny: "Avoid the greet, dodge those feet!" },
       { reason: "NOOOO", funny: "Pedestrian shuffle, avoid the scuffle!" },
@@ -85,7 +89,7 @@ const MESSAGES = {
       { reason: "NOOOO", funny: "Sidewalk scene, avoid the lean!" },
       { reason: "NOOOO", funny: "Bad fight! Bike blight" },
       { reason: "NOOOO", funny: "Human block, avoid the shock!" },
-      { reason: "NOOOO", funny: "Watch your stroll, dodge the roll!" }
+      { reason: "NOOOO", funny: "Watch your stroll, dodge the roll!" },
     ],
     BUILDING: [
       { reason: "OOPS", funny: "Shop drop! Street's your stop!" },
@@ -101,8 +105,7 @@ const MESSAGES = {
       { reason: "OOPS", funny: "Crash a store, explore no more!" },
       { reason: "OOPS", funny: "Store pop! Time to stop!" },
       { reason: "OOPS", funny: "Watch the display, stay away!" },
-      { reason: "OOPS", funny: "Store smack! Stick to the track!" }
-
+      { reason: "OOPS", funny: "Store smack! Stick to the track!" },
     ],
     STREETCAR: [
       { reason: "STREETCAR SMOOCH", funny: "Streetcar zap! That’s a wrap!" },
@@ -118,10 +121,10 @@ const MESSAGES = {
       { reason: "STREETCAR SMOOCH", funny: "Ding ding! Watch that swing!" },
       { reason: "STREETCAR SMOOCH", funny: "Tram bam! Avoid the jam!" },
       { reason: "STREETCAR SMOOCH", funny: "Clang clang! Streetcar pang!" },
-    ]
+    ],
   },
   GAME: {
     START: "Left/Right to swerve, double-tap to jump the curve",
-    RESTART: (score) => `Out of luck! Alive for ${score} seconds - Tap to try again!`
-  }
+    RESTART: (score) => `Out of luck! Alive for ${score} seconds - Tap to try again!`,
+  },
 };

@@ -23,26 +23,22 @@ const CONFIG = {
 
   SPAWN_RATES: {
     STREETCAR: 0.1,
-    STREETCAR_LANE_CAR: 0.6,
-    ONCOMING_CAR: 0.7,
+    STREETCAR_LANE_CAR: 0.8,
+    ONCOMING_CAR: 0.4,
     PARKED_CAR: 0.2,
     DOOR_OPENING: 0.4,
     PEDESTRIAN: 0.9,
     BUILDING: 0.9,
   },
   SAFE_DISTANCE: {
-    STREETCAR: 2,
+    STREETCAR: 8,
     STREETCAR_LANE_CAR: 8,
-    ONCOMING_CAR: 1,
+    ONCOMING_CAR: 8,
     PARKED: 1,
     PEDESTRIAN: 3,
     BUILDING: 1,
     STREETCAR_TO_STREETCAR: 20,
     STREETCAR_TO_CAR: 15,
-    CLUSTER_MIN: 1,
-    CLUSTER_MAX: 2,
-    CLUSTER_GAP_MIN: 4,
-    CLUSTER_GAP_MAX: 6,
     DEFAULT: 5,
   },
   PEDESTRIAN: {
@@ -56,7 +52,7 @@ const CONFIG = {
     BIKE_RIGHT: 15,
     PARKED: 17,
     SIDEWALK: 25,
-    BUILDINGS: 29,
+    BUILDINGS: 28,
   },
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
@@ -106,10 +102,6 @@ const CONFIG = {
     DOOR: {
       WIDTHS: [0, 0.8, 1, 1.5, 1.8],
       HEIGHTS: [0.8, 1.8],
-    },
-    CLUSTERS: {
-      MIN: 4,
-      MAX: 7,
     },
   },
   INPUT: {
@@ -334,7 +326,7 @@ class CollisionManager {
               return "STREETCAR";
             case EntityType.STREETCAR_LANE_CAR:
             case EntityType.ONCOMING_CAR:
-              return "TRAFFIC";
+              return "ONCOMING_CAR";
             case EntityType.PEDESTRIAN:
               return "PEDESTRIAN";
             case EntityType.BUILDING:
@@ -726,21 +718,8 @@ class SpawnManager {
     this.spatialManager = spatialManager;
     this.config = config;
     this.debugLog = false; // Set to true to debug pedestrian spawning
-
-    // Update parked car configuration to use CONFIG values
-    this.parkedCarConfig = {
-      minClusterSpacing: this.config.SAFE_DISTANCE.CLUSTER_MIN,
-      maxClusterSpacing: this.config.SAFE_DISTANCE.CLUSTER_MAX,
-      gapChance: 0.1,
-      minGapSize: this.config.SAFE_DISTANCE.CLUSTER_GAP_MIN,
-      maxGapSize: this.config.SAFE_DISTANCE.CLUSTER_GAP_MAX,
-      minClusterSize: 4,
-      maxClusterSize: 7,
-    };
-
     this.spawnRules = this.createSpawnRules();
   }
-
 
   createSpawnRules() {
     return new Map([
@@ -856,6 +835,11 @@ class SpawnManager {
   }
 
   getRequiredSpacing(entityTypeA, entityTypeB) {
+    // console.log("Checking spacing requirement:", {
+    //   entityA: entityTypeA,
+    //   entityB: entityTypeB,
+    // });
+
     // Special cases first
     if (entityTypeA === EntityType.STREETCAR && entityTypeB === EntityType.STREETCAR) {
       return this.config.SAFE_DISTANCE.STREETCAR_TO_STREETCAR;
@@ -867,63 +851,128 @@ class SpawnManager {
     // Get base safe distances from CONFIG
     const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
 
-    // Add 50% more space for same-lane entities
-    return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
+    const finalDistance = baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
+
+    // console.log("Spacing calculation:", {
+    //   baseDistance: baseDistance,
+    //   finalDistance: finalDistance,
+    // });
+
+    return finalDistance;
   }
 
   canSpawnAt(entityType, position) {
+    // console.log(`\n=== Checking spawn at position for ${entityType} ===`, {
+    //   x: position.x,
+    //   y: position.y,
+    // });
+
     const rules = this.spawnRules.get(entityType);
-    if (!rules) return false;
-
-    // Special handling for pedestrians - only check their specific lane
-    if (entityType === EntityType.PEDESTRIAN) {
-      const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
-        if (entity.type !== EntityType.PEDESTRIAN) return false;
-        // Only check pedestrians in the same lane
-        const sameX = Math.abs(entity.position.x - position.x) < 0.1;
-        const closeY = Math.abs(entity.position.y - position.y) < this.config.SAFE_DISTANCE.PEDESTRIAN;
-        return sameX && closeY;
-      });
-
-      return nearbyEntities.length === 0;
+    if (!rules) {
+      // console.log("No spawn rules found for entity type:", entityType);
+      return false;
     }
 
-    // Regular entity spawning logic
+    // Check if lane is allowed
     const isLaneAllowed = rules.laneRules.allowedLanes.includes(Math.floor(position.x));
-    if (!isLaneAllowed) return false;
+    if (!isLaneAllowed) {
+      // console.log("Lane not allowed:", {
+      //   attemptedLane: Math.floor(position.x),
+      //   allowedLanes: rules.laneRules.allowedLanes,
+      // });
+      return false;
+    }
 
+    // Get nearby entities
     const nearbyEntities = Array.from(this.spatialManager.entities).filter((entity) => {
       const xDistance = Math.abs(entity.position.x - position.x);
       const yDistance = Math.abs(entity.position.y - position.y);
 
       if (yDistance > 30) return false;
 
+      // Special handling for streetcars
       if (entityType === EntityType.STREETCAR || entity.type === EntityType.STREETCAR) {
         return xDistance <= 2;
       }
       return xDistance <= 1;
     });
 
-    return nearbyEntities.every((entity) => {
+    // Log nearby entities
+    if (nearbyEntities.length > 0) {
+      // console.log(
+      //   "Found nearby entities:",
+      //   nearbyEntities.map((e) => ({
+      //     type: e.type,
+      //     position: {
+      //       x: e.position.x,
+      //       y: e.position.y,
+      //     },
+      //     distance: Math.abs(e.position.y - position.y),
+      //   }))
+      // );
+    }
+
+    // Check spacing requirements
+    const hasEnoughSpace = nearbyEntities.every((entity) => {
       const distance = Math.abs(entity.position.y - position.y);
       const requiredSpacing = this.getRequiredSpacing(entityType, entity.type);
-      return distance >= requiredSpacing;
+
+      const hasSpace = distance >= requiredSpacing;
+      if (!hasSpace) {
+        // console.log("Insufficient spacing:", {
+        //   entityType: entity.type,
+        //   distance: distance,
+        //   required: requiredSpacing,
+        // });
+      }
+      return hasSpace;
     });
+
+    // console.log(`Spawn check result for ${entityType}:`, {
+    //   isLaneAllowed: isLaneAllowed,
+    //   nearbyCount: nearbyEntities.length,
+    //   hasEnoughSpace: hasEnoughSpace,
+    //   canSpawn: isLaneAllowed && hasEnoughSpace,
+    // });
+
+    return isLaneAllowed && hasEnoughSpace;
   }
 
   spawnEntity(entityType) {
-    if (this.debugLog) console.log(`Attempting to spawn ${entityType}`);
+    if (entityType === EntityType.ONCOMING_CAR) {
+      // console.log("\n=== Attempting to spawn oncoming car ===");
+
+      const spawnConfig = this.getSpawnConfig(entityType);
+      if (!spawnConfig) {
+        // console.log("Failed: No spawn config for oncoming car");
+        return null;
+      }
+
+      // console.log("Spawn config for oncoming car:", {
+      //   position: spawnConfig.position,
+      //   direction: spawnConfig.direction,
+      // });
+
+      if (this.canSpawnAt(entityType, spawnConfig.position)) {
+        const car = new OncomingCar(this.config, spawnConfig);
+        // console.log("Successfully created oncoming car at:", {
+        //   x: car.position.x,
+        //   y: car.position.y,
+        // });
+        return car;
+      } else {
+        // console.log("Failed: Position not valid for oncoming car");
+        return null;
+      }
+    }
 
     if (entityType === EntityType.PEDESTRIAN) {
       const isGoingUp = Math.random() < 0.5;
-      if (this.debugLog) console.log(`Spawning pedestrian going ${isGoingUp ? 'up' : 'down'}`);
+      if (this.debugLog) console.log(`Spawning pedestrian going ${isGoingUp ? "up" : "down"}`);
 
       // Configure spawn position based on direction
       const spawnConfig = {
-        position: new Position(
-          isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK,
-          isGoingUp ? this.config.GAME.HEIGHT + 1 : -1
-        )
+        position: new Position(isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK, isGoingUp ? this.config.GAME.HEIGHT + 1 : -1),
       };
 
       if (this.canSpawnAt(entityType, spawnConfig.position)) {
@@ -984,6 +1033,104 @@ const DOOR_STATES = {
   OPENING_3: 3,
   FULLY_OPEN: 4,
 };
+
+class VehicleClusterManager {
+  constructor(config) {
+    this.config = config;
+    this.clusters = new Map();
+
+    // Initialize cluster settings for each vehicle type
+    [EntityType.STREETCAR, EntityType.STREETCAR_LANE_CAR, EntityType.ONCOMING_CAR, EntityType.PARKED_CAR].forEach((type) => {
+      this.clusters.set(type, {
+        active: false,
+        vehiclesSpawned: 0,
+        targetSize: 0,
+        gapTimer: 0,
+      });
+    });
+
+    // Cluster configuration
+    this.clusterConfig = {
+      chanceToStartCluster: 0.2, // 20% chance to start a new cluster
+      minVehiclesInCluster: 2,
+      maxVehiclesInCluster: 4,
+      minGapAfterCluster: 15, // Minimum frames to wait after cluster
+      maxGapAfterCluster: 25, // Maximum frames to wait after cluster
+      baseSpawnRate: 0.8, // Higher spawn rate during clustering
+    };
+  }
+
+  shouldSpawnVehicle(entityType, baseSpawnRate) {
+    const cluster = this.clusters.get(entityType);
+    if (!cluster) return Math.random() < baseSpawnRate;
+
+    // Handle gap after cluster
+    if (cluster.gapTimer > 0) {
+      cluster.gapTimer--;
+      return false;
+    }
+
+    // Maybe start a new cluster
+    if (!cluster.active && Math.random() < this.clusterConfig.chanceToStartCluster) {
+      this.startNewCluster(entityType);
+    }
+
+    // Use higher spawn rate during active cluster
+    const effectiveRate = cluster.active ? this.clusterConfig.baseSpawnRate : baseSpawnRate;
+
+    const shouldSpawn = Math.random() < effectiveRate;
+
+    if (shouldSpawn && cluster.active) {
+      cluster.vehiclesSpawned++;
+
+      // Check if cluster is complete
+      if (cluster.vehiclesSpawned >= cluster.targetSize) {
+        this.endCluster(entityType);
+      }
+    }
+
+    return shouldSpawn;
+  }
+
+  startNewCluster(entityType) {
+    const cluster = this.clusters.get(entityType);
+    if (!cluster) return;
+
+    cluster.active = true;
+    cluster.vehiclesSpawned = 0;
+    cluster.targetSize =
+      this.clusterConfig.minVehiclesInCluster +
+      Math.floor(Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1));
+
+    // console.log(`Starting cluster for ${entityType}:`, {
+    //   targetSize: cluster.targetSize,
+    //   spawnRate: this.clusterConfig.baseSpawnRate,
+    // });
+  }
+
+  endCluster(entityType) {
+    const cluster = this.clusters.get(entityType);
+    if (!cluster) return;
+
+    cluster.active = false;
+    cluster.vehiclesSpawned = 0;
+    cluster.targetSize = 0;
+    // Set random gap timer
+    cluster.gapTimer =
+      this.clusterConfig.minGapAfterCluster +
+      Math.floor(Math.random() * (this.clusterConfig.maxGapAfterCluster - this.clusterConfig.minGapAfterCluster));
+
+    // console.log(`Ending cluster for ${entityType}, gap timer:`, cluster.gapTimer);
+  }
+
+  isClusterActive(entityType) {
+    return this.clusters.get(entityType)?.active || false;
+  }
+
+  getClusterInfo(entityType) {
+    return this.clusters.get(entityType);
+  }
+}
 
 class EntityBehavior {
   constructor(entity) {
@@ -1226,11 +1373,11 @@ class StreetcarBehavior extends VehicleBehaviorBase {
 
   shouldMove() {
     if (this.stopped) {
-      console.log("\n=== Streetcar Stopped ===", {
-        position: this.entity.position,
-        stopped: this.stopped,
-        stuckTimer: this.stuckTimer
-      });
+      // console.log("\n=== Streetcar Stopped ===", {
+      //   position: this.entity.position,
+      //   stopped: this.stopped,
+      //   stuckTimer: this.stuckTimer,
+      // });
       return false;
     }
 
@@ -1238,22 +1385,23 @@ class StreetcarBehavior extends VehicleBehaviorBase {
     const shouldStop = this.shouldStop(nearbyEntities);
 
     // Track if we're stuck in the same position
-    if (this.lastPosition && 
-        this.lastPosition.y === this.entity.position.y) {
+    if (this.lastPosition && this.lastPosition.y === this.entity.position.y) {
       this.stuckTimer++;
-      if (this.stuckTimer > 60) { // About 1 second at 60fps
-        console.log("\n=== Streetcar Potentially Stuck ===", {
-          position: this.entity.position,
-          nearbyEntities: nearbyEntities.map(e => ({
-            type: e.type,
-            position: e.position,
-            distance: Math.abs(e.position.y - this.entity.position.y)
-          }))
-        });
-        
+      if (this.stuckTimer > 60) {
+        // About 1 second at 60fps
+        // console.log("\n=== Streetcar Potentially Stuck ===", {
+        //   position: this.entity.position,
+        //   nearbyEntities: nearbyEntities.map((e) => ({
+        //     type: e.type,
+        //     position: e.position,
+        //     distance: Math.abs(e.position.y - this.entity.position.y),
+        //   })),
+        // });
+
         // Auto-unstuck mechanism
-        if (this.stuckTimer > 120) { // 2 seconds
-          console.log("Attempting to unstick streetcar");
+        if (this.stuckTimer > 120) {
+          // 2 seconds
+          // console.log("Attempting to unstick streetcar");
           this.stopped = false;
           this.stuckTimer = 0;
           return true;
@@ -1263,36 +1411,36 @@ class StreetcarBehavior extends VehicleBehaviorBase {
       this.stuckTimer = 0;
     }
 
-    this.lastPosition = {...this.entity.position};
+    this.lastPosition = { ...this.entity.position };
 
     if (shouldStop) {
-      console.log("\n=== Streetcar Movement Blocked ===", {
-        position: this.entity.position,
-        nearbyEntities: nearbyEntities.map(e => ({
-          type: e.type,
-          position: e.position,
-          distance: Math.abs(e.position.y - this.entity.position.y)
-        }))
-      });
+      // console.log("\n=== Streetcar Movement Blocked ===", {
+      //   position: this.entity.position,
+      //   nearbyEntities: nearbyEntities.map((e) => ({
+      //     type: e.type,
+      //     position: e.position,
+      //     distance: Math.abs(e.position.y - this.entity.position.y),
+      //   })),
+      // });
     }
 
     return !shouldStop;
   }
 
   shouldStop(nearbyEntities) {
-    const blockingEntities = nearbyEntities.filter(other => {
+    const blockingEntities = nearbyEntities.filter((other) => {
       const distance = Math.abs(other.position.y - this.entity.position.y);
       const isTooClose = distance < this.minDistance;
-      
+
       if (isTooClose) {
-        console.log(`Entity too close to streetcar:`, {
-          type: other.type,
-          position: other.position,
-          distance: distance,
-          minRequired: this.minDistance
-        });
+        // console.log(`Entity too close to streetcar:`, {
+        //   type: other.type,
+        //   position: other.position,
+        //   distance: distance,
+        //   minRequired: this.minDistance,
+        // });
       }
-      
+
       return isTooClose;
     });
 
@@ -1309,14 +1457,14 @@ class StreetcarBehavior extends VehicleBehaviorBase {
       if (this.canMoveTo(newPosition)) {
         this.move(newPosition);
       } else {
-        console.log("\n=== Streetcar Movement Failed ===", {
-          currentPos: this.entity.position,
-          attemptedPos: newPosition,
-          nearbyEntities: this.getNearbyEntities().map(e => ({
-            type: e.type,
-            position: e.position
-          }))
-        });
+        // console.log("\n=== Streetcar Movement Failed ===", {
+        //   currentPos: this.entity.position,
+        //   attemptedPos: newPosition,
+        //   nearbyEntities: this.getNearbyEntities().map((e) => ({
+        //     type: e.type,
+        //     position: e.position,
+        //   })),
+        // });
         this.handleMovementBlocked();
       }
     }
@@ -1324,15 +1472,15 @@ class StreetcarBehavior extends VehicleBehaviorBase {
 
   handleMovementBlocked() {
     this.stopped = true;
-    console.log("\n=== Streetcar Movement Blocked ===", {
-      position: this.entity.position,
-      stuckTimer: this.stuckTimer
-    });
-    
+    // console.log("\n=== Streetcar Movement Blocked ===", {
+    //   position: this.entity.position,
+    //   stuckTimer: this.stuckTimer,
+    // });
+
     setTimeout(() => {
-      console.log("\n=== Attempting to Resume Streetcar Movement ===", {
-        position: this.entity.position
-      });
+      // console.log("\n=== Attempting to Resume Streetcar Movement ===", {
+      //   position: this.entity.position,
+      // });
       this.stopped = false;
     }, 1000);
   }
@@ -1346,7 +1494,13 @@ class OncomingCarBehavior extends VehicleBehaviorBase {
       ignoreCollisions: false,
     });
   }
+
+  update() {
+    // Just move down at constant speed
+    this.entity.position.y += this.baseSpeed;
+  }
 }
+
 class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1368,7 +1522,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
 
     // If we've tried too many times, force transform
     if (this.parkingAttempts > this.maxAttempts) {
-      console.log("Max parking attempts reached, forcing transformation");
+      // console.log("Max parking attempts reached, forcing transformation");
       this.transformToParkedCar();
       return;
     }
@@ -1389,25 +1543,24 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
 
     // Try multiple positions if the first one fails
     // for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
-        for (let speedMultiplier of [1, 1.25, 1.5, 1.75]) {
-
+    for (let speedMultiplier of [1, 1.25, 1.5, 1.75]) {
       const newPosition = new Position(currentX + moveDirection * speedMultiplier, this.entity.position.y + verticalSpeed);
 
       if (this.entity.spatialManager.validateMove(this.entity, newPosition)) {
         this.entity.spatialManager.movementCoordinator.moveEntity(this.entity, newPosition);
 
         if (distanceToLane < 0.5) {
-          console.log("At parking position, transforming");
+          // console.log("At parking position, transforming");
           this.transformToParkedCar();
         }
         return;
       }
     }
 
-    console.log("All parking movements blocked");
+    // console.log("All parking movements blocked");
     // If we get here, movement was blocked - force transform after a few attempts
     if (this.parkingAttempts > 3) {
-      console.log("Movement blocked too many times, forcing transformation");
+      // console.log("Movement blocked too many times, forcing transformation");
       this.transformToParkedCar();
     }
   }
@@ -1416,65 +1569,62 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
     const spatialManager = this.entity.spatialManager;
     const targetPosition = new Position(this.targetLane, this.entity.position.y);
 
-    console.log("\n=== Starting Parking Transform ===");
+    // console.log("\n=== Starting Parking Transform ===");
     console.log("Original vehicle position:", {
-        x: this.entity.position.x,
-        y: this.entity.position.y
+      x: this.entity.position.x,
+      y: this.entity.position.y,
     });
 
     // Get nearby entities before transformation
-    const nearbyEntities = spatialManager.grid.getNearbyEntities(
-        targetPosition,
-        this.entity.config.SAFE_DISTANCE.PARKED * 2
-    );
+    const nearbyEntities = spatialManager.grid.getNearbyEntities(targetPosition, this.entity.config.SAFE_DISTANCE.PARKED * 2);
 
-    const nearbyParkedCars = nearbyEntities.filter(e => e.type === EntityType.PARKED_CAR);
-    
+    const nearbyParkedCars = nearbyEntities.filter((e) => e.type === EntityType.PARKED_CAR);
+
     // Calculate initial safe position
     let safeY = targetPosition.y;
     const minSpacing = this.entity.config.SAFE_DISTANCE.PARKED;
 
     // Create parked car to test positions
     const parkedCar = new ParkedCar(this.entity.config, {
-        position: new Position(this.targetLane, safeY)
+      position: new Position(this.targetLane, safeY),
     });
     parkedCar.behavior.baseSpeed = 1;
 
     // Try to find a valid position
     let validPosition = false;
     let attempts = 0;
-    const maxAttempts = 15;  // Increased from 10 to give more chances
+    const maxAttempts = 15; // Increased from 10 to give more chances
 
     while (!validPosition && attempts < maxAttempts) {
-        validPosition = spatialManager.validateMove(parkedCar, parkedCar.position);
-        console.log(`Trying position at y: ${safeY}, valid: ${validPosition}`);
-        
-        if (!validPosition) {
-            safeY += minSpacing;
-            parkedCar.position.y = safeY;
-            attempts++;
-        }
+      validPosition = spatialManager.validateMove(parkedCar, parkedCar.position);
+      console.log(`Trying position at y: ${safeY}, valid: ${validPosition}`);
+
+      if (!validPosition) {
+        safeY += minSpacing;
+        parkedCar.position.y = safeY;
+        attempts++;
+      }
     }
 
     if (validPosition) {
-        console.log("Found valid position at y:", safeY);
-        // Only register the new car and remove the old one if we found a valid position
-        spatialManager.registerEntity(parkedCar);
-        spatialManager.unregisterEntity(this.entity);
-        
-        console.log("=== Parking Transform Complete ===");
-        console.log("Final parked car position:", {
-            x: parkedCar.position.x,
-            y: parkedCar.position.y,
-            hitbox: parkedCar.getHitbox()
-        });
+      console.log("Found valid position at y:", safeY);
+      // Only register the new car and remove the old one if we found a valid position
+      spatialManager.registerEntity(parkedCar);
+      spatialManager.unregisterEntity(this.entity);
+
+      console.log("=== Parking Transform Complete ===");
+      console.log("Final parked car position:", {
+        x: parkedCar.position.x,
+        y: parkedCar.position.y,
+        hitbox: parkedCar.getHitbox(),
+      });
     } else {
-        console.warn("Failed to find valid parking position after", attempts, "attempts");
-        // Keep the original car moving if we can't find a parking spot
-        this.willPark = false;
-        this.isParking = false;
+      console.warn("Failed to find valid parking position after", attempts, "attempts");
+      // Keep the original car moving if we can't find a parking spot
+      this.willPark = false;
+      this.isParking = false;
     }
-}
+  }
   update() {
     if (this.isParking) {
       this.handleParking();
@@ -1503,131 +1653,6 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
   }
 }
 
-
-// class PedestrianBehavior extends EntityBehavior {
-//   constructor(entity, isGoingUp) {
-//     super(entity);
-//     this.entity = entity;
-//     this.config = entity.config;
-//     this.isGoingUp = isGoingUp;
-//     this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
-//     this.stopped = false;
-//     this.waitTime = 0;
-//     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
-    
-//     // Assign lane based on direction
-//     this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK;
-//     this.entity.position.x = this.lane; // Set initial x position based on lane
-//   }
-
-//   shouldWait(nearbyEntities) {
-//     return nearbyEntities.some((other) => {
-//       // Only check for pedestrians in the same lane
-//       if (Math.abs(other.position.x - this.entity.position.x) > 0.1) {
-//         return false;
-//       }
-//       const distance = Math.abs(other.position.y - this.entity.position.y);
-//       return distance < this.minDistance;
-//     });
-//   }
-
-//   update() {
-//     if (this.stopped) {
-//       this.waitTime--;
-//       if (this.waitTime <= 0) {
-//         this.stopped = false;
-//       }
-//       return;
-//     }
-
-//     const nearbyEntities = this.getNearbyEntities();
-
-//     if (this.shouldWait(nearbyEntities)) {
-//       this.stopped = true;
-//       this.waitTime = this.config.GAME.ANIMATION_FRAMES.PEDESTRIAN_WAIT;
-//       return;
-//     }
-
-//     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
-
-//     if (this.canMoveTo(newPosition)) {
-//       this.move(newPosition);
-//     }
-//   }
-
-//   getNearbyEntities() {
-//     if (!this.entity.spatialManager) return [];
-
-//     return this.entity.spatialManager.grid
-//       .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
-//       .filter(
-//         (entity) =>
-//           entity !== this.entity &&
-//           entity.type !== EntityType.BIKE &&
-//           entity.type === EntityType.PEDESTRIAN &&
-//           Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider pedestrians in same lane
-//       );
-//   }
-// }
-
-// class PedestrianBehavior extends EntityBehavior {
-//   constructor(entity, isGoingUp) {
-//     super(entity);
-//     this.entity = entity; // Ensure we have a reference to the entity
-//     this.config = entity.config; // Get config from the entity
-//     this.isGoingUp = isGoingUp;
-//     this.baseSpeed = isGoingUp ? -this.config.PEDESTRIAN.SPEED : this.config.PEDESTRIAN.SPEED;
-//     this.stopped = false;
-//     this.waitTime = 0;
-//     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
-//   }
-
-//   shouldWait(nearbyEntities) {
-//     return nearbyEntities.some((other) => {
-//       const distance = Math.abs(other.position.y - this.entity.position.y);
-//       return distance < this.minDistance;
-//     });
-//   }
-
-//   update() {
-//     if (this.stopped) {
-//       this.waitTime--;
-//       if (this.waitTime <= 0) {
-//         this.stopped = false;
-//       }
-//       return;
-//     }
-
-//     const nearbyEntities = this.getNearbyEntities();
-
-//     if (this.shouldWait(nearbyEntities)) {
-//       this.stopped = true;
-//       this.waitTime = this.config.GAME.ANIMATION_FRAMES.PEDESTRIAN_WAIT;
-//       return;
-//     }
-
-//     const newPosition = new Position(Math.round(this.entity.position.x), this.entity.position.y + this.baseSpeed);
-
-//     if (this.canMoveTo(newPosition)) {
-//       this.move(newPosition);
-//     }
-//   }
-
-//   getNearbyEntities() {
-//     if (!this.entity.spatialManager) return [];
-
-//     return this.entity.spatialManager.grid
-//       .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
-//       .filter(
-//         (entity) =>
-//           entity !== this.entity &&
-//           entity.type !== EntityType.BIKE &&
-//           entity.type === EntityType.PEDESTRIAN &&
-//           Math.abs(entity.position.x - this.entity.position.x) < this.config.COLLISION.ADJACENT_LANE_THRESHOLD
-//       );
-//   }
-// }
-
 class PedestrianBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
@@ -1638,9 +1663,9 @@ class PedestrianBehavior extends EntityBehavior {
     this.stopped = false;
     this.waitTime = 0;
     this.minDistance = this.config.SAFE_DISTANCE.PEDESTRIAN;
-    
+
     // Assign lane based on direction
-    this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK;
+    this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 2 : this.config.LANES.SIDEWALK;
     this.entity.position.x = this.lane; // Set initial x position based on lane
   }
 
@@ -1682,15 +1707,13 @@ class PedestrianBehavior extends EntityBehavior {
   getNearbyEntities() {
     if (!this.entity.spatialManager) return [];
 
-    return this.entity.spatialManager.grid
-      .getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS)
-      .filter(
-        (entity) =>
-          entity !== this.entity &&
-          entity.type !== EntityType.BIKE &&
-          entity.type === EntityType.PEDESTRIAN &&
-          Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider pedestrians in same lane
-      );
+    return this.entity.spatialManager.grid.getNearbyEntities(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS).filter(
+      (entity) =>
+        entity !== this.entity &&
+        entity.type !== EntityType.BIKE &&
+        entity.type === EntityType.PEDESTRIAN &&
+        Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider pedestrians in same lane
+    );
   }
 }
 
@@ -1814,25 +1837,11 @@ class ParkedCar extends BaseEntity {
   }
 }
 
-// class Pedestrian extends BaseEntity {
-//   constructor(config, spawnConfig, isGoingUp) {
-//     super(config, spawnConfig, EntityType.PEDESTRIAN);
-//     const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
-//     this.width = template.width;
-//     this.height = template.height;
-//     this.art = template.art;
-//     this.color = STYLES.RESET;
-//     this.behavior = new PedestrianBehavior(this, isGoingUp);
-//   }
-// }
-
-
 class Pedestrian extends BaseEntity {
   constructor(config, spawnConfig, isGoingUp) {
     super(config, spawnConfig, EntityType.PEDESTRIAN);
-    
-    const pedestrianColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
 
+    const pedestrianColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
 
     // Choose art based on direction
     const template = isGoingUp ? ENTITIES.PEDESTRIAN.UP : ENTITIES.PEDESTRIAN.DOWN;
@@ -1842,16 +1851,16 @@ class Pedestrian extends BaseEntity {
     this.color = `<span style='color: ${pedestrianColor}'>`;
 
     // this.color = STYLES.RESET;
-    
+
     // Modify spawn position based on direction
     if (isGoingUp) {
-      spawnConfig.position.y = config.GAME.HEIGHT + 1;  // Spawn at bottom for upward
-      spawnConfig.position.x = config.LANES.SIDEWALK + 3;  // Right side of sidewalk
+      spawnConfig.position.y = config.GAME.HEIGHT + 1; // Spawn at bottom for upward
+      spawnConfig.position.x = config.LANES.SIDEWALK + 1; // Right side of sidewalk
     } else {
-      spawnConfig.position.y = -1;  // Spawn at top for downward
-      spawnConfig.position.x = config.LANES.SIDEWALK;  // Left side of sidewalk
+      spawnConfig.position.y = -1; // Spawn at top for downward
+      spawnConfig.position.x = config.LANES.SIDEWALK; // Left side of sidewalk
     }
-    
+
     this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
     this.behavior = new PedestrianBehavior(this, isGoingUp);
   }
@@ -1872,27 +1881,26 @@ class BuildingManager {
     let buildings = [...TORONTO_BUILDINGS];
     buildings = this.shuffleArray(buildings);
     const screenHeight = this.config.GAME.HEIGHT;
-    const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0;  // Ensures no spacing
+    const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0; // Ensures no spacing
     let currentY = screenHeight;
 
     while (currentY > -10) {
-        if (buildings.length === 0) {
-            buildings = this.shuffleArray([...TORONTO_BUILDINGS]);  // Refill if out of buildings
-        }
-        const building = buildings.pop();
-        currentY -= building.art.length;
+      if (buildings.length === 0) {
+        buildings = this.shuffleArray([...TORONTO_BUILDINGS]); // Refill if out of buildings
+      }
+      const building = buildings.pop();
+      currentY -= building.art.length;
 
-        // Push the building into the queue at current position
-        this.buildingQueue.push({
-            building: building,
-            y: currentY
-        });
+      // Push the building into the queue at current position
+      this.buildingQueue.push({
+        building: building,
+        y: currentY,
+      });
 
-        // Subtract buildingSpacing for the next placement, ensuring no gaps initially
-        currentY -= buildingSpacing;
+      // Subtract buildingSpacing for the next placement, ensuring no gaps initially
+      currentY -= buildingSpacing;
     }
-}
-
+  }
 
   getNextBuilding() {
     if (this.buildingQueue.length === 0) {
@@ -1919,13 +1927,13 @@ class BuildingManager {
 
       // Place building just above current position
       currentY -= buildingHeight;
-      
+
       // console.log(`Adding ${nextBuilding.name} at Y=${currentY} (height=${buildingHeight})`);
 
       this.buildingQueue.push({
         building: nextBuilding,
         y: currentY,
-        height: buildingHeight
+        height: buildingHeight,
       });
 
       // Add minimum spacing after building
@@ -1939,24 +1947,23 @@ class BuildingManager {
     }
 
     // Find building with lowest Y value (highest on screen)
-    const highestY = Math.min(...Array.from(this.activeBuildings)
-      .map(building => building.position.y));
-    
+    const highestY = Math.min(...Array.from(this.activeBuildings).map((building) => building.position.y));
+
     // console.log(`Highest building Y position: ${highestY}`);
     return highestY;
   }
 
   validatePosition(y, height) {
-    if (typeof y !== 'number' || isNaN(y)) {
+    if (typeof y !== "number" || isNaN(y)) {
       return false;
     }
 
     // Check if this position would overlap with any existing buildings
-    return !Array.from(this.activeBuildings).some(building => {
-      const topOverlap = y < (building.position.y + building.height + this.minSpacing);
-      const bottomOverlap = (y + height + this.minSpacing) > building.position.y;
+    return !Array.from(this.activeBuildings).some((building) => {
+      const topOverlap = y < building.position.y + building.height + this.minSpacing;
+      const bottomOverlap = y + height + this.minSpacing > building.position.y;
       const sameColumn = Math.abs(building.position.x - this.config.LANES.BUILDINGS) < 0.1;
-      
+
       if (sameColumn && topOverlap && bottomOverlap) {
         // console.log(`Position invalid - overlap with ${building.name} at Y=${building.position.y}`);
         return true;
@@ -1979,8 +1986,7 @@ class BuildingManager {
     // console.log('Shuffling building list');
     for (let i = this.shuffledBuildings.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [this.shuffledBuildings[i], this.shuffledBuildings[j]] = 
-      [this.shuffledBuildings[j], this.shuffledBuildings[i]];
+      [this.shuffledBuildings[i], this.shuffledBuildings[j]] = [this.shuffledBuildings[j], this.shuffledBuildings[i]];
     }
     this.buildingIndex = 0;
   }
@@ -2007,10 +2013,10 @@ class BuildingBehavior extends EntityBehavior {
     // Handle respawning when building goes off screen
     if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
       // console.log('\n=== Building Respawn Attempt ===');
-      
+
       // Get existing buildings sorted by Y position
       const buildings = Array.from(this.entity.spatialManager.entities)
-        .filter(e => e.type === EntityType.BUILDING && e !== this.entity)
+        .filter((e) => e.type === EntityType.BUILDING && e !== this.entity)
         .sort((a, b) => a.position.y - b.position.y);
 
       // console.log('Current buildings positions:');
@@ -2022,7 +2028,7 @@ class BuildingBehavior extends EntityBehavior {
         Building.buildingIndex = 0;
         // console.log('Reshuffled buildings array');
       }
-      
+
       const newBuilding = Building.availableBuildings[Building.buildingIndex];
       const newHeight = newBuilding.art.length;
       // console.log(`Selected building: ${newBuilding.name} (height: ${newHeight})`);
@@ -2043,14 +2049,14 @@ class BuildingBehavior extends EntityBehavior {
       // Validate position
       if (this.validatePosition(newY, newHeight, buildings)) {
         // console.log(`Position valid at Y=${newY}`);
-        
+
         // Update building properties
         this.entity.position.y = newY;
         this.entity.art = newBuilding.art;
         this.entity.height = newHeight;
         this.entity.name = newBuilding.name;
         Building.buildingIndex++;
-        
+
         // console.log(`=== Respawn Complete ===\n`);
       } else {
         // console.log(`Failed to find valid position at Y=${newY}`);
@@ -2061,7 +2067,7 @@ class BuildingBehavior extends EntityBehavior {
           attempts++;
           // console.log(`Attempt ${attempts}: Trying Y=${newY}`);
         }
-        
+
         if (this.validatePosition(newY, newHeight, buildings)) {
           this.entity.position.y = newY;
           this.entity.art = newBuilding.art;
@@ -2077,16 +2083,16 @@ class BuildingBehavior extends EntityBehavior {
   }
 
   validatePosition(y, height, existingBuildings) {
-    if (typeof y !== 'number' || isNaN(y)) {
-      console.error('Invalid Y position:', y);
+    if (typeof y !== "number" || isNaN(y)) {
+      console.error("Invalid Y position:", y);
       return false;
     }
 
-    return !existingBuildings.some(building => {
-      const topOverlap = y < (building.position.y + building.height + this.minSpacing);
-      const bottomOverlap = (y + height + this.minSpacing) > building.position.y;
+    return !existingBuildings.some((building) => {
+      const topOverlap = y < building.position.y + building.height + this.minSpacing;
+      const bottomOverlap = y + height + this.minSpacing > building.position.y;
       const sameColumn = Math.abs(building.position.x - this.entity.config.LANES.BUILDINGS) < 0.1;
-      
+
       if (sameColumn && topOverlap && bottomOverlap) {
         // console.log(`Collision with ${building.name} at Y=${building.position.y}:`);
         // console.log(`- Top overlap: ${topOverlap}`);
@@ -2115,7 +2121,7 @@ class Building extends BaseEntity {
     // Calculate spawn position using same logic as respawn
     const minSpacing = config.SAFE_DISTANCE.BUILDING || 0;
     let calculatedY;
-    
+
     if (spawnY !== null) {
       calculatedY = spawnY;
     } else if (Building.nextSpawnY !== null) {
@@ -2162,7 +2168,6 @@ class Building extends BaseEntity {
     return COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
   }
 }
-
 
 class Position {
   constructor(x, y) {
@@ -2471,6 +2476,7 @@ class LoserLane {
     this.initializeGameWorld();
     this.setupControls();
     this.settingsManager = new SettingsManager(this);
+    this.clusterManager = new VehicleClusterManager(CONFIG);
   }
 
   addEventListenerWithTracking(element, type, handler, options = false) {
@@ -2853,6 +2859,21 @@ class LoserLane {
   }
 
   spawnEntities() {
+    // console.log("\n=== Spawn Cycle Config ===", {
+    //   streetcarRate: CONFIG.SPAWN_RATES.STREETCAR,
+    //   streetcarLaneCarRate: CONFIG.SPAWN_RATES.STREETCAR_LANE_CAR,
+    //   oncomingCarRate: CONFIG.SPAWN_RATES.ONCOMING_CAR,
+    //   parkedCarRate: CONFIG.SPAWN_RATES.PARKED_CAR,
+    //   streetcarLane: CONFIG.LANES.TRACKS,
+    //   streetcarLaneCar: CONFIG.LANES.TRACKS + 1,
+    //   oncomingLane: CONFIG.LANES.ONCOMING,
+    //   parkedLane: CONFIG.LANES.PARKED,
+    //   streetcarRate: CONFIG.SPAWN_RATES.STREETCAR,
+    //   streetcarLaneCarRate: CONFIG.SPAWN_RATES.STREETCAR_LANE_CAR,
+    //   oncomingCarRate: CONFIG.SPAWN_RATES.ONCOMING_CAR,
+    //   parkedCarRate: CONFIG.SPAWN_RATES.PARKED_CAR,
+    // });
+
     const spawnChecks = [
       { type: EntityType.STREETCAR, rate: CONFIG.SPAWN_RATES.STREETCAR },
       { type: EntityType.STREETCAR_LANE_CAR, rate: CONFIG.SPAWN_RATES.STREETCAR_LANE_CAR },
@@ -2862,15 +2883,25 @@ class LoserLane {
     ];
 
     spawnChecks.forEach(({ type, rate }) => {
-      if (Math.random() < rate) {
-        const entity = this.spatialManager.spawnManager.spawnEntity(type);
-        if (entity) {
-          this.spatialManager.registerEntity(entity);
+      if (type === EntityType.PEDESTRIAN) {
+        // Handle pedestrian spawning normally
+        if (Math.random() < rate) {
+          const entity = this.spatialManager.spawnManager.spawnEntity(type);
+          if (entity) {
+            this.spatialManager.registerEntity(entity);
+          }
+        }
+      } else {
+        // Use cluster manager for vehicles
+        if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
+          const entity = this.spatialManager.spawnManager.spawnEntity(type);
+          if (entity) {
+            this.spatialManager.registerEntity(entity);
+          }
         }
       }
     });
   }
-
   initializeBuildings() {
     let currentY = CONFIG.GAME.HEIGHT;
     const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0; // Ensure minimum spacing
@@ -2977,33 +3008,30 @@ class LoserLane {
     });
   }
 
-
   drawEntity(entity) {
     if (!entity || !entity.art) return;
 
-  if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+    if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+      // Add debug markers for building boundaries
+      if (entity.type === EntityType.BUILDING) {
+        // Mark top boundary
+        this.gridSystem.updateCell(
+          Math.floor(entity.position.x),
+          Math.floor(entity.position.y)
+          // '▲',
+          // '<span style="color: black">'
+        );
 
-    // Add debug markers for building boundaries
-    if (entity.type === EntityType.BUILDING) {
-      // Mark top boundary
-      this.gridSystem.updateCell(
-        Math.floor(entity.position.x), 
-        Math.floor(entity.position.y), 
-        // '▲',
-        // '<span style="color: black">'
-      );
-      
-      // Mark bottom boundary
-      this.gridSystem.updateCell(
-        Math.floor(entity.position.x), 
-        Math.floor(entity.position.y + entity.height), 
-        // '▼',
-        // '<span style="color: black">'
-      );
-    }
+        // Mark bottom boundary
+        this.gridSystem.updateCell(
+          Math.floor(entity.position.x),
+          Math.floor(entity.position.y + entity.height)
+          // '▼',
+          // '<span style="color: black">'
+        );
+      }
 
-
-    entity.art.forEach((line, i) => {
+      entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
@@ -3158,7 +3186,7 @@ class LoserLane {
     }
 
     this.flashScreen();
-    this.showDeathMessage(reason);
+    const { category, message, randomFace } = this.showDeathMessage(reason);
 
     setTimeout(() => {
       const messageEl = document.getElementById("main-msg-box");
@@ -3167,7 +3195,12 @@ class LoserLane {
       }
       this.restart();
     }, this.config.ANIMATIONS.DEATH_DURATION);
+
+    // Add social card generation based on death reason and score
+    const score = this.state.score;
+    // generateSocialCard(reason, this.state.score, message.funny, randomFace); // Assumes generateSocialCard is updated to accept these arguments
   }
+
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
@@ -3187,17 +3220,24 @@ class LoserLane {
     const messageEl = document.getElementById("main-msg-box");
     if (!messageEl) return;
 
-    const randomMessage = this.getRandomDeathMessage(reason);
+    // Retrieve a single random message
+    const message = this.getRandomDeathMessage(reason);
     const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
 
-    // <span class="message-reason">${randomMessage.reason}</span>
+    // Construct the full message for potential further use
+    const fullMessage = `${reason}: ${message.funny} ${randomFace}`;
 
+    // Display reason, message, and face in separate elements
     messageEl.innerHTML = `
-      ${randomMessage.funny}<br /><br />
+      <p>${message.funny}</p>
       <span class="cute-death-face">${randomFace}</span>
     `;
     messageEl.style.display = "block";
-  }
+
+    // Return reason, message, and face as separate elements
+    return { reason, message, randomFace };
+}
+
 
   getRandomDeathMessage(type) {
     const messages = MESSAGES.DEATH[type];
@@ -3221,7 +3261,6 @@ class LoserLane {
     this.start();
 
     Building.buildingManager = null; // This will force a new BuildingManager to be created
-
 
     const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
@@ -3247,10 +3286,6 @@ class LoserLane {
       moveSpeed: 9,
       isFirstMovement: true, // Reset this flag on cleanup
     };
-
-    // console.log("New movement state after cleanup:", {
-    //   ...this.movementState,
-    // });
 
     this.preventDefaultTouchBehaviors();
 

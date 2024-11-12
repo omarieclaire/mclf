@@ -7,6 +7,7 @@
   --light-purp: #dfb1ff;
   --hot-pink: #ff77df;
   --med-purp: #b19eff;
+  --green: #63f863;
   --dark-grey: #202020;
   --darker-grey: #222;
   --black: #141414;
@@ -48,8 +49,17 @@ body {
 
 a {
   color: var(--dark-yellow);
+  color: var(--green);
   text-decoration: none;
   margin: 0;
+  /* font-weight: bold; */
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  text-transform: capitalize;
+  letter-spacing: 0.5rem;
+  border: 3px dashed var(--green);
+  padding: 7px;
 }
 
 .grid-cell {
@@ -268,7 +278,7 @@ a {
 .bike-art-left,
 .bike-art-right {
   color: var(--hot-pink);
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   line-height: 1;
   text-align: center;
   font-weight: bolder;
@@ -401,6 +411,18 @@ button {
   transition: transform 0.1s, box-shadow 0.1s; /* Simple animation */
   /* Add a slight 3D effect */
   box-shadow: 4px 4px #666;
+
+
+
+
+  background-color: var(--dark-yellow);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: var(--black);
+  font-size: 1rem;
+  border-radius: 0;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -408,6 +430,9 @@ button:hover {
   color: #fff; /* White text on hover */
   /* transform: translate(-2px, -2px); Moves slightly upward */
   box-shadow: 6px 6px #333;
+
+  background-color: var(--hot-pink);
+
 }
 
 button:active {
@@ -416,14 +441,14 @@ button:active {
 }
 
 #add-art-link {
-  background: var(--dark-grey);
+  /* background: var(--dark-grey);
   cursor: pointer;
   font-family: "Courier New", monospace;
   text-transform: capitalize;
   margin: 0;
   padding: 0;
   letter-spacing: 0.7rem;
-  padding: 3px 0;
+  padding: 3px 0; */
   /* color: #d1feff; */
 }
 
@@ -632,3 +657,58 @@ button:active {
 
 
 
+/* social card stuff */
+
+#social-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  border: 3px dashed var(--green); /* Consistent border */
+  font-family: "Courier New", monospace;
+  background-color: var(--dark-grey);
+  z-index: 10000;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+@media (min-width: 600px) {
+  #social-card {
+    max-width: 50vw;
+  }
+}
+
+
+#social-card img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+
+  font-size: 1.5em;
+  line-height: 1em;
+  white-space: pre-wrap;
+  font-family: "Courier New", monospace;
+  color: var(--light-purp);
+}
+
+/* #social-card button {
+  background-color: var(--dark-yellow);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: var(--black);
+  font-size: 1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#social-card button:hover {
+  background-color: var(--hot-pink);
+} */
+
+/* Hide buttons for capture */
+.hide-buttons #download-card-btn,
+.hide-buttons #share-card-btn {
+  display: none;
+}
