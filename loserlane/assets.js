@@ -5,7 +5,7 @@
 // " ╪", 
 // " o "],
 
-console.log('Assets loaded:');
+// console.log('Assets loaded:');
 
 
 const ENTITIES = {
