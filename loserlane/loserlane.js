@@ -1607,7 +1607,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       ignoreCollisions: false,
     });
     // entity.config.PROBABILITIES.PARKING findme
-    this.willPark = Math.random() < 0.1;
+    this.willPark = Math.random() < 0.6;
     this.isParking = false;
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
@@ -1971,37 +1971,54 @@ class BuildingManager {
     this.buildingQueue = [];
     this.activeBuildings = new Set();
     this.minSpacing = 1;
-    this.shuffledBuildings = [...TORONTO_BUILDINGS];
+    this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]); // Shuffle once
     this.buildingIndex = 0;
     this.initializeBuildingQueue();
+    console.log("building manager");
+    
   }
 
   initializeBuildingQueue() {
-    let buildings = [...TORONTO_BUILDINGS];
-    buildings = this.shuffleArray(buildings);
+    console.log("BuildingManager initializeBuildingQueue ?");
+
+    // Start by creating a shuffled list of buildings
+    this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
+    this.buildingIndex = 0;  // Track the next building to spawn
+  
     const screenHeight = this.config.GAME.HEIGHT;
-    const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0; // Ensures no spacing
+    const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0;
     let currentY = screenHeight;
-
+  
+    // Populate initial buildings queue
     while (currentY > -10) {
-      if (buildings.length === 0) {
-        buildings = this.shuffleArray([...TORONTO_BUILDINGS]); // Refill if out of buildings
+      // Refill and reshuffle if we've used all buildings
+      if (this.buildingIndex >= this.shuffledBuildings.length) {
+        this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
+        this.buildingIndex = 0;
+        console.log("Shuffling buildings again after using entire list.");
       }
-      const building = buildings.pop();
+  
+      // Get the next unique building from shuffled list
+      const building = this.shuffledBuildings[this.buildingIndex++];
       currentY -= building.art.length;
-
+  
+      console.log(`Placing building ${building.name} at Y=${currentY} with height=${building.art.length}`);
+  
       // Push the building into the queue at current position
       this.buildingQueue.push({
         building: building,
         y: currentY,
       });
-
-      // Subtract buildingSpacing for the next placement, ensuring no gaps initially
+  
+      // Subtract buildingSpacing for the next placement
       currentY -= buildingSpacing;
     }
   }
+  
 
   getNextBuilding() {
+    console.log("BuildingManager getNextBuilding ?");
+
     if (this.buildingQueue.length === 0) {
       // Find the highest (smallest Y value) building
       const highestY = this.getHighestBuildingY();
@@ -2012,14 +2029,19 @@ class BuildingManager {
   }
 
   refillQueue(startY) {
+    console.log("BuildingManager refillQueue ?");
+
     // console.log(`Refilling queue starting at Y=${startY}`);
     let currentY = startY;
 
     // Always add buildings slightly above the highest current building
     for (let i = 0; i < 5; i++) {
       if (this.buildingIndex >= this.shuffledBuildings.length) {
-        this.shuffleBuildings();
+        this.buildingIndex = 0; // Reset index
+        this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]); // Shuffle again after using all buildings
+        console.log("Shuffling buildings again after using entire list.");
       }
+  
 
       const nextBuilding = this.shuffledBuildings[this.buildingIndex++];
       const buildingHeight = nextBuilding.art.length;
@@ -2027,7 +2049,7 @@ class BuildingManager {
       // Place building just above current position
       currentY -= buildingHeight;
 
-      // console.log(`Adding ${nextBuilding.name} at Y=${currentY} (height=${buildingHeight})`);
+      console.log(`Respawning building ${nextBuilding.name} at Y=${currentY} with height=${buildingHeight}`);
 
       this.buildingQueue.push({
         building: nextBuilding,
@@ -2041,6 +2063,8 @@ class BuildingManager {
   }
 
   getHighestBuildingY() {
+    console.log("BuildingManager getHighestBuildingY ?");
+
     if (this.activeBuildings.size === 0) {
       return this.config.GAME.HEIGHT;
     }
@@ -2082,7 +2106,7 @@ class BuildingManager {
   }
 
   shuffleBuildings() {
-    // console.log('Shuffling building list');
+    console.log('Shuffling building list');
     for (let i = this.shuffledBuildings.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.shuffledBuildings[i], this.shuffledBuildings[j]] = [this.shuffledBuildings[j], this.shuffledBuildings[i]];
@@ -2098,6 +2122,8 @@ class BuildingBehavior extends EntityBehavior {
     this.speed = 1;
     this.ignoreCollisions = true;
     this.minSpacing = 1;
+    console.log("BuildingBehavior constructor ?");
+
     // console.log('\n=== Building Behavior Created ===', {
     //   name: entity.name,
     //   y: entity.position.y,
@@ -2123,7 +2149,7 @@ class BuildingBehavior extends EntityBehavior {
 
       // Select new building first since we need its height
       if (Building.buildingIndex >= Building.availableBuildings.length) {
-        Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
+        // Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
         Building.buildingIndex = 0;
         // console.log('Reshuffled buildings array');
       }
@@ -2212,6 +2238,7 @@ class Building extends BaseEntity {
     if (Building.buildingIndex >= Building.availableBuildings.length) {
       Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
       Building.buildingIndex = 0;
+      
     }
 
     const selectedBuilding = Building.availableBuildings[Building.buildingIndex++];
@@ -2252,9 +2279,14 @@ class Building extends BaseEntity {
     this.behavior = new BuildingBehavior(this);
 
     Building.nextSpawnY = calculatedY;
+
+    console.log("Building constructor ?");
+
   }
 
   static shuffleArray(array) {
+    console.log("Building shuffleArray ?");
+
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -3041,6 +3073,8 @@ class LoserLane {
     });
   }
   initializeBuildings() {
+    console.log("initializeBuildings spawn"); //findme
+    
     let currentY = CONFIG.GAME.HEIGHT;
     const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0; // Ensure minimum spacing
 
@@ -3076,6 +3110,8 @@ class LoserLane {
   }
 
   validateBuildingPlacement(position, height, existingBuildings) {
+    console.log("validateBuildingPlacement spawn");
+
     const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
 
     return !existingBuildings.some((existing) => {
