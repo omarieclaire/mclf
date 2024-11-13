@@ -21,7 +21,7 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    STREETCAR: 0.1,
+    STREETCAR: 0.05,
     STREETCAR_LANE_CAR: 0.8,
     ONCOMING_CAR: 0.4,
     PARKED_CAR: 0.2,
@@ -66,10 +66,10 @@ const CONFIG = {
         STOP_DURATION_MAX: 15, // 5 seconds
       },
       HARD: {
-        STOP_INTERVAL_MIN: 3, // 5 seconds
-        STOP_INTERVAL_MAX: 9, // 15 seconds
-        STOP_DURATION_MIN: 6, // 2 seconds
-        STOP_DURATION_MAX: 12, // 4 seconds
+        STOP_INTERVAL_MIN: 6, // 5 seconds
+        STOP_INTERVAL_MAX: 24, // 15 seconds
+        STOP_DURATION_MIN: 2, // 2 seconds
+        STOP_DURATION_MAX: 4, // 4 seconds
       },
     },
   },
