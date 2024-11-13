@@ -3,10 +3,10 @@ const STYLES = {
   TRAFFIC: "<span style='color: #FFFF00'>", // Yellow
   TTC: "<span style='color: #FF0000; background-color: #660000'>", // Red with Dark Red background
   BIKE: "<span style='color: #00FFFF'>", // Cyan
-  PARKED: "<span style='color: #AAAAAA'>", // Medium Gray
+  // PARKED: "<span style='color: #AAAAAA'>", // Medium Gray
   PEDESTRIAN: "<span style='color: #00FFFF'>", // Cyan
   SIDEWALK: "<span style='background-color: #333333'>", // Dark Gray
-  BUILDINGS: "<span style='color: #FFFFFF'>", // White
+  // BUILDINGS: "<span style='color: #FFFFFF'>", // White
   TRACKS: "<span style='color: #444444'>", // Dark Gray
 };
 
@@ -58,35 +58,35 @@ const COLOURS = {
   ],
 };
 
-// const EXPLOSION_COLORS = [
+// const EXPLOSION_COLOURS = [
 //   STYLES.TRAFFIC, // Default red
-//   STYLES.BIKE, // Bike color
-//   STYLES.TRACKS, // Track color
-//   "<span style='color: #FFA500'>", // Orange
-//   // "<span style='color: #FF69B4'>", // Pink
-//   "<span style='color: #FF4500'>", // Orange Red
+//   STYLES.BIKE, // Bike colour
+//   STYLES.TRACKS, // Track colour
+//   "<span style='colour: #FFA500'>", // Orange
+//   // "<span style='colour: #FF69B4'>", // Pink
+//   "<span style='colour: #FF4500'>", // Orange Red
 // ];
-const EXPLOSION_COLORS = [
+const EXPLOSION_COLOURS = [
   STYLES.TRAFFIC, // Default red
-  // STYLES.BIKE,        // Bike color
-  STYLES.TRACKS, // Track color
-  "<span style='color: #FF4500'>", // Orange Red
-  "<span style='color: #FF5722'>", // Deep Orange
-  "<span style='color: #FF6347'>", // Tomato
-  "<span style='color: #FF7043'>", // Deep Orange 400
-  "<span style='color: #FF7F50'>", // Coral
-  "<span style='color: #FF8C00'>", // Dark Orange
-  "<span style='color: #FFA07A'>", // Light Salmon
-  "<span style='color: #E65100'>", // Deep Orange 900
-  "<span style='color: #FF5252'>", // Red Accent 200
-  "<span style='color: #FF6E40'>", // Deep Orange Accent 200
-  "<span style='color: #FF3D00'>", // Deep Orange Accent 400
-  "<span style='color: #DD2C00'>", // Deep Orange Accent 700
-  "<span style='color: #BF360C'>", // Deep Orange 900
-  "<span style='color: #FF6B6B'>", // Reddish
-  "<span style='color: #FF7043'>", // Warm Orange
-  "<span style='color: #F4511E'>", // Deep Orange 600
-  "<span style='color: #FF5722'>", // Material Deep Orange
+  // STYLES.BIKE,        // Bike colour
+  STYLES.TRACKS, // Track colour
+  "<span style='colour: #FF4500'>", // Orange Red
+  "<span style='colour: #FF5722'>", // Deep Orange
+  "<span style='colour: #FF6347'>", // Tomato
+  "<span style='colour: #FF7043'>", // Deep Orange 400
+  "<span style='colour: #FF7F50'>", // Coral
+  "<span style='colour: #FF8C00'>", // Dark Orange
+  "<span style='colour: #FFA07A'>", // Light Salmon
+  "<span style='colour: #E65100'>", // Deep Orange 900
+  "<span style='colour: #FF5252'>", // Red Accent 200
+  "<span style='colour: #FF6E40'>", // Deep Orange Accent 200
+  "<span style='colour: #FF3D00'>", // Deep Orange Accent 400
+  "<span style='colour: #DD2C00'>", // Deep Orange Accent 700
+  "<span style='colour: #BF360C'>", // Deep Orange 900
+  "<span style='colour: #FF6B6B'>", // Reddish
+  "<span style='colour: #FF7043'>", // Warm Orange
+  "<span style='colour: #F4511E'>", // Deep Orange 600
+  "<span style='colour: #FF5722'>", // Material Deep Orange
 ];
 
 const peopleCol = [

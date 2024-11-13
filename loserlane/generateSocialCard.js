@@ -83,12 +83,12 @@ function generateSocialCard(canvas, reason, score, message, randomFace) {
     // Get CSS styles from :root
     const styles = getComputedStyle(document.documentElement);
     const fontMain = styles.getPropertyValue("--font-main").trim();
-    const colors = {
-        gameOver: styles.getPropertyValue("--color-game-over").trim(),
-        reason: styles.getPropertyValue("--color-reason").trim(),
-        message: styles.getPropertyValue("--color-message").trim(),
-        face: styles.getPropertyValue("--color-face").trim(),
-        score: styles.getPropertyValue("--color-score").trim()
+    const colours = {
+        gameOver: styles.getPropertyValue("--colour-game-over").trim(),
+        reason: styles.getPropertyValue("--colour-reason").trim(),
+        message: styles.getPropertyValue("--colour-message").trim(),
+        face: styles.getPropertyValue("--colour-face").trim(),
+        score: styles.getPropertyValue("--colour-score").trim()
     };
     const fonts = {
         gameOver: styles.getPropertyValue("--font-game-over").trim(),
@@ -105,18 +105,18 @@ function generateSocialCard(canvas, reason, score, message, randomFace) {
 
     // Define and draw each text element
     finalCtx.textAlign = "center";
-    // { text: `Reason: ${reason}`, y: boxYPosition + 60, color: colors.reason, font: fonts.reason },
+    // { text: `Reason: ${reason}`, y: boxYPosition + 60, colour: colours.reason, font: fonts.reason },
 
     const textPositions = [
-        { text: "D E A D", y: boxYPosition + 25, color: colors.gameOver, font: fonts.gameOver },
-        { text: message, y: boxYPosition + 60, color: colors.message, font: fonts.message },
-        { text: randomFace, y: boxYPosition + 90, color: colors.face, font: fonts.face },
-        { text: `Score: ${score}`, y: boxYPosition + 120, color: colors.score, font: fonts.score }
+        { text: "D E A D", y: boxYPosition + 25, colour: colours.gameOver, font: fonts.gameOver },
+        { text: message, y: boxYPosition + 60, colour: colours.message, font: fonts.message },
+        { text: randomFace, y: boxYPosition + 90, colour: colours.face, font: fonts.face },
+        { text: `Score: ${score}`, y: boxYPosition + 120, colour: colours.score, font: fonts.score }
     ];
     
-    textPositions.forEach(({ text, y, color, font }) => {
+    textPositions.forEach(({ text, y, colour, font }) => {
         finalCtx.font = font;
-        finalCtx.fillStyle = color;
+        finalCtx.fillStyle = colour;
         finalCtx.fillText(text, cropSize / 2, y);
     });
 
@@ -131,7 +131,7 @@ function generateSocialCard(canvas, reason, score, message, randomFace) {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-colour: rgba(0, 0, 0, 0.7);
         z-index: 10000;
     `;
 
