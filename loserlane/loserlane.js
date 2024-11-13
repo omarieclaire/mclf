@@ -45,12 +45,12 @@ const CONFIG = {
   },
   STREETCAR: {
     STOP_INTERVAL: {
-      MIN: 300, // 5 seconds
-      MAX: 600, // 10 seconds
+      MIN: 500, // 5 seconds
+      MAX: 900, // 10 seconds
     },
     STOP_DURATION: {
       MIN: 380, // 3 seconds
-      MAX: 500, // 5 seconds
+      MAX: 800, // 5 seconds
     },
     DIFFICULTY_LEVELS: {
       EASY: {
@@ -200,15 +200,10 @@ class EntityType {
 class SpatialManager {
   constructor(config) {
     this.config = config;
-    this.entities = new Set();
-    this.collisionManager = new CollisionManager(config);
-
     this.grid = new GridSystem(config);
     this.collisionManager = new CollisionManager(this);
     this.movementCoordinator = new MovementCoordinator(this);
     this.spawnManager = new SpawnManager(this, config);
-    // this.spawnManager = new SpawnManager(config, this); // Pass 'this' as the spatialManager
-
     this.entities = new Set();
   }
 
@@ -981,17 +976,29 @@ class SpawnManager {
   }
 
   spawnEntity(entityType) {
-    
     if (entityType === EntityType.ONCOMING_CAR) {
+      // console.log("\n=== Attempting to spawn oncoming car ===");
+
       const spawnConfig = this.getSpawnConfig(entityType);
       if (!spawnConfig) {
+        // console.log("Failed: No spawn config for oncoming car");
         return null;
       }
 
+      // console.log("Spawn config for oncoming car:", {
+      //   position: spawnConfig.position,
+      //   direction: spawnConfig.direction,
+      // });
+
       if (this.canSpawnAt(entityType, spawnConfig.position)) {
         const car = new OncomingCar(this.config, spawnConfig);
+        // console.log("Successfully created oncoming car at:", {
+        //   x: car.position.x,
+        //   y: car.position.y,
+        // });
         return car;
       } else {
+        // console.log("Failed: Position not valid for oncoming car");
         return null;
       }
     }
@@ -1378,38 +1385,37 @@ class StreetcarBehavior extends VehicleBehaviorBase {
     this.isAtStop = false;
     this.stopTimer = 0;
     this.nextStopTime = this.getRandomStopTime();
-    // this.spatialManager = spatialManager;
-    this.behavior = new StreetcarBehavior(this, config);
     console.log(`Streetcar initialized with nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
   }
 
   spawnPedestrians() {
     if (this.pedestriansSpawnedAtStop) return; // Prevent multiple spawns per stop
-
+  
     // Get the spatial manager from the entity
     const spatialManager = this.entity.spatialManager;
     if (!spatialManager) return;
-
+  
     // Determine the number of pedestrians to spawn
     const numPedestrians = Math.floor(Math.random() * 3) + 1; // Spawn 1 to 3 pedestrians
-
+  
     for (let i = 0; i < numPedestrians; i++) {
       const isGoingUp = Math.random() < 0.5;
       const offsetX = (Math.random() - 0.5) * 2; // Random offset between -1 and 1
       const spawnX = this.entity.position.x + offsetX + this.entity.width / 2;
       const spawnY = this.entity.position.y + (isGoingUp ? -1 : this.entity.height + 1);
-
+  
       const spawnPosition = new Position(spawnX, spawnY);
-
+  
       // Create a new pedestrian entity
       const pedestrian = new Pedestrian(this.config, { position: spawnPosition }, isGoingUp);
-
+  
       // Register the pedestrian with the spatial manager
       spatialManager.registerEntity(pedestrian);
     }
-
+  
     this.pedestriansSpawnedAtStop = true; // Mark as spawned for this stop
   }
+  
 
   getRandomStopTime() {
     // Choose the desired difficulty level: EASY, NORMAL, or HARD
@@ -1854,8 +1860,6 @@ class Streetcar extends BaseEntity {
     this.art = ENTITIES.STREETCAR.art;
     this.color = STYLES.TTC;
     this.behavior = new StreetcarBehavior(this);
-    this.spatialManager = spatialManager; // Assign spatialManager to the streetcar
-
     console.log("Streetcar created at position:", this.position);
   }
 }
