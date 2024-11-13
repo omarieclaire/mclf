@@ -20,7 +20,6 @@ const CONFIG = {
       right: 0,
     },
   },
-
   SPAWN_RATES: {
     STREETCAR: 0.1,
     STREETCAR_LANE_CAR: 0.8,
@@ -36,7 +35,7 @@ const CONFIG = {
     ONCOMING_CAR: 8,
     PARKED: 1,
     PEDESTRIAN: 3,
-    BUILDING: 1,
+    BUILDING: 0,
     STREETCAR_TO_STREETCAR: 20,
     STREETCAR_TO_CAR: 15,
     DEFAULT: 5,
@@ -44,15 +43,45 @@ const CONFIG = {
   PEDESTRIAN: {
     SPEED: 0.5,
   },
+  STREETCAR: {
+    STOP_INTERVAL: {
+      MIN: 300, // 5 seconds
+      MAX: 600, // 10 seconds
+    },
+    STOP_DURATION: {
+      MIN: 380, // 3 seconds
+      MAX: 500, // 5 seconds
+    },
+    DIFFICULTY_LEVELS: {
+      EASY: {
+        STOP_INTERVAL_MIN: 9, // 15 seconds
+        STOP_INTERVAL_MAX: 18, // 30 seconds
+        STOP_DURATION_MIN: 12, // 4 seconds
+        STOP_DURATION_MAX: 18, // 6 seconds
+      },
+      NORMAL: {
+        STOP_INTERVAL_MIN: 6, // 10 seconds
+        STOP_INTERVAL_MAX: 12, // 20 seconds
+        STOP_DURATION_MIN: 9, // 3 seconds
+        STOP_DURATION_MAX: 15, // 5 seconds
+      },
+      HARD: {
+        STOP_INTERVAL_MIN: 3, // 5 seconds
+        STOP_INTERVAL_MAX: 9, // 15 seconds
+        STOP_DURATION_MIN: 6, // 2 seconds
+        STOP_DURATION_MAX: 12, // 4 seconds
+      },
+    },
+  },
   LANES: {
-    ONCOMING: 3,
-    DIVIDER: 8,
-    TRACKS: 11,
-    BIKE: 16,
-    BIKE_RIGHT: 17,
-    PARKED: 19,
-    SIDEWALK: 27,
-    BUILDINGS: 30,
+    ONCOMING: 2,
+    DIVIDER: 7,
+    TRACKS: 10,
+    BIKE: 15,
+    BIKE_RIGHT: 18,
+    PARKED: 20,
+    SIDEWALK: 28,
+    BUILDINGS: 31,
   },
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
@@ -92,7 +121,7 @@ const CONFIG = {
     PARTICLE_SPEED: 0.5,
   },
   PROBABILITIES: {
-    PARKING: 0.1,
+    PARKING: 0.01,
     GAP: 0.6,
     DOOR_OPENING: 0.3,
   },
@@ -171,10 +200,15 @@ class EntityType {
 class SpatialManager {
   constructor(config) {
     this.config = config;
+    this.entities = new Set();
+    this.collisionManager = new CollisionManager(config);
+
     this.grid = new GridSystem(config);
     this.collisionManager = new CollisionManager(this);
     this.movementCoordinator = new MovementCoordinator(this);
     this.spawnManager = new SpawnManager(this, config);
+    // this.spawnManager = new SpawnManager(config, this); // Pass 'this' as the spatialManager
+
     this.entities = new Set();
   }
 
@@ -826,8 +860,8 @@ class SpawnManager {
         {
           baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
           randomSpacingRange: {
-            min: 3,
-            max: 7,
+            min: 0,
+            max: 1,
           },
           laneRules: {
             allowedLanes: [this.config.LANES.BUILDINGS],
@@ -947,29 +981,17 @@ class SpawnManager {
   }
 
   spawnEntity(entityType) {
+    
     if (entityType === EntityType.ONCOMING_CAR) {
-      // console.log("\n=== Attempting to spawn oncoming car ===");
-
       const spawnConfig = this.getSpawnConfig(entityType);
       if (!spawnConfig) {
-        // console.log("Failed: No spawn config for oncoming car");
         return null;
       }
 
-      // console.log("Spawn config for oncoming car:", {
-      //   position: spawnConfig.position,
-      //   direction: spawnConfig.direction,
-      // });
-
       if (this.canSpawnAt(entityType, spawnConfig.position)) {
         const car = new OncomingCar(this.config, spawnConfig);
-        // console.log("Successfully created oncoming car at:", {
-        //   x: car.position.x,
-        //   y: car.position.y,
-        // });
         return car;
       } else {
-        // console.log("Failed: Position not valid for oncoming car");
         return null;
       }
     }
@@ -1342,32 +1364,6 @@ class ParkedCarBehavior extends VehicleBehaviorBase {
   }
 }
 
-// class StreetcarBehavior extends VehicleBehaviorBase {
-//   constructor(entity) {
-//     super(entity, {
-//       baseSpeed: -1,
-//       minDistance: entity.config.SAFE_DISTANCE.STREETCAR,
-//       ignoreCollisions: false,
-//     });
-//   }
-
-//   shouldMove() {
-//     if (this.stopped) {
-//       return false;
-//     }
-
-//     const nearbyEntities = this.getNearbyEntities();
-//     return !this.shouldStop(nearbyEntities);
-//   }
-
-//   shouldStop(nearbyEntities) {
-//     return nearbyEntities.some((other) => {
-//       const distance = Math.abs(other.position.y - this.entity.position.y);
-//       return distance < this.minDistance;
-//     });
-//   }
-// }
-
 class StreetcarBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1377,6 +1373,61 @@ class StreetcarBehavior extends VehicleBehaviorBase {
     });
     this.stuckTimer = 0;
     this.lastPosition = null;
+
+    // New properties for stopping behavior
+    this.isAtStop = false;
+    this.stopTimer = 0;
+    this.nextStopTime = this.getRandomStopTime();
+    // this.spatialManager = spatialManager;
+    this.behavior = new StreetcarBehavior(this, config);
+    console.log(`Streetcar initialized with nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
+  }
+
+  spawnPedestrians() {
+    if (this.pedestriansSpawnedAtStop) return; // Prevent multiple spawns per stop
+
+    // Get the spatial manager from the entity
+    const spatialManager = this.entity.spatialManager;
+    if (!spatialManager) return;
+
+    // Determine the number of pedestrians to spawn
+    const numPedestrians = Math.floor(Math.random() * 3) + 1; // Spawn 1 to 3 pedestrians
+
+    for (let i = 0; i < numPedestrians; i++) {
+      const isGoingUp = Math.random() < 0.5;
+      const offsetX = (Math.random() - 0.5) * 2; // Random offset between -1 and 1
+      const spawnX = this.entity.position.x + offsetX + this.entity.width / 2;
+      const spawnY = this.entity.position.y + (isGoingUp ? -1 : this.entity.height + 1);
+
+      const spawnPosition = new Position(spawnX, spawnY);
+
+      // Create a new pedestrian entity
+      const pedestrian = new Pedestrian(this.config, { position: spawnPosition }, isGoingUp);
+
+      // Register the pedestrian with the spatial manager
+      spatialManager.registerEntity(pedestrian);
+    }
+
+    this.pedestriansSpawnedAtStop = true; // Mark as spawned for this stop
+  }
+
+  getRandomStopTime() {
+    // Choose the desired difficulty level: EASY, NORMAL, or HARD
+    const level = this.entity.config.STREETCAR.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
+    const min = level.STOP_INTERVAL_MIN;
+    const max = level.STOP_INTERVAL_MAX;
+    const time = Math.floor(Math.random() * (max - min + 1)) + min;
+    console.log(`Generated nextStopTime: ${time}`);
+    return time;
+  }
+
+  getRandomStopDuration() {
+    const level = this.entity.config.STREETCAR.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
+    const min = level.STOP_DURATION_MIN;
+    const max = level.STOP_DURATION_MAX;
+    const duration = Math.floor(Math.random() * (max - min + 1)) + min;
+    console.log(`Generated stopDuration: ${duration}`);
+    return duration;
   }
 
   shouldMove() {
@@ -1454,8 +1505,49 @@ class StreetcarBehavior extends VehicleBehaviorBase {
 
     return blockingEntities.length > 0;
   }
-
   update() {
+    // console.log(`Streetcar Update - isAtStop: ${this.isAtStop}, nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
+
+    if (this.isAtStop) {
+      // Streetcar is at a stop
+      this.stopTimer--;
+      // console.log(`Streetcar is stopped. stopTimer decremented to: ${this.stopTimer}`);
+      if (this.stopTimer <= 0) {
+        this.isAtStop = false;
+        this.nextStopTime = this.getRandomStopTime();
+        // console.log("Streetcar is resuming movement at position:", this.entity.position);
+      }
+      return; // Skip movement while stopped
+    } else {
+      // Decrement the timer until the next stop
+      this.nextStopTime--;
+      // console.log(`Streetcar is moving. nextStopTime decremented to: ${this.nextStopTime}`);
+      if (this.nextStopTime <= 0) {
+        this.isAtStop = true;
+        this.stopTimer = this.getRandomStopDuration();
+        // console.log("Streetcar is stopping at position:", this.entity.position);
+        return; // Stop moving this frame
+      }
+
+      if (this.isAtStop) {
+        // Streetcar is at a stop
+        this.stopTimer--;
+        console.log(`Streetcar is stopped. stopTimer decremented to: ${this.stopTimer}`);
+
+        // Spawn pedestrians if not already done
+        this.spawnPedestrians();
+
+        if (this.stopTimer <= 0) {
+          this.isAtStop = false;
+          this.pedestriansSpawnedAtStop = false; // Reset for next stop
+          this.nextStopTime = this.getRandomStopTime();
+          console.log("Streetcar is resuming movement at position:", this.entity.position);
+        }
+        return; // Skip movement while stopped
+      }
+    }
+
+    // Existing movement logic
     if (this.stopped) {
       return;
     }
@@ -1465,14 +1557,6 @@ class StreetcarBehavior extends VehicleBehaviorBase {
       if (this.canMoveTo(newPosition)) {
         this.move(newPosition);
       } else {
-        // console.log("\n=== Streetcar Movement Failed ===", {
-        //   currentPos: this.entity.position,
-        //   attemptedPos: newPosition,
-        //   nearbyEntities: this.getNearbyEntities().map((e) => ({
-        //     type: e.type,
-        //     position: e.position,
-        //   })),
-        // });
         this.handleMovementBlocked();
       }
     }
@@ -1516,8 +1600,8 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
       minDistance: entity.config.SAFE_DISTANCE.STREETCAR_LANE_CAR,
       ignoreCollisions: false,
     });
-
-    this.willPark = Math.random() < 0.9;
+    // entity.config.PROBABILITIES.PARKING findme
+    this.willPark = Math.random() < 0.1;
     this.isParking = false;
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
@@ -1605,7 +1689,7 @@ class StreetcarLaneCarBehavior extends VehicleBehaviorBase {
 
     while (!validPosition && attempts < maxAttempts) {
       validPosition = spatialManager.validateMove(parkedCar, parkedCar.position);
-      console.log(`Trying position at y: ${safeY}, valid: ${validPosition}`);
+      // console.log(`Trying position at y: ${safeY}, valid: ${validPosition}`);
 
       if (!validPosition) {
         safeY += minSpacing;
@@ -1770,6 +1854,9 @@ class Streetcar extends BaseEntity {
     this.art = ENTITIES.STREETCAR.art;
     this.color = STYLES.TTC;
     this.behavior = new StreetcarBehavior(this);
+    this.spatialManager = spatialManager; // Assign spatialManager to the streetcar
+
+    console.log("Streetcar created at position:", this.position);
   }
 }
 
@@ -2307,8 +2394,6 @@ class OptimizedGridSystem {
     let currentRow = [];
     let lastStyle = null;
 
-    
-
     for (let y = 0; y < this.height; y++) {
       currentRow = [];
       for (let x = 0; x < this.width; x++) {
@@ -2333,7 +2418,7 @@ class OptimizedGridSystem {
    */
   getActiveCharacters() {
     const activeChars = [];
-    
+
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         const cell = this.grid[y][x];
@@ -2343,16 +2428,15 @@ class OptimizedGridSystem {
             x,
             y,
             content: cell.content,
-            style: cell.style
+            style: cell.style,
           });
         }
       }
     }
-    
+
     return activeChars;
   }
 }
-
 
 class SettingsManager {
   constructor(game) {
@@ -3040,7 +3124,6 @@ class LoserLane {
       this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 1, y, "║", STYLES.TRACKS);
       this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 5, y, "║", STYLES.TRACKS);
 
-      
       if (y % 3 === 0) {
         this.gridSystem.updateCell(CONFIG.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
       }
@@ -3063,7 +3146,7 @@ class LoserLane {
 
     if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
       const isDying = this.state.isDead;
-      
+
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
@@ -3091,17 +3174,12 @@ class LoserLane {
               // Add death animation classes if dying
               if (isDying) {
                 const isEdge = /[┌┐│╰╯]/.test(char);
-                const glitchClass = isEdge ? 'char-glitch edge' : 'char-glitch body';
+                const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
                 effectClass += ` ${glitchClass}`;
               }
 
               const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-              this.gridSystem.updateCell(
-                Math.floor(entity.position.x + x),
-                Math.floor(entity.position.y + i),
-                wrappedChar,
-                entity.color
-              );
+              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
             }
           });
         }
@@ -3234,114 +3312,110 @@ class LoserLane {
     }
   }
 
+  die(reason) {
+    console.log("\n=== Death Animation Starting ===");
 
-die(reason) {
-  console.log("\n=== Death Animation Starting ===");
-  
-  this.state.isDead = true;
+    this.state.isDead = true;
 
-  // Store death state
-  this.state.deathState = {
-    animation: 0,
-    x: Math.round(this.state.currentLane),
-    y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-    reason: reason,
-    frameCounter: 0,
-    colorIndex: 0,
-  };
+    // Store death state
+    this.state.deathState = {
+      animation: 0,
+      x: Math.round(this.state.currentLane),
+      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      reason: reason,
+      frameCounter: 0,
+      colorIndex: 0,
+    };
 
-  // Add screen shake effect
-  const gameScreen = document.getElementById("game-screen");
-  if (gameScreen) {
-    gameScreen.classList.add("screen-shake");
+    // Add screen shake effect
+    const gameScreen = document.getElementById("game-screen");
+    if (gameScreen) {
+      gameScreen.classList.add("screen-shake");
 
-    // Create game over overlay
-    const overlay = document.createElement("div");
-    overlay.className = "game-over";
-    document.body.appendChild(overlay);
+      // Create game over overlay
+      const overlay = document.createElement("div");
+      overlay.className = "game-over";
+      document.body.appendChild(overlay);
 
-    // Clean up effects after animation
+      // Clean up effects after animation
+      setTimeout(() => {
+        gameScreen.classList.remove("screen-shake");
+        overlay.remove();
+      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+    }
+
+    // Show death message
+    this.showDeathMessage(reason);
+
+    // Restart after a longer delay to see the glitch animation
     setTimeout(() => {
-      gameScreen.classList.remove("screen-shake");
-      overlay.remove();
-    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+      const messageEl = document.getElementById("main-msg-box");
+      if (messageEl) {
+        messageEl.classList.remove("show-message");
+      }
+      this.restart();
+    }, 2000); // Increased to 2 seconds to see the full glitch
   }
 
-  // Show death message
-  this.showDeathMessage(reason);
+  die(reason) {
+    console.log("\n=== Death Animation Starting ===");
 
-  // Restart after a longer delay to see the glitch animation
-  setTimeout(() => {
-    const messageEl = document.getElementById("main-msg-box");
-    if (messageEl) {
-      messageEl.classList.remove("show-message");
+    this.state.isDead = true;
+
+    // Store the death position using the current player position
+    this.state.deathState = {
+      animation: 0,
+      x: Math.round(this.state.currentLane),
+      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      reason: reason,
+      frameCounter: 0,
+      colorIndex: 0,
+    };
+
+    // Add screen shake effect
+    const gameScreen = document.getElementById("game-screen");
+    if (gameScreen) {
+      gameScreen.classList.add("screen-shake");
+
+      // Create game over overlay
+      const overlay = document.createElement("div");
+      overlay.className = "game-over";
+      document.body.appendChild(overlay);
+
+      // Clean up effects after animation
+      setTimeout(() => {
+        gameScreen.classList.remove("screen-shake");
+        overlay.remove();
+      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
     }
-    this.restart();
-  }, 2000);  // Increased to 2 seconds to see the full glitch
-}
 
+    // Call flashScreen for red flash effect
+    this.flashScreen();
+    this.showDeathMessage(reason);
 
+    // Capture screenshot after animation completes (these lines are ready but inactive)
+    // setTimeout(() => {
+    //   const score = this.state.score;
+    //   const message = this.showDeathMessage(reason).message;
+    //   html2canvas(gameScreen)
+    //       .then((canvas) => {
+    //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
+    //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
+    //       })
+    //       .catch((error) => {
+    //           console.error("Failed to capture screenshot:", error);
+    //       });
+    // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
 
-die(reason) {
-  console.log("\n=== Death Animation Starting ===");
-  
-  this.state.isDead = true;
-
-  // Store the death position using the current player position
-  this.state.deathState = {
-    animation: 0,
-    x: Math.round(this.state.currentLane),
-    y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-    reason: reason,
-    frameCounter: 0,
-    colorIndex: 0,
-  };
-
-  // Add screen shake effect
-  const gameScreen = document.getElementById("game-screen");
-  if (gameScreen) {
-    gameScreen.classList.add("screen-shake");
-
-    // Create game over overlay
-    const overlay = document.createElement("div");
-    overlay.className = "game-over";
-    document.body.appendChild(overlay);
-
-    // Clean up effects after animation
+    // Restart game after death duration
     setTimeout(() => {
-      gameScreen.classList.remove("screen-shake");
-      overlay.remove();
-    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+      const messageEl = document.getElementById("main-msg-box");
+      if (messageEl) {
+        messageEl.classList.remove("show-message");
+      }
+      this.restart();
+    }, this.config.ANIMATIONS.DEATH_DURATION);
   }
-
-  // Call flashScreen for red flash effect
-  this.flashScreen();
-  this.showDeathMessage(reason);
-
-  // Capture screenshot after animation completes (these lines are ready but inactive)
-  // setTimeout(() => {
-  //   const score = this.state.score;
-  //   const message = this.showDeathMessage(reason).message;
-  //   html2canvas(gameScreen)
-  //       .then((canvas) => {
-  //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
-  //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
-  //       })
-  //       .catch((error) => {
-  //           console.error("Failed to capture screenshot:", error);
-  //       });
-  // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-
-  // Restart game after death duration
-  setTimeout(() => {
-    const messageEl = document.getElementById("main-msg-box");
-    if (messageEl) {
-      messageEl.classList.remove("show-message");
-    }
-    this.restart();
-  }, this.config.ANIMATIONS.DEATH_DURATION);
-}
-
 
   // die(reason) {
   //   this.state.isDead = true;

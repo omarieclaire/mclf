@@ -79,8 +79,7 @@ const TORONTO_BUILDINGS = [
     {
         name: "MIMI",
         art: [
-            "   ◄o►   ",
-            "⸨⎻⎻⎻⎻⎻⎻⎻⎻⸩",
+            "⸨⎻⎻⎻◄o►⎻⎻⸩",
             "│ MIMI'S │",
             "│⊰PLACE⊱ │",
             "╚═⳺⳻⳺⳻⳺⳻═╝"
