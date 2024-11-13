@@ -45,7 +45,7 @@ const CONFIG = {
   },
   STREETCAR: {
     STOP_INTERVAL: {
-      MIN: 500, // 5 seconds
+      MIN: 600, // 5 seconds
       MAX: 900, // 10 seconds
     },
     STOP_DURATION: {
@@ -53,18 +53,6 @@ const CONFIG = {
       MAX: 800, // 5 seconds
     },
     DIFFICULTY_LEVELS: {
-      EASY: {
-        STOP_INTERVAL_MIN: 9, // 15 seconds
-        STOP_INTERVAL_MAX: 18, // 30 seconds
-        STOP_DURATION_MIN: 12, // 4 seconds
-        STOP_DURATION_MAX: 18, // 6 seconds
-      },
-      NORMAL: {
-        STOP_INTERVAL_MIN: 6, // 10 seconds
-        STOP_INTERVAL_MAX: 12, // 20 seconds
-        STOP_DURATION_MIN: 9, // 3 seconds
-        STOP_DURATION_MAX: 15, // 5 seconds
-      },
       HARD: {
         STOP_INTERVAL_MIN: 6, // 5 seconds
         STOP_INTERVAL_MAX: 24, // 15 seconds
@@ -196,7 +184,6 @@ class EntityType {
  * Central manager class handling spatial relationships between game entities
  * Coordinates collision detection, movement, and entity spawning
  */
-
 
 class Position {
   constructor(x, y) {
@@ -1402,32 +1389,31 @@ class StreetcarBehavior extends VehicleBehaviorBase {
 
   spawnPedestrians() {
     if (this.pedestriansSpawnedAtStop) return; // Prevent multiple spawns per stop
-  
+
     // Get the spatial manager from the entity
     const spatialManager = this.entity.spatialManager;
     if (!spatialManager) return;
-  
+
     // Determine the number of pedestrians to spawn
     const numPedestrians = Math.floor(Math.random() * 3) + 1; // Spawn 1 to 3 pedestrians
-  
+
     for (let i = 0; i < numPedestrians; i++) {
       const isGoingUp = Math.random() < 0.5;
       const offsetX = (Math.random() - 0.5) * 2; // Random offset between -1 and 1
       const spawnX = this.entity.position.x + offsetX + this.entity.width / 2;
       const spawnY = this.entity.position.y + (isGoingUp ? -1 : this.entity.height + 1);
-  
+
       const spawnPosition = new Position(spawnX, spawnY);
-  
+
       // Create a new pedestrian entity
       const pedestrian = new Pedestrian(this.config, { position: spawnPosition }, isGoingUp);
-  
+
       // Register the pedestrian with the spatial manager
       spatialManager.registerEntity(pedestrian);
     }
-  
+
     this.pedestriansSpawnedAtStop = true; // Mark as spawned for this stop
   }
-  
 
   getRandomStopTime() {
     // Choose the desired difficulty level: EASY, NORMAL, or HARD
@@ -1979,81 +1965,100 @@ class Pedestrian extends BaseEntity {
 
 class BuildingManager {
   constructor(config) {
-    console.log('[BuildingManager] Initializing with config:', config);
+    console.log("[BuildingManager] Initializing with config:", config);
     this.config = config;
     this.buildingQueue = [];
     this.activeBuildings = new Set();
     this.minSpacing = 1;
-    // Initialize with shuffled buildings
+
+    // Initial shuffle and logging
     this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
+    console.log("[BuildingManager] Shuffled buildings:", this.shuffledBuildings.map(b => b.name));
     this.buildingIndex = 0;
+
     this.initializeBuildingQueue();
   }
 
+  shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    console.log("[BuildingManager] Array shuffled:", array.map(b => b.name));
+    return array;
+  }
+
   initializeBuildingQueue() {
-    console.log('[BuildingManager] Initializing building queue');
-    
-    // Create fresh shuffled building list
-    this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
-    this.buildingIndex = 0;
-  
+    console.log("[BuildingManager] Initializing building queue");
+
     const screenHeight = this.config.GAME.HEIGHT;
     const buildingSpacing = this.config.SAFE_DISTANCE.BUILDING || 0;
     let currentY = screenHeight;
-  
-    console.log('[BuildingManager] Screen height:', screenHeight, 'Building spacing:', buildingSpacing);
-  
+
+    console.log("[BuildingManager] Screen height:", screenHeight, "Building spacing:", buildingSpacing);
+
     // Fill queue from bottom to top of screen
     while (currentY > -10) {
-      // Check if we need to reshuffle
+      // Log the current index and check for reshuffle necessity
+      console.log("[BuildingManager] Current buildingIndex:", this.buildingIndex);
       if (this.buildingIndex >= this.shuffledBuildings.length) {
-        console.log('[BuildingManager] Reached end of building list, reshuffling');
+        console.log("[BuildingManager] Reached end of building list, reshuffling");
         this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
         this.buildingIndex = 0;
       }
-  
+
+      // Select the next building
       const building = this.shuffledBuildings[this.buildingIndex++];
+      console.log(`[BuildingManager] Selected building "${building.name}" at index ${this.buildingIndex - 1}`);
+
       currentY -= building.art.length;
-  
+
       console.log(`[BuildingManager] Adding building "${building.name}" at Y=${currentY}, Height=${building.art.length}`);
-  
+
       this.buildingQueue.push({
         building: building,
         y: currentY,
       });
-  
+
+      // Check for duplicate entries in the queue
+      const duplicateCount = this.buildingQueue.filter(b => b.building.name === building.name).length;
+      if (duplicateCount > 1) {
+        console.warn(`[BuildingManager] Duplicate building detected: "${building.name}" appears ${duplicateCount} times in queue`);
+      }
+
       currentY -= buildingSpacing;
     }
-    
-    console.log('[BuildingManager] Initial queue size:', this.buildingQueue.length);
+
+    console.log("[BuildingManager] Final queue:", this.buildingQueue.map(b => b.building.name));
+    console.log("[BuildingManager] Initial queue size:", this.buildingQueue.length);
   }
 
   getNextBuilding() {
-    console.log('[BuildingManager] Requesting next building. Queue size:', this.buildingQueue.length);
+    console.log("[BuildingManager] Requesting next building. Queue size:", this.buildingQueue.length);
 
     if (this.buildingQueue.length === 0) {
       const highestY = this.getHighestBuildingY();
-      console.log('[BuildingManager] Queue empty, refilling from Y:', highestY);
+      console.log("[BuildingManager] Queue empty, refilling from Y:", highestY);
       this.refillQueue(highestY);
     }
 
     const nextBuilding = this.buildingQueue.shift();
-    console.log('[BuildingManager] Providing building:', nextBuilding?.building?.name, 'at Y:', nextBuilding?.y);
+    console.log("[BuildingManager] Providing building:", nextBuilding?.building?.name, "at Y:", nextBuilding?.y);
     return nextBuilding;
   }
 
   refillQueue(startY) {
-    console.log('[BuildingManager] Refilling queue from Y:', startY);
+    console.log("[BuildingManager] Refilling queue from Y:", startY);
     let currentY = startY;
 
-    // Add new batch of buildings
     for (let i = 0; i < 5; i++) {
+      console.log("[BuildingManager] Current buildingIndex during refill:", this.buildingIndex);
       if (this.buildingIndex >= this.shuffledBuildings.length) {
-        console.log('[BuildingManager] Reshuffling building list during refill');
-        this.buildingIndex = 0;
+        console.log("[BuildingManager] Reshuffling building list during refill");
         this.shuffledBuildings = this.shuffleArray([...TORONTO_BUILDINGS]);
+        this.buildingIndex = 0;
       }
-  
+
       const nextBuilding = this.shuffledBuildings[this.buildingIndex++];
       const buildingHeight = nextBuilding.art.length;
       currentY -= buildingHeight;
@@ -2068,63 +2073,26 @@ class BuildingManager {
 
       currentY -= this.minSpacing;
     }
-    
-    console.log('[BuildingManager] Queue size after refill:', this.buildingQueue.length);
-  }
 
-  validatePosition(y, height) {
-    console.log('[BuildingManager] Validating position - Y:', y, 'Height:', height);
-
-    if (typeof y !== "number" || isNaN(y)) {
-      console.warn('[BuildingManager] Invalid Y position:', y);
-      return false;
-    }
-
-    // Check for overlaps with existing buildings
-    const isValid = !Array.from(this.activeBuildings).some((building) => {
-      const topOverlap = y < building.position.y + building.height + this.minSpacing;
-      const bottomOverlap = y + height + this.minSpacing > building.position.y;
-      const sameColumn = Math.abs(building.position.x - this.config.LANES.BUILDINGS) < 0.1;
-
-      if (sameColumn && topOverlap && bottomOverlap) {
-        console.log(`[BuildingManager] Position invalid - overlaps with "${building.name}" at Y=${building.position.y}`);
-        return true;
-      }
-      return false;
-    });
-
-    console.log('[BuildingManager] Position validation result:', isValid);
-    return isValid;
-  }
-
-  // Track active buildings for collision detection
-  registerBuilding(building) {
-    console.log(`[BuildingManager] Registering building "${building.name}" at Y=${building.position.y}`);
-    this.activeBuildings.add(building);
-    console.log('[BuildingManager] Active buildings count:', this.activeBuildings.size);
-  }
-
-  unregisterBuilding(building) {
-    console.log(`[BuildingManager] Unregistering building "${building.name}" from Y=${building.position.y}`);
-    this.activeBuildings.delete(building);
-    console.log('[BuildingManager] Active buildings count:', this.activeBuildings.size);
+    console.log("[BuildingManager] Queue size after refill:", this.buildingQueue.length);
   }
 }
+
 
 class BuildingBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
-    console.log('[BuildingBehavior] Creating new behavior for:', entity.name);
-    
+    console.log("[BuildingBehavior] Creating new behavior for:", entity.name);
+
     // Movement properties
     this.canMove = true;
     this.speed = 1;
     this.ignoreCollisions = true;
     this.minSpacing = 1;
 
-    console.log('[BuildingBehavior] Initial position:', {
+    console.log("[BuildingBehavior] Initial position:", {
       y: entity.position.y,
-      height: entity.height
+      height: entity.height,
     });
   }
 
@@ -2141,13 +2109,15 @@ class BuildingBehavior extends EntityBehavior {
         .filter((e) => e.type === EntityType.BUILDING && e !== this.entity)
         .sort((a, b) => a.position.y - b.position.y);
 
-      console.log('[BuildingBehavior] Current building positions:', 
-        buildings.map(b => `${b.name}: Y=${b.position.y}`));
+      console.log(
+        "[BuildingBehavior] Current building positions:",
+        buildings.map((b) => `${b.name}: Y=${b.position.y}`)
+      );
 
       // Select new building properties
       if (Building.buildingIndex >= Building.availableBuildings.length) {
         Building.buildingIndex = 0;
-        console.log('[BuildingBehavior] Reset building index');
+        console.log("[BuildingBehavior] Reset building index");
       }
 
       const newBuilding = Building.availableBuildings[Building.buildingIndex];
@@ -2155,17 +2125,15 @@ class BuildingBehavior extends EntityBehavior {
       console.log(`[BuildingBehavior] Selected new building: ${newBuilding.name} (height: ${newHeight})`);
 
       // Calculate new position
-      let newY = buildings.length === 0 
-        ? this.entity.config.SPAWNING.MIN_BUILDING_HEIGHT
-        : buildings[0].position.y - newHeight - this.minSpacing;
+      let newY = buildings.length === 0 ? this.entity.config.SPAWNING.MIN_BUILDING_HEIGHT : buildings[0].position.y - newHeight - this.minSpacing;
 
-      console.log('[BuildingBehavior] Calculated new Y position:', newY);
+      console.log("[BuildingBehavior] Calculated new Y position:", newY);
 
       // Validate and adjust position if needed
       if (this.validatePosition(newY, newHeight, buildings)) {
         this.updateBuildingProperties(newY, newBuilding, newHeight);
       } else {
-        console.log('[BuildingBehavior] Initial position invalid, searching for valid position');
+        console.log("[BuildingBehavior] Initial position invalid, searching for valid position");
         this.findValidPosition(newY, newHeight, newBuilding, buildings);
       }
     }
@@ -2176,9 +2144,9 @@ class BuildingBehavior extends EntityBehavior {
     console.log(`[BuildingBehavior] Updating building properties:`, {
       name: newBuilding.name,
       y: newY,
-      height: newHeight
+      height: newHeight,
     });
-    
+
     this.entity.position.y = newY;
     this.entity.art = newBuilding.art;
     this.entity.height = newHeight;
@@ -2208,7 +2176,7 @@ class BuildingBehavior extends EntityBehavior {
 
   validatePosition(y, height, existingBuildings) {
     if (typeof y !== "number" || isNaN(y)) {
-      console.error('[BuildingBehavior] Invalid Y position:', y);
+      console.error("[BuildingBehavior] Invalid Y position:", y);
       return false;
     }
 
@@ -2228,9 +2196,9 @@ class BuildingBehavior extends EntityBehavior {
     console.log(`[BuildingBehavior] Position validation result:`, {
       y,
       height,
-      isValid
+      isValid,
     });
-    
+
     return isValid;
   }
 }
@@ -2242,15 +2210,15 @@ class Building extends BaseEntity {
   static buildingIndex = 0;
 
   constructor(config, spawnY = null) {
-    console.log('[Building] Creating new building:', {
+    console.log("[Building] Creating new building:", {
       spawnY,
       nextSpawnY: Building.nextSpawnY,
-      buildingIndex: Building.buildingIndex
+      buildingIndex: Building.buildingIndex,
     });
 
     // Reshuffle if we've used all buildings
     if (Building.buildingIndex >= Building.availableBuildings.length) {
-      console.log('[Building] Reshuffling building list');
+      console.log("[Building] Reshuffling building list");
       Building.availableBuildings = Building.shuffleArray([...TORONTO_BUILDINGS]);
       Building.buildingIndex = 0;
     }
@@ -2269,11 +2237,11 @@ class Building extends BaseEntity {
       calculatedY = config.GAME.HEIGHT - height - minSpacing;
     }
 
-    console.log('[Building] Calculated spawn position:', {
+    console.log("[Building] Calculated spawn position:", {
       building: selectedBuilding.name,
       height,
       calculatedY,
-      spacing: minSpacing
+      spacing: minSpacing,
     });
 
     const spawnConfig = {
@@ -2292,16 +2260,16 @@ class Building extends BaseEntity {
 
     Building.nextSpawnY = calculatedY;
 
-    console.log('[Building] Building created:', {
+    console.log("[Building] Building created:", {
       name: this.name,
       position: this.position,
       height: this.height,
-      width: this.width
+      width: this.width,
     });
   }
 
   static shuffleArray(array) {
-    console.log('[Building] Shuffling building array');
+    console.log("[Building] Shuffling building array");
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -2312,7 +2280,7 @@ class Building extends BaseEntity {
 
   getRandomBuildingColor() {
     const color = COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
-    console.log('[Building] Selected color:', color);
+    console.log("[Building] Selected color:", color);
     return color;
   }
 }
@@ -3080,7 +3048,7 @@ class LoserLane {
   }
   initializeBuildings() {
     console.log("initializeBuildings spawn"); //findme
-    
+
     let currentY = CONFIG.GAME.HEIGHT;
     const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0; // Ensure minimum spacing
 
@@ -3113,23 +3081,6 @@ class LoserLane {
         currentY -= minSpacing;
       }
     }
-  }
-
-  validateBuildingPlacement(position, height, existingBuildings) {
-    console.log("validateBuildingPlacement spawn");
-
-    const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
-
-    return !existingBuildings.some((existing) => {
-      // Check vertical overlap with spacing
-      const verticalOverlap =
-        position.y < existing.position.y + existing.height + minSpacing && position.y + height + minSpacing > existing.position.y;
-
-      // Buildings must be in same column to collide
-      const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
-
-      return sameColumn && verticalOverlap;
-    });
   }
 
   initializeParkedCars() {
