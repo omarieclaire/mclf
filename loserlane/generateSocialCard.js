@@ -68,76 +68,196 @@ const ART = {
     },
 };
 
-function generateSocialCard(reason, score, message, randomFace) {
-    // Remove any existing social card to prevent duplicates
-    const existingCard = document.getElementById("social-card");
-    if (existingCard) {
-      existingCard.remove();
-    }
-  
-    // Create the social card
-    const socialCard = document.createElement("div");
-    socialCard.id = "social-card";
-  
-    // Retrieve art from ART based on reason
-    const entityData = ART[reason] || { art: ["N/A"] };
-    const art = Array.isArray(entityData.art) ? entityData.art.join('\n') : "N/A";
-  
-    // Set the content for the social card with separate elements
-    // <p><strong>Reason:</strong> ${reason}</p>
-    
-    socialCard.innerHTML = `
-      <h2>Game Over</h2>
-      <pre>${art}</pre>
-   
+function generateSocialCard(canvas, reason, score, message, randomFace) {
+    const cropSize = 500;
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = cropSize;
+    finalCanvas.height = cropSize;
+    const finalCtx = finalCanvas.getContext("2d");
 
-      <p>${message}</p>
-      <span class="cute-death-face">${randomFace}</span>
-      <p>Score: ${score}</p>
-      <button id="download-card-btn">Save Card</button>
-      <button id="share-card-btn">Share to Socials</button>
+    // Draw the game screen capture onto the final canvas
+    const startX = (canvas.width - cropSize) / 2;
+    const startY = (canvas.height - cropSize) / 2;
+    finalCtx.drawImage(canvas, startX, startY, cropSize, cropSize, 0, 0, cropSize, cropSize);
+
+    // Get CSS styles from :root
+    const styles = getComputedStyle(document.documentElement);
+    const fontMain = styles.getPropertyValue("--font-main").trim();
+    const colors = {
+        gameOver: styles.getPropertyValue("--color-game-over").trim(),
+        reason: styles.getPropertyValue("--color-reason").trim(),
+        message: styles.getPropertyValue("--color-message").trim(),
+        face: styles.getPropertyValue("--color-face").trim(),
+        score: styles.getPropertyValue("--color-score").trim()
+    };
+    const fonts = {
+        gameOver: styles.getPropertyValue("--font-game-over").trim(),
+        reason: styles.getPropertyValue("--font-reason").trim(),
+        message: styles.getPropertyValue("--font-message").trim(),
+        face: styles.getPropertyValue("--font-face").trim(),
+        score: styles.getPropertyValue("--font-score").trim()
+    };
+
+    // Draw a semi-transparent box for legibility
+    const boxYPosition = cropSize - 150;
+    finalCtx.fillStyle = "rgba(0, 0, 0, 1)";
+    finalCtx.fillRect(0, boxYPosition, cropSize, 130);
+
+    // Define and draw each text element
+    finalCtx.textAlign = "center";
+    // { text: `Reason: ${reason}`, y: boxYPosition + 60, color: colors.reason, font: fonts.reason },
+
+    const textPositions = [
+        { text: "D E A D", y: boxYPosition + 25, color: colors.gameOver, font: fonts.gameOver },
+        { text: message, y: boxYPosition + 60, color: colors.message, font: fonts.message },
+        { text: randomFace, y: boxYPosition + 90, color: colors.face, font: fonts.face },
+        { text: `Score: ${score}`, y: boxYPosition + 120, color: colors.score, font: fonts.score }
+    ];
+    
+    textPositions.forEach(({ text, y, color, font }) => {
+        finalCtx.font = font;
+        finalCtx.fillStyle = color;
+        finalCtx.fillText(text, cropSize / 2, y);
+    });
+
+    // Generate an overlay for the screenshot
+    const overlay = document.createElement("div");
+    overlay.className = "screenshot-overlay";
+    overlay.style.cssText = `
+     
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
     `;
-  
-    document.getElementById("game-container").appendChild(socialCard);
-  
-    // Event listener for downloading the card
-    document.getElementById("download-card-btn").addEventListener("click", () => {
-      socialCard.classList.add("hide-buttons");
-      html2canvas(socialCard).then((canvas) => {
+
+    // Add screenshot image to overlay
+    const screenshotImage = new Image();
+    screenshotImage.src = finalCanvas.toDataURL();
+    screenshotImage.alt = `Game Over screen. Reason: ${reason}, Message: ${message}, Face: ${randomFace}, Score: ${score}`;
+    screenshotImage.style.width = `${cropSize}px`;
+    screenshotImage.style.height = `${cropSize}px`;
+    screenshotImage.style.border = "3px dashed var(--green)";
+    overlay.appendChild(screenshotImage);
+
+    // Button container with save, share, and close buttons
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "SAVE";
+    saveButton.onclick = () => {
         const link = document.createElement("a");
-        link.download = "social_card.png";
-        link.href = canvas.toDataURL();
+        link.download = "game_over_screenshot.png";
+        link.href = screenshotImage.src;
         link.click();
-        socialCard.classList.remove("hide-buttons");
-      }).catch((error) => {
-        alert("Failed to save image. Please try again.");
-        socialCard.classList.remove("hide-buttons");
-      });
-    });
-  
-    // Event listener for sharing the card
-    document.getElementById("share-card-btn").addEventListener("click", () => {
-      socialCard.classList.add("hide-buttons");
-      html2canvas(socialCard).then((canvas) => {
-        canvas.toBlob((blob) => {
-          const file = new File([blob], "social_card.png", { type: "image/png" });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({
-              files: [file],
-              title: "My Game Over Card",
-              text: `I scored ${score} in the game! ${message} ${randomFace}`
-            }).catch(() => {
-              alert("Failed to share image. Please try again.");
-            });
-          } else {
-            alert("Your browser doesn't support direct sharing.");
-          }
-          socialCard.classList.remove("hide-buttons");
+    };
+    buttonContainer.appendChild(saveButton);
+
+    const shareButton = document.createElement("button");
+    shareButton.textContent = "SHARE";
+    shareButton.onclick = () => {
+        finalCanvas.toBlob((blob) => {
+            const file = new File([blob], "game_over_screenshot.png", { type: "image/png" });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: "D E A D",
+                    text: `I scored ${score} in the game! ${message} ${randomFace}`
+                }).catch(() => alert("Failed to share image. Please try again."));
+            } else {
+                alert("Your browser doesn't support direct sharing.");
+            }
         });
-      }).catch(() => {
-        alert("Failed to share image. Please try again.");
-        socialCard.classList.remove("hide-buttons");
-      });
-    });
-  }
-  
+    };
+    buttonContainer.appendChild(shareButton);
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "CLOSE";
+    closeButton.onclick = () => {
+        overlay.remove();
+        this.restart(); // Restart the game after closing
+    };
+    buttonContainer.appendChild(closeButton);
+
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.gap = "1rem";
+    buttonContainer.style.marginTop = "1rem";
+    overlay.appendChild(buttonContainer);
+
+    document.body.appendChild(overlay);
+}
+
+
+
+function generateSocialCardNoSS(reason, score, messageText, randomFace) {
+    const overlay = document.createElement("div");
+    overlay.className = "screenshot-overlay";
+
+    const entityData = ART[reason] || { art: ["N/A"] };
+    const art = Array.isArray(entityData.art) ? entityData.art.join("\n") : "N/A";
+
+    const socialCard = document.createElement("div");
+    socialCard.className = "social-card";
+    // <p class="message-reason"><strong></strong> ${reason}</p>
+    // <pre class="ascii-art">${art}</pre>
+
+    socialCard.innerHTML = `
+      <h2 class="game-over-title">DEAD</h2>
+            <p class="message-text">${messageText}</p>
+                  <span class="cute-death-face">${randomFace}</span>
+      <p class="score-text">Score: ${score}</p>
+    `;
+    overlay.appendChild(socialCard);
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container"; 
+
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "SAVE";
+    saveButton.onclick = () => {
+        html2canvas(socialCard).then((canvas) => {
+            const link = document.createElement("a");
+            link.download = "game_over_card.png";
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    };
+    buttonContainer.appendChild(saveButton);
+
+    const shareButton = document.createElement("button");
+    shareButton.textContent = "SHARE";
+    shareButton.onclick = () => {
+        html2canvas(socialCard).then((canvas) => {
+            canvas.toBlob((blob) => {
+                const file = new File([blob], "game_over_card.png", { type: "image/png" });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: "D E A D",
+                        text: `I scored ${score} in the game! ${messageText} ${randomFace}`
+                    }).catch(() => alert("Failed to share image. Please try again."));
+                } else {
+                    alert("Your browser doesn't support direct sharing.");
+                }
+            });
+        });
+    };
+    buttonContainer.appendChild(shareButton);
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "CLOSE";
+    closeButton.onclick = () => {
+        overlay.remove();
+        this.restart();
+    };
+    buttonContainer.appendChild(closeButton);
+
+    overlay.appendChild(buttonContainer);
+    document.body.appendChild(overlay);
+}
+

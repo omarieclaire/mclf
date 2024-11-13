@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 40,
+    WIDTH: 38,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
@@ -58,9 +58,7 @@ const CONFIG = {
     DOOR_OPEN_DURATION: 100,
     DOOR_OPEN_DELAY: 25,
     DEATH_DURATION: 1500,
-    SCREEN_SHAKE_DURATION: 1000,
-    FLASH_DELAY: 100,
-    PARTICLE_DURATION: 500,
+    SCREEN_SHAKE_DURATION: 1500,
   },
   MOVEMENT: {
     JUMP_AMOUNT: 2,
@@ -3132,7 +3130,6 @@ class LoserLane {
       }
     }
   }
-
   die(reason) {
     this.state.isDead = true;
 
@@ -3151,27 +3148,6 @@ class LoserLane {
     if (gameScreen) {
       gameScreen.classList.add("screen-shake");
 
-      // Add CSS for new particle animations
-      const style = document.createElement("style");
-      style.textContent = `
-        .death-particle {
-          animation: particle-pulse 0.3s infinite;
-        }
-        .death-particle-outer {
-          animation: particle-float 0.5s ease-out;
-        }
-        @keyframes particle-pulse {
-          0% { opacity: 1; }
-          50% { opacity: 0.5; }
-          100% { opacity: 1; }
-        }
-        @keyframes particle-float {
-          0% { transform: translate(0, 0); opacity: 1; }
-          100% { transform: translate(var(--float-x, 5px), var(--float-y, -5px)); opacity: 0; }
-        }
-      `;
-      document.head.appendChild(style);
-
       // Create game over overlay
       const overlay = document.createElement("div");
       overlay.className = "game-over";
@@ -3181,13 +3157,29 @@ class LoserLane {
       setTimeout(() => {
         gameScreen.classList.remove("screen-shake");
         overlay.remove();
-        style.remove();
       }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
     }
 
+    // Call flashScreen for red flash effect
     this.flashScreen();
-    const { category, message, randomFace } = this.showDeathMessage(reason);
+    this.showDeathMessage(reason);
 
+    // Capture screenshot after animation completes (these lines are ready but inactive)
+    // setTimeout(() => {
+    //   const score = this.state.score;
+    //   const message = this.showDeathMessage(reason).message;
+
+    //   html2canvas(gameScreen)
+    //       .then((canvas) => {
+    //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
+    //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
+    //       })
+    //       .catch((error) => {
+    //           console.error("Failed to capture screenshot:", error);
+    //       });
+    // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+
+    // Restart game after death duration
     setTimeout(() => {
       const messageEl = document.getElementById("main-msg-box");
       if (messageEl) {
@@ -3195,25 +3187,26 @@ class LoserLane {
       }
       this.restart();
     }, this.config.ANIMATIONS.DEATH_DURATION);
-
-    // Add social card generation based on death reason and score
-    const score = this.state.score;
-    // generateSocialCard(reason, this.state.score, message.funny, randomFace); // Assumes generateSocialCard is updated to accept these arguments
   }
 
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
 
-    const colors = ["#FF0000", "#000000", "#222"];
+    const colors = ["#FF0000", "#000000", "#222"]; // Red flash sequence
     let delay = 0;
 
     colors.forEach((color) => {
       setTimeout(() => {
         gameScreen.style.backgroundColor = color;
       }, delay);
-      delay += 100;
+      delay += 100; // Adjust timing for each color switch
     });
+
+    // Reset background color after the flash sequence
+    setTimeout(() => {
+      gameScreen.style.backgroundColor = ""; // Reset to default color
+    }, delay);
   }
 
   showDeathMessage(reason) {
@@ -3236,8 +3229,7 @@ class LoserLane {
 
     // Return reason, message, and face as separate elements
     return { reason, message, randomFace };
-}
-
+  }
 
   getRandomDeathMessage(type) {
     const messages = MESSAGES.DEATH[type];
