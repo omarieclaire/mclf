@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 38,
+    WIDTH: 41,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 500,
     MIN_SPEED: 300,
@@ -45,14 +45,14 @@ const CONFIG = {
     SPEED: 0.5,
   },
   LANES: {
-    ONCOMING: 1,
-    DIVIDER: 6,
-    TRACKS: 9,
-    BIKE: 14,
-    BIKE_RIGHT: 15,
-    PARKED: 17,
-    SIDEWALK: 25,
-    BUILDINGS: 28,
+    ONCOMING: 3,
+    DIVIDER: 8,
+    TRACKS: 11,
+    BIKE: 16,
+    BIKE_RIGHT: 17,
+    PARKED: 19,
+    SIDEWALK: 27,
+    BUILDINGS: 30,
   },
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
@@ -2988,6 +2988,7 @@ class LoserLane {
       this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 1, y, "║", STYLES.TRACKS);
       this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 5, y, "║", STYLES.TRACKS);
 
+      
       if (y % 3 === 0) {
         this.gridSystem.updateCell(CONFIG.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
       }

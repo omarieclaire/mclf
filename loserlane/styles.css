@@ -240,7 +240,7 @@ a {
   flex-direction: column;
   text-align: center;
   z-index: 100;
-  border: 1px double var(--dark-yellow);
+  /* border: 1px double var(--dark-yellow); */
   /* width: var(--game-width); */
   width: 100vw;
   margin: 0;
@@ -255,11 +255,12 @@ a {
 }
 
 #title-box {
-    border-bottom: 2px dashed var(--dark-yellow);
+    /* border-bottom: 2px dashed var(--dark-yellow); */
     padding: 7px;
     margin: 0;
     /* margin-bottom: 10px; */
-
+    border: 1px double var(--dark-yellow);
+    width: 100%;
 }
 
 #score-box {
