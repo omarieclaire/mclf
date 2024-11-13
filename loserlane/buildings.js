@@ -457,9 +457,9 @@ const TORONTO_BUILDINGS = [
         name: "WEEEED",
         art: [
             "╭═══╧════╮",
-            "│∥≑≑≑≑∥∥≑≑│",
+            "│∥≑≑≑∥∥≑≑│",
             "│≜ ≜ ≜≜ ≜│",
-            "│∥∥≑ ∥∥∥ ≑∥∥│",
+            "│∥∥≑∥∥≑∥∥│",
             "│⌡WEEEED⌠│",
             "│⌡⌠⌡⌠⌡⌠⌡⌠│",
             "└────────┘"
@@ -499,15 +499,15 @@ const TORONTO_BUILDINGS = [
     {
         name: "BwwwEOT",
         art: [
-            "╭════◇════╮",
-            "║   ╭╥╮   ║",
-            "║  ╓╨╨╨╖  ║",
-            "║ ┃┇⇋⇋⇋┇┃ ║",
-            "║ ┃ ┅┅┅ ┃ ║",
-            "║WHY  GUY",
-            "║  ╙╨╨╨╜  ║",
-            " ║  ║║║  ║ ",
-            "╰═════════╯"
+            "╭═══◇═══╮",
+            "║   ╭╥╮  ║",
+            "║  ╓╨╨╨╖ ║",
+            "║┃ ┇⇋⇋┇ ┃║",
+            "║┃ ┅┅ ┅ ┃║",
+            "║WHY  GUY║",
+            "║  ╙╨╨╨╜ ║",
+            "║ ║║║ ║  ║",
+            "╰════════╯"
         ]
     },
     {
@@ -580,14 +580,14 @@ const TORONTO_BUILDINGS = [
         name: "APT2",
         art: [
           "██████████",
-          "║ ░ ░░░ ░ ║",
-          "║ ░ ░░░ ░ ║",
-          "║ ░ ░░░ ░ ║",
-          "║ ░ ░░░ ░ ║",
-          "║ ░ ░░░ ░ ║",
-          "║ ─────── ║",
-          "║ ▒▒▒▒▒▒▒ ║",
-          "╰─────────╯",
+          "║ ░ ░░ ░ ║",
+          "║ ░ ░░ ░ ║",
+          "║ ░ ░░ ░ ║",
+          "║ ░ ░░ ░ ║",
+          "║ ░ ░░ ░ ║",
+          "║ ────── ║",
+          "║ ▒▒▒▒▒▒ ║",
+          "╰────────╯",
         ],
       },
     
@@ -607,24 +607,24 @@ const TORONTO_BUILDINGS = [
       {
         name: "APT4",
         art: [
-          "██████████",
-          "║ ▒▒ ▒▒ ▒ ║",
-          "║ ▒▒ ▒▒ ▒ ║",
-          "║ ▒▒ ▒▒ ▒ ║",
-          "║ ═══════ ║",
-          "║ ░░░░░░░ ║",
-          "╰─────────╯",
+          "█████████",
+          "║ ▒ ▒▒ ▒ ║",
+          "║ ▒ ▒▒ ▒ ║",
+          "║ ▒ ▒▒ ▒ ║",
+          "║ ══════ ║",
+          "║ ░░░░░░ ║",
+          "╰────────╯",
         ],
       },
     
       {
         name: "APT5",
         art: [
-          "▓▓▓▓▓▓▓▓▓▓",
-          "║ ▲ ▲▲  ▲ ║",
-          "║ ═══════ ║",
-          "║ ███████ ║",
-          "╰╩╩╩╩╩╩╩╩╩╯",
+          "▓▓▓▓▓▓▓▓▓",
+          "║ ▲ ▲▲ ▲ ║",
+          "║ ══════ ║",
+          "║ ██████ ║",
+          "╰╩╩╩╩╩╩╩╩╯",
         ],
       },
     
@@ -713,9 +713,9 @@ const TORONTO_BUILDINGS = [
         name: "APT13",
         art: [
           "██████████",
-          "║ ═══════ ║",
-          "║ ░░░░░░░ ║",
-          "╰─────────╯",
+          "║ ══════ ║",
+          "║ ░░░░░░ ║",
+          "╰────────╯",
         ],
       },
     
@@ -729,11 +729,54 @@ const TORONTO_BUILDINGS = [
           "╰╩╩╩╩╩╩╩╩╯",
         ],
       },
+      
+
+
+
+      {
+        name: "BROCKTON_HAUNT",
+        art: [
+            "╭────────╮",
+            "│BROCK   │",
+            "│TON     │",
+            "│HAUNT   │",
+            "༼つ╹ ╹ ༽つ│",
+            "╰────────╯"
+        ],
+    },
+    {
+        name: "PHO_HUNG",
+        art: [
+            ":::::::::",
+            "!       !",
+            "!       !",
+            "! Pho   !",
+            "! Hung  !",
+            "!       !",
+            "!       !",
+            ":::::::::"
+           
+        ],
+    } 
 ];
 
 console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
 
 
+function checkBuildingWidth(buildings) {
+    const nonCompliantBuildings = buildings.filter(building => 
+        building.art.some(line => line.length > 10)
+    );
+
+    if (nonCompliantBuildings.length > 0) {
+        console.log("Non-compliant buildings (lines over 10 characters):");
+        nonCompliantBuildings.forEach(building => console.log(building.name));
+    } else {
+        console.log("All buildings are compliant.");
+    }
+}
+
+checkBuildingWidth(TORONTO_BUILDINGS);
 
 
 

@@ -791,3 +791,31 @@ button:active {
   text-align: center;
   margin: 5px 0;
 }
+
+
+
+/* Death glitch animation classes */
+.char-glitch {
+  display: inline-block !important;
+  animation: tilt 2.4s steps(1) infinite;
+}
+
+.char-glitch.edge {
+  animation-name: tiltEdge;
+}
+
+.char-glitch.body {
+  animation-name: tiltBody;
+}
+
+@keyframes tiltEdge {
+  0%, 5% { transform: rotate(0deg); }
+  10%, 90% { transform: rotate(15deg); }
+  95%, 100% { transform: rotate(0deg); }
+}
+
+@keyframes tiltBody {
+  0%, 5% { transform: rotate(0deg); }
+  10%, 90% { transform: rotate(6deg); }
+  95%, 100% { transform: rotate(0deg); }
+}

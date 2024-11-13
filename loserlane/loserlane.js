@@ -215,19 +215,25 @@ class SpatialManager {
   }
 }
 
+// =========================================
+// GridSystem - Spatial/Collision Management
+// =========================================
 class GridSystem {
   constructor(config) {
     this.config = config;
-    this.cellSize = 5; // Size of each grid cell
-    this.cells = new Map(); // Map of cell coordinates to sets of entities
+    this.cellSize = 5; // Size of each spatial partition cell
+    // Map of cell coordinates to sets of entities in that cell
+    this.cells = new Map();
   }
 
+  // Convert world coordinates to cell key
   getCellKey(x, y) {
     const cellX = Math.floor(x / this.cellSize);
     const cellY = Math.floor(y / this.cellSize);
     return `${cellX},${cellY}`;
   }
 
+  // Add entity to appropriate spatial partition
   addEntity(entity) {
     const key = this.getCellKey(entity.position.x, entity.position.y);
     if (!this.cells.has(key)) {
@@ -236,6 +242,7 @@ class GridSystem {
     this.cells.get(key).add(entity);
   }
 
+  // Remove entity from its spatial partition
   removeEntity(entity) {
     const key = this.getCellKey(entity.position.x, entity.position.y);
     const cell = this.cells.get(key);
@@ -247,10 +254,12 @@ class GridSystem {
     }
   }
 
+  // Update entity's position in spatial partitioning
   updateEntityPosition(entity, oldPos, newPos) {
     const oldKey = this.getCellKey(oldPos.x, oldPos.y);
     const newKey = this.getCellKey(newPos.x, newPos.y);
 
+    // Only update if entity moved to new cell
     if (oldKey !== newKey) {
       this.cells.get(oldKey)?.delete(entity);
       if (!this.cells.has(newKey)) {
@@ -260,6 +269,7 @@ class GridSystem {
     }
   }
 
+  // Find all entities within radius of a position
   getNearbyEntities(position, radius) {
     const nearbyEntities = new Set();
     const cellRadius = Math.ceil(radius / this.cellSize);
@@ -267,6 +277,7 @@ class GridSystem {
     const centerCellX = Math.floor(position.x / this.cellSize);
     const centerCellY = Math.floor(position.y / this.cellSize);
 
+    // Check all cells within radius
     for (let dx = -cellRadius; dx <= cellRadius; dx++) {
       for (let dy = -cellRadius; dy <= cellRadius; dy++) {
         const key = `${centerCellX + dx},${centerCellY + dy}`;
@@ -284,7 +295,6 @@ class GridSystem {
     return Array.from(nearbyEntities);
   }
 }
-
 class CollisionManager {
   constructor(spatialManager) {
     this.spatialManager = spatialManager;
@@ -2228,10 +2238,17 @@ class GameState {
   }
 }
 
+// =========================================
+// OptimizedGridSystem - Visual Rendering Grid
+// =========================================
 class OptimizedGridSystem {
   constructor(width, height) {
     this.width = width;
     this.height = height;
+    // 2D array representing the game screen, each cell contains:
+    // - content: The character to display
+    // - style: CSS styling/color information
+    // - dirty: Whether the cell needs redrawing
     this.grid = Array(height)
       .fill()
       .map(() =>
@@ -2243,9 +2260,11 @@ class OptimizedGridSystem {
             dirty: true,
           }))
       );
+    // Track which cells need updating for optimization
     this.dirtyRegions = new Set();
   }
 
+  // Mark a rectangular region as needing redraw
   markRegionDirty(x1, y1, x2, y2) {
     for (let y = Math.max(0, Math.floor(y1)); y < Math.min(this.height, Math.ceil(y2)); y++) {
       for (let x = Math.max(0, Math.floor(x1)); x < Math.min(this.width, Math.ceil(x2)); x++) {
@@ -2255,10 +2274,12 @@ class OptimizedGridSystem {
     }
   }
 
+  // Update a single cell's content and style
   updateCell(x, y, content, style = null) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
 
     const cell = this.grid[y][x];
+    // Only mark as dirty if content or style actually changed
     if (cell.content !== content || cell.style !== style) {
       cell.content = content;
       cell.style = style;
@@ -2267,6 +2288,7 @@ class OptimizedGridSystem {
     }
   }
 
+  // Reset dirty cells to empty state
   clear() {
     this.dirtyRegions.forEach((key) => {
       const [x, y] = key.split(",").map(Number);
@@ -2279,15 +2301,19 @@ class OptimizedGridSystem {
     this.dirtyRegions.clear();
   }
 
+  // Convert grid to HTML string for rendering
   render() {
     let output = [];
     let currentRow = [];
     let lastStyle = null;
 
+    
+
     for (let y = 0; y < this.height; y++) {
       currentRow = [];
       for (let x = 0; x < this.width; x++) {
         const cell = this.grid[y][x];
+        // Only add style tags when style changes
         if (cell.style !== lastStyle) {
           if (lastStyle !== null) currentRow.push(STYLES.RESET);
           if (cell.style !== null) currentRow.push(cell.style);
@@ -2300,7 +2326,33 @@ class OptimizedGridSystem {
     }
     return output.join("\n");
   }
+
+  /**
+   * Get all active characters and their styles from the grid
+   * @returns {Array<{x: number, y: number, content: string, style: string|null}>}
+   */
+  getActiveCharacters() {
+    const activeChars = [];
+    
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const cell = this.grid[y][x];
+        // Include any cell that isn't an empty space
+        if (cell.content !== " ") {
+          activeChars.push({
+            x,
+            y,
+            content: cell.content,
+            style: cell.style
+          });
+        }
+      }
+    }
+    
+    return activeChars;
+  }
 }
+
 
 class SettingsManager {
   constructor(game) {
@@ -3006,35 +3058,16 @@ class LoserLane {
       }
     });
   }
-
   drawEntity(entity) {
     if (!entity || !entity.art) return;
 
     if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-      // Add debug markers for building boundaries
-      if (entity.type === EntityType.BUILDING) {
-        // Mark top boundary
-        this.gridSystem.updateCell(
-          Math.floor(entity.position.x),
-          Math.floor(entity.position.y)
-          // '▲',
-          // '<span style="color: black">'
-        );
-
-        // Mark bottom boundary
-        this.gridSystem.updateCell(
-          Math.floor(entity.position.x),
-          Math.floor(entity.position.y + entity.height)
-          // '▼',
-          // '<span style="color: black">'
-        );
-      }
-
+      const isDying = this.state.isDead;
+      
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-              // Get appropriate shadow class while keeping original colors
               let effectClass = "entity ";
               switch (entity.type) {
                 case EntityType.STREETCAR:
@@ -3055,14 +3088,83 @@ class LoserLane {
                   break;
               }
 
+              // Add death animation classes if dying
+              if (isDying) {
+                const isEdge = /[┌┐│╰╯]/.test(char);
+                const glitchClass = isEdge ? 'char-glitch edge' : 'char-glitch body';
+                effectClass += ` ${glitchClass}`;
+              }
+
               const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
+              this.gridSystem.updateCell(
+                Math.floor(entity.position.x + x),
+                Math.floor(entity.position.y + i),
+                wrappedChar,
+                entity.color
+              );
             }
           });
         }
       });
     }
   }
+
+  // drawEntity(entity) {
+  //   if (!entity || !entity.art) return;
+
+  //   if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+  //     // Add debug markers for building boundaries
+  //     if (entity.type === EntityType.BUILDING) {
+  //       // Mark top boundary
+  //       this.gridSystem.updateCell(
+  //         Math.floor(entity.position.x),
+  //         Math.floor(entity.position.y)
+  //         // '▲',
+  //         // '<span style="color: black">'
+  //       );
+
+  //       // Mark bottom boundary
+  //       this.gridSystem.updateCell(
+  //         Math.floor(entity.position.x),
+  //         Math.floor(entity.position.y + entity.height)
+  //         // '▼',
+  //         // '<span style="color: black">'
+  //       );
+  //     }
+
+  //     entity.art.forEach((line, i) => {
+  //       if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
+  //         line.split("").forEach((char, x) => {
+  //           if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
+  //             // Get appropriate shadow class while keeping original colors
+  //             let effectClass = "entity ";
+  //             switch (entity.type) {
+  //               case EntityType.STREETCAR:
+  //                 effectClass += "streetcar";
+  //                 break;
+  //               case EntityType.STREETCAR_LANE_CAR:
+  //               case EntityType.ONCOMING_CAR:
+  //                 effectClass += "car";
+  //                 break;
+  //               case EntityType.PARKED_CAR:
+  //                 effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "car";
+  //                 break;
+  //               case EntityType.PEDESTRIAN:
+  //                 effectClass += "pedestrian";
+  //                 break;
+  //               case EntityType.BUILDING:
+  //                 effectClass += "building";
+  //                 break;
+  //             }
+
+  //             const wrappedChar = `<span class="${effectClass}">${char}</span>`;
+  //             this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
+  //           }
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   drawBike() {
     if (this.state.isDead && this.state.deathState.animation < 15) {
@@ -3131,64 +3233,174 @@ class LoserLane {
       }
     }
   }
-  die(reason) {
-    this.state.isDead = true;
 
-    // Store the death position using the current player position
-    this.state.deathState = {
-      animation: 0,
-      x: Math.round(this.state.currentLane),
-      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-      reason: reason,
-      frameCounter: 0,
-      colorIndex: 0,
-    };
 
-    // Add screen shake effect
-    const gameScreen = document.getElementById("game-screen");
-    if (gameScreen) {
-      gameScreen.classList.add("screen-shake");
+die(reason) {
+  console.log("\n=== Death Animation Starting ===");
+  
+  this.state.isDead = true;
 
-      // Create game over overlay
-      const overlay = document.createElement("div");
-      overlay.className = "game-over";
-      document.body.appendChild(overlay);
+  // Store death state
+  this.state.deathState = {
+    animation: 0,
+    x: Math.round(this.state.currentLane),
+    y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+    reason: reason,
+    frameCounter: 0,
+    colorIndex: 0,
+  };
 
-      // Clean up effects after animation
-      setTimeout(() => {
-        gameScreen.classList.remove("screen-shake");
-        overlay.remove();
-      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-    }
+  // Add screen shake effect
+  const gameScreen = document.getElementById("game-screen");
+  if (gameScreen) {
+    gameScreen.classList.add("screen-shake");
 
-    // Call flashScreen for red flash effect
-    this.flashScreen();
-    this.showDeathMessage(reason);
+    // Create game over overlay
+    const overlay = document.createElement("div");
+    overlay.className = "game-over";
+    document.body.appendChild(overlay);
 
-    // Capture screenshot after animation completes (these lines are ready but inactive)
-    // setTimeout(() => {
-    //   const score = this.state.score;
-    //   const message = this.showDeathMessage(reason).message;
-
-    //   html2canvas(gameScreen)
-    //       .then((canvas) => {
-    //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
-    //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
-    //       })
-    //       .catch((error) => {
-    //           console.error("Failed to capture screenshot:", error);
-    //       });
-    // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-
-    // Restart game after death duration
+    // Clean up effects after animation
     setTimeout(() => {
-      const messageEl = document.getElementById("main-msg-box");
-      if (messageEl) {
-        messageEl.classList.remove("show-message");
-      }
-      this.restart();
-    }, this.config.ANIMATIONS.DEATH_DURATION);
+      gameScreen.classList.remove("screen-shake");
+      overlay.remove();
+    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
   }
+
+  // Show death message
+  this.showDeathMessage(reason);
+
+  // Restart after a longer delay to see the glitch animation
+  setTimeout(() => {
+    const messageEl = document.getElementById("main-msg-box");
+    if (messageEl) {
+      messageEl.classList.remove("show-message");
+    }
+    this.restart();
+  }, 2000);  // Increased to 2 seconds to see the full glitch
+}
+
+
+
+die(reason) {
+  console.log("\n=== Death Animation Starting ===");
+  
+  this.state.isDead = true;
+
+  // Store the death position using the current player position
+  this.state.deathState = {
+    animation: 0,
+    x: Math.round(this.state.currentLane),
+    y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+    reason: reason,
+    frameCounter: 0,
+    colorIndex: 0,
+  };
+
+  // Add screen shake effect
+  const gameScreen = document.getElementById("game-screen");
+  if (gameScreen) {
+    gameScreen.classList.add("screen-shake");
+
+    // Create game over overlay
+    const overlay = document.createElement("div");
+    overlay.className = "game-over";
+    document.body.appendChild(overlay);
+
+    // Clean up effects after animation
+    setTimeout(() => {
+      gameScreen.classList.remove("screen-shake");
+      overlay.remove();
+    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+  }
+
+  // Call flashScreen for red flash effect
+  this.flashScreen();
+  this.showDeathMessage(reason);
+
+  // Capture screenshot after animation completes (these lines are ready but inactive)
+  // setTimeout(() => {
+  //   const score = this.state.score;
+  //   const message = this.showDeathMessage(reason).message;
+  //   html2canvas(gameScreen)
+  //       .then((canvas) => {
+  //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
+  //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
+  //       })
+  //       .catch((error) => {
+  //           console.error("Failed to capture screenshot:", error);
+  //       });
+  // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+
+  // Restart game after death duration
+  setTimeout(() => {
+    const messageEl = document.getElementById("main-msg-box");
+    if (messageEl) {
+      messageEl.classList.remove("show-message");
+    }
+    this.restart();
+  }, this.config.ANIMATIONS.DEATH_DURATION);
+}
+
+
+  // die(reason) {
+  //   this.state.isDead = true;
+
+  //   // Store the death position using the current player position
+  //   this.state.deathState = {
+  //     animation: 0,
+  //     x: Math.round(this.state.currentLane),
+  //     y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+  //     reason: reason,
+  //     frameCounter: 0,
+  //     colorIndex: 0,
+  //   };
+
+  //   // Add screen shake effect
+  //   const gameScreen = document.getElementById("game-screen");
+  //   if (gameScreen) {
+  //     gameScreen.classList.add("screen-shake");
+
+  //     // Create game over overlay
+  //     const overlay = document.createElement("div");
+  //     overlay.className = "game-over";
+  //     document.body.appendChild(overlay);
+
+  //     // Clean up effects after animation
+  //     setTimeout(() => {
+  //       gameScreen.classList.remove("screen-shake");
+  //       overlay.remove();
+  //     }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+  //   }
+
+  //   // Call flashScreen for red flash effect
+  //   this.flashScreen();
+  //   this.showDeathMessage(reason);
+
+  //   // Capture screenshot after animation completes (these lines are ready but inactive)
+  //   // setTimeout(() => {
+  //   //   const score = this.state.score;
+  //   //   const message = this.showDeathMessage(reason).message;
+
+  //   //   html2canvas(gameScreen)
+  //   //       .then((canvas) => {
+  //   //           generateSocialCard.call(this, canvas, reason, score, message.funny, randomFace);
+  //   //           generateSocialCardNoSS(reason, score, message.funny, randomFace);
+  //   //       })
+  //   //       .catch((error) => {
+  //   //           console.error("Failed to capture screenshot:", error);
+  //   //       });
+  //   // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+
+  //   // Restart game after death duration
+  //   setTimeout(() => {
+  //     const messageEl = document.getElementById("main-msg-box");
+  //     if (messageEl) {
+  //       messageEl.classList.remove("show-message");
+  //     }
+  //     this.restart();
+  //   }, this.config.ANIMATIONS.DEATH_DURATION);
+  // }
 
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
