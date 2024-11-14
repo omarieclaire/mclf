@@ -430,15 +430,15 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   buttonContainer.className = "button-container";
 
   const saveButton = document.createElement("button");
-  saveButton.textContent = "SAVE";
-  saveButton.onclick = () => {
-    html2canvas(socialCard).then((canvas) => {
-      const link = document.createElement("a");
-      link.download = "game_over_card.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  };
+saveButton.textContent = "SAVE";
+saveButton.onclick = () => {
+  html2canvas(socialCard).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = `loser-lane-${score}s.png`; // Customized filename here
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+};
   buttonContainer.appendChild(saveButton);
 
   const shareButton = document.createElement("button");
@@ -446,7 +446,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   shareButton.onclick = () => {
     html2canvas(socialCard).then((canvas) => {
       canvas.toBlob((blob) => {
-        const file = new File([blob], "game_over_card.png", { type: "image/png" });
+        const file = new File([blob], `loser-lane-${score}s.png`, { type: "image/png" }); // Customized filename here
 
         // Try file sharing first
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
