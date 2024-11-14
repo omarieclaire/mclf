@@ -820,7 +820,7 @@ button:active {
 
 @media (min-width: 600px) {
   .message-text {
-    font-size: 1.3rem;
+    /* font-size: 1.3rem; */
     text-transform: uppercase;
   }
 }
