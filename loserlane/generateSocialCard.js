@@ -497,7 +497,7 @@ buttonContainer.appendChild(shareButton);
 //   }
 // };
 
-  buttonContainer.appendChild(shareButton);
+//   buttonContainer.appendChild(shareButton);
 
   const closeButton = document.createElement("button");
   closeButton.textContent = "CLOSE";
