@@ -442,43 +442,45 @@ saveButton.onclick = () => {
   buttonContainer.appendChild(saveButton);
 
   const shareButton = document.createElement("button");
-  shareButton.textContent = "SHARE";
-  shareButton.onclick = () => {
-    html2canvas(socialCard).then((canvas) => {
-      canvas.toBlob((blob) => {
-        const file = new File([blob], `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`, { type: "image/png" }); // Customized filename here
-
-        // Try file sharing first
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator
-            .share({
-              files: [file],
-              title: "WE NEED BIKE LANES",
-              text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
-            })
-            .catch((error) => {
-              console.error("Error sharing:", error);
-              alert("Failed to share image. Please try again.");
-            });
-        }
-        // Fall back to text-only sharing
-        else if (navigator.share) {
-          navigator
-            .share({
-              title: "WE NEED BIKE LANES",
-              text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
-              url: window.location.href, // Include the game URL
-            })
-            .catch((error) => {
-              console.error("Error sharing:", error);
-              alert("Failed to share. Please try again.");
-            });
-        } else {
-          alert("Your browser doesn't support sharing.");
-        }
-      });
-    });
+shareButton.textContent = "SHARE";
+shareButton.onclick = async () => {
+  const shareData = {
+    title: "WE NEED BIKE LANES",
+    text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
+    url: window.location.href
   };
+
+  // Check if the Web Share API is supported
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      console.log('Shared successfully');
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        // Only show error if user didn't just cancel the share
+        console.error('Share failed:', err.message);
+        
+        // Fallback to clipboard
+        try {
+          await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+          alert('Share text copied to clipboard!');
+        } catch (clipErr) {
+          console.error('Clipboard failed:', clipErr);
+          alert('Could not share or copy. Please try again!');
+        }
+      }
+    }
+  } else {
+    // Fallback for browsers that don't support sharing
+    try {
+      await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+      alert('Share text copied to clipboard!');
+    } catch (err) {
+      console.error('Clipboard failed:', err);
+      alert('Could not share or copy. Please try again!');
+    }
+  }
+};
 
   buttonContainer.appendChild(shareButton);
 
