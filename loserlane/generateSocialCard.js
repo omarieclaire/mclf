@@ -434,7 +434,7 @@ saveButton.textContent = "SAVE";
 saveButton.onclick = () => {
   html2canvas(socialCard).then((canvas) => {
     const link = document.createElement("a");
-    link.download = `loser-lane-${score}s.png`; // Customized filename here
+    link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`; // Customized filename here
     link.href = canvas.toDataURL();
     link.click();
   });
@@ -446,7 +446,7 @@ saveButton.onclick = () => {
   shareButton.onclick = () => {
     html2canvas(socialCard).then((canvas) => {
       canvas.toBlob((blob) => {
-        const file = new File([blob], `loser-lane-${score}s.png`, { type: "image/png" }); // Customized filename here
+        const file = new File([blob], `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`, { type: "image/png" }); // Customized filename here
 
         // Try file sharing first
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
