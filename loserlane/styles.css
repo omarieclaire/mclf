@@ -1,37 +1,37 @@
-:root {
-  --vh: 1vh;
+  :root {
+    --vh: 1vh;
 
-  /* Colours */
-  --dark-yellow: #e7a900;
-  --light-blue: #d1feff;
-  --light-purp: #dfb1ff;
-  --hot-pink: #ff77df;
-  --med-purp: #b19eff;
-  --green: #63f863;
-  --dark-grey: #120303;
-  --black: #000000;
+    /* Colours */
+    --dark-yellow: #e7a900;
+    --light-blue: #d1feff;
+    --light-purp: #dfb1ff;
+    --hot-pink: #ff77df;
+    --med-purp: #b19eff;
+    --green: #63f863;
+    --dark-grey: #120303;
+    --black: #000000;
 
-  --overlay-background: rgba(0, 0, 0, 0.8);
+    --overlay-background: rgba(0, 0, 0, 0.8);
 
-  /* Font settings */
-  --font-main: "Courier New", monospace;
-  --font-size-base: 1rem;
-  --font-size-large: 1.5rem;
+    /* Font settings */
+    --font-main: "Courier New", monospace;
+    --font-size-base: 1rem;
+    --font-size-large: 1.5rem;
 
-  /* Social card font styles */
-  --font-game-over: bold calc(2 * var(--font-size-base)) var(--font-main);
-  --font-reason: calc(1.5 * var(--font-size-base)) var(--font-main);
-  --font-message: calc(1.5 * var(--font-size-base)) var(--font-main);
-  --font-face: var(--font-size-large) var(--font-main);
-  --font-score: calc(1.3 * var(--font-size-base)) var(--font-main);
+    /* Social card font styles */
+    --font-game-over: bold calc(2 * var(--font-size-base)) var(--font-main);
+    --font-reason: calc(1.5 * var(--font-size-base)) var(--font-main);
+    --font-message: calc(1.5 * var(--font-size-base)) var(--font-main);
+    --font-face: var(--font-size-large) var(--font-main);
+    --font-score: calc(1.3 * var(--font-size-base)) var(--font-main);
 
-  /* Social card text colours */
-  --colour-game-over: var(--hot-pink);
-  --colour-reason: var(--dark-yellow);
-  --colour-message: var(--med-purp);
-  --colour-face: var(--light-blue);
-  --colour-score: var(--green);
-}
+    /* Social card text colours */
+    --colour-game-over: var(--hot-pink);
+    --colour-reason: var(--dark-yellow);
+    --colour-message: var(--med-purp);
+    --colour-face: var(--light-blue);
+    --colour-score: var(--green);
+  }
 
 * Prevent text selection */ * {
   -webkit-user-select: none;
@@ -319,6 +319,17 @@ a {
   font-size: 1rem;
 }
 
+.doug {
+  color: var(--green);
+  font-size: 1.2rem;
+  letter-spacing: 7px;
+  /* font-weight: bold; */
+  padding: 0 5px;
+  border-top: 2px solid var(--dark-yellow);
+  border-bottom: 2px solid var(--dark-yellow);
+  margin: 1rem 0;
+}
+
 .message-reason {
   color: var(--hot-pink);
   font-size: 1.5rem;
@@ -326,8 +337,9 @@ a {
 }
 
 .cute-death-face {
-  font-size: 2rem;
-  color: var(--med-purp);
+  font-size: 1rem;
+  color: var(--dark-yellow);
+  /* text-align: center; */
 }
 
 #settings-window {
@@ -704,7 +716,7 @@ button:active {
   opacity: 0;
   transform: scale(0.8);
 }
-
+/* 
 /* social card stuff */
 
 /* Social Deathmachined Overlay */
@@ -723,7 +735,7 @@ button:active {
   align-items: center;
   justify-content: center;
   background-color: var(--overlay-background);
-  z-index: 10000;
+  z-index: 1000;
 }
 
 .social-card {
@@ -734,7 +746,9 @@ button:active {
   width: 300px; /* Adjust the size of the card */
   border: 3px dashed var(--green);
   background-color: var(--dark-grey);
-  padding: 20px;
+  padding: 15px;
+  /* margin: 1rem; */
+  /* gap: 20px; */
   font-family: var(--font-main);
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
@@ -753,11 +767,15 @@ button:active {
   color: var(--colour-game-over);
   font: var(--font-game-over);
 }
+.ascii-art{
+  padding: 15px 0;
+  /* rotate: 0deg; */
+}
 .ascii-art,
 .message-reason,
 .message-text,
-.score-text,
-.cute-death-face {
+.score-text 
+{
   color: var(--light-purp);
   font: var(--font-main);
 }
@@ -768,14 +786,33 @@ button:active {
 .message-text {
   color: var(--light-purp);
   font: var(--font-message);
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  margin-top: 2rem;
 }
 .cute-death-face {
-  color: var(--med-purp);
+  color: var(--light-purp);
+
+  /* color: var(--med-purp); */
   font: var(--font-face);
+  font-size: 1.1rem;
+
 }
 .score-text {
-  color: var(--light-purp);
+  /* color: var(--dark-yellow); */
   font: var(--font-score);
+  font: var(--font-reason);
+  color: var(--hot-pink);
+  font-size: 2rem;
+
+
+  /* font-size: 1.1rem; */
+  /* letter-spacing: 2px; */
+
+}
+
+.message-reason{
+  font-size: 1.9rem;
 }
 
 .social-card h2,
@@ -783,12 +820,12 @@ button:active {
 .social-card p {
   text-align: center;
   margin: 5px 0;
-}
+} */
 
 /* Death glitch animation classes */
 .char-glitch {
   display: inline-block !important;
-  animation: tilt 2.1s steps(1) infinite;
+  animation: tilt 2.3s steps(1) infinite;
 }
 
 .char-glitch.edge {
@@ -806,11 +843,11 @@ button:active {
   }
   10%,
   90% {
-    transform: rotate(15deg);
+    transform: rotate(8deg);
   }
   95%,
   100% {
-    transform: rotate(0deg);
+    transform: rotate(20deg);
   }
 }
 
@@ -827,4 +864,37 @@ button:active {
   100% {
     transform: rotate(0deg);
   }
+}
+
+
+
+
+
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+.screen-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.death-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 0, 0, 0.3);
+  z-index: 1000;
+  pointer-events: none;
 }

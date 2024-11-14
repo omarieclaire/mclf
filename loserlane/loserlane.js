@@ -166,7 +166,6 @@ const CONFIG = {
   },
 };
 
-
 const DOOR_STATES = {
   CLOSED: 0,
   OPENING_1: 1,
@@ -174,7 +173,6 @@ const DOOR_STATES = {
   OPENING_3: 3,
   FULLY_OPEN: 4,
 };
-
 
 class DarlingType {
   static TTC = "TTC";
@@ -187,7 +185,7 @@ class DarlingType {
 }
 
 // =========================================
-// Position 
+// Position
 // =========================================
 
 class Position {
@@ -667,7 +665,6 @@ class CollisionManager {
   }
 }
 
-
 // =========================================
 // MovementCoordinator -  Management
 // =========================================
@@ -690,7 +687,7 @@ class MovementCoordinator {
    */
   validateIfMoveIsPossibleConsideringCollisions(darlingTryingToMove, desiredPosition) {
     if (darlingTryingToMove.behavior?.ignoreCollisions) {
-      return true; 
+      return true;
     }
     // Temporarily move entity to check position
     const tempPosition = darlingTryingToMove.position;
@@ -729,7 +726,7 @@ class MovementCoordinator {
       this.updateMovementPlan(entity, plan);
     }
   }
-    /**
+  /**
    * Updates an individual entity's movement plan
    * Handles path following and recalculation if blocked
    */
@@ -983,7 +980,7 @@ class SpawnManager {
     ]);
   }
 
-    /**
+  /**
    * Determines required spacing between different entity types
    * Handles special cases like TTC-to-TTC spacing
    */
@@ -1011,7 +1008,7 @@ class SpawnManager {
     return finalDistance;
   }
 
-    /**
+  /**
    * Validates if an entity can be spawned at a specific position
    * Checks lane rules and spacing requirements
    */
@@ -1133,17 +1130,9 @@ class SpawnManager {
   }
 }
 
-
-
-
-
 // =========================================
-// SpawnManager -  Management
+// VehicleClusterManager
 // =========================================
-
-
-
-
 
 class VehicleClusterManager {
   constructor(config) {
@@ -1242,9 +1231,15 @@ class VehicleClusterManager {
     return this.clusters.get(entityType);
   }
 }
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
 
 // =========================================
-// BEHAVIOUR BEHAVIOUR BEHAVIOUR
+// EntityBehavior
 // =========================================
 
 class EntityBehavior {
@@ -1306,6 +1301,10 @@ class EntityBehavior {
     };
   }
 }
+
+// =========================================
+// BuildingBehavior
+// =========================================
 
 class BuildingBehavior extends EntityBehavior {
   constructor(entity) {
@@ -1421,6 +1420,10 @@ class BuildingBehavior extends EntityBehavior {
     return isValid;
   }
 }
+// =========================================
+// VehicleBehaviorBase
+// =========================================
+
 class VehicleBehaviorBase extends EntityBehavior {
   constructor(entity, options = {}) {
     super(entity);
@@ -1478,6 +1481,10 @@ class VehicleBehaviorBase extends EntityBehavior {
     // Override in child classes that need animation
   }
 }
+// =========================================
+// WandererBehavior
+// =========================================
+
 class WandererBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
@@ -1541,12 +1548,20 @@ class WandererBehavior extends EntityBehavior {
     );
   }
 }
+// =========================================
+// BikeBehavior
+// =========================================
+
 class BikeBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
     this.canMove = true;
   }
 }
+// =========================================
+// ParkedDeathmachineBehavior
+// =========================================
+
 class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1636,6 +1651,10 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
     }, 500);
   }
 }
+// =========================================
+// TTCBehavior
+// =========================================
+
 class TTCBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1847,6 +1866,10 @@ class TTCBehavior extends VehicleBehaviorBase {
     }, 1000);
   }
 }
+// =========================================
+// OncomingDeathmachineBehavior
+// =========================================
+
 class OncomingDeathmachineBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -1861,6 +1884,10 @@ class OncomingDeathmachineBehavior extends VehicleBehaviorBase {
     this.building.position.y += this.baseSpeed;
   }
 }
+// =========================================
+// TTCLaneDeathmachineBehavior
+// =========================================
+
 class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -2012,6 +2039,17 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     return hasSpace;
   }
 }
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+
+// =========================================
+// BaseEntity
+// =========================================
+
 class BaseEntity {
   constructor(config, spawnConfig, type) {
     this.config = config;
@@ -2041,6 +2079,10 @@ class BaseEntity {
     };
   }
 }
+// =========================================
+// Building Entity
+// =========================================
+
 class Building extends BaseEntity {
   // Static properties for building management
   static nextSpawnY = null;
@@ -2048,11 +2090,11 @@ class Building extends BaseEntity {
   static buildingIndex = 0;
 
   constructor(config, spawnY = null) {
-    console.log("[Building] Creating new building:", {
-      spawnY,
-      nextSpawnY: Building.nextSpawnY,
-      buildingIndex: Building.buildingIndex,
-    });
+    // console.log("[Building] Creating new building:", {
+    //   spawnY,
+    //   nextSpawnY: Building.nextSpawnY,
+    //   buildingIndex: Building.buildingIndex,
+    // });
 
     // Reshuffle if we've used all buildings
     if (Building.buildingIndex >= Building.availableBuildings.length) {
@@ -2075,12 +2117,12 @@ class Building extends BaseEntity {
       calculatedY = config.GAME.HEIGHT - height - minSpacing;
     }
 
-    console.log("[Building] Calculated spawn position:", {
-      building: selectedBuilding.name,
-      height,
-      calculatedY,
-      spacing: minSpacing,
-    });
+    // console.log("[Building] Calculated spawn position:", {
+    //   building: selectedBuilding.name,
+    //   height,
+    //   calculatedY,
+    //   spacing: minSpacing,
+    // });
 
     const spawnConfig = {
       position: new Position(config.LANES.BUILDINGS, calculatedY),
@@ -2098,12 +2140,12 @@ class Building extends BaseEntity {
 
     Building.nextSpawnY = calculatedY;
 
-    console.log("[Building] Building created:", {
-      name: this.name,
-      position: this.position,
-      height: this.height,
-      width: this.width,
-    });
+    // console.log("[Building] Building created:", {
+    //   name: this.name,
+    //   position: this.position,
+    //   height: this.height,
+    //   width: this.width,
+    // });
   }
 
   static shuffleArray(array) {
@@ -2118,10 +2160,14 @@ class Building extends BaseEntity {
 
   getRandomBuildingColor() {
     const color = COLOURS.BUILDINGS[Math.floor(Math.random() * COLOURS.BUILDINGS.length)];
-    console.log("[Building] Selected color:", color);
+    // console.log("[Building] Selected color:", color);
     return color;
   }
 }
+// =========================================
+// TTC Entity
+// =========================================
+
 class TTC extends BaseEntity {
   constructor(config, spawnConfig) {
     super(config, spawnConfig, DarlingType.TTC);
@@ -2133,6 +2179,10 @@ class TTC extends BaseEntity {
     console.log("TTC created at position:", this.position);
   }
 }
+// =========================================
+// TTCLaneDeathmachine Entity
+// =========================================
+
 class TTCLaneDeathmachine extends BaseEntity {
   constructor(config, spawnConfig) {
     super(config, spawnConfig, DarlingType.TTC_LANE_DEATHMACHINE);
@@ -2156,6 +2206,10 @@ class TTCLaneDeathmachine extends BaseEntity {
     return COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
   }
 }
+// =========================================
+// OncomingDeathmachine Entity
+// =========================================
+
 class OncomingDeathmachine extends BaseEntity {
   constructor(config, spawnConfig) {
     super(config, spawnConfig, DarlingType.ONCOMING_DEATHMACHINE);
@@ -2179,6 +2233,10 @@ class OncomingDeathmachine extends BaseEntity {
     return COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
   }
 }
+// =========================================
+// ParkedDeathmachine Entity
+// =========================================
+
 class ParkedDeathmachine extends BaseEntity {
   constructor(config, spawnConfig) {
     super(config, spawnConfig, DarlingType.PARKED_DEATHMACHINE);
@@ -2202,6 +2260,10 @@ class ParkedDeathmachine extends BaseEntity {
     return COLOURS.VEHICLES[Math.floor(Math.random() * COLOURS.VEHICLES.length)];
   }
 }
+// =========================================
+// Wanderer Entity
+// =========================================
+
 class Wanderer extends BaseEntity {
   constructor(config, spawnConfig, isGoingUp) {
     super(config, spawnConfig, DarlingType.WANDERER);
@@ -2230,6 +2292,19 @@ class Wanderer extends BaseEntity {
     this.behavior = new WandererBehavior(this, isGoingUp);
   }
 }
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+// =========================================
+
+// =========================================
+// GameState
+// =========================================
+
 class GameState {
   constructor(config) {
     this.config = config;
@@ -2279,6 +2354,7 @@ class GameState {
     return this.speed;
   }
 }
+
 // =========================================
 // OptimizedGridSystem - Visual Rendering Grid
 // =========================================
@@ -2391,176 +2467,16 @@ class OptimizedGridSystem {
     return activeChars;
   }
 }
-class SettingsManager {
-  constructor(game) {
-    this.game = game;
-    this.setupSettingsControls();
-  }
 
-  setupSettingsControls() {
-    document.addEventListener("keydown", (e) => {
-      if (e.key.toLowerCase() === "d") {
-        const settingsWindow = document.getElementById("settings-window");
-        if (settingsWindow) {
-          settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
-        }
-      }
-    });
+// =========================================
+// BaseControl
+// =========================================
 
-    this.setupSettingControl("initial-speed", (value) => {
-      CONFIG.GAME.INITIAL_SPEED = parseInt(value);
-    });
-
-    this.setupSettingControl("min-speed", (value) => {
-      CONFIG.GAME.MIN_SPEED = parseInt(value);
-    });
-
-    // Add other settings controls as needed
-  }
-
-  setupSettingControl(id, callback) {
-    const element = document.getElementById(id);
-    const valueDisplay = document.getElementById(`${id}-value`);
-
-    if (element && valueDisplay) {
-      element.addEventListener("input", (e) => {
-        const value = e.target.value;
-        valueDisplay.textContent = value;
-        callback(value);
-      });
-    }
-  }
-}
-class TouchInputManager {
+class BaseControl {
   constructor(game) {
     this.game = game;
     this.config = game.config;
-    this.touchState = {
-      left: { lastTap: 0 },
-      right: { lastTap: 0 },
-    };
-
-    // Add animation styles
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes jumpAnnounce {
-        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-        100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    this.setupTouchControls();
-  }
-
-  setupTouchControls() {
-    const leftControl = document.getElementById("move-left");
-    const rightControl = document.getElementById("move-right");
-
-    if (!leftControl || !rightControl) {
-      console.warn("Touch controls not found in DOM");
-      return;
-    }
-
-    const touchOptions = { passive: false };
-
-    ["left", "right"].forEach((side) => {
-      const element = side === "left" ? leftControl : rightControl;
-      element.addEventListener("touchstart", (e) => this.handleTouchStart(e, side), touchOptions);
-      element.addEventListener("touchend", (e) => this.handleTouchEnd(e, side), touchOptions);
-    });
-
-    document.addEventListener(
-      "touchmove",
-      (e) => {
-        if (this.game.state?.isPlaying) {
-          e.preventDefault();
-        }
-      },
-      { passive: false }
-    );
-  }
-
-  handleTouchStart(event, side) {
-    event.preventDefault();
-    if (!this.game.state?.isPlaying) return;
-
-    const currentTime = performance.now();
-    const state = this.touchState[side];
-
-    // Check for double tap
-    if (currentTime - state.lastTap < this.config.DOUBLE_TAP_WINDOW) {
-      this.handleDoubleTap(side);
-      state.lastTap = 0; // Reset tap timer
-      return;
-    }
-
-    // Single tap - regular movement
-    if (side === "left") {
-      this.game.state.currentLane = Math.max(this.game.state.currentLane - 1, this.config.LANES.ONCOMING);
-      this.game.movementState.isMovingLeft = true;
-    } else {
-      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, this.config.LANES.BUILDINGS - 1);
-      this.game.movementState.isMovingRight = true;
-    }
-
-    state.lastTap = currentTime;
-    this.game.movementState.holdStartTime = currentTime;
-    this.game.movementState.isHolding = true;
-  }
-
-  handleTouchEnd(event, side) {
-    event.preventDefault();
-
-    if (side === "left") {
-      this.game.movementState.isMovingLeft = false;
-    } else {
-      this.game.movementState.isMovingRight = false;
-    }
-    this.game.movementState.isHolding = false;
-  }
-
-  handleDoubleTap(side) {
-    this.game.handleJump(side);
-  }
-
-  cleanup() {
-    this.touchState.left.lastTap = 0;
-    this.touchState.right.lastTap = 0;
-  }
-}
-class LoserLane {
-  constructor() {
-    this.config = CONFIG;
-    this.state = new GameState(this.config);
-    this.spatialManager = new SpatialManager(this.config);
     this.eventListeners = new Map();
-    this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
-
-    const now = performance.now();
-    this.initialLastMove = now; // Track when we first created the movement state
-
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      lastMove: performance.now(),
-      moveSpeed: this.config.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
-      holdDelay: this.config.MOVEMENT.HOLD_DELAY,
-      holdStartTime: 0,
-      isHolding: false,
-    };
-
-    this.debug = true;
-    this.lastFrameTime = performance.now();
-    this.frameId = null;
-
-    this.touchInputManager = new TouchInputManager(this);
-
-    this.initializeGameWorld();
-    this.setupControls();
-    this.settingsManager = new SettingsManager(this);
-    this.clusterManager = new VehicleClusterManager(CONFIG);
   }
 
   addEventListenerWithTracking(element, type, handler, options = false) {
@@ -2571,38 +2487,419 @@ class LoserLane {
     this.eventListeners.get(element).push({ type, handler, options });
   }
 
+  cleanup() {
+    this.eventListeners.forEach((listeners, element) => {
+      listeners.forEach(({ type, handler, options }) => {
+        element.removeEventListener(type, handler, options);
+      });
+    });
+    this.eventListeners.clear();
+  }
+}
+
+// =========================================
+// KeyboardControls
+// =========================================
+
+class KeyboardControls extends BaseControl {
+  constructor(game) {
+    super(game);
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      lastMove: performance.now(),
+      moveSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
+      holdDelay: CONFIG.MOVEMENT.HOLD_DELAY,
+      holdStartTime: 0,
+      isHolding: false,
+    };
+    this.setupKeyboardControls();
+  }
+
+  setupKeyboardControls() {
+    // Your existing keyboard control setup code
+    this.addEventListenerWithTracking(document, "keydown", (e) => {
+      if (!this.game.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
+        this.game.start();
+        document.getElementById("title-box").style.visibility = "visible";
+        return;
+      }
+
+      if (this.game.state.isPlaying) {
+        const now = performance.now();
+        switch (e.key) {
+          case "ArrowLeft":
+            this.handleArrowKey("left", now);
+            break;
+          case "ArrowRight":
+            this.handleArrowKey("right", now);
+            break;
+          case "p":
+          case "P":
+            this.game.togglePause();
+            break;
+        }
+      }
+    });
+
+    this.addEventListenerWithTracking(document, "keyup", (e) => {
+      if (this.game.state.isPlaying) {
+        switch (e.key) {
+          case "ArrowLeft":
+            this.movementState.isMovingLeft = false;
+            this.movementState.isHolding = false;
+            break;
+          case "ArrowRight":
+            this.movementState.isMovingRight = false;
+            this.movementState.isHolding = false;
+            break;
+        }
+      }
+    });
+  }
+
+  handleArrowKey(direction, now) {
+    const isLeft = direction === "left";
+    const lastKeyTime = CONFIG.GAME.lastKeys[direction];
+
+    if (now - lastKeyTime < CONFIG.GAME.DOUBLE_TAP_TIME) {
+      this.game.handleJump(direction);
+      CONFIG.GAME.lastKeys[direction] = 0;
+    } else {
+      if (!this.movementState[`isMoving${isLeft ? "Left" : "Right"}`]) {
+        this.game.state.currentLane = isLeft
+          ? Math.max(this.game.state.currentLane - 1, CONFIG.LANES.ONCOMING)
+          : Math.min(this.game.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
+
+        this.movementState[`isMoving${isLeft ? "Left" : "Right"}`] = true;
+        this.movementState.holdStartTime = now;
+        this.movementState.isHolding = true;
+      }
+      CONFIG.GAME.lastKeys[direction] = now;
+    }
+  }
+
+  update(timestamp) {
+    if (this.game.state.isDead) return;
+
+    if (this.movementState.isHolding && timestamp - this.movementState.holdStartTime > this.movementState.holdDelay) {
+      this.updateContinuousMovement(timestamp);
+    }
+    this.movementState.lastMove = timestamp;
+  }
+
+  updateContinuousMovement(timestamp) {
+    const moveTime = timestamp - this.movementState.lastMove;
+    const cappedMoveTime = Math.min(moveTime, 16.67);
+    const moveAmount = (cappedMoveTime / 1000) * this.movementState.moveSpeed * 60;
+
+    if (this.movementState.isMovingLeft) {
+      this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+    }
+    if (this.movementState.isMovingRight) {
+      this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
+    }
+  }
+}
+// =========================================
+// TouchControls
+// =========================================
+
+class TouchControls extends BaseControl {
+  constructor(game) {
+    super(game);
+    this.touchState = {
+      left: { lastTap: 0 },
+      right: { lastTap: 0 },
+    };
+    // Add movement state for touch controls
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      holdStartTime: 0,
+      isHolding: false,
+    };
+    this.setupTouchControls();
+    this.preventDefaultTouchBehaviors();
+  }
+
+  setupTouchControls() {
+    const leftControl = document.getElementById("move-left");
+    const rightControl = document.getElementById("move-right");
+
+    if (!leftControl || !rightControl) return;
+
+    const touchOptions = { passive: false };
+
+    ["left", "right"].forEach((side) => {
+      const element = side === "left" ? leftControl : rightControl;
+      this.addEventListenerWithTracking(element, "touchstart", (e) => this.handleTouchStart(e, side), touchOptions);
+      this.addEventListenerWithTracking(element, "touchend", (e) => this.handleTouchEnd(e, side), touchOptions);
+    });
+  }
+
+  handleTouchStart(event, side) {
+    event.preventDefault();
+    if (!this.game.state?.isPlaying) return;
+
+    const now = performance.now();
+    const state = this.touchState[side];
+
+    if (now - state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME) {
+      this.game.handleJump(side);
+      state.lastTap = 0;
+      return;
+    }
+
+    if (side === "left") {
+      this.game.state.currentLane = Math.max(this.game.state.currentLane - 1, CONFIG.LANES.ONCOMING);
+      this.movementState.isMovingLeft = true;
+    } else {
+      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
+      this.movementState.isMovingRight = true;
+    }
+
+    state.lastTap = now;
+    this.movementState.holdStartTime = now;
+    this.movementState.isHolding = true;
+  }
+
+  handleTouchEnd(event, side) {
+    event.preventDefault();
+    if (side === "left") {
+      this.movementState.isMovingLeft = false;
+    } else {
+      this.movementState.isMovingRight = false;
+    }
+    this.movementState.isHolding = false;
+  }
+
+  preventDefaultTouchBehaviors() {
+    const options = { passive: false };
+    const events = ["touchmove", "touchforcechange", "touchcancel", "gesturestart", "gesturechange", "gestureend"];
+
+    events.forEach((event) => {
+      this.addEventListenerWithTracking(
+        document,
+        event,
+        (e) => {
+          if (this.game.state?.isPlaying || event.startsWith("gesture")) {
+            e.preventDefault();
+          }
+        },
+        options
+      );
+    });
+  }
+  cleanup() {
+    super.cleanup();
+    this.movementState = {
+      isMovingLeft: false,
+      isMovingRight: false,
+      holdStartTime: 0,
+      isHolding: false,
+    };
+    this.touchState = {
+      left: { lastTap: 0 },
+      right: { lastTap: 0 },
+    };
+  }
+}
+// =========================================
+// UIControls
+// =========================================
+
+class UIControls extends BaseControl {
+  constructor(game) {
+    super(game);
+    this.setupClickHandler();
+    this.setupInfoButton();
+  }
+
+  setupClickHandler() {
+    const gameContainer = document.getElementById("game-container");
+    if (gameContainer) {
+      this.addEventListenerWithTracking(gameContainer, "click", (e) => {
+        const isExcludedElement =
+          e.target.id === "add-art-link" ||
+          e.target.id === "info-div" ||
+          e.target.id === "close-info" ||
+          e.target.closest("#info-div") ||
+          e.target.closest(".title-box");
+
+        if (isExcludedElement) {
+          if (e.target.id === "add-art-link" || e.target.closest("#add-art-link")) {
+            window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
+          }
+          return;
+        }
+
+        if (!this.game.state.isPlaying) {
+          let titleBox = document.getElementById("title-box-container");
+          if (titleBox) {
+            titleBox.style.width = this.config.GAME.WIDTH;
+            titleBox.style.visibility = "visible";
+          }
+          this.game.start();
+        }
+      });
+    }
+  }
+
   setupInfoButton() {
     const infoButton = document.getElementById("add-art-link");
     const infoDiv = document.getElementById("info-div");
     const closeButton = document.getElementById("close-info");
 
-    console.log("Setting up info button:", { infoButton, infoDiv, closeButton });
-
     if (infoButton && infoDiv && closeButton) {
-      infoButton.addEventListener("click", (e) => {
-        console.log("Info button clicked - showing info div");
-        e.preventDefault();
-        e.stopPropagation();
-        infoDiv.style.display = "block";
+      [
+        [
+          infoButton,
+          "click",
+          () => {
+            infoDiv.style.display = "block";
+          },
+        ],
+        [
+          closeButton,
+          "click",
+          () => {
+            infoDiv.style.display = "none";
+          },
+        ],
+        [
+          infoDiv,
+          "click",
+          (e) => {
+            e.stopPropagation();
+          },
+        ],
+      ].forEach(([element, event, handler]) => {
+        this.addEventListenerWithTracking(element, event, (e) => {
+          e.preventDefault();
+          handler(e);
+        });
       });
-
-      closeButton.addEventListener("click", (e) => {
-        console.log("Close button clicked - hiding info div");
-        e.preventDefault();
-        e.stopPropagation();
-        infoDiv.style.display = "none";
-      });
-
-      infoDiv.addEventListener("click", (e) => {
-        console.log("Info div clicked - preventing propagation");
-        e.preventDefault();
-        e.stopPropagation();
-      });
-
-      console.log("Info button setup complete");
-    } else {
-      console.warn("Could not find all required info elements:", { infoButton, infoDiv, closeButton });
     }
+  }
+}
+// =========================================
+// Controls
+// =========================================
+
+class Controls {
+  constructor(game) {
+    this.keyboard = new KeyboardControls(game);
+    this.touch = new TouchControls(game);
+    this.ui = new UIControls(game);
+  }
+
+  update(timestamp) {
+    this.keyboard.update(timestamp);
+  }
+
+  cleanup() {
+    this.keyboard.cleanup();
+    this.touch.cleanup();
+    this.ui.cleanup();
+  }
+}
+// =========================================
+// SettingsManager
+// =========================================
+
+class SettingsManager {
+  constructor(game) {
+    this.game = game;
+    this.eventListeners = new Map();
+    this.initialize();
+  }
+
+  initialize() {
+    this.setupSettingsControls();
+  }
+
+  addEventListenerWithTracking(element, type, handler, options = false) {
+    element.addEventListener(type, handler, options);
+    if (!this.eventListeners.has(element)) {
+      this.eventListeners.set(element, []);
+    }
+    this.eventListeners.get(element).push({ type, handler, options });
+  }
+
+  setupSettingsControls() {
+    // Toggle settings window with 'd' key
+    this.addEventListenerWithTracking(document, "keydown", (e) => {
+      if (e.key.toLowerCase() === "d") {
+        const settingsWindow = document.getElementById("settings-window");
+        if (settingsWindow) {
+          settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
+        }
+      }
+    });
+
+    // Setup individual settings
+    this.setupSettingControl("initial-speed", (value) => {
+      CONFIG.GAME.INITIAL_SPEED = parseInt(value);
+    });
+
+    this.setupSettingControl("min-speed", (value) => {
+      CONFIG.GAME.MIN_SPEED = parseInt(value);
+    });
+  }
+
+  setupSettingControl(id, callback) {
+    const element = document.getElementById(id);
+    const valueDisplay = document.getElementById(`${id}-value`);
+
+    if (element && valueDisplay) {
+      this.addEventListenerWithTracking(element, "input", (e) => {
+        const value = e.target.value;
+        valueDisplay.textContent = value;
+        callback(value);
+      });
+    }
+  }
+
+  cleanup() {
+    // Remove all tracked event listeners
+    this.eventListeners.forEach((listeners, element) => {
+      listeners.forEach(({ type, handler, options }) => {
+        element.removeEventListener(type, handler, options);
+      });
+    });
+    this.eventListeners.clear();
+  }
+}
+// =========================================
+// LoserLane
+// =========================================
+
+class LoserLane {
+  constructor() {
+    this.config = CONFIG;
+    this.state = new GameState(this.config);
+    this.spatialManager = new SpatialManager(this.config);
+    // this.eventListeners = new Map();
+    this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
+
+    const now = performance.now();
+    this.initialLastMove = now; // Track when we first created the movement state
+    this.debug = true;
+    this.lastFrameTime = performance.now();
+    this.frameId = null;
+    this.initializeGameWorld();
+    this.clusterManager = new VehicleClusterManager(CONFIG);
+    this.controls = new Controls(this);
+    this.settingsManager = new SettingsManager(this);
+  }
+
+  addEventListenerWithTracking(element, type, handler, options = false) {
+    element.addEventListener(type, handler, options);
+    if (!this.eventListeners.has(element)) {
+      this.eventListeners.set(element, []);
+    }
+    this.eventListeners.get(element).push({ type, handler, options });
   }
 
   initializeGameWorld() {
@@ -2636,119 +2933,9 @@ class LoserLane {
     }, CONFIG.MOVEMENT.JUMP_DURATION);
   }
 
-  setupControls() {
-    // Track last keypress time for double-tap detection
-    let lastLeftPress = 0;
-    let lastRightPress = 0;
-    const DOUBLE_PRESS_WINDOW = 500; // 500ms window for double press
-
-    const keydownHandler = (e) => {
-      if (!this.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
-        this.start();
-        document.getElementById("title-box").style.visibility = "visible";
-        return;
-      }
-
-      if (this.state.isPlaying) {
-        const now = performance.now();
-
-        switch (e.key) {
-          case "ArrowLeft":
-            // Check for double press
-            if (now - lastLeftPress < DOUBLE_PRESS_WINDOW) {
-              // It's a double press - perform jump
-              this.handleJump("left");
-              lastLeftPress = 0; // Reset timer
-            } else {
-              // Regular movement
-              if (!this.movementState.isMovingLeft) {
-                this.state.currentLane = Math.max(this.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-                this.movementState.isMovingLeft = true;
-                this.movementState.holdStartTime = now;
-                this.movementState.isHolding = true;
-              }
-              lastLeftPress = now;
-            }
-            break;
-
-          case "ArrowRight":
-            // Check for double press
-            if (now - lastRightPress < DOUBLE_PRESS_WINDOW) {
-              // It's a double press - perform jump
-              this.handleJump("right");
-              lastRightPress = 0; // Reset timer
-            } else {
-              // Regular movement
-              if (!this.movementState.isMovingRight) {
-                this.state.currentLane = Math.min(this.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
-                this.movementState.isMovingRight = true;
-                this.movementState.holdStartTime = now;
-                this.movementState.isHolding = true;
-              }
-              lastRightPress = now;
-            }
-            break;
-
-          case "p":
-          case "P":
-            this.togglePause();
-            break;
-        }
-      }
-    };
-
-    const keyupHandler = (e) => {
-      if (this.state.isPlaying) {
-        switch (e.key) {
-          case "ArrowLeft":
-            this.movementState.isMovingLeft = false;
-            this.movementState.isHolding = false;
-            break;
-          case "ArrowRight":
-            this.movementState.isMovingRight = false;
-            this.movementState.isHolding = false;
-            break;
-        }
-      }
-    };
-
-    const clickHandler = (e) => {
-      const isExcludedElement =
-        e.target.id === "add-art-link" ||
-        e.target.id === "info-div" ||
-        e.target.id === "close-info" ||
-        e.target.closest("#info-div") ||
-        e.target.closest(".title-box");
-
-      if (isExcludedElement) {
-        // console.log("Click on excluded element - not starting game");
-        if (e.target.id === "add-art-link" || e.target.closest("#add-art-link")) {
-          window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
-        }
-        return;
-      }
-
-      if (!this.state.isPlaying) {
-        console.log("Starting game");
-
-        let titleBox = document.getElementById("title-box-container");
-        let gameWidth = this.config.GAME.WIDTH;
-        //  console.log(gameWidth);
-
-        titleBox.style.width = gameWidth;
-        titleBox.style.visibility = "visible";
-        this.start();
-      }
-    };
-
-    this.addEventListenerWithTracking(document, "keydown", keydownHandler);
-    this.addEventListenerWithTracking(document, "keyup", keyupHandler);
-    const gameContainer = document.getElementById("game-container");
-    if (gameContainer) {
-      this.addEventListenerWithTracking(gameContainer, "click", clickHandler);
-    }
-  }
-
+  /**
+   * Main game update function called on each animation frame
+   */
   update(timestamp) {
     if (!timestamp) {
       this.frameId = requestAnimationFrame((t) => this.update(t));
@@ -2760,22 +2947,8 @@ class LoserLane {
       return;
     }
 
-    // Handle continuous movement only after hold delay
-    if (!this.state.isDead) {
-      if (this.movementState.isHolding && timestamp - this.movementState.holdStartTime > this.movementState.holdDelay) {
-        const moveTime = timestamp - this.movementState.lastMove;
-        const cappedMoveTime = Math.min(moveTime, 16.67);
-        const moveAmount = (cappedMoveTime / 1000) * this.movementState.moveSpeed * 60;
-
-        if (this.movementState.isMovingLeft) {
-          this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-        }
-        if (this.movementState.isMovingRight) {
-          this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
-        }
-      }
-      this.movementState.lastMove = timestamp;
-    }
+    // Update controls (handles continuous movement)
+    this.controls.update(timestamp);
 
     // Regular game update at fixed interval
     const deltaTime = timestamp - this.lastFrameTime;
@@ -2788,6 +2961,7 @@ class LoserLane {
           return;
         }
       } else {
+        // Update game state
         this.spatialManager.update();
         this.updateBikePosition();
         this.spawnDarlings();
@@ -2816,66 +2990,6 @@ class LoserLane {
     }
   }
 
-  preventDefaultTouchBehaviors() {
-    const options = { passive: false };
-
-    document.addEventListener(
-      "touchmove",
-      (e) => {
-        if (this.state?.isPlaying) {
-          e.preventDefault();
-        }
-      },
-      options
-    );
-
-    document.addEventListener("touchforcechange", (e) => e.preventDefault(), options);
-    document.addEventListener("touchcancel", (e) => e.preventDefault(), options);
-
-    // Prevent zoom
-    document.addEventListener("gesturestart", (e) => e.preventDefault());
-    document.addEventListener("gesturechange", (e) => e.preventDefault());
-    document.addEventListener("gestureend", (e) => e.preventDefault());
-  }
-
-  moveLeft(isDoubleTap = false, isTouchMove = false) {
-    if (this.state.isDead) return;
-
-    const now = Date.now();
-    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.touchState.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
-
-    const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-    this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-
-    this.state.isJumping = isDoubleTapJump;
-    if (isDoubleTapJump) {
-      setTimeout(() => {
-        this.state.isJumping = false;
-      }, 200);
-    }
-
-    this.state.touchState.lastTap = now;
-  }
-
-  moveRight(isDoubleTap = false, isTouchMove = false) {
-    if (this.state.isDead) return;
-
-    const now = Date.now();
-    const isDoubleTapJump = !isTouchMove && isDoubleTap && now - this.state.touchState.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME;
-
-    const moveAmount = isDoubleTapJump ? 2 : isTouchMove ? 0.5 : 1;
-    this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
-
-    this.state.isJumping = isDoubleTapJump;
-    if (isDoubleTapJump) {
-      setTimeout(() => {
-        this.state.isJumping = false;
-      }, 200);
-    }
-
-    this.state.touchState.lastTap = now;
-  }
-
   start() {
     if (this.state.isPlaying) return;
 
@@ -2883,11 +2997,6 @@ class LoserLane {
     if (messageBox) {
       messageBox.style.display = "none";
     }
-
-    // console.log("Game starting, movement state:", {
-    //   ...this.movementState,
-    //   currentTime: performance.now(),
-    // });
 
     this.state.isPlaying = true;
     this.lastFrameTime = performance.now();
@@ -3124,63 +3233,6 @@ class LoserLane {
     }
   }
 
-  // drawEntity(entity) {
-  //   if (!entity || !entity.art) return;
-
-  //   if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-  //     // Add debug markers for building boundaries
-  //     if (entity.type === EntityType.BUILDING) {
-  //       // Mark top boundary
-  //       this.gridSystem.updateCell(
-  //         Math.floor(entity.position.x),
-  //         Math.floor(entity.position.y)
-  //         // '▲',
-  //         // '<span style="color: black">'
-  //       );
-
-  //       // Mark bottom boundary
-  //       this.gridSystem.updateCell(
-  //         Math.floor(entity.position.x),
-  //         Math.floor(entity.position.y + entity.height)
-  //         // '▼',
-  //         // '<span style="color: black">'
-  //       );
-  //     }
-
-  //     entity.art.forEach((line, i) => {
-  //       if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
-  //         line.split("").forEach((char, x) => {
-  //           if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-  //             // Get appropriate shadow class while keeping original colors
-  //             let effectClass = "entity ";
-  //             switch (entity.type) {
-  //               case EntityType.TTC:
-  //                 effectClass += "TTC";
-  //                 break;
-  //               case EntityType.TTC_LANE_DEATHMACHINE:
-  //               case EntityType.ONCOMING_DEATHMACHINE:
-  //                 effectClass += "deathMachine";
-  //                 break;
-  //               case EntityType.PARKED_DEATHMACHINE:
-  //                 effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "deathMachine";
-  //                 break;
-  //               case EntityType.WANDERER:
-  //                 effectClass += "wanderer";
-  //                 break;
-  //               case EntityType.BUILDING:
-  //                 effectClass += "building";
-  //                 break;
-  //             }
-
-  //             const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-  //             this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
-  //           }
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
   drawBike() {
     if (this.state.isDead && this.state.deathState.animation < 15) {
       // Get current animation frame
@@ -3249,54 +3301,29 @@ class LoserLane {
     }
   }
 
-  die(reason) {
-    console.log("\n=== Death Animation Starting ===");
+  showDeathMessage(reason) {
+    const messageEl = document.getElementById("main-msg-box");
+    if (!messageEl) return;
 
-    this.state.isDead = true;
+    // Retrieve a single random message
+    const message = this.getRandomDeathMessage(reason);
+    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
 
-    // Store death state
-    this.state.deathState = {
-      animation: 0,
-      x: Math.round(this.state.currentLane),
-      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-      reason: reason,
-      frameCounter: 0,
-      colorIndex: 0,
-    };
+    // Construct the full message for potential further use
+    const fullMessage = `${reason}: ${message.funny} ${randomFace}`;
 
-    // Add screen shake effect
-    const gameScreen = document.getElementById("game-screen");
-    if (gameScreen) {
-      gameScreen.classList.add("screen-shake");
+    // Display reason, message, and face in separate elements
+    messageEl.innerHTML = `
+      <p>${message.funny}</p>
+      <span class="cute-death-face">${randomFace}</span>
+    `;
+    messageEl.style.display = "block";
 
-      // Create game over overlay
-      const overlay = document.createElement("div");
-      overlay.className = "game-over";
-      document.body.appendChild(overlay);
-
-      // Clean up effects after animation
-      setTimeout(() => {
-        gameScreen.classList.remove("screen-shake");
-        overlay.remove();
-      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-    }
-
-    // Show death message
-    this.showDeathMessage(reason);
-
-    // Restart after a longer delay to see the glitch animation
-    setTimeout(() => {
-      const messageEl = document.getElementById("main-msg-box");
-      if (messageEl) {
-        messageEl.classList.remove("show-message");
-      }
-      this.restart();
-    }, 2000); // Increased to 2 seconds to see the full glitch
+    // Return all parts: reason, message object, and random face
+    return { reason, message, randomFace };
   }
 
   die(reason) {
-    console.log("\n=== Death Animation Starting ===");
-
     this.state.isDead = true;
 
     // Store the death position using the current player position
@@ -3328,21 +3355,19 @@ class LoserLane {
 
     // Call flashScreen for red flash effect
     this.flashScreen();
-    this.showDeathMessage(reason);
 
-    // Capture screenshot after animation completes (these lines are ready but inactive)
-    // setTimeout(() => {
-    //   const score = this.state.score;
-    //   const message = this.showDeathMessage(reason).message;
-    //   html2canvas(gameScreen)
-    //       .then((canvas) => {
-    //           generateSocialDeathmachined.call(this, canvas, reason, score, message.funny, randomFace);
-    //           generateSocialDeathmachinedNoSS(reason, score, message.funny, randomFace);
-    //       })
-    //       .catch((error) => {
-    //           console.error("Failed to capture screenshot:", error);
-    //       });
-    // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
+    const messageInfo = this.showDeathMessage(reason);
+    setTimeout(() => {
+      const score = this.state.score;
+      html2canvas(gameScreen)
+        .then((canvas) => {
+          this.togglePause(); // Pause the game
+          generateSocialCardNoSS(canvas, messageInfo.reason, score, messageInfo.message.funny, messageInfo.randomFace, this); // Pass 'this' as game instance
+        })
+        .catch((error) => {
+          console.error("Failed to capture screenshot:", error);
+        });
+    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
 
     // Restart game after death duration
     setTimeout(() => {
@@ -3353,65 +3378,6 @@ class LoserLane {
       this.restart();
     }, this.config.ANIMATIONS.DEATH_DURATION);
   }
-
-  // die(reason) {
-  //   this.state.isDead = true;
-
-  //   // Store the death position using the current player position
-  //   this.state.deathState = {
-  //     animation: 0,
-  //     x: Math.round(this.state.currentLane),
-  //     y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-  //     reason: reason,
-  //     frameCounter: 0,
-  //     colorIndex: 0,
-  //   };
-
-  //   // Add screen shake effect
-  //   const gameScreen = document.getElementById("game-screen");
-  //   if (gameScreen) {
-  //     gameScreen.classList.add("screen-shake");
-
-  //     // Create game over overlay
-  //     const overlay = document.createElement("div");
-  //     overlay.className = "game-over";
-  //     document.body.appendChild(overlay);
-
-  //     // Clean up effects after animation
-  //     setTimeout(() => {
-  //       gameScreen.classList.remove("screen-shake");
-  //       overlay.remove();
-  //     }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-  //   }
-
-  //   // Call flashScreen for red flash effect
-  //   this.flashScreen();
-  //   this.showDeathMessage(reason);
-
-  //   // Capture screenshot after animation completes (these lines are ready but inactive)
-  //   // setTimeout(() => {
-  //   //   const score = this.state.score;
-  //   //   const message = this.showDeathMessage(reason).message;
-
-  //   //   html2canvas(gameScreen)
-  //   //       .then((canvas) => {
-  //   //           generateSocialDeathmachined.call(this, canvas, reason, score, message.funny, randomFace);
-  //   //           generateSocialDeathmachinedNoSS(reason, score, message.funny, randomFace);
-  //   //       })
-  //   //       .catch((error) => {
-  //   //           console.error("Failed to capture screenshot:", error);
-  //   //       });
-  //   // }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-
-  //   // Restart game after death duration
-  //   setTimeout(() => {
-  //     const messageEl = document.getElementById("main-msg-box");
-  //     if (messageEl) {
-  //       messageEl.classList.remove("show-message");
-  //     }
-  //     this.restart();
-  //   }, this.config.ANIMATIONS.DEATH_DURATION);
-  // }
 
   flashScreen() {
     const gameScreen = document.getElementById("game-screen");
@@ -3433,28 +3399,6 @@ class LoserLane {
     }, delay);
   }
 
-  showDeathMessage(reason) {
-    const messageEl = document.getElementById("main-msg-box");
-    if (!messageEl) return;
-
-    // Retrieve a single random message
-    const message = this.getRandomDeathMessage(reason);
-    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
-
-    // Construct the full message for potential further use
-    const fullMessage = `${reason}: ${message.funny} ${randomFace}`;
-
-    // Display reason, message, and face in separate elements
-    messageEl.innerHTML = `
-      <p>${message.funny}</p>
-      <span class="cute-death-face">${randomFace}</span>
-    `;
-    messageEl.style.display = "block";
-
-    // Return reason, message, and face as separate elements
-    return { reason, message, randomFace };
-  }
-
   getRandomDeathMessage(type) {
     const messages = MESSAGES.DEATH[type];
     if (!messages?.length) {
@@ -3469,49 +3413,36 @@ class LoserLane {
   restart() {
     this.cleanup();
     Building.nextSpawnY = null;
+    Building.buildingManager = null;
+
     this.spatialManager = new SpatialManager(CONFIG);
     this.state = new GameState(CONFIG);
-    this.initializeGameWorld();
-    this.setupControls();
-    // this.setupTouchControls();
-    this.start();
+    this.controls = new Controls(this);
+    this.settingsManager = new SettingsManager(this);
+    this.clusterManager = new VehicleClusterManager(CONFIG);
 
-    Building.buildingManager = null; // This will force a new BuildingManager to be created
+    this.initializeGameWorld();
+    this.start();
 
     const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
   }
-  cleanup() {
-    console.log("Cleanup called, old movement state:", {
-      ...this.movementState,
-    });
 
+  cleanup() {
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
+
     this.spatialManager.darlings.clear();
     this.gridSystem.clear();
-    const now = performance.now();
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      lastMove: now,
-      moveSpeed: 9,
-      isFirstMovement: true, // Reset this flag on cleanup
-    };
+    this.controls.cleanup();
+    this.settingsManager.cleanup(); // Add settings cleanup
 
-    this.preventDefaultTouchBehaviors();
-
-    this.eventListeners.forEach((listeners, element) => {
-      listeners.forEach(({ type, handler, options }) => {
-        element.removeEventListener(type, handler, options);
-      });
-    });
-    this.eventListeners.clear();
+    this.lastFrameTime = performance.now();
   }
 }
-// Initialize the game
+
 const game = new LoserLane();
