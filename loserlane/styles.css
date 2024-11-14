@@ -70,17 +70,32 @@ a {
   text-decoration: none;
   margin: 0;
   padding: 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   text-transform: capitalize;
   letter-spacing: 0.5rem;
 }
 
+@media (min-width: 600px) {
+  a {
+    font-size: 1.1rem;
+    letter-spacing: 0.5rem;
+  }  
+}
+
 #add-art-link {
   /* width: 90%; */
   margin: 0;
-  padding: 7px;
+  padding: 1px;
 }
+ @media (min-width: 600px) {
+  #add-art-link {
+    /* width: 90%; */
+    margin: 0;
+    padding: 7px;
+  }
+ }
+
 
 .grid-cell {
   display: inline-block;
@@ -319,16 +334,6 @@ a {
   font-size: 1rem;
 }
 
-.doug {
-  color: var(--green);
-  font-size: 1.2rem;
-  letter-spacing: 7px;
-  /* font-weight: bold; */
-  padding: 0 5px;
-  border-top: 2px solid var(--dark-yellow);
-  border-bottom: 2px solid var(--dark-yellow);
-  margin: 1rem 0;
-}
 
 .message-reason {
   color: var(--hot-pink);
@@ -719,6 +724,28 @@ button:active {
 /* 
 /* social card stuff */
 
+
+
+
+
+.doug {
+  color: var(--green);
+  font-size: 1.2rem;
+  letter-spacing: 7px;
+  /* font-weight: bold; */
+  padding: 0 5px;
+  border-top: 2px solid var(--dark-yellow);
+  border-bottom: 2px solid var(--dark-yellow);
+  margin: 1rem 0;
+}
+
+
+
+
+
+
+
+
 /* Social Deathmachined Overlay */
 .screenshot-overlay {
   position: absolute;
@@ -786,9 +813,16 @@ button:active {
 .message-text {
   color: var(--light-purp);
   font: var(--font-message);
-  font-size: 1.3rem;
+  font-size: 1rem;
   text-transform: uppercase;
   margin-top: 2rem;
+}
+
+@media (min-width: 600px) {
+  .message-text {
+    font-size: 1.3rem;
+    text-transform: uppercase;
+  }
 }
 .cute-death-face {
   color: var(--light-purp);
@@ -803,12 +837,19 @@ button:active {
   font: var(--font-score);
   font: var(--font-reason);
   color: var(--hot-pink);
-  font-size: 2rem;
+  font-size: 1.8rem;
 
 
   /* font-size: 1.1rem; */
   /* letter-spacing: 2px; */
 
+}
+
+@media (min-width: 600px) {
+  .score-text {
+    font-size: 2rem;
+    text-transform: uppercase;
+  }
 }
 
 .message-reason{
