@@ -455,7 +455,11 @@ shareButton.onclick = () => {
         })
         .catch(() => alert("Couldn't copy text!")); 
 };
-buttonContainer.appendChild(shareButton);
+// buttonContainer.appendChild(shareButton);
+
+
+
+
 //   const shareButton = document.createElement("button");
 // shareButton.textContent = "COPY";
 // shareButton.onclick = async () => {
