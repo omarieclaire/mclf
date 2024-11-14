@@ -441,46 +441,61 @@ saveButton.onclick = () => {
 };
   buttonContainer.appendChild(saveButton);
 
-  const shareButton = document.createElement("button");
-shareButton.textContent = "SHARE";
-shareButton.onclick = async () => {
-  const shareData = {
-    title: "WE NEED BIKE LANES",
-    text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
-    url: window.location.href
-  };
 
-  // Check if the Web Share API is supported
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      console.log('Shared successfully');
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        // Only show error if user didn't just cancel the share
-        console.error('Share failed:', err.message);
-        
-        // Fallback to clipboard
-        try {
-          await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-          alert('Share text copied to clipboard!');
-        } catch (clipErr) {
-          console.error('Clipboard failed:', clipErr);
-          alert('Could not share or copy. Please try again!');
-        }
-      }
-    }
-  } else {
-    // Fallback for browsers that don't support sharing
-    try {
-      await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-      alert('Share text copied to clipboard!');
-    } catch (err) {
-      console.error('Clipboard failed:', err);
-      alert('Could not share or copy. Please try again!');
-    }
-  }
+  const shareButton = document.createElement("button");
+shareButton.textContent = "COPY";
+shareButton.onclick = () => {
+    const textToCopy = `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`;
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            shareButton.textContent = "COPIED!";
+            setTimeout(() => {
+                shareButton.textContent = "COPY";
+            }, 2000);
+        })
+        .catch(() => alert("Couldn't copy text!")); 
 };
+buttonContainer.appendChild(shareButton);
+//   const shareButton = document.createElement("button");
+// shareButton.textContent = "COPY";
+// shareButton.onclick = async () => {
+//   const shareData = {
+//     title: "WE NEED BIKE LANES",
+//     text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
+//     url: window.location.href
+//   };
+
+//   // Check if the Web Share API is supported
+//   if (navigator.share) {
+//     try {
+//       await navigator.share(shareData);
+//       console.log('Shared successfully');
+//     } catch (err) {
+//       if (err.name !== 'AbortError') {
+//         // Only show error if user didn't just cancel the share
+//         console.error('Share failed:', err.message);
+        
+//         // Fallback to clipboard
+//         try {
+//           await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+//           alert('Share text copied to clipboard!');
+//         } catch (clipErr) {
+//           console.error('Clipboard failed:', clipErr);
+//           alert('Could not share or copy. Please try again!');
+//         }
+//       }
+//     }
+//   } else {
+//     // Fallback for browsers that don't support sharing
+//     try {
+//       await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+//       alert('Share text copied to clipboard!');
+//     } catch (err) {
+//       console.error('Clipboard failed:', err);
+//       alert('Could not share or copy. Please try again!');
+//     }
+//   }
+// };
 
   buttonContainer.appendChild(shareButton);
 
