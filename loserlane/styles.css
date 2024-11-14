@@ -245,7 +245,7 @@ a {
 #title-box-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* gap: 10px; */
   justify-content: space-between;
   padding: 8px 0;
   color: var(--light-blue);
