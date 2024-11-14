@@ -539,16 +539,16 @@ button:active {
   will-change: transform, text-shadow;
 }
 
-/* Streetcar - subtle red danger glow + slow pulse */
-.streetcar {
+/* TTC - subtle red danger glow + slow pulse */
+.TTC {
   /* text-shadow: 0 0 1px rgba(255, 0, 0, 0.2); */
   animation: slowPulse 4s ease-in-out infinite;
 }
-.streetcar:hover {
+.TTC:hover {
   text-shadow: 0 0 3px rgba(255, 0, 0, 3);
 }
 
-/* Cars - slight headlight effect + gentle wiggle */
+/* Deathmachines - slight headlight effect + gentle wiggle */
 .car {
   /* text-shadow: 1px 1px 0 rgb(255, 181, 181); */
   animation: gentleWiggle 6s ease-in-out infinite;
@@ -568,8 +568,8 @@ button:active {
   background-color: rgba(19, 16, 83, 0.15);
 }
 
-/* Pedestrians - make them pop slightly + tiny bounce */
-.pedestrian {
+/* Wanderers - make them pop slightly + tiny bounce */
+.wanderer {
   /* text-shadow: 0 0 0 rgba(24, 233, 167, 0.476); */
   animation: tinyBounce 2s ease-in-out infinite;
 }
@@ -707,7 +707,7 @@ button:active {
 
 /* social card stuff */
 
-/* Social Card Overlay */
+/* Social Deathmachined Overlay */
 .screenshot-overlay {
   position: absolute;
   top: 50%;

@@ -68,43 +68,43 @@
       <div id="settings-window">
         <h3>Game Settings</h3>
 
-        <!-- Pedestrian Speed -->
-        <label for="pedestrian-speed"
-          >Pedestrian Speed
-          <span id="pedestrian-speed-value" class="value-display">0.5</span>
+        <!-- Wanderer Speed -->
+        <label for="wanderer-speed"
+          >Wanderer Speed
+          <span id="wanderer-speed-value" class="value-display">0.5</span>
         </label>
-        <input id="pedestrian-speed" type="range" min="0.1" max="3" step="0.1" value="0.5" />
+        <input id="wanderer-speed" type="range" min="0.1" max="3" step="0.1" value="0.5" />
 
         <!-- Spawn Rates -->
-        <label for="streetcar-spawn-rate"
-          >Streetcar Spawn Rate
-          <span id="streetcar-spawn-rate-value" class="value-display">0.03</span>
+        <label for="TTC-spawn-rate"
+          >TTC Spawn Rate
+          <span id="TTC-spawn-rate-value" class="value-display">0.03</span>
         </label>
-        <input id="streetcar-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.03" />
+        <input id="TTC-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.03" />
 
         <label for="oncoming-car-spawn-rate"
-          >Oncoming Car Spawn Rate
+          >Oncoming Deathmachine Spawn Rate
           <span id="oncoming-car-spawn-rate-value" class="value-display">0.15</span>
         </label>
         <input id="oncoming-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
 
         <label for="parked-car-spawn-rate"
-          >Parked Car Spawn Rate
+          >Parked Deathmachine Spawn Rate
           <span id="parked-car-spawn-rate-value" class="value-display">0.05</span>
         </label>
         <input id="parked-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
 
-        <label for="streetcar-lane-car-spawn-rate"
-          >Streetcar Lane Car Spawn Rate
-          <span id="streetcar-lane-car-spawn-rate-value" class="value-display">0.3</span>
+        <label for="TTC-lane-car-spawn-rate"
+          >TTC Lane Deathmachine Spawn Rate
+          <span id="TTC-lane-car-spawn-rate-value" class="value-display">0.3</span>
         </label>
-        <input id="streetcar-lane-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.3" />
+        <input id="TTC-lane-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.3" />
 
-        <label for="pedestrian-spawn-rate"
-          >Pedestrian Spawn Rate
-          <span id="pedestrian-spawn-rate-value" class="value-display">0.05</span>
+        <label for="wanderer-spawn-rate"
+          >Wanderer Spawn Rate
+          <span id="wanderer-spawn-rate-value" class="value-display">0.05</span>
         </label>
-        <input id="pedestrian-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.05" />
+        <input id="wanderer-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.05" />
 
         <!-- Game Speed Controls -->
         <label for="initial-speed"
@@ -126,20 +126,20 @@
         <input id="speed-decrease-rate" type="range" min="0.9" max="1" step="0.001" value="0.995" />
 
         <!-- Gaps Between Vehicles -->
-        <label for="streetcar-gap"
-          >Streetcar Gap
-          <span id="streetcar-gap-value" class="value-display">20</span>
+        <label for="TTC-gap"
+          >TTC Gap
+          <span id="TTC-gap-value" class="value-display">20</span>
         </label>
-        <input id="streetcar-gap" type="range" min="10" max="50" step="1" value="20" />
+        <input id="TTC-gap" type="range" min="10" max="50" step="1" value="20" />
 
         <label for="lane-car-gap"
-          >Streetcar Lane Car Gap
+          >TTC Lane Deathmachine Gap
           <span id="lane-car-gap-value" class="value-display">12</span>
         </label>
         <input id="lane-car-gap" type="range" min="10" max="50" step="1" value="12" />
 
         <label for="oncoming-car-gap"
-          >Oncoming Car Gap
+          >Oncoming Deathmachine Gap
           <span id="oncoming-car-gap-value" class="value-display">8</span>
         </label>
         <input id="oncoming-car-gap" type="range" min="5" max="30" step="1" value="8" />
@@ -167,7 +167,7 @@
     <script src="assets.js"></script>
     <script src="messages.js"></script>
 
-    <script src="generateSocialCard.js"></script>
+    <script src="generateSocialDeathmachined.js"></script>
 
     <script src="loserlane.js"></script>
   </body>

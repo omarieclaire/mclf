@@ -8,7 +8,7 @@
 // console.log('Assets loaded:');
 
 
-const ENTITIES = {
+const DARLINGS = {
     BIKE: {
         art: 
         [" O ", 
@@ -18,7 +18,7 @@ const ENTITIES = {
         width: 3,
         height: 3
     },
-    PEDESTRIAN: {
+    WANDERER: {
         UP: {
             art: [
                 "○", 
@@ -44,7 +44,7 @@ const ENTITIES = {
             height: 2
         }
     },
-    STREETCAR: {
+    TTC: {
         art: [
             "┌0--─0┐",
             "│▀▀▀▀▀│",
@@ -60,7 +60,7 @@ const ENTITIES = {
         height: 9
     },
 
-    MOVINGCAR: {
+    MOVINGDEATHMACHINE: {
         art: [
             "┌.─.┐",
             "│▀▀▀│",
@@ -71,7 +71,7 @@ const ENTITIES = {
         width: 5,
         height: 6
     },
-    ONCOMINGCAR: {
+    ONCOMINGDEATHMACHINE: {
         art: [
             "┌───┐",
             "│▀▀▀│",
@@ -82,7 +82,7 @@ const ENTITIES = {
         width: 5,
         height: 6
     },
-    CAR: {
+    DEATHMACHINE: {
         art: [
             " ┌.─.┐",
             " │▀▀▀│",
@@ -93,7 +93,7 @@ const ENTITIES = {
         width: 7,
         height: 6
     },
-    PARKED_CAR_STATES: [
+    PARKED_DEATHMACHINE_STATES: [
         // State 0: Closed
         [
             "  ┌.─.┐ ",

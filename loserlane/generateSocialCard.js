@@ -5,13 +5,13 @@ const ART = {
          "^|^", 
          " O "],
     },
-    PEDESTRIAN: {
+    WANDERER: {
         art: [
             "○", 
             "╽"
         ]
     },
-    STREETCAR: {
+    TTC: {
         art: [
             "┌0--─0┐",
             "│▀▀▀▀▀│",
@@ -25,7 +25,7 @@ const ART = {
         ]
     },
 
-    CAR: {
+    DEATHMACHINE: {
         art: [
             "┌.─.┐",
             "│▀▀▀│",
@@ -37,7 +37,7 @@ const ART = {
         height: 6
     },
 
-    PARKEDCAR: {
+    PARKEDDEATHMACHINE: {
         art: [
             "┌.─.┐",
             "│▀▀▀│",
