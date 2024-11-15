@@ -2939,60 +2939,55 @@ class LoserLane {
 
   movePlayer(direction) {
     if (!this.state.isPlaying) return;
-  
+
     const moveAmount = direction === "left" ? -1 : 1;
     const newLane = Math.floor(this.state.currentLane + moveAmount);
-    
+
     // Clear debug
-    console.log('Moving:', {
+    console.log("Moving:", {
       from: this.state.currentLane,
       to: newLane,
       direction: direction,
-      immunity: this.doubleJumpPending
+      immunity: this.doubleJumpPending,
     });
-  
+
     // About to move onto a track?
-    const isMovingOntoTrack = newLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
-                             newLane === CONFIG.KILLERLANES.KILLERTRACK2;
-    
+    const isMovingOntoTrack = newLane === CONFIG.KILLERLANES.KILLERTRACK1 || newLane === CONFIG.KILLERLANES.KILLERTRACK2;
+
     if (isMovingOntoTrack && !this.doubleJumpPending) {
       console.log("Starting immunity window - moving onto track");
       this.doubleJumpPending = true;
-      
+
       // If already had a timer, clear it
       if (this.immunityTimer) {
         clearTimeout(this.immunityTimer);
       }
-      
+
       this.immunityTimer = setTimeout(() => {
         console.log("Immunity expired - checking position", {
-          lane: this.state.currentLane
+          lane: this.state.currentLane,
         });
-        const onTrack = this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
-                       this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
+        const onTrack = this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
         this.doubleJumpPending = false;
         if (onTrack) {
           this.die("TRACK");
         }
       }, 300);
     }
-  
+
     // Move
-    this.state.currentLane = Math.max(
-      CONFIG.LANES.ONCOMING,
-      Math.min(newLane, CONFIG.LANES.BUILDINGS - 1)
-    );
-  
+    this.state.currentLane = Math.max(CONFIG.LANES.ONCOMING, Math.min(newLane, CONFIG.LANES.BUILDINGS - 1));
+
     this.updateBikePosition();
     this.checkBikeCollisions();
   }
-  
+
   handleInput(direction, now) {
     if (!this.game.state?.isPlaying) return;
-  
-    const onTrack = this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
-                   this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
-  
+
+    const onTrack =
+      this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
+
     // Handle jumping
     if (this.game.doubleJumpPending && onTrack) {
       console.log("Second tap received - jumping from track");
@@ -3002,56 +2997,57 @@ class LoserLane {
       this.game.movePlayer(direction);
     }
   }
-  
+
   handleJump(direction) {
     console.log("Processing jump", {
       from: this.state.currentLane,
       direction: direction,
-      immunity: this.doubleJumpPending
+      immunity: this.doubleJumpPending,
     });
-  
+
     if (this.state.isJumping) return;
-  
+
     const moveAmount = direction === "left" ? -1 : 1;
-    
+
     // Complete the jump
     this.state.currentLane += moveAmount;
-    
+
     // Clear immunity
     if (this.immunityTimer) {
       clearTimeout(this.immunityTimer);
       this.immunityTimer = null;
     }
     this.doubleJumpPending = false;
-    
+
     console.log("Jump completed to lane:", this.state.currentLane);
   }
 
   handleInput(direction, now) {
     if (!this.game.state?.isPlaying) return;
-  
+
     console.log("Input received", {
       direction: direction,
       currentLane: this.game.state.currentLane,
       immunity: this.game.doubleJumpPending,
       track1: CONFIG.KILLERLANES.KILLERTRACK1,
-      track2: CONFIG.KILLERLANES.KILLERTRACK2
+      track2: CONFIG.KILLERLANES.KILLERTRACK2,
     });
-  
+
     // If we're on a track AND in immunity window, handle as jump
-    if (this.game.doubleJumpPending && 
-        (this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 ||
-         this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)) {
+    if (
+      this.game.doubleJumpPending &&
+      (this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
+    ) {
       console.log("Second tap during immunity - jumping!", {
         from: this.game.state.currentLane,
-        direction: direction
+        direction: direction,
       });
       this.game.handleJump(direction);
     } else {
       console.log("Regular move - not jumping because", {
         hasImmunity: this.game.doubleJumpPending,
         onTrack1: this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1,
-        onTrack2: this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2
+        onTrack2: this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2,
       });
       this.game.movePlayer(direction);
     }
@@ -3060,11 +3056,11 @@ class LoserLane {
     console.log("Handling jump", {
       from: this.state.currentLane,
       direction: direction,
-      immunity: this.doubleJumpPending
+      immunity: this.doubleJumpPending,
     });
-  
+
     if (this.state.isJumping) return;
-  
+
     // Handle the jump across tracks
     if (this.doubleJumpPending) {
       let jumped = false;
@@ -3076,7 +3072,7 @@ class LoserLane {
         this.state.currentLane += direction === "left" ? -1 : 1;
         jumped = true;
       }
-      
+
       if (jumped) {
         if (this.immunityTimer) {
           clearTimeout(this.immunityTimer);
@@ -3087,7 +3083,7 @@ class LoserLane {
         return;
       }
     }
-  
+
     // Set animation state
     this.state.isJumping = true;
     setTimeout(() => {
@@ -3157,25 +3153,21 @@ class LoserLane {
       width: DARLINGS.BIKE.width,
       height: DARLINGS.BIKE.height,
     };
-  
+
     const darlingsForCollision = {
-      obstacles: Array.from(this.spatialManager.darlings)
-        .filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
-      parkedDeathMachines: Array.from(this.spatialManager.darlings)
-        .filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
+      obstacles: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
+      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
-  
-    const collision = this.spatialManager.collisionManager
-      .checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
-  
+
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
+
     console.log("Collision check result:", {
       collisionType: collision,
       currentLane: this.state.currentLane,
       doubleJumpPending: this.doubleJumpPending,
-      onTrack: [CONFIG.KILLERLANES.KILLERTRACK1, CONFIG.KILLERLANES.KILLERTRACK2]
-        .includes(Math.floor(this.state.currentLane))
+      onTrack: [CONFIG.KILLERLANES.KILLERTRACK1, CONFIG.KILLERLANES.KILLERTRACK2].includes(Math.floor(this.state.currentLane)),
     });
-  
+
     if (collision) {
       this.die(collision);
     }
@@ -3483,10 +3475,12 @@ class LoserLane {
       }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
     }
 
+
     // Call flashScreen for red flash effect
     this.flashScreen();
 
     const messageInfo = this.showDeathMessage(reason);
+
     setTimeout(() => {
       const score = this.state.score;
       html2canvas(gameScreen)
@@ -3505,7 +3499,7 @@ class LoserLane {
       if (messageEl) {
         messageEl.classList.remove("show-message");
       }
-      this.restart();
+      // this.restart();
     }, this.config.ANIMATIONS.DEATH_DURATION);
   }
 
@@ -3529,9 +3523,12 @@ class LoserLane {
     }, delay);
   }
 
+  // gameInstance.togglePause();
   getRandomDeathMessage(type) {
     const messages = MESSAGES.DEATH[type];
     if (!messages?.length) {
+      console.log(`oops no death message ${type}`);
+
       return {
         reason: "X X!",
         funny: "Sometimes things just happen",
