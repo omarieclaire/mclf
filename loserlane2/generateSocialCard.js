@@ -347,29 +347,14 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // Content container
   const contentContainer = document.createElement("div");
-  contentContainer.className = "sharebox-content-container"
   contentContainer.style.position = "relative";
   contentContainer.style.zIndex = "1";
-
-  // Message text
-  const messageText = document.createElement("p");
-  messageText.className = "message-text";
-
-  messageText.innerHTML = messageString;
-  contentContainer.appendChild(messageText);
 
   // Score text
   const scoreText = document.createElement("p");
   scoreText.className = "score-text";
   scoreText.innerHTML = `I survived ${score} seconds without a bike lane`;
   contentContainer.appendChild(scoreText);
-
-  // THANKS DOUG
-  const doug2 = document.createElement("p");
-  doug2.className = "cute-death-face";
-  doug2.innerHTML = `THANKS DOUG`;
-  contentContainer.appendChild(doug2);
-
   const asciiWrapper = document.createElement("div");
   asciiWrapper.style.position = "relative"; // Make sure this is set
   asciiWrapper.style.width = "fit-content"; // Add this
@@ -416,21 +401,26 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   // asciiWrapper.appendChild(asciiArtOverlay2);
   contentContainer.appendChild(asciiWrapper);
 
-  // Sad face
-  // const faceContainer = document.createElement("div");
-  // faceContainer.style.textAlign = "center";
-  // const sadFace = document.createElement("span");
-  // sadFace.className = "cute-death-face";
-  // sadFace.innerHTML = randomFace;
-  // faceContainer.appendChild(sadFace);
-  // contentContainer.appendChild(faceContainer);
-
   // Score text
   const doug = document.createElement("p");
   doug.className = "doug";
   doug.innerHTML = `WE NEED BIKE LANES`;
-  
   contentContainer.appendChild(doug);
+  // Message text
+  const messageText = document.createElement("p");
+  messageText.className = "message-text";
+
+  messageText.innerHTML = messageString;
+  contentContainer.appendChild(messageText);
+
+  // Sad face
+  const faceContainer = document.createElement("div");
+  faceContainer.style.textAlign = "center";
+  const sadFace = document.createElement("span");
+  sadFace.className = "cute-death-face";
+  sadFace.innerHTML = randomFace;
+  faceContainer.appendChild(sadFace);
+  contentContainer.appendChild(faceContainer);
 
   // Add the content container to the social card
   socialCard.appendChild(contentContainer);
@@ -440,75 +430,78 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   buttonContainer.className = "button-container";
 
   const saveButton = document.createElement("button");
-  saveButton.textContent = "SAVE";
-  saveButton.onclick = () => {
-    html2canvas(socialCard).then((canvas) => {
-      const link = document.createElement("a");
-      link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`; // Customized filename here
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  };
+saveButton.textContent = "SAVE";
+saveButton.onclick = () => {
+  html2canvas(socialCard).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`; // Customized filename here
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+};
   buttonContainer.appendChild(saveButton);
 
+
   const shareButton = document.createElement("button");
-  shareButton.textContent = "COPY";
-  shareButton.onclick = () => {
+shareButton.textContent = "COPY";
+shareButton.onclick = () => {
     const textToCopy = `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`;
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        shareButton.textContent = "COPIED!";
-        setTimeout(() => {
-          shareButton.textContent = "COPY";
-        }, 2000);
-      })
-      .catch(() => alert("Couldn't copy text!"));
-  };
-  // buttonContainer.appendChild(shareButton);
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            shareButton.textContent = "COPIED!";
+            setTimeout(() => {
+                shareButton.textContent = "COPY";
+            }, 2000);
+        })
+        .catch(() => alert("Couldn't copy text!")); 
+};
+// buttonContainer.appendChild(shareButton);
 
-  //   const shareButton = document.createElement("button");
-  // shareButton.textContent = "COPY";
-  // shareButton.onclick = async () => {
-  //   const shareData = {
-  //     title: "WE NEED BIKE LANES",
-  //     text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
-  //     url: window.location.href
-  //   };
 
-  //   // Check if the Web Share API is supported
-  //   if (navigator.share) {
-  //     try {
-  //       await navigator.share(shareData);
-  //       console.log('Shared successfully');
-  //     } catch (err) {
-  //       if (err.name !== 'AbortError') {
-  //         // Only show error if user didn't just cancel the share
-  //         console.error('Share failed:', err.message);
 
-  //         // Fallback to clipboard
-  //         try {
-  //           await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-  //           alert('Share text copied to clipboard!');
-  //         } catch (clipErr) {
-  //           console.error('Clipboard failed:', clipErr);
-  //           alert('Could not share or copy. Please try again!');
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     // Fallback for browsers that don't support sharing
-  //     try {
-  //       await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-  //       alert('Share text copied to clipboard!');
-  //     } catch (err) {
-  //       console.error('Clipboard failed:', err);
-  //       alert('Could not share or copy. Please try again!');
-  //     }
-  //   }
-  // };
 
-  //   buttonContainer.appendChild(shareButton);
+//   const shareButton = document.createElement("button");
+// shareButton.textContent = "COPY";
+// shareButton.onclick = async () => {
+//   const shareData = {
+//     title: "WE NEED BIKE LANES",
+//     text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
+//     url: window.location.href
+//   };
+
+//   // Check if the Web Share API is supported
+//   if (navigator.share) {
+//     try {
+//       await navigator.share(shareData);
+//       console.log('Shared successfully');
+//     } catch (err) {
+//       if (err.name !== 'AbortError') {
+//         // Only show error if user didn't just cancel the share
+//         console.error('Share failed:', err.message);
+        
+//         // Fallback to clipboard
+//         try {
+//           await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+//           alert('Share text copied to clipboard!');
+//         } catch (clipErr) {
+//           console.error('Clipboard failed:', clipErr);
+//           alert('Could not share or copy. Please try again!');
+//         }
+//       }
+//     }
+//   } else {
+//     // Fallback for browsers that don't support sharing
+//     try {
+//       await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+//       alert('Share text copied to clipboard!');
+//     } catch (err) {
+//       console.error('Clipboard failed:', err);
+//       alert('Could not share or copy. Please try again!');
+//     }
+//   }
+// };
+
+//   buttonContainer.appendChild(shareButton);
 
   const closeButton = document.createElement("button");
   closeButton.textContent = "CLOSE";
