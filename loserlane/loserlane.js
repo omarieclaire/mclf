@@ -419,57 +419,29 @@ class CollisionManager {
   checkBikeCollisionIsSpecial(bikeHitbox, darlings, isJumping) {
     // First check TTCs and other vehicles
     for (const darling of darlings.obstacles) {
-      // console.log(darlings.obstacles);
-
-      // Skip checking TTC collision only when jumping over tracks and it's a streetcar
-      if (isJumping && darling.type === DarlingType.TTC) {
-        const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
-        const TTCCenter = darling.position.x + darling.width / 2;
-        // Only skip if bike is directly above the streetcar
-        if (Math.abs(bikeCenter - TTCCenter) < 2) {
-          continue;
-        }
-      }
-
+      // Check collision with the current obstacle
       if (this.checkCollision(bikeHitbox, darling.getHitbox())) {
         const obstacleHitbox = darling.getHitbox();
         const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
 
-        // If obstacle is moving and hits bike from behind, trigger collision
-        if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
-          switch (darling.type) {
-            case DarlingType.TTC:
-              return "TTC";
-            case DarlingType.TTC_LANE_DEATHMACHINE:
-            case DarlingType.ONCOMING_DEATHMACHINE:
-              return "ONCOMING_DEATHMACHINE";
-            case DarlingType.WANDERER:
-              return "PEDESTRIAN";
-            case DarlingType.BUILDING:
-              return "BUILDING";
-            default:
-              return "TRAFFIC";
-          }
-        }
-
-        // If bike runs into obstacle or obstacle hits from front
-        if (darling.behavior?.baseSpeed <= 0 || collisionDirection !== "up") {
-          switch (darling.type) {
-            case DarlingType.TTC:
-              return "TTC";
-            case DarlingType.TTC_LANE_DEATHMACHINE:
-            case DarlingType.ONCOMING_DEATHMACHINE:
-              return "TRAFFIC";
-            case DarlingType.WANDERER:
-              return "WANDERER";
-            case DarlingType.BUILDING:
-              return "BUILDING";
-            default:
-              return "TRAFFIC";
-          }
+        // Determine collision type
+        switch (darling.type) {
+          case DarlingType.TTC: // Always die if hitting TTC
+            return "TTC";
+          case DarlingType.TTC_LANE_DEATHMACHINE:
+          case DarlingType.ONCOMING_DEATHMACHINE:
+            return "ONCOMING_DEATHMACHINE";
+          case DarlingType.WANDERER:
+            return "WANDERER";
+          case DarlingType.BUILDING:
+            return "BUILDING";
+          default:
+            return "TRAFFIC";
         }
       }
     }
+
+    // Check parked vehicles and doors
     for (const deathMachine of darlings.parkedDeathMachines) {
       if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
         return "PARKEDDEATHMACHINE";
@@ -488,15 +460,8 @@ class CollisionManager {
         console.log("In track crossing immunity window");
         return null; // Skip collision during immunity window
       } else {
-        // Add debug logs
-        console.log("Track collision detected - access check:", {
-          spatialManager: !!this.spatialManager,
-          game: !!this.spatialManager?.game,
-          doubleJumpPending: this.spatialManager?.game?.doubleJumpPending,
-          bikeCenter: Math.floor(bikeCenter),
-          onTrack: trackPositions.includes(Math.floor(bikeCenter)),
-        });
-        return "TRACK";
+        console.log("Track collision detected - bike dies");
+        return "TRACKS";
       }
     }
 
@@ -2340,24 +2305,6 @@ class Wanderer extends BaseEntity {
 // =========================================
 
 class GameState {
-  // constructor(config) {
-  //   this.config = config;
-  //   this.isDead = false;
-  //   this.isPlaying = false;
-  //   this.isPaused = false;
-  //   this.score = 0;
-  //   this.currentLane = config.LANES.BIKE;
-  //   this.isJumping = false;
-  //   this.speed = config.GAME.INITIAL_SPEED;
-
-  //   this.deathState = {
-  //     animation: 0,
-  //     x: 0,
-  //     y: 0,
-  //     reason: null,
-  //     frameCounter: 0,
-  //     colorIndex: 0,
-  //   };
   constructor(config) {
     this.config = config;
     this.isDead = false;
@@ -2367,10 +2314,6 @@ class GameState {
     this.currentLane = config.LANES.BIKE; // Should always start at BIKE lane (15)
     this.isJumping = false;
     this.speed = config.GAME.INITIAL_SPEED;
-
-    // Add debug alert that we can see on mobile
-    // alert(`Initial bike position: ${this.currentLane}, Bike lane should be: ${config.LANES.BIKE}`);
-
     this.deathState = {
       animation: 0,
       x: 0,
@@ -2970,7 +2913,7 @@ class LoserLane {
         const onTrack = this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
         this.doubleJumpPending = false;
         if (onTrack) {
-          this.die("TRACK");
+          this.die("TRACKS");
         }
       }, 300);
     }
@@ -3145,33 +3088,36 @@ class LoserLane {
 
     return bikeEntity;
   }
-
   checkBikeCollisions() {
+    // Immediate return if the player is already dead
+    if (this.state.isDead) return;
+  
     const bikeHitbox = {
       x: this.state.currentLane,
       y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
       width: DARLINGS.BIKE.width,
       height: DARLINGS.BIKE.height,
     };
-
+  
     const darlingsForCollision = {
       obstacles: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
       parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
-
+  
     const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
-
+  
     console.log("Collision check result:", {
       collisionType: collision,
       currentLane: this.state.currentLane,
       doubleJumpPending: this.doubleJumpPending,
       onTrack: [CONFIG.KILLERLANES.KILLERTRACK1, CONFIG.KILLERLANES.KILLERTRACK2].includes(Math.floor(this.state.currentLane)),
     });
-
+  
     if (collision) {
       this.die(collision);
     }
   }
+  
 
   spawnDarlings() {
     // console.log("\n=== Spawn Cycle Config ===", {
@@ -3474,7 +3420,6 @@ class LoserLane {
         overlay.remove();
       }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
     }
-
 
     // Call flashScreen for red flash effect
     this.flashScreen();
