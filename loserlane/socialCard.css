@@ -7,6 +7,8 @@
   border-top: 2px solid var(--dark-yellow);
   border-bottom: 2px solid var(--dark-yellow);
   margin: 1rem 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Soft black background with 50% opacity */
+  border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
 }
 
 .sharebox-content-container {
@@ -49,6 +51,11 @@
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
   z-index: 10000;
+}
+
+.social-card * {
+
+
 }
 
 @media (min-width: 600px) {
@@ -113,6 +120,8 @@
   font: var(--font-score);
   font: var(--font-reason);
   color: var(--hot-pink);
+  background-color: rgba(0, 0, 0, 0.7); /* Soft black background with 50% opacity */
+  border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
   font-size: 1.8rem;
 
   /* font-size: 1.1rem; */
