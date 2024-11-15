@@ -72,7 +72,7 @@ const CONFIG = {
     BUILDINGS: 31,
   },
   KILLERLANES: {
-    KILLERTRACK1: 9,
+    KILLERTRACK1: 10,
     KILLERTRACK2: 14,
   },
 
@@ -2881,6 +2881,7 @@ class LoserLane {
   }
 
   movePlayer(direction) {
+    if (this.state.isDead) return;
     if (!this.state.isPlaying) return;
 
     const moveAmount = direction === "left" ? -1 : 1;
@@ -2949,6 +2950,8 @@ class LoserLane {
     });
 
     if (this.state.isJumping) return;
+    if (this.state.isDead) return;
+
 
     const moveAmount = direction === "left" ? -1 : 1;
 
