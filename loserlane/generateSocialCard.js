@@ -44,15 +44,15 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(71, 9, 6, 0.6);
+    background-color: rgba(2, 0, 0, 0.6);
     z-index: 10000;
 `;
 
   const socialCard = document.createElement("div");
   socialCard.className = "social-card";
   socialCard.style.position = "relative";
-  socialCard.style.width = "400px"; // Make it square
-  socialCard.style.height = "400px"; // Make it square
+  // socialCard.style.width = "400px"; // Make it square
+  // socialCard.style.height = "400px"; // Make it square
   socialCard.style.margin = "0 auto"; // Center it
 
   // Create and add screenshot as background
@@ -80,7 +80,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   backgroundOverlay.style.left = "0";
   backgroundOverlay.style.width = "100%";
   backgroundOverlay.style.height = "100%";
-  backgroundOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+  backgroundOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.65)";
   socialCard.appendChild(backgroundOverlay);
 
   const entityData = ART[reason] || { art: ["N/A"] };
@@ -191,7 +191,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // Save Button
   const saveButton = document.createElement("button");
-  saveButton.textContent = "SAVE";
+  saveButton.textContent = "DOWNLOAD IMAGE";
   saveButton.onclick = () => {
     generateImage().then((dataUrl) => {
       const link = document.createElement("a");
@@ -217,11 +217,11 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`, '_blank');
     });
   };
-  buttonContainer.appendChild(fbButton);
+  // buttonContainer.appendChild(fbButton);
 
   // Instagram Share Button
   const igButton = document.createElement("button");
-  igButton.textContent = "IG";
+  igButton.textContent = "COPY";
   igButton.onclick = () => {
     generateImage().then((dataUrl) => {
       // Unfortunately, Instagram doesn't have a web API for sharing
@@ -238,7 +238,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
         .then(() => {
           igButton.textContent = "SAVED!";
           setTimeout(() => {
-            igButton.textContent = "IG";
+            igButton.textContent = "COPY";
           }, 2000);
           alert("Image saved! Text copied to clipboard. You can now create a new post on Instagram with these.");
         })

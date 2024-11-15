@@ -1,143 +1,138 @@
-
-
 .doug {
-    color: var(--green);
-    font-size: 1.2rem;
-    letter-spacing: 7px;
-    /* font-weight: bold; */
-    padding: 0 5px;
-    border-top: 2px solid var(--dark-yellow);
-    border-bottom: 2px solid var(--dark-yellow);
-    margin: 1rem 0;
-  }
-  
-  .sharebox-content-container {
-    position: relative;
-    /* z-index; 1; */
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  
-  
-  
-  
-  
-  /* Social Deathmachined Overlay */
-  .screenshot-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    /* position: fixed; */
-    /* top: 0; */
-    /* left: 0; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--overlay-background);
-    z-index: 1000;
-  }
+  color: var(--green);
+  font-size: 1.2rem;
+  letter-spacing: 7px;
+  /* font-weight: bold; */
+  padding: 0 5px;
+  border-top: 2px solid var(--dark-yellow);
+  border-bottom: 2px solid var(--dark-yellow);
+  margin: 1rem 0;
+}
 
-  
-  
-  .social-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 80vw; /* Restrict max width */
-    width: 300px; /* Adjust the size of the card */
-    border: 3px dashed var(--green);
-    background-color: var(--dark-grey);
-    padding: 15px;
-    /* margin: 1rem; */
-    /* gap: 20px; */
-    font-family: var(--font-main);
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-sizing: border-box;
-    z-index: 10000;
-  }
-  
-  .social-card-image {
-    width: 80vw;
-    max-width: 500px;
-    border: 3px dashed var(--green);
-    margin-bottom: 1rem;
-  }
-  
-  /* Text Styles */
-  .game-over-title {
-    color: var(--colour-game-over);
-    font: var(--font-game-over);
-  }
-  .ascii-art{
-    padding: 15px 0;
-    /* rotate: 0deg; */
-  }
-  .ascii-art,
-  .message-reason,
-  .message-text,
-  .score-text 
-  {
-    color: var(--light-purp);
-    font: var(--font-main);
-  }
-  .message-reason {
-    color: var(--hot-pink);
-    font: var(--font-reason);
-  }
+.sharebox-content-container {
+  position: relative;
+  /* z-index; 1; */
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Social Deathmachined Overlay */
+.screenshot-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--overlay-background);
+  z-index: 1000;
+}
+
+.social-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 95vw; /* Restrict max width */
+  /* width: 300px; Adjust the size of the card */
+  border: 3px dashed var(--green);
+  background-color: var(--dark-grey);
+  padding: 15px;
+  font-family: var(--font-main);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  z-index: 10000;
+}
+
+@media (min-width: 600px) {
+    .social-card {
+        max-width: 500px; /* Restrict max width */
+        width: auto; /* Adjust the size of the card */
+
+      }
+
+}
+
+.social-card-image {
+  /* width: 80vw;
+  max-width: 500px;
+  border: 3px dashed var(--green); */
+  margin-bottom: 1rem;
+}
+
+/* Text Styles */
+.game-over-title {
+  color: var(--colour-game-over);
+  font: var(--font-game-over);
+}
+.ascii-art {
+  padding: 15px 0;
+  /* rotate: 0deg; */
+}
+.ascii-art,
+.message-reason,
+.message-text,
+.score-text {
+  color: var(--light-purp);
+  font: var(--font-main);
+}
+.message-reason {
+  color: var(--hot-pink);
+  font: var(--font-reason);
+}
+.message-text {
+  color: var(--light-purp);
+  font: var(--font-message);
+  font-size: 1rem;
+  text-transform: uppercase;
+  margin-top: 2rem;
+}
+
+@media (min-width: 600px) {
   .message-text {
-    color: var(--light-purp);
-    font: var(--font-message);
-    font-size: 1rem;
+    /* font-size: 1.3rem; */
     text-transform: uppercase;
-    margin-top: 2rem;
   }
-  
-  @media (min-width: 600px) {
-    .message-text {
-      /* font-size: 1.3rem; */
-      text-transform: uppercase;
-    }
-  }
-  .cute-death-face {
-    color: var(--light-purp);
-  
-    /* color: var(--med-purp); */
-    font: var(--font-face);
-    font-size: 1.1rem;
-  
-  }
+}
+.cute-death-face {
+  color: var(--light-purp);
+
+  /* color: var(--med-purp); */
+  font: var(--font-face);
+  font-size: 1.1rem;
+}
+.score-text {
+  /* color: var(--dark-yellow); */
+  font: var(--font-score);
+  font: var(--font-reason);
+  color: var(--hot-pink);
+  font-size: 1.8rem;
+
+  /* font-size: 1.1rem; */
+  /* letter-spacing: 2px; */
+}
+
+@media (min-width: 600px) {
   .score-text {
-    /* color: var(--dark-yellow); */
-    font: var(--font-score);
-    font: var(--font-reason);
-    color: var(--hot-pink);
-    font-size: 1.8rem;
-  
-  
-    /* font-size: 1.1rem; */
-    /* letter-spacing: 2px; */
-  
+    font-size: 2rem;
+    text-transform: uppercase;
   }
-  
-  @media (min-width: 600px) {
-    .score-text {
-      font-size: 2rem;
-      text-transform: uppercase;
-    }
-  }
-  
-  .message-reason{
-    font-size: 1.9rem;
-  }
-  
-  .social-card h2,
-  .social-card pre,
-  .social-card p {
-    text-align: center;
-    margin: 5px 0;
-  } 
+}
+
+.message-reason {
+  font-size: 1.9rem;
+}
+
+.social-card h2,
+.social-card pre,
+.social-card p {
+  text-align: center;
+  margin: 5px 0;
+}
