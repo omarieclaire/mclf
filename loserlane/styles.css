@@ -112,6 +112,7 @@ a {
   }
 } */
 
+/* makes each character take up 1% of the viewport width and 2% of the viewport height. */
 .grid-cell {
   display: inline-block;
   width: calc(100vw / 42); /* 42 is your CONFIG.GAME.WIDTH */

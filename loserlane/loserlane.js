@@ -6,11 +6,7 @@ const CONFIG = {
     MIN_SPEED: 300,
     SPEED_DECREASE_RATE: 0.995,
     CYCLIST_Y: Math.floor(window.innerHeight / 40),
-    DOUBLE_TAP_TIME: 350,
-    lastKeys: {
-      left: 0,
-      right: 0,
-    },
+    DOUBLE_TAP_TIME: 150, // 300ms window for double-tap
     ANIMATION_FRAMES: {
       WANDERER_WAIT: 20,
       DEATH_SEQUENCE: 15,
@@ -21,11 +17,18 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    TTC: 0.05,
-    TTC_LANE_DEATHMACHINE: 0.8,
-    ONCOMING_DEATHMACHINE: 0.4,
-    PARKED_DEATHMACHINE: 0.2,
-    DOOR_OPENING: 0.4,
+    // TTC: 0.05,
+    // TTC_LANE_DEATHMACHINE: 0.8,
+    // ONCOMING_DEATHMACHINE: 0.4,
+    // PARKED_DEATHMACHINE: 0.2,
+    // DOOR_OPENING: 0.4,
+    // WANDERER: 0.9,
+    // BUILDING: 0.9,
+    TTC: 0.00002,
+    TTC_LANE_DEATHMACHINE: 0.0000008,
+    ONCOMING_DEATHMACHINE: 0.000004,
+    PARKED_DEATHMACHINE: 0.0000002,
+    DOOR_OPENING: 0.000004,
     WANDERER: 0.9,
     BUILDING: 0.9,
   },
@@ -59,15 +62,20 @@ const CONFIG = {
     },
   },
   LANES: {
-    ONCOMING: 2,
+    ONCOMING: 1,
     DIVIDER: 7,
     TRACKS: 10,
-    BIKE: 15,
+    BIKE: 17,
     BIKE_RIGHT: 18,
     PARKED: 20,
     SIDEWALK: 28,
     BUILDINGS: 31,
   },
+  KILLERLANES: {
+    KILLERTRACK1: 9,
+    KILLERTRACK2: 14,
+  },
+
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
     DOOR_OPEN_DELAY: 25,
@@ -77,11 +85,11 @@ const CONFIG = {
 
   MOVEMENT: {
     JUMP_AMOUNT: 3,
-    JUMP_DURATION: 1000,
-    HOLD_DELAY: 2000,
+    JUMP_DELAY_DURATION: 1,
     BASE_MOVE_SPEED: 1,
     BIKE_SPEED: 0.1,
     WANDERER_SPEED: 0.5,
+    LANE_CHANGE_SPEED: 2.5, // New speed just for lane changes
   },
   // SPEED: {
   //   DEFAULT: 1,
@@ -122,10 +130,10 @@ const CONFIG = {
       DRAG_THRESHOLD: 10,
       TAP_DURATION: 200,
     },
-    KEYBOARD: {
-      REPEAT_DELAY: 200,
-      REPEAT_RATE: 50,
-    },
+    // KEYBOARD: {
+    //   REPEAT_DELAY: 200,
+    //   REPEAT_RATE: 50,
+    // },
   },
   DIFFICULTY: {
     LEVELS: {
@@ -219,7 +227,14 @@ class SpatialManager {
     // Set to store all active game darlings
     this.darlings = new Set();
   }
-
+  setGame(game) {
+    console.log("Setting game reference in SpatialManager", {
+      hasGame: !!game,
+      doubleJumpPending: game.doubleJumpPending,
+    });
+    this.game = game;
+    this.collisionManager = new CollisionManager(this);
+  }
   update() {
     // Cleanup: Remove darlings that have moved off screen
     // Using a 5-pixel buffer zone above and below the game height
@@ -277,6 +292,10 @@ class GridSystem {
   constructor(config) {
     this.config = config;
     // Define size of each grid cell - smaller cells are more precise but higher computational overhead
+    // This is just for internal collision detection optimization.
+    // Instead of checking every entity against every other entity,
+    //  it divides the space into 5x5 chunks to only check nearby entities.
+    // It doesn't affect gameplay or movement.
     this.cellSize = 5;
     // Map to store all occupied cells
     // Key: String coordinate in format "x,y"
@@ -460,11 +479,25 @@ class CollisionManager {
       }
     }
 
-    // Finally check track collisions when not jumping
-    const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
+    // Track-specific collision handling
+    const trackPositions = [this.config.KILLERLANES.KILLERTRACK1, this.config.KILLERLANES.KILLERTRACK2];
     const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
+
     if (!isJumping && trackPositions.includes(Math.floor(bikeCenter))) {
-      return "TRACKS";
+      if (this.spatialManager?.game?.doubleJumpPending) {
+        console.log("In track crossing immunity window");
+        return null; // Skip collision during immunity window
+      } else {
+        // Add debug logs
+        console.log("Track collision detected - access check:", {
+          spatialManager: !!this.spatialManager,
+          game: !!this.spatialManager?.game,
+          doubleJumpPending: this.spatialManager?.game?.doubleJumpPending,
+          bikeCenter: Math.floor(bikeCenter),
+          onTrack: trackPositions.includes(Math.floor(bikeCenter)),
+        });
+        return "TRACK";
+      }
     }
 
     return null;
@@ -1351,11 +1384,11 @@ class BuildingBehavior extends EntityBehavior {
 
   updateBuildingProperties(newY, newBuilding, newHeight) {
     // Log the updated building properties
-    console.log(`[BuildingBehavior] Updating building properties:`, {
-      name: newBuilding.name,
-      y: newY,
-      height: newHeight,
-    });
+    // console.log(`[BuildingBehavior] Updating building properties:`, {
+    //   name: newBuilding.name,
+    //   y: newY,
+    //   height: newHeight,
+    // });
 
     // Update the building's properties
     this.building.position.y = newY;
@@ -1411,11 +1444,11 @@ class BuildingBehavior extends EntityBehavior {
     });
 
     // Log the validation result
-    console.log(`[BuildingBehavior] Position validation result:`, {
-      y,
-      height,
-      isValid,
-    });
+    // console.log(`[BuildingBehavior] Position validation result:`, {
+    //   y,
+    //   height,
+    //   isValid,
+    // });
 
     return isValid;
   }
@@ -1556,6 +1589,7 @@ class BikeBehavior extends EntityBehavior {
   constructor(entity) {
     super(entity);
     this.canMove = true;
+    console.log(`Bike generated in lane: ${entity.position.x}`);
   }
 }
 // =========================================
@@ -2306,15 +2340,36 @@ class Wanderer extends BaseEntity {
 // =========================================
 
 class GameState {
+  // constructor(config) {
+  //   this.config = config;
+  //   this.isDead = false;
+  //   this.isPlaying = false;
+  //   this.isPaused = false;
+  //   this.score = 0;
+  //   this.currentLane = config.LANES.BIKE;
+  //   this.isJumping = false;
+  //   this.speed = config.GAME.INITIAL_SPEED;
+
+  //   this.deathState = {
+  //     animation: 0,
+  //     x: 0,
+  //     y: 0,
+  //     reason: null,
+  //     frameCounter: 0,
+  //     colorIndex: 0,
+  //   };
   constructor(config) {
     this.config = config;
     this.isDead = false;
     this.isPlaying = false;
     this.isPaused = false;
     this.score = 0;
-    this.currentLane = config.LANES.BIKE;
+    this.currentLane = config.LANES.BIKE; // Should always start at BIKE lane (15)
     this.isJumping = false;
     this.speed = config.GAME.INITIAL_SPEED;
+
+    // Add debug alert that we can see on mobile
+    // alert(`Initial bike position: ${this.currentLane}, Bike lane should be: ${config.LANES.BIKE}`);
 
     this.deathState = {
       animation: 0,
@@ -2477,8 +2532,34 @@ class BaseControl {
     this.game = game;
     this.config = game.config;
     this.eventListeners = new Map();
+    // Add timing tracking to base class since both controls need it
+    this.lastInput = {
+      left: 0,
+      right: 0,
+    };
+    this.inputStartPosition = null; // Track starting position for both controls
   }
 
+  // Handle the input consistently for both keyboard and touch
+  handleInput(direction, now) {
+    if (!this.game.state?.isPlaying) return;
+
+    // If we're in an immunity window AND on a track, do a jump
+    if (
+      this.game.doubleJumpPending &&
+      (this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
+    ) {
+      console.log("Second tap during immunity - jumping!", {
+        currentLane: this.game.state.currentLane,
+      });
+      this.game.handleJump(direction);
+    } else {
+      console.log("Regular move", {
+        currentLane: this.game.state.currentLane,
+      });
+      this.game.movePlayer(direction);
+    }
+  }
   addEventListenerWithTracking(element, type, handler, options = false) {
     element.addEventListener(type, handler, options);
     if (!this.eventListeners.has(element)) {
@@ -2497,130 +2578,10 @@ class BaseControl {
   }
 }
 
-// =========================================
-// KeyboardControls
-// =========================================
-
-class KeyboardControls extends BaseControl {
-  constructor(game) {
-    super(game);
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      lastMove: performance.now(),
-      moveSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
-      holdDelay: CONFIG.MOVEMENT.HOLD_DELAY,
-      holdStartTime: 0,
-      isHolding: false,
-    };
-    this.setupKeyboardControls();
-  }
-
-  setupKeyboardControls() {
-    // Your existing keyboard control setup code
-    this.addEventListenerWithTracking(document, "keydown", (e) => {
-      if (!this.game.state.isPlaying && (e.key === " " || e.key === "Spacebar")) {
-        this.game.start();
-        document.getElementById("title-box").style.visibility = "visible";
-        return;
-      }
-
-      if (this.game.state.isPlaying) {
-        const now = performance.now();
-        switch (e.key) {
-          case "ArrowLeft":
-            this.handleArrowKey("left", now);
-            break;
-          case "ArrowRight":
-            this.handleArrowKey("right", now);
-            break;
-          case "p":
-          case "P":
-            this.game.togglePause();
-            break;
-        }
-      }
-    });
-
-    this.addEventListenerWithTracking(document, "keyup", (e) => {
-      if (this.game.state.isPlaying) {
-        switch (e.key) {
-          case "ArrowLeft":
-            this.movementState.isMovingLeft = false;
-            this.movementState.isHolding = false;
-            break;
-          case "ArrowRight":
-            this.movementState.isMovingRight = false;
-            this.movementState.isHolding = false;
-            break;
-        }
-      }
-    });
-  }
-
-  handleArrowKey(direction, now) {
-    const isLeft = direction === "left";
-    const lastKeyTime = CONFIG.GAME.lastKeys[direction];
-
-    if (now - lastKeyTime < CONFIG.GAME.DOUBLE_TAP_TIME) {
-      this.game.handleJump(direction);
-      CONFIG.GAME.lastKeys[direction] = 0;
-    } else {
-      if (!this.movementState[`isMoving${isLeft ? "Left" : "Right"}`]) {
-        this.game.state.currentLane = isLeft
-          ? Math.max(this.game.state.currentLane - 1, CONFIG.LANES.ONCOMING)
-          : Math.min(this.game.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
-
-        this.movementState[`isMoving${isLeft ? "Left" : "Right"}`] = true;
-        this.movementState.holdStartTime = now;
-        this.movementState.isHolding = true;
-      }
-      CONFIG.GAME.lastKeys[direction] = now;
-    }
-  }
-
-  update(timestamp) {
-    if (this.game.state.isDead) return;
-
-    if (this.movementState.isHolding && timestamp - this.movementState.holdStartTime > this.movementState.holdDelay) {
-      this.updateContinuousMovement(timestamp);
-    }
-    this.movementState.lastMove = timestamp;
-  }
-
-  updateContinuousMovement(timestamp) {
-    const moveTime = timestamp - this.movementState.lastMove;
-    const cappedMoveTime = Math.min(moveTime, 16.67);
-    const moveAmount = (cappedMoveTime / 1000) * this.movementState.moveSpeed * 60;
-
-    if (this.movementState.isMovingLeft) {
-      this.game.state.currentLane = Math.max(this.game.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-    }
-    if (this.movementState.isMovingRight) {
-      this.game.state.currentLane = Math.min(this.game.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
-    }
-  }
-}
-// =========================================
-// TouchControls
-// =========================================
-
 class TouchControls extends BaseControl {
   constructor(game) {
     super(game);
-    this.touchState = {
-      left: { lastTap: 0 },
-      right: { lastTap: 0 },
-    };
-    // Add movement state for touch controls
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      holdStartTime: 0,
-      isHolding: false,
-    };
     this.setupTouchControls();
-    this.preventDefaultTouchBehaviors();
   }
 
   setupTouchControls() {
@@ -2629,85 +2590,42 @@ class TouchControls extends BaseControl {
 
     if (!leftControl || !rightControl) return;
 
-    const touchOptions = { passive: false };
-
-    ["left", "right"].forEach((side) => {
-      const element = side === "left" ? leftControl : rightControl;
-      this.addEventListenerWithTracking(element, "touchstart", (e) => this.handleTouchStart(e, side), touchOptions);
-      this.addEventListenerWithTracking(element, "touchend", (e) => this.handleTouchEnd(e, side), touchOptions);
-    });
-  }
-
-  handleTouchStart(event, side) {
-    event.preventDefault();
-    if (!this.game.state?.isPlaying) return;
-
-    const now = performance.now();
-    const state = this.touchState[side];
-
-    if (now - state.lastTap < CONFIG.GAME.DOUBLE_TAP_TIME) {
-      this.game.handleJump(side);
-      state.lastTap = 0;
-      return;
-    }
-
-    if (side === "left") {
-      this.game.state.currentLane = Math.max(this.game.state.currentLane - 1, CONFIG.LANES.ONCOMING);
-      this.movementState.isMovingLeft = true;
-    } else {
-      this.game.state.currentLane = Math.min(this.game.state.currentLane + 1, CONFIG.LANES.BUILDINGS - 1);
-      this.movementState.isMovingRight = true;
-    }
-
-    state.lastTap = now;
-    this.movementState.holdStartTime = now;
-    this.movementState.isHolding = true;
-  }
-
-  handleTouchEnd(event, side) {
-    event.preventDefault();
-    if (side === "left") {
-      this.movementState.isMovingLeft = false;
-    } else {
-      this.movementState.isMovingRight = false;
-    }
-    this.movementState.isHolding = false;
-  }
-
-  preventDefaultTouchBehaviors() {
-    const options = { passive: false };
-    const events = ["touchmove", "touchforcechange", "touchcancel", "gesturestart", "gesturechange", "gestureend"];
-
-    events.forEach((event) => {
-      this.addEventListenerWithTracking(
-        document,
-        event,
-        (e) => {
-          if (this.game.state?.isPlaying || event.startsWith("gesture")) {
-            e.preventDefault();
-          }
-        },
-        options
-      );
-    });
-  }
-  cleanup() {
-    super.cleanup();
-    this.movementState = {
-      isMovingLeft: false,
-      isMovingRight: false,
-      holdStartTime: 0,
-      isHolding: false,
+    const handleTouch = (direction) => (e) => {
+      e.preventDefault();
+      this.handleInput(direction, performance.now());
     };
-    this.touchState = {
-      left: { lastTap: 0 },
-      right: { lastTap: 0 },
-    };
+
+    leftControl.addEventListener("touchstart", handleTouch("left"));
+    rightControl.addEventListener("touchstart", handleTouch("right"));
   }
 }
-// =========================================
-// UIControls
-// =========================================
+
+class KeyboardControls extends BaseControl {
+  constructor(game) {
+    super(game);
+    this.setupKeyboardControls();
+  }
+
+  setupKeyboardControls() {
+    this.addEventListenerWithTracking(document, "keydown", (e) => {
+      if (!this.game.state.isPlaying) {
+        if (e.key === " " || e.key === "Spacebar") {
+          this.game.start();
+          document.getElementById("title-box").style.visibility = "visible";
+        }
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        this.handleInput("left", performance.now());
+      } else if (e.key === "ArrowRight") {
+        this.handleInput("right", performance.now());
+      } else if (e.key === "p" || e.key === "P") {
+        this.game.togglePause();
+      }
+    });
+  }
+}
 
 class UIControls extends BaseControl {
   constructor(game) {
@@ -2783,9 +2701,6 @@ class UIControls extends BaseControl {
     }
   }
 }
-// =========================================
-// Controls
-// =========================================
 
 class Controls {
   constructor(game) {
@@ -2794,16 +2709,13 @@ class Controls {
     this.ui = new UIControls(game);
   }
 
-  update(timestamp) {
-    this.keyboard.update(timestamp);
-  }
-
   cleanup() {
     this.keyboard.cleanup();
     this.touch.cleanup();
     this.ui.cleanup();
   }
 }
+
 // =========================================
 // SettingsManager
 // =========================================
@@ -2879,7 +2791,11 @@ class LoserLane {
   constructor() {
     this.config = CONFIG;
     this.state = new GameState(this.config);
+    this.doubleJumpPending = false; // Move this up before spatialManager creation
+
     this.spatialManager = new SpatialManager(this.config);
+    this.spatialManager.setGame(this);
+
     // this.eventListeners = new Map();
     this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
 
@@ -2911,44 +2827,89 @@ class LoserLane {
   }
 
   handleJump(direction) {
-    // Don't allow new jumps while already jumping
+    console.log("Calling handleJump with direction:", direction);
+    console.log("Current state:", {
+      currentLane: this.state.currentLane,
+      doubleJumpPending: this.doubleJumpPending,
+      direction: direction,
+    });
+
     if (this.state.isJumping) {
+      console.log("Player is currently jumping, exiting handleJump early");
       return;
     }
 
-    // Move bike
-    const moveAmount = CONFIG.MOVEMENT.JUMP_AMOUNT;
+    const currentLane = this.state.currentLane;
+
     if (direction === "left") {
-      this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
+      // Complete track jump if we're on a track during immunity window
+      if (this.doubleJumpPending) {
+        console.log("Attempting left track jump from lane:", currentLane);
+        if (currentLane === CONFIG.KILLERLANES.KILLERTRACK1) {
+          this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK1 - 1;
+          clearTimeout(this.immunityTimer);
+          this.doubleJumpPending = false;
+          console.log("Successfully crossed left over track 1");
+        } else if (currentLane === CONFIG.KILLERLANES.KILLERTRACK2) {
+          this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK2 - 1;
+          clearTimeout(this.immunityTimer);
+          this.doubleJumpPending = false;
+          console.log("Successfully crossed left over track 2");
+        }
+        return;
+      }
+
+      // Regular movement logic
+      if (currentLane === CONFIG.KILLERLANES.KILLERTRACK1 + 1) {
+        this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK1 - 1;
+      } else if (currentLane === CONFIG.KILLERLANES.KILLERTRACK2 + 1) {
+        this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK2 - 1;
+      } else {
+        this.state.currentLane = Math.max(currentLane - 2, CONFIG.LANES.ONCOMING);
+      }
     } else {
-      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
+      // Complete track jump if we're on a track during immunity window
+      if (this.doubleJumpPending) {
+        console.log("Attempting right track jump from lane:", currentLane);
+        if (currentLane === CONFIG.KILLERLANES.KILLERTRACK1) {
+          this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK1 + 1;
+          clearTimeout(this.immunityTimer);
+          this.doubleJumpPending = false;
+          console.log("Successfully crossed right over track 1");
+        } else if (currentLane === CONFIG.KILLERLANES.KILLERTRACK2) {
+          this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK2 + 1;
+          clearTimeout(this.immunityTimer);
+          this.doubleJumpPending = false;
+          console.log("Successfully crossed right over track 2");
+        }
+        return;
+      }
+
+      // Regular movement logic
+      if (currentLane === CONFIG.KILLERLANES.KILLERTRACK1 - 1) {
+        this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK1 + 1;
+      } else if (currentLane === CONFIG.KILLERLANES.KILLERTRACK2 - 1) {
+        this.state.currentLane = CONFIG.KILLERLANES.KILLERTRACK2 + 1;
+      } else {
+        this.state.currentLane = Math.min(currentLane + 2, CONFIG.LANES.BUILDINGS - 1);
+      }
     }
 
-    // Start jump
+    // Set brief jumping animation state
     this.state.isJumping = true;
-
-    // End jump after duration
     setTimeout(() => {
       this.state.isJumping = false;
-    }, CONFIG.MOVEMENT.JUMP_DURATION);
+    }, CONFIG.MOVEMENT.JUMP_DELAY_DURATION);
   }
 
   /**
    * Main game update function called on each animation frame
    */
   update(timestamp) {
-    if (!timestamp) {
+    if (!timestamp || this.state.isPaused) {
       this.frameId = requestAnimationFrame((t) => this.update(t));
       return;
     }
-
-    if (this.state.isPaused) {
-      this.frameId = requestAnimationFrame((t) => this.update(t));
-      return;
-    }
-
-    // Update controls (handles continuous movement)
-    this.controls.update(timestamp);
 
     // Regular game update at fixed interval
     const deltaTime = timestamp - this.lastFrameTime;
@@ -2963,17 +2924,175 @@ class LoserLane {
       } else {
         // Update game state
         this.spatialManager.update();
-        this.updateBikePosition();
         this.spawnDarlings();
-        this.checkBikeCollisions();
         this.state.incrementScore();
         this.state.updateSpeed();
         this.updateScoreDisplay();
       }
-      this.render();
     }
 
+    // Always update and render bike position
+    this.render();
+
     this.frameId = requestAnimationFrame((t) => this.update(t));
+  }
+
+  movePlayer(direction) {
+    if (!this.state.isPlaying) return;
+  
+    const moveAmount = direction === "left" ? -1 : 1;
+    const newLane = Math.floor(this.state.currentLane + moveAmount);
+    
+    // Clear debug
+    console.log('Moving:', {
+      from: this.state.currentLane,
+      to: newLane,
+      direction: direction,
+      immunity: this.doubleJumpPending
+    });
+  
+    // About to move onto a track?
+    const isMovingOntoTrack = newLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
+                             newLane === CONFIG.KILLERLANES.KILLERTRACK2;
+    
+    if (isMovingOntoTrack && !this.doubleJumpPending) {
+      console.log("Starting immunity window - moving onto track");
+      this.doubleJumpPending = true;
+      
+      // If already had a timer, clear it
+      if (this.immunityTimer) {
+        clearTimeout(this.immunityTimer);
+      }
+      
+      this.immunityTimer = setTimeout(() => {
+        console.log("Immunity expired - checking position", {
+          lane: this.state.currentLane
+        });
+        const onTrack = this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
+                       this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
+        this.doubleJumpPending = false;
+        if (onTrack) {
+          this.die("TRACK");
+        }
+      }, 300);
+    }
+  
+    // Move
+    this.state.currentLane = Math.max(
+      CONFIG.LANES.ONCOMING,
+      Math.min(newLane, CONFIG.LANES.BUILDINGS - 1)
+    );
+  
+    this.updateBikePosition();
+    this.checkBikeCollisions();
+  }
+  
+  handleInput(direction, now) {
+    if (!this.game.state?.isPlaying) return;
+  
+    const onTrack = this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
+                   this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
+  
+    // Handle jumping
+    if (this.game.doubleJumpPending && onTrack) {
+      console.log("Second tap received - jumping from track");
+      this.game.handleJump(direction);
+    } else {
+      console.log("Regular move");
+      this.game.movePlayer(direction);
+    }
+  }
+  
+  handleJump(direction) {
+    console.log("Processing jump", {
+      from: this.state.currentLane,
+      direction: direction,
+      immunity: this.doubleJumpPending
+    });
+  
+    if (this.state.isJumping) return;
+  
+    const moveAmount = direction === "left" ? -1 : 1;
+    
+    // Complete the jump
+    this.state.currentLane += moveAmount;
+    
+    // Clear immunity
+    if (this.immunityTimer) {
+      clearTimeout(this.immunityTimer);
+      this.immunityTimer = null;
+    }
+    this.doubleJumpPending = false;
+    
+    console.log("Jump completed to lane:", this.state.currentLane);
+  }
+
+  handleInput(direction, now) {
+    if (!this.game.state?.isPlaying) return;
+  
+    console.log("Input received", {
+      direction: direction,
+      currentLane: this.game.state.currentLane,
+      immunity: this.game.doubleJumpPending,
+      track1: CONFIG.KILLERLANES.KILLERTRACK1,
+      track2: CONFIG.KILLERLANES.KILLERTRACK2
+    });
+  
+    // If we're on a track AND in immunity window, handle as jump
+    if (this.game.doubleJumpPending && 
+        (this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 ||
+         this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)) {
+      console.log("Second tap during immunity - jumping!", {
+        from: this.game.state.currentLane,
+        direction: direction
+      });
+      this.game.handleJump(direction);
+    } else {
+      console.log("Regular move - not jumping because", {
+        hasImmunity: this.game.doubleJumpPending,
+        onTrack1: this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1,
+        onTrack2: this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2
+      });
+      this.game.movePlayer(direction);
+    }
+  }
+  handleJump(direction) {
+    console.log("Handling jump", {
+      from: this.state.currentLane,
+      direction: direction,
+      immunity: this.doubleJumpPending
+    });
+  
+    if (this.state.isJumping) return;
+  
+    // Handle the jump across tracks
+    if (this.doubleJumpPending) {
+      let jumped = false;
+      if (this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1) {
+        this.state.currentLane += direction === "left" ? -1 : 1;
+        jumped = true;
+      }
+      if (this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2) {
+        this.state.currentLane += direction === "left" ? -1 : 1;
+        jumped = true;
+      }
+      
+      if (jumped) {
+        if (this.immunityTimer) {
+          clearTimeout(this.immunityTimer);
+          this.immunityTimer = null;
+        }
+        this.doubleJumpPending = false;
+        console.log("Successfully jumped to:", this.state.currentLane);
+        return;
+      }
+    }
+  
+    // Set animation state
+    this.state.isJumping = true;
+    setTimeout(() => {
+      this.state.isJumping = false;
+    }, CONFIG.MOVEMENT.JUMP_DELAY_DURATION);
   }
 
   updateBikePosition() {
@@ -3038,14 +3157,25 @@ class LoserLane {
       width: DARLINGS.BIKE.width,
       height: DARLINGS.BIKE.height,
     };
-
+  
     const darlingsForCollision = {
-      obstacles: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
-      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
+      obstacles: Array.from(this.spatialManager.darlings)
+        .filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
+      parkedDeathMachines: Array.from(this.spatialManager.darlings)
+        .filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
-
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
-
+  
+    const collision = this.spatialManager.collisionManager
+      .checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
+  
+    console.log("Collision check result:", {
+      collisionType: collision,
+      currentLane: this.state.currentLane,
+      doubleJumpPending: this.doubleJumpPending,
+      onTrack: [CONFIG.KILLERLANES.KILLERTRACK1, CONFIG.KILLERLANES.KILLERTRACK2]
+        .includes(Math.floor(this.state.currentLane))
+    });
+  
     if (collision) {
       this.die(collision);
     }
