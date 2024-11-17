@@ -1,0 +1,88 @@
+/* Tutorial-specific styles */
+.control-highlight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-highlight.left { left: 0; }
+.control-highlight.right { right: 0; }
+
+/* Desktop styles - big arrows */
+@media (min-width: 600px) {
+  .control-highlight.active {
+      opacity: 1;
+      font-size: 10rem;
+      color: var(--green);
+      margin-top: 12rem;
+  }
+
+  .control-highlight.active::after {
+      content: '←';
+      animation: pulse 2s infinite;
+  }
+
+  .control-highlight.right.active::after {
+      content: '→';
+  }
+}
+
+/* Mobile styles - colored backgrounds */
+@media (max-width: 599px) {
+  .control-highlight.active {
+      opacity: 1;
+      background: rgba(99, 248, 99, 0.2);
+  }
+}
+
+/* Success state for both */
+.control-highlight.success::after {
+  content: '✓';
+  animation: none;
+  color: var(--green);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Start button animations */
+#start-button {
+  display: block;
+  margin: 20px auto;
+  animation: buttonPulse 2s infinite;
+}
+
+@keyframes buttonPulse {
+  0%, 100% { 
+      transform: scale(1); 
+  }
+  50% { 
+      transform: scale(1.1); 
+  }
+}
+
+/* Add to your CSS */
+.control-highlight.wrong {
+  opacity: 1;
+  background: rgba(255, 0, 0, 0.2);
+  animation: wrongFlash 0.5s;
+}
+
+@keyframes wrongFlash {
+  0%, 100% { 
+      background: transparent; 
+  }
+  50% { 
+      background: rgba(255, 0, 0, 0.2); 
+  }
+}
