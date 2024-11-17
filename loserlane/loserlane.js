@@ -2548,6 +2548,15 @@ class TouchControls extends BaseControl {
 
     const handleTouch = (direction) => (e) => {
       e.preventDefault();
+
+      // Handle tutorial mode inputs
+      if (!this.game.state.isPlaying && !this.game.state.tutorialComplete) {
+        console.log(`Tutorial ${direction} touch detected`);
+        this.game.tutorialSystem.handleMove(direction);
+        return;
+      }
+
+      // Regular game handling
       this.handleInput(direction, performance.now());
     };
 
@@ -2564,14 +2573,32 @@ class KeyboardControls extends BaseControl {
 
   setupKeyboardControls() {
     this.addEventListenerWithTracking(document, "keydown", (e) => {
-      if (!this.game.state.isPlaying) {
+      // Handle tutorial mode inputs
+      if (!this.game.state.isPlaying && !this.game.state.tutorialComplete) {
+        if (e.key === "ArrowLeft") {
+          console.log("Tutorial left key pressed");
+          this.game.tutorialSystem.handleMove("left");
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          console.log("Tutorial right key pressed");
+          this.game.tutorialSystem.handleMove("right");
+          return;
+        }
+      }
+
+      // Check for spacebar start after tutorial complete
+      if (!this.game.state.isPlaying && this.game.state.tutorialComplete) {
         if (e.key === " " || e.key === "Spacebar") {
+          console.log("Starting game via spacebar");
           this.game.start();
-          document.getElementById("title-box").style.visibility = "visible";
+          document.getElementById("pregame-msg-box").style.display = "none";
+          this.game.controlsDiv.style.opacity = "1";
         }
         return;
       }
 
+      // Regular game controls
       if (e.key === "ArrowLeft") {
         this.handleInput("left", performance.now());
       } else if (e.key === "ArrowRight") {
@@ -2608,8 +2635,8 @@ class UIControls extends BaseControl {
           return;
         }
 
-        if (!this.game.state.isPlaying) {
-          let titleBox = document.getElementById("title-box-container");
+        if (!this.game.state.isPlaying && this.game.state.tutorialComplete) {
+          let titleBox = document.getElementById("game-info-container");
           if (titleBox) {
             titleBox.style.width = this.config.GAME.WIDTH;
             titleBox.style.visibility = "visible";
@@ -2743,6 +2770,248 @@ class SettingsManager {
 // LoserLane
 // =========================================
 
+class TutorialSystem {
+  constructor(game) {
+    console.log("🎮 Initializing Tutorial System");
+    this.game = game;
+    this.config = game.config;
+
+    // Cache DOM elements
+    this.tutorialBike = document.getElementById("tutorial-bike");
+    this.tutorialText = document.getElementById("tutorial-text");
+    this.controlsDiv = document.getElementById("controls");
+    this.startButton = document.getElementById("start-button");
+    this.leftHighlight = document.getElementById("left-highlight");
+    this.rightHighlight = document.getElementById("right-highlight");
+
+    // Tutorial state
+    this.completedSteps = {
+      left: false,
+      right: false,
+    };
+
+    // Check if user is on mobile
+    this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    console.log(`📱 Device type detected: ${this.isMobile ? "Mobile" : "Desktop"}`);
+
+    // Hide start button initially
+    this.startButton.style.display = "none";
+
+    // Initialize
+    this.init();
+  }
+
+  init() {
+    console.log("🎮 Starting tutorial initialization");
+    // Add highlight styles if not already present
+    if (!document.getElementById("tutorial-styles")) {
+      console.log("💅 Adding tutorial styles");
+      const styles = document.createElement("style");
+      styles.id = "tutorial-styles";
+      styles.textContent = `
+  .control-highlight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: rgba(99, 248, 99, 0.1);
+    z-index: 10;
+    height: 100%; /* Add this */
+  }
+
+        #tutorial-text {
+      color: var(--light-purp);  /* Using your game's color scheme */
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      padding: 0.5rem;
+      text-align: center;
+      font-family: var(--font-main);
+    }
+
+
+        
+       .control-highlight.left { 
+    left: 0; 
+    border-right: 2px solid var(--green);  /* Add this */
+  }
+  
+  .control-highlight.right { 
+    right: 0; 
+    border-left: 2px solid var(--green);   /* Add this */
+  }
+  
+  .control-highlight.active {
+    opacity: 1;
+    background: rgba(99, 248, 99, 0.1); /* Make more visible */
+    animation: pulseHighlight 1.5s infinite;
+  }
+       @keyframes pulseHighlight {
+    0%, 100% { 
+      background: rgba(99, 248, 99, 0.05);
+    }
+    50% { 
+      background: rgba(99, 248, 99, 0.2);
+    }
+  }
+        .tutorial-success {
+          animation: successPulse 0.5s ease;
+        }
+        @keyframes successPulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.2); }
+          100% { transform: scale(1); }
+        }
+        .tutorial-bike-move {
+          transition: transform 0.3s ease;
+        }
+        .tutorial-bike-move.left {
+          transform: translateX(-${this.config.LANES.BIKE_RIGHT - this.config.LANES.BIKE}px);
+        }
+        .tutorial-bike-move.right {
+          transform: translateX(${this.config.LANES.BIKE_RIGHT - this.config.LANES.BIKE}px);
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+
+    // Start with left control tutorial
+    this.showLeftTutorial();
+
+    // Add event listeners
+    this.addControlListeners();
+    console.log("✅ Tutorial initialization complete");
+  }
+
+  showLeftTutorial() {
+    console.log("👈 Showing left control tutorial");
+    const text = this.isMobile ? "Tap the left side of the screen to move left" : "Press the left arrow key to move left";
+    console.log("Setting tutorial text to:", text);
+    console.log("Tutorial text element:", this.tutorialText);
+
+    if (!this.tutorialText) {
+      console.error("Tutorial text element is null!");
+      return;
+    }
+
+    try {
+      this.tutorialText.textContent = text;
+      console.log("Successfully set tutorial text");
+      console.log("Current text content:", this.tutorialText.textContent);
+    } catch (e) {
+      console.error("Error setting tutorial text:", e);
+    }
+
+    this.leftHighlight.classList.add("active");
+  }
+
+  showRightTutorial() {
+    console.log("👉 Showing right control tutorial");
+    const text = this.isMobile ? "Tap the right side of the screen to move right" : "Press the right arrow key to move right";
+    this.tutorialText.textContent = text;
+    this.rightHighlight.classList.add("active");
+  }
+
+  addControlListeners() {
+    console.log("🎮 Setting up control listeners");
+    // Use existing control system
+    const originalHandleInput = this.game.controls.handleInput;
+    this.game.controls.handleInput = (direction, now) => {
+      console.log(`🕹️ Control input received: ${direction}`);
+      if (!this.game.state.isPlaying) {
+        console.log("🎮 Game not started - handling as tutorial input");
+        this.handleMove(direction);
+      } else {
+        console.log("🎮 Game started - passing to game controls");
+        originalHandleInput.call(this.game.controls, direction, now);
+      }
+    };
+  }
+
+  handleMove(direction) {
+    console.log(`🎯 Handling ${direction} move`);
+    if (this.completedSteps[direction]) {
+      console.log(`⏭️ ${direction} move already completed, skipping`);
+      return;
+    }
+
+    // Mark step as completed
+    this.completedSteps[direction] = true;
+    console.log("✅ Tutorial steps status:", this.completedSteps);
+
+    // Move the bike and leave it there
+    if (direction === "left") {
+      this.tutorialBike.style.marginLeft = "-20px";
+    } else {
+      this.tutorialBike.style.marginLeft = "20px";
+    }
+
+    // Show next step or complete tutorial
+    if (!this.completedSteps.right) {
+      this.showRightTutorial();
+    } else if (!this.completedSteps.left) {
+      this.showLeftTutorial();
+    } else {
+      this.completeTutorial();
+    }
+  }
+  completeTutorial() {
+    console.log("🏁 Completing tutorial");
+
+    // Clean up tutorial animations/styles
+    this.tutorialBike.style.marginLeft = "0"; // Reset bike position
+    this.leftHighlight.classList.remove("active"); // Remove highlight
+    this.rightHighlight.classList.remove("active"); // Remove highlight
+
+    // Make controls transparent
+    this.controlsDiv.style.opacity = "0";
+
+    // Show start button
+    this.startButton.style.display = "block";
+    this.tutorialText.textContent = "You're ready to ride!";
+
+    // Set tutorial complete flag
+    this.game.state.tutorialComplete = true;
+
+    // Add start button listener that uses existing game start
+    this.startButton.addEventListener("click", () => {
+      console.log("🎮 Start button clicked - beginning game");
+      this.game.start();
+
+      // Remove tutorial elements and reset styles
+      console.log("🧹 Cleaning up tutorial elements");
+      this.tutorialText.textContent = "";
+      document.getElementById("pregame-msg-box").style.display = "none";
+      this.tutorialBike.style.marginLeft = "0"; // Double-check bike position reset
+
+      // Make sure controls are ready for gameplay
+      this.controlsDiv.style.opacity = "1";
+
+      // Show game info container
+      const gameInfo = document.getElementById("game-info-container");
+      if (gameInfo) {
+        gameInfo.style.visibility = "visible";
+      }
+    });
+  }
+
+  cleanup() {
+    console.log("🧹 Cleaning up tutorial system");
+    // Remove any event listeners or styles when needed
+    const tutorialStyles = document.getElementById("tutorial-styles");
+    if (tutorialStyles) {
+      tutorialStyles.remove();
+      console.log("✨ Tutorial styles removed");
+    }
+  }
+}
+
+// export default TutorialSystem;
+
+// export default TutorialSystem;
+
 class LoserLane {
   /**
    * Initializes the game engine and core systems
@@ -2771,6 +3040,10 @@ class LoserLane {
 
     // === Game Components ===
     this.initializeGameComponents();
+
+    this.tutorialComplete = false;
+
+    this.tutorialSystem = new TutorialSystem(this);
   }
 
   initializeGameComponents() {
@@ -3032,8 +3305,6 @@ class LoserLane {
    * Main game update function called on each animation frame
    */
 
-
-
   update(timestamp) {
     if (!timestamp || this.state.isPaused) {
       this.frameId = requestAnimationFrame((t) => this.update(t));
@@ -3044,12 +3315,12 @@ class LoserLane {
     //   this.frameId = requestAnimationFrame((t) => this.update(t));
     //   return;
     // }
-  
+
     // Regular game update at fixed interval
     const deltaTime = timestamp - this.lastFrameTime;
     if (deltaTime >= this.state.speed) {
       this.lastFrameTime = timestamp;
-  
+
       if (this.state.isDead) {
         if (this.state.updateDeathAnimation()) {
           this.cleanup();
@@ -3066,13 +3337,12 @@ class LoserLane {
         this.updateScoreDisplay();
       }
     }
-  
+
     // Always update and render bike position
     this.render();
-  
+
     this.frameId = requestAnimationFrame((t) => this.update(t));
   }
-  
 
   // 5. Collision methods (checkBikeCollisions)
 
@@ -3255,7 +3525,7 @@ class LoserLane {
   start() {
     if (this.state.isPlaying) return;
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.style.display = "none";
     }
@@ -3313,7 +3583,7 @@ class LoserLane {
 
     // Restart game after death duration
     setTimeout(() => {
-      const messageEl = document.getElementById("main-msg-box");
+      const messageEl = document.getElementById("pregame-msg-box");
       if (messageEl) {
         messageEl.classList.remove("show-message");
       }
@@ -3335,7 +3605,7 @@ class LoserLane {
     this.initializeGameWorld();
     this.start();
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
@@ -3354,7 +3624,7 @@ class LoserLane {
   togglePause() {
     this.state.isPaused = !this.state.isPaused;
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.style.display = this.state.isPaused ? "block" : "none";
       messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
@@ -3382,7 +3652,7 @@ class LoserLane {
   }
 
   showDeathMessage(reason) {
-    const messageEl = document.getElementById("main-msg-box");
+    const messageEl = document.getElementById("pregame-msg-box");
     if (!messageEl) return;
 
     // Retrieve a single random message
@@ -3404,7 +3674,7 @@ class LoserLane {
   }
 
   showDeathMessage(reason) {
-    const messageEl = document.getElementById("main-msg-box");
+    const messageEl = document.getElementById("pregame-msg-box");
     if (!messageEl) return;
 
     // Retrieve a single random message
@@ -3478,6 +3748,10 @@ class LoserLane {
     this.settingsManager.cleanup(); // Add settings cleanup
 
     this.lastFrameTime = performance.now();
+
+    if (this.tutorialSystem) {
+      this.tutorialSystem.cleanup();
+    }
   }
 }
 

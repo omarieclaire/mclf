@@ -121,7 +121,7 @@ a {
   box-sizing: border-box;
 }
 
-#main-msg-box {
+#pregame-msg-box {
   position: absolute;
   top: 60%;
   left: 50%;
@@ -137,7 +137,7 @@ a {
 }
 
 @media (min-width: 600px) {
-  #main-msg-box {
+  #pregame-msg-box {
     max-width: 50%;
   }
 }
@@ -243,7 +243,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-#title-box-container {
+#game-info-container {
   display: flex;
   align-items: center;
   /* gap: 10px; */
@@ -261,13 +261,13 @@ a {
 }
 
 @media (min-width: 600px) {
-  #title-box-container {
+  #game-info-container {
     width: 25rem;
     /* width: var(--game-width); */
   }
 }
 
-#title-box {
+#game-info-box {
   /* border-bottom: 2px dashed var(--dark-yellow); */
   padding: 7px;
   margin: 0;
@@ -276,7 +276,7 @@ a {
   width: 100%;
 }
 
-#score-box {
+#game-score-box {
   display: flex;
   align-items: flex-end;
   flex-direction: row;
@@ -289,7 +289,7 @@ a {
   /* border: 3px dashed var(--light-purp); */
 }
 
-#big-title {
+#pregame-msg-title {
   font-size: 1.8rem;
   color: var(--hot-pink);
   font-weight: bolder;
@@ -297,13 +297,13 @@ a {
 }
 
 @media (max-height: 600px) {
-  #big-title {
+  #pregame-msg-title {
     font-size: 2.7rem;
     color: var(--med-purp);
   }
 }
 
-#title {
+#game-title {
   color: var(--green);
   font-size: 1.85rem;
   letter-spacing: 18px;
@@ -709,16 +709,16 @@ button:active {
 }
 
 /* Death message styling */
-#main-msg-box {
+#pregame-msg-box {
   transition: all 0.5s ease-in-out;
 }
 
-#main-msg-box.show-message {
+#pregame-msg-box.show-message {
   opacity: 1;
   transform: scale(1);
 }
 
-#main-msg-box.hide-message {
+#pregame-msg-box.hide-message {
   opacity: 0;
   transform: scale(0.8);
 }

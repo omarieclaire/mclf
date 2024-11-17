@@ -3316,7 +3316,7 @@ class LoserLane {
   start() {
     if (this.state.isPlaying) return;
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.style.display = "none";
     }
@@ -3375,7 +3375,7 @@ class LoserLane {
 
     // Restart game after death duration
     setTimeout(() => {
-      const messageEl = document.getElementById("main-msg-box");
+      const messageEl = document.getElementById("pregame-msg-box");
       if (messageEl) {
         messageEl.classList.remove("show-message");
       }
@@ -3431,7 +3431,7 @@ class LoserLane {
     this.initializeGameWorld();
     this.start();
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
@@ -3441,7 +3441,7 @@ class LoserLane {
   togglePause() {
     this.state.isPaused = !this.state.isPaused;
 
-    const messageBox = document.getElementById("main-msg-box");
+    const messageBox = document.getElementById("pregame-msg-box");
     if (messageBox) {
       messageBox.style.display = this.state.isPaused ? "block" : "none";
       messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
@@ -3449,7 +3449,7 @@ class LoserLane {
   }
 
   showDeathMessage(reason) {
-    const messageEl = document.getElementById("main-msg-box");
+    const messageEl = document.getElementById("pregame-msg-box");
     if (!messageEl) return;
 
     // Retrieve a single random message
