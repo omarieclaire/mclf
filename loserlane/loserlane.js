@@ -2929,7 +2929,7 @@ class TutorialSystem {
 
     // Show start button
     this.startButton.style.display = "block";
-    this.tutorialText.textContent = "ready?";
+    this.tutorialText.textContent = "How long can you stay alive without a bike lane?";
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;

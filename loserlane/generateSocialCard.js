@@ -53,15 +53,15 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(2, 0, 0, 0.6);
+    background-color: rgba(2, 0, 0, 0.8);
     z-index: 10000;
 `;
 
   const socialCard = document.createElement("div");
   socialCard.className = "social-card";
   socialCard.style.position = "relative";
-  // socialCard.style.width = "400px"; // Make it square
-  // socialCard.style.height = "400px"; // Make it square
+  socialCard.style.width = "400px"; // Make it square
+  socialCard.style.height = "400px"; // Make it square
   socialCard.style.margin = "0 auto"; // Center it
 
   // Create and add screenshot as background
@@ -89,7 +89,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   backgroundOverlay.style.left = "0";
   backgroundOverlay.style.width = "100%";
   backgroundOverlay.style.height = "100%";
-  backgroundOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.65)";
+  backgroundOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
   socialCard.appendChild(backgroundOverlay);
 
   const entityData = ART[reason] || { art: ["N/A"] };
@@ -106,7 +106,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   messageText.className = "message-text";
 
   messageText.innerHTML = messageString;
-  contentContainer.appendChild(messageText);
+  // contentContainer.appendChild(messageText);
 
   // Score text
   const scoreText = document.createElement("p");
@@ -158,7 +158,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiArtOverlay2.style.top = "0";
   asciiArtOverlay2.style.left = "0";
   asciiArtOverlay2.style.color = "#e7a900";
-  asciiArtOverlay2.style.opacity = "0.6";
+  asciiArtOverlay2.style.opacity = "0.8";
   asciiArtOverlay2.style.pointerEvents = "none";
 
   asciiWrapper.appendChild(asciiArt);
@@ -180,7 +180,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   doug.className = "doug";
   doug.innerHTML = `WE NEED BIKE LANES`;
   
-  contentContainer.appendChild(doug);
+  // contentContainer.appendChild(doug);
 
   // Add the content container to the social card
   socialCard.appendChild(contentContainer);
@@ -200,7 +200,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // Save Button
   const saveButton = document.createElement("button");
-  saveButton.textContent = "DOWNLOAD IMAGE";
+  saveButton.textContent = "SAVE IMAGE";
   saveButton.onclick = () => {
     generateImage().then((dataUrl) => {
       const link = document.createElement("a");

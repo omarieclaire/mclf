@@ -1,5 +1,6 @@
 .doug {
   color: var(--green);
+  font-weight: strong;
   font-size: 1.2rem;
   letter-spacing: 7px;
   /* font-weight: bold; */
@@ -44,7 +45,8 @@
   align-items: center;
   max-width: 95vw; /* Restrict max width */
   /* width: 300px; Adjust the size of the card */
-  border: 3px dashed var(--green);
+  border: 1px dashed var(--green);
+  outline: 1px solid var(--black);
   background-color: var(--dark-grey);
   padding: 15px;
   font-family: var(--font-main);
@@ -125,7 +127,8 @@
   color: var(--hot-pink);
   background-color: rgba(0, 0, 0, 0.7); /* Soft black background with 50% opacity */
   border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
-  font-size: 1.8rem;
+  font-size: clamp(1rem, 2rem, 5rem); 
+
 
   /* font-size: 1.1rem; */
   /* letter-spacing: 2px; */
