@@ -2784,6 +2784,8 @@ class TutorialSystem {
     this.leftHighlight = document.getElementById("left-highlight");
     this.rightHighlight = document.getElementById("right-highlight");
 
+    this.currentStep = "left"; // Add this to track which step we're on
+
     // Tutorial state
     this.completedSteps = {
       left: false,
@@ -2803,79 +2805,6 @@ class TutorialSystem {
 
   init() {
     console.log("🎮 Starting tutorial initialization");
-    // Add highlight styles if not already present
-    if (!document.getElementById("tutorial-styles")) {
-      console.log("💅 Adding tutorial styles");
-      const styles = document.createElement("style");
-      styles.id = "tutorial-styles";
-      styles.textContent = `
-  .control-highlight {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background: rgba(99, 248, 99, 0.1);
-    z-index: 10;
-    height: 100%; /* Add this */
-  }
-
-        #tutorial-text {
-      color: var(--light-purp);  /* Using your game's color scheme */
-      font-size: 1.2rem;
-      margin: 1rem 0;
-      padding: 0.5rem;
-      text-align: center;
-      font-family: var(--font-main);
-    }
-
-
-        
-       .control-highlight.left { 
-    left: 0; 
-    border-right: 2px solid var(--green);  /* Add this */
-  }
-  
-  .control-highlight.right { 
-    right: 0; 
-    border-left: 2px solid var(--green);   /* Add this */
-  }
-  
-  .control-highlight.active {
-    opacity: 1;
-    background: rgba(99, 248, 99, 0.1); /* Make more visible */
-    animation: pulseHighlight 1.5s infinite;
-  }
-       @keyframes pulseHighlight {
-    0%, 100% { 
-      background: rgba(99, 248, 99, 0.05);
-    }
-    50% { 
-      background: rgba(99, 248, 99, 0.2);
-    }
-  }
-        .tutorial-success {
-          animation: successPulse 0.5s ease;
-        }
-        @keyframes successPulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.2); }
-          100% { transform: scale(1); }
-        }
-        .tutorial-bike-move {
-          transition: transform 0.3s ease;
-        }
-        .tutorial-bike-move.left {
-          transform: translateX(-${this.config.LANES.BIKE_RIGHT - this.config.LANES.BIKE}px);
-        }
-        .tutorial-bike-move.right {
-          transform: translateX(${this.config.LANES.BIKE_RIGHT - this.config.LANES.BIKE}px);
-        }
-      `;
-      document.head.appendChild(styles);
-    }
 
     // Start with left control tutorial
     this.showLeftTutorial();
@@ -2931,31 +2860,57 @@ class TutorialSystem {
   }
 
   handleMove(direction) {
-    console.log(`🎯 Handling ${direction} move`);
-    if (this.completedSteps[direction]) {
-      console.log(`⏭️ ${direction} move already completed, skipping`);
+    // Handle wrong input
+    if (direction !== this.currentStep) {
+      console.log(`Wrong input: got ${direction}, expected ${this.currentStep}`);
+      const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+      wrongHighlight.classList.add("wrong");
+
+      // Save original text
+      const originalText = this.tutorialText.textContent;
+
+      // Show humorous message
+      this.tutorialText.textContent = direction === "right" ? "Your other left!" : "Your other right!";
+
+      // Reset everything after animation
+      setTimeout(() => {
+        wrongHighlight.classList.remove("wrong");
+        this.tutorialText.textContent = originalText;
+      }, 500);
       return;
     }
 
+    // Rest of the existing handleMove code...
+    console.log(`🎯 Handling ${direction} move`);
+    if (this.completedSteps[direction]) return;
+
     // Mark step as completed
     this.completedSteps[direction] = true;
-    console.log("✅ Tutorial steps status:", this.completedSteps);
 
-    // Move the bike and leave it there
+    // Move the bike
     if (direction === "left") {
       this.tutorialBike.style.marginLeft = "-20px";
+      this.currentStep = "right";
     } else {
       this.tutorialBike.style.marginLeft = "20px";
+      this.currentStep = "complete";
     }
 
-    // Show next step or complete tutorial
-    if (!this.completedSteps.right) {
-      this.showRightTutorial();
-    } else if (!this.completedSteps.left) {
-      this.showLeftTutorial();
-    } else {
-      this.completeTutorial();
-    }
+    // Show success indicator
+    const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+    highlight.classList.remove("active");
+    highlight.classList.add("success");
+
+    setTimeout(() => {
+      highlight.classList.remove("success");
+      if (!this.completedSteps.right) {
+        this.showRightTutorial();
+      } else if (!this.completedSteps.left) {
+        this.showLeftTutorial();
+      } else {
+        this.completeTutorial();
+      }
+    }, 500);
   }
   completeTutorial() {
     console.log("🏁 Completing tutorial");
