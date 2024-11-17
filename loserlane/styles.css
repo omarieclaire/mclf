@@ -121,26 +121,6 @@ a {
   box-sizing: border-box;
 }
 
-#pregame-msg-box {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5rem;
-  text-align: center;
-  width: 90%;
-  max-width: 90%;
-  z-index: 100;
-  color: var(--light-purp);
-  background-color: var(--overlay-background);
-  padding: 1rem;
-}
-
-@media (min-width: 600px) {
-  #pregame-msg-box {
-    max-width: 50%;
-  }
-}
 
 @viewport {
   width: device-width;
@@ -708,20 +688,6 @@ button:active {
   animation: screenShake 0.8s ease-in-out;
 }
 
-/* Death message styling */
-#pregame-msg-box {
-  transition: all 0.5s ease-in-out;
-}
-
-#pregame-msg-box.show-message {
-  opacity: 1;
-  transform: scale(1);
-}
-
-#pregame-msg-box.hide-message {
-  opacity: 0;
-  transform: scale(0.8);
-}
 /* 
 /* social card stuff */
 
@@ -805,3 +771,4 @@ button:active {
   z-index: 1000;
   pointer-events: none;
 }
+

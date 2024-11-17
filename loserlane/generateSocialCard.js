@@ -32,6 +32,15 @@ const ART = {
   TRACKS: {
     art: [" ||  || ", " ||  || ", " ||  || ", " ||  || "],
   },
+  BUILDING: {
+    art: [
+      "┌────────┐",
+      "│SHE     │",
+      "│  SAID  │",
+      "│BOOM    │",
+      "└────────┘"
+    ],
+  },
 };
 
 function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace, gameInstance) {

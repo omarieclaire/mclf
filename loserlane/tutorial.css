@@ -22,24 +22,31 @@
       opacity: 1;
       font-size: 10rem;
       color: var(--green);
-      margin-top: 12rem;
-  }
+      margin-top: 5rem;
+       
+    }
 
   .control-highlight.active::after {
       content: '←';
       animation: pulse 2s infinite;
+      top: 50%; /* Center vertically */
+      left: 50%; /* Center horizontally */
+      transform: translate(90%, -10%); /* Adjust for true center alignment */  
   }
 
   .control-highlight.right.active::after {
       content: '→';
+      top: 50%; /* Center vertically */
+      left: 50%; /* Center horizontally */
+      transform: translate(-90%, -10%); /* Adjust for true center alignment */  
   }
 }
 
 /* Mobile styles - colored backgrounds */
 @media (max-width: 599px) {
   .control-highlight.active {
-      opacity: 1;
-      background: rgba(99, 248, 99, 0.2);
+      opacity: .4;
+      background: blue;
   }
 }
 
@@ -85,4 +92,75 @@
   50% { 
       background: rgba(255, 0, 0, 0.2); 
   }
+}
+
+
+#pregame-msg-box {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  text-align: center;
+  width: 90%;
+  max-width: 90%;
+  z-index: 100;
+  color: var(--light-purp);
+  background-color: var(--overlay-background);
+  padding: 1rem;
+}
+
+@media (min-width: 600px) {
+  #pregame-msg-box {
+    max-width: 50%;
+  }
+}
+
+/* Death message styling */
+#pregame-msg-box {
+  transition: all 0.5s ease-in-out;
+}
+
+#pregame-msg-box.show-message {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#pregame-msg-box.hide-message {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+
+.title-box-container{
+  display:flex;
+  flex-direction: row;  /* margin: auto; */
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 2rem;
+}
+
+#tutorial-bike{
+  font-size: 1.6rem;
+  margin: 1rem 0;
+
+}
+#pregame-msg-title {
+  font-size: clamp(1rem, 2rem, 5rem); /* Adjusts font size between min, preferred, and max */
+  color: var(--hot-pink);
+  font-weight: bolder;
+  letter-spacing: 16px;
+  text-align: center; 
+}
+
+
+@media (min-width: 600px) {
+  #pregame-msg-title {
+    font-size: clamp(1rem, 3.5rem, 5rem)
+  }
+}
+
+#tutorial-text {
+
 }

@@ -2925,7 +2925,7 @@ class TutorialSystem {
 
     // Show start button
     this.startButton.style.display = "block";
-    this.tutorialText.textContent = "You're ready to ride!";
+    this.tutorialText.textContent = "ready?";
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;
