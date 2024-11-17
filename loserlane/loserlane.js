@@ -2593,7 +2593,11 @@ class KeyboardControls extends BaseControl {
           console.log("Starting game via spacebar");
           this.game.start();
           document.getElementById("pregame-msg-box").style.display = "none";
-          this.game.controlsDiv.style.opacity = "1";
+          let gameInfoContainer =document.getElementById("game-info-container");
+          gameInfoContainer.style.opacity = "1";
+          gameInfoContainer.style.visibility = "visible";
+
+          // this.game.controlsDiv.style.opacity = "1";
         }
         return;
       }
@@ -3131,36 +3135,33 @@ class LoserLane {
   movePlayer(direction) {
     if (this.state.isDead || !this.state.isPlaying) return;
 
+    console.log('\n=== Move Player Called ===');
+    console.log('Current state:', {
+      currentLane: this.state.currentLane,
+      direction: direction,
+      isJumping: this.state.isJumping,
+      doubleJumpPending: this.doubleJumpPending
+    });
+
     const moveAmount = direction === "left" ? -1 : 1;
     const newLane = Math.floor(this.state.currentLane + moveAmount);
 
+    console.log('Calculated move:', {
+      moveAmount,
+      newLane,
+      currentLane: this.state.currentLane,
+      delta: Math.abs(newLane - this.state.currentLane)
+    });
+
     // Update position
     this.state.currentLane = Math.max(CONFIG.LANES.ONCOMING, Math.min(newLane, CONFIG.LANES.BUILDINGS - 1));
+    
+    console.log('After move:', {
+      finalLane: this.state.currentLane,
+      totalMove: Math.abs(this.state.currentLane - newLane)
+    });
+
     this.updateBikePosition();
-
-    // Check collisions
-    // this.checkBikeCollisions();
-
-    // const isOnTrack = this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2;
-
-    // if (isOnTrack && !this.doubleJumpPending) {
-    //   // console.log("Starting immunity window - on track at:", Date.now());
-    //   // this.doubleJumpPending = true;
-    //   // if (this.immunityTimer) {
-    //   //   console.log("Clearing existing timer");
-    //   //   clearTimeout(this.immunityTimer);
-    //   // }
-    //   // this.immunityTimer = setTimeout(() => {
-    //   //   console.log("Timer expired at:", Date.now());
-    //   //   this.doubleJumpPending = false;
-    //   //   if (this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 ||
-    //   //       this.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2) {
-    //   //     this.die("TRACKS");
-    //   //     console.log(`should be dead`);
-    //   //   }
-    //   //   console.log(`not on the tracks anymore, doubleJumpPending is ${this.doubleJumpPending}`);
-    //   // }, 100);
-    // }
   }
   handleJump(direction) {
     // Don't allow new jumps while already jumping
@@ -3302,6 +3303,17 @@ class LoserLane {
   // 5. Collision methods (checkBikeCollisions)
 
   checkBikeCollisions() {
+    console.log('\n=== Checking Bike Collisions ===');
+    console.log('Collision check state:', {
+      spatialManagerExists: !!this.spatialManager,
+      collisionManagerExists: !!this.spatialManager.collisionManager,
+      bikePosition: {
+        lane: this.state.currentLane,
+        y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+      },
+      totalEntities: this.spatialManager.darlings.size
+    });
+
     const bikeHitbox = {
       x: this.state.currentLane,
       y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
@@ -3310,11 +3322,30 @@ class LoserLane {
     };
 
     const darlingsForCollision = {
-      darlings: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
-      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
+      darlings: Array.from(this.spatialManager.darlings).filter(
+        e => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE
+      ),
+      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter(
+        e => e.type === DarlingType.PARKED_DEATHMACHINE
+      )
     };
 
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
+    console.log('Collision check details:', {
+      numRegularDarlings: darlingsForCollision.darlings.length,
+      numParkedDeathMachines: darlingsForCollision.parkedDeathMachines.length,
+      bikeHitbox
+    });
+
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(
+      bikeHitbox, 
+      darlingsForCollision, 
+      this.state.isJumping
+    );
+
+    console.log('Collision result:', {
+      collisionDetected: !!collision,
+      collisionType: collision
+    });
 
     if (collision) {
       this.die(collision);
@@ -3547,17 +3578,50 @@ class LoserLane {
   }
 
   restart() {
+    console.log('\n=== Game Restart Initiated ===');
+    console.log('Before cleanup:', {
+      spatialManagerExists: !!this.spatialManager,
+      darlingCount: this.spatialManager ? this.spatialManager.darlings.size : 0,
+      collisionManagerExists: this.spatialManager ? !!this.spatialManager.collisionManager : false
+    });
+
     this.cleanup();
+    
+    console.log('After cleanup:', {
+      spatialManagerExists: !!this.spatialManager,
+      stateExists: !!this.state
+    });
+
     Building.nextSpawnY = null;
     Building.buildingManager = null;
 
+    // Create new instances
     this.spatialManager = new SpatialManager(CONFIG);
+    console.log('New SpatialManager created:', {
+      hasCollisionManager: !!this.spatialManager.collisionManager,
+      isDarlingSetEmpty: this.spatialManager.darlings.size === 0
+    });
+
     this.state = new GameState(CONFIG);
     this.controls = new Controls(this);
     this.settingsManager = new SettingsManager(this);
     this.clusterManager = new VehicleClusterManager(CONFIG);
 
+    // Critical: Set game reference in spatial manager
+    this.spatialManager.setGame(this);
+    
+    console.log('Before world initialization:', {
+      spatialManagerReady: !!this.spatialManager,
+      collisionManagerReady: !!this.spatialManager.collisionManager
+    });
+
     this.initializeGameWorld();
+    
+    console.log('After world initialization:', {
+      bikeRegistered: Array.from(this.spatialManager.darlings).some(entity => entity.type === DarlingType.BIKE),
+      totalEntities: this.spatialManager.darlings.size
+    });
+
     this.start();
 
     const messageBox = document.getElementById("pregame-msg-box");
@@ -3565,7 +3629,6 @@ class LoserLane {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
   }
-
   addEventListenerWithTracking(element, type, handler, options = false) {
     element.addEventListener(type, handler, options);
     if (!this.eventListeners.has(element)) {
@@ -3692,6 +3755,13 @@ class LoserLane {
   }
 
   cleanup() {
+    console.log('\n=== Cleanup Started ===');
+    console.log('Before cleanup:', {
+      hasFrameId: !!this.frameId,
+      darlingCount: this.spatialManager?.darlings.size,
+      controlsExist: !!this.controls
+    });
+
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
@@ -3700,13 +3770,19 @@ class LoserLane {
     this.spatialManager.darlings.clear();
     this.gridSystem.clear();
     this.controls.cleanup();
-    this.settingsManager.cleanup(); // Add settings cleanup
+    this.settingsManager.cleanup();
 
     this.lastFrameTime = performance.now();
 
     if (this.tutorialSystem) {
       this.tutorialSystem.cleanup();
     }
+
+    console.log('After cleanup:', {
+      hasFrameId: !!this.frameId,
+      darlingCount: this.spatialManager?.darlings.size,
+      lastFrameTime: this.lastFrameTime
+    });
   }
 }
 
