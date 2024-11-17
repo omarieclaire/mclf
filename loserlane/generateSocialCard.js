@@ -114,11 +114,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   scoreText.innerHTML = `I survived ${score} seconds without a bike lane`;
   contentContainer.appendChild(scoreText);
 
-  // THANKS DOUG
-  const doug2 = document.createElement("p");
-  doug2.className = "cute-death-face";
-  doug2.innerHTML = `THANKS DOUG`;
-  contentContainer.appendChild(doug2);
+  
 
   const asciiWrapper = document.createElement("div");
   asciiWrapper.style.position = "relative"; // Make sure this is set
@@ -176,12 +172,18 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   // contentContainer.appendChild(faceContainer);
 
   // Score text
-  const doug = document.createElement("p");
-  doug.className = "doug";
-  doug.innerHTML = `WE NEED BIKE LANES`;
-  
+  // const doug = document.createElement("p");
+  // doug.className = "doug";
+  // doug.innerHTML = `WE NEED BIKE LANES`;
   // contentContainer.appendChild(doug);
 
+
+  // THANKS DOUG
+  const doug2 = document.createElement("p");
+  doug2.className = "cute-death-face";
+  doug2.innerHTML = `THANKS DOUG`;
+  contentContainer.appendChild(doug2);
+  
   // Add the content container to the social card
   socialCard.appendChild(contentContainer);
 
