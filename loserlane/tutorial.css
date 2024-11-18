@@ -164,3 +164,8 @@
 #tutorial-text {
 
 }
+
+.highlight{
+  /* background-color: yellow; */
+  font-weight:bold;
+}

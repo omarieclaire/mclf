@@ -2593,7 +2593,7 @@ class KeyboardControls extends BaseControl {
           console.log("Starting game via spacebar");
           this.game.start();
           document.getElementById("pregame-msg-box").style.display = "none";
-          let gameInfoContainer =document.getElementById("game-info-container");
+          let gameInfoContainer = document.getElementById("game-info-container");
           gameInfoContainer.style.opacity = "1";
           gameInfoContainer.style.visibility = "visible";
 
@@ -2820,7 +2820,9 @@ class TutorialSystem {
 
   showLeftTutorial() {
     console.log("👈 Showing left control tutorial");
-    const text = this.isMobile ? "Tap the left side of the screen to move left" : "Press the left arrow key to move left";
+    const text = this.isMobile
+      ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
+      : "Press the <span class='highlight'>left arrow key</span> to move left";
     console.log("Setting tutorial text to:", text);
     console.log("Tutorial text element:", this.tutorialText);
 
@@ -2830,7 +2832,7 @@ class TutorialSystem {
     }
 
     try {
-      this.tutorialText.textContent = text;
+      this.tutorialText.innerHTML = text;
       console.log("Successfully set tutorial text");
       console.log("Current text content:", this.tutorialText.textContent);
     } catch (e) {
@@ -2842,8 +2844,10 @@ class TutorialSystem {
 
   showRightTutorial() {
     console.log("👉 Showing right control tutorial");
-    const text = this.isMobile ? "Tap the right side of the screen to move right" : "Press the right arrow key to move right";
-    this.tutorialText.textContent = text;
+    const text = this.isMobile
+      ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
+      : "Press the <span class='highlight'>right arrow key</span> to move right";
+    this.tutorialText.innerHTML = text;
     this.rightHighlight.classList.add("active");
   }
 
@@ -2874,12 +2878,12 @@ class TutorialSystem {
       const originalText = this.tutorialText.textContent;
 
       // Show humorous message
-      this.tutorialText.textContent = direction === "right" ? "Your other left!" : "Your other right!";
+      this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
 
       // Reset everything after animation
       setTimeout(() => {
         wrongHighlight.classList.remove("wrong");
-        this.tutorialText.textContent = originalText;
+        this.tutorialText.innerHTML = originalText;
       }, 500);
       return;
     }
@@ -2929,7 +2933,7 @@ class TutorialSystem {
 
     // Show start button
     this.startButton.style.display = "block";
-    this.tutorialText.textContent = "How long can you stay alive?";
+    this.tutorialText.innerHTML = "How long can you stay alive?";
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;
@@ -2941,7 +2945,7 @@ class TutorialSystem {
 
       // Remove tutorial elements and reset styles
       console.log("🧹 Cleaning up tutorial elements");
-      this.tutorialText.textContent = "";
+      this.tutorialText.innerHTML = "";
       document.getElementById("pregame-msg-box").style.display = "none";
       this.tutorialBike.style.marginLeft = "0"; // Double-check bike position reset
 
@@ -2966,7 +2970,6 @@ class TutorialSystem {
     }
   }
 }
-
 
 class LoserLane {
   constructor() {
@@ -3128,30 +3131,30 @@ class LoserLane {
   movePlayer(direction) {
     if (this.state.isDead || !this.state.isPlaying) return;
 
-    console.log('\n=== Move Player Called ===');
-    console.log('Current state:', {
+    console.log("\n=== Move Player Called ===");
+    console.log("Current state:", {
       currentLane: this.state.currentLane,
       direction: direction,
       isJumping: this.state.isJumping,
-      doubleJumpPending: this.doubleJumpPending
+      doubleJumpPending: this.doubleJumpPending,
     });
 
     const moveAmount = direction === "left" ? -1 : 1;
     const newLane = Math.floor(this.state.currentLane + moveAmount);
 
-    console.log('Calculated move:', {
+    console.log("Calculated move:", {
       moveAmount,
       newLane,
       currentLane: this.state.currentLane,
-      delta: Math.abs(newLane - this.state.currentLane)
+      delta: Math.abs(newLane - this.state.currentLane),
     });
 
     // Update position
     this.state.currentLane = Math.max(CONFIG.LANES.ONCOMING, Math.min(newLane, CONFIG.LANES.BUILDINGS - 1));
-    
-    console.log('After move:', {
+
+    console.log("After move:", {
       finalLane: this.state.currentLane,
-      totalMove: Math.abs(this.state.currentLane - newLane)
+      totalMove: Math.abs(this.state.currentLane - newLane),
     });
 
     this.updateBikePosition();
@@ -3296,15 +3299,15 @@ class LoserLane {
   // 5. Collision methods (checkBikeCollisions)
 
   checkBikeCollisions() {
-    console.log('\n=== Checking Bike Collisions ===');
-    console.log('Collision check state:', {
+    console.log("\n=== Checking Bike Collisions ===");
+    console.log("Collision check state:", {
       spatialManagerExists: !!this.spatialManager,
       collisionManagerExists: !!this.spatialManager.collisionManager,
       bikePosition: {
         lane: this.state.currentLane,
-        y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+        y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
       },
-      totalEntities: this.spatialManager.darlings.size
+      totalEntities: this.spatialManager.darlings.size,
     });
 
     const bikeHitbox = {
@@ -3315,29 +3318,21 @@ class LoserLane {
     };
 
     const darlingsForCollision = {
-      darlings: Array.from(this.spatialManager.darlings).filter(
-        e => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE
-      ),
-      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter(
-        e => e.type === DarlingType.PARKED_DEATHMACHINE
-      )
+      darlings: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
+      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
 
-    console.log('Collision check details:', {
+    console.log("Collision check details:", {
       numRegularDarlings: darlingsForCollision.darlings.length,
       numParkedDeathMachines: darlingsForCollision.parkedDeathMachines.length,
-      bikeHitbox
+      bikeHitbox,
     });
 
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(
-      bikeHitbox, 
-      darlingsForCollision, 
-      this.state.isJumping
-    );
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
 
-    console.log('Collision result:', {
+    console.log("Collision result:", {
       collisionDetected: !!collision,
-      collisionType: collision
+      collisionType: collision,
     });
 
     if (collision) {
@@ -3571,18 +3566,18 @@ class LoserLane {
   }
 
   restart() {
-    console.log('\n=== Game Restart Initiated ===');
-    console.log('Before cleanup:', {
+    console.log("\n=== Game Restart Initiated ===");
+    console.log("Before cleanup:", {
       spatialManagerExists: !!this.spatialManager,
       darlingCount: this.spatialManager ? this.spatialManager.darlings.size : 0,
-      collisionManagerExists: this.spatialManager ? !!this.spatialManager.collisionManager : false
+      collisionManagerExists: this.spatialManager ? !!this.spatialManager.collisionManager : false,
     });
 
     this.cleanup();
-    
-    console.log('After cleanup:', {
+
+    console.log("After cleanup:", {
       spatialManagerExists: !!this.spatialManager,
-      stateExists: !!this.state
+      stateExists: !!this.state,
     });
 
     Building.nextSpawnY = null;
@@ -3590,9 +3585,9 @@ class LoserLane {
 
     // Create new instances
     this.spatialManager = new SpatialManager(CONFIG);
-    console.log('New SpatialManager created:', {
+    console.log("New SpatialManager created:", {
       hasCollisionManager: !!this.spatialManager.collisionManager,
-      isDarlingSetEmpty: this.spatialManager.darlings.size === 0
+      isDarlingSetEmpty: this.spatialManager.darlings.size === 0,
     });
 
     this.state = new GameState(CONFIG);
@@ -3602,17 +3597,17 @@ class LoserLane {
 
     // Critical: Set game reference in spatial manager
     this.spatialManager.setGame(this);
-    
-    console.log('Before world initialization:', {
+
+    console.log("Before world initialization:", {
       spatialManagerReady: !!this.spatialManager,
-      collisionManagerReady: !!this.spatialManager.collisionManager
+      collisionManagerReady: !!this.spatialManager.collisionManager,
     });
 
     this.initializeGameWorld();
-    
-    console.log('After world initialization:', {
-      bikeRegistered: Array.from(this.spatialManager.darlings).some(entity => entity.type === DarlingType.BIKE),
-      totalEntities: this.spatialManager.darlings.size
+
+    console.log("After world initialization:", {
+      bikeRegistered: Array.from(this.spatialManager.darlings).some((entity) => entity.type === DarlingType.BIKE),
+      totalEntities: this.spatialManager.darlings.size,
     });
 
     this.start();
@@ -3748,11 +3743,11 @@ class LoserLane {
   }
 
   cleanup() {
-    console.log('\n=== Cleanup Started ===');
-    console.log('Before cleanup:', {
+    console.log("\n=== Cleanup Started ===");
+    console.log("Before cleanup:", {
       hasFrameId: !!this.frameId,
       darlingCount: this.spatialManager?.darlings.size,
-      controlsExist: !!this.controls
+      controlsExist: !!this.controls,
     });
 
     if (this.frameId) {
@@ -3771,10 +3766,10 @@ class LoserLane {
       this.tutorialSystem.cleanup();
     }
 
-    console.log('After cleanup:', {
+    console.log("After cleanup:", {
       hasFrameId: !!this.frameId,
       darlingCount: this.spatialManager?.darlings.size,
-      lastFrameTime: this.lastFrameTime
+      lastFrameTime: this.lastFrameTime,
     });
   }
 }
