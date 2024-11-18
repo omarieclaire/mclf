@@ -31,14 +31,14 @@
       animation: pulse 2s infinite;
       top: 50%; /* Center vertically */
       left: 50%; /* Center horizontally */
-      transform: translate(90%, -10%); /* Adjust for true center alignment */  
+      transform: translate(130%, 30%); /* Adjust for true center alignment */  
   }
 
   .control-highlight.right.active::after {
       content: '→';
       top: 50%; /* Center vertically */
       left: 50%; /* Center horizontally */
-      transform: translate(-90%, -10%); /* Adjust for true center alignment */  
+      transform: translate(-130%, 30%); /* Adjust for true center alignment */  
   }
 }
 
@@ -78,7 +78,6 @@
   }
 }
 
-/* Add to your CSS */
 .control-highlight.wrong {
   opacity: 1;
   background: rgba(255, 0, 0, 0.2);
@@ -108,6 +107,7 @@
   color: var(--light-purp);
   background-color: var(--overlay-background);
   padding: 1rem;
+  z-index: 1;
 }
 
 @media (min-width: 600px) {

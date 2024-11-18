@@ -2,7 +2,7 @@ const CONFIG = {
   GAME: {
     WIDTH: 41,
     HEIGHT: Math.floor(window.innerHeight / 20),
-    INITIAL_SPEED: 500,
+    INITIAL_SPEED: 50,
     MIN_SPEED: 300,
     SPEED_DECREASE_RATE: 0.995,
     CYCLIST_Y: Math.floor(window.innerHeight / 40),
@@ -38,7 +38,7 @@ const CONFIG = {
     BUILDING: 0,
     TTC_TO_TTC: 20,
     TTC_TO_DEATHMACHINE: 15,
-    DEFAULT: 5,
+    DEFAULT: 1,
   },
   TTC: {
     STOP_INTERVAL: {
@@ -116,24 +116,24 @@ const CONFIG = {
       HEIGHTS: [0.8, 1.8],
     },
   },
-  INPUT: {
-    TOUCH: {
-      SENSITIVITY: 1.0,
-      DRAG_THRESHOLD: 10,
-      TAP_DURATION: 200,
-    },
-    KEYBOARD: {
-      REPEAT_DELAY: 200,
-      REPEAT_RATE: 50,
-    },
-  },
-  DIFFICULTY: {
-    LEVELS: {
-      EASY: { speedMultiplier: 0.8, spawnRateMultiplier: 0.7 },
-      NORMAL: { speedMultiplier: 1.0, spawnRateMultiplier: 1.0 },
-      HARD: { speedMultiplier: 1.2, spawnRateMultiplier: 1.3 },
-    },
-  },
+  // INPUT: {
+  //   TOUCH: {
+  //     SENSITIVITY: 1.0,
+  //     DRAG_THRESHOLD: 10,
+  //     TAP_DURATION: 200,
+  //   },
+  //   KEYBOARD: {
+  //     REPEAT_DELAY: 200,
+  //     REPEAT_RATE: 50,
+  //   },
+  // },
+  // DIFFICULTY: {
+  //   LEVELS: {
+  //     EASY: { speedMultiplier: 0.8, spawnRateMultiplier: 0.7 },
+  //     NORMAL: { speedMultiplier: 1.0, spawnRateMultiplier: 1.0 },
+  //     HARD: { speedMultiplier: 1.2, spawnRateMultiplier: 1.3 },
+  //   },
+  // },
   AUDIO: {
     VOLUME: {
       MASTER: 1.0,
@@ -158,12 +158,12 @@ const CONFIG = {
     OFFSCREEN_BUFFER: 5,
   },
 
-  GAMEPLAY: {
-    SCORE_MULTIPLIER: 1,
-    BASE_DIFFICULTY: 1.0,
-    DIFFICULTY_INCREASE_RATE: 0.01,
-    MAX_DIFFICULTY: 2.0,
-  },
+  // GAMEPLAY: {
+  //   SCORE_MULTIPLIER: 1,
+  //   BASE_DIFFICULTY: 1.0,
+  //   DIFFICULTY_INCREASE_RATE: 0.01,
+  //   MAX_DIFFICULTY: 2.0,
+  // },
 };
 
 const DOOR_STATES = {
@@ -2967,15 +2967,8 @@ class TutorialSystem {
   }
 }
 
-// export default TutorialSystem;
-
-// export default TutorialSystem;
 
 class LoserLane {
-  /**
-   * Initializes the game engine and core systems
-   * @constructor
-   */
   constructor() {
     // === Core Game State ===
     this.config = CONFIG;
@@ -2983,8 +2976,8 @@ class LoserLane {
     this.eventListeners = new Map(); // Add this for event tracking
 
     // === Game System Flags ===
-    this.doubleJumpPendingGiveMeImmunity = false; // Track jump state before system init
-    this.immunityTimer = null; // Track immunity window
+    // this.doubleJumpPendingGiveMeImmunity = false; // Track jump state before system init
+    // this.immunityTimer = null; // Track immunity window
     this.debug = true;
     this.frameId = null;
 
