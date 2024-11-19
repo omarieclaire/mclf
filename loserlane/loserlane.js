@@ -1571,93 +1571,89 @@ class BikeBehavior extends EntityBehavior {
 // ParkedDeathmachineBehavior
 // =========================================
 
+// In ParkedDeathmachineBehavior class
 class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   constructor(entity) {
-    super(entity, {
-      baseSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
+      super(entity, {
+          baseSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
+          minDistance: entity.config.SAFE_DISTANCE.PARKED,
+          ignoreCollisions: false,
+          hasAnimation: true,
+      });
 
-      minDistance: entity.config.SAFE_DISTANCE.PARKED,
-      ignoreCollisions: false,
-      hasAnimation: true,
-    });
+      this.lastPosition = { ...entity.position }; // Track last position
+      this.stuckFrames = 0; // Track how long it's been stuck
 
-    this.doorState = DOOR_STATES.CLOSED;
-    this.doorTimer = 0;
-    this.doorHitbox = null;
-    this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
-    this.doorAnimationActive = false;
-    this.lastDoorUpdate = Date.now();
-    this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
-
-    const targetPercentage =
-      entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y +
-      Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
-    this.doorOpenY = Math.floor(this.building.config.GAME.HEIGHT * targetPercentage);
+      console.log(`[ParkedDM] Created:`, {
+          id: entity.id,
+          position: { x: entity.position.x, y: entity.position.y },
+          baseSpeed: this.baseSpeed,
+          dimensions: { width: entity.width, height: entity.height }
+      });
   }
 
-  updateAnimation() {
-    if (
-      this.shouldOpenDoor &&
-      !this.doorAnimationActive &&
-      this.building.position.y >= this.doorOpenY &&
-      this.building.position.y <= this.doorOpenY + 2
-    ) {
-      this.doorAnimationActive = true;
-      this.updateDoorState();
-    }
+  update() {
+      // Track movement
+      const hasntMoved = (
+          this.building.position.x === this.lastPosition.x && 
+          this.building.position.y === this.lastPosition.y
+      );
 
-    if (
-      this.doorAnimationActive &&
-      this.doorState < DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 &&
-      Date.now() - this.lastDoorUpdate > this.doorOpenDelay
-    ) {
-      this.updateDoorState();
-    }
+      if (hasntMoved) {
+          this.stuckFrames++;
+          if (this.stuckFrames % 60 === 0) { // Log every second
+              console.log(`[ParkedDM] STUCK for ${this.stuckFrames} frames:`, {
+                  id: this.building.id,
+                  position: { x: this.building.position.x, y: this.building.position.y },
+                  stopped: this.stopped,
+                  baseSpeed: this.baseSpeed,
+                  nearbyVehicles: this.getNearbyVehicles()
+              });
+          }
+      } else {
+          this.stuckFrames = 0;
+      }
 
-    this.updateDoorHitbox();
+      // Regular movement handling
+      if (this.stopped) {
+          console.log(`[ParkedDM] Stopped state:`, {
+              id: this.building.id,
+              position: { x: this.building.position.x, y: this.building.position.y },
+              stuckFrames: this.stuckFrames
+          });
+      } else {
+          super.update();
+      }
+
+      // Track position for next frame
+      this.lastPosition = { ...this.building.position };
+
+      // Animation update
+      if (this.hasAnimation) {
+          this.updateAnimation();
+      }
   }
 
-  updateDoorState() {
-    this.doorState++;
-    this.lastDoorUpdate = Date.now();
-    this.building.art = DARLINGS.PARKED_DEATHMACHINE_STATES[this.doorState];
-
-    // Add door-opening animation class when door is opening
-    if (this.doorState > 0) {
-      this.building.animationClass = "parked-deathMachine door-opening animated";
-    } else {
-      this.building.animationClass = "parked-deathMachine animated";
-    }
-
-    const doorWidths = [0, 0.8, 1, 1.5, 1.8];
-    const doorWidth = doorWidths[this.doorState];
-    const hitboxHeight = this.doorState === DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 ? 0.8 : 1.8;
-
-    this.doorHitbox = {
-      x: this.building.position.x,
-      y: this.building.position.y + 1,
-      width: doorWidth,
-      height: hitboxHeight,
-    };
+  getNearbyVehicles() {
+      if (!this.building.spatialManager) return [];
+      
+      return this.building.spatialManager.grid
+          .getNearbyDarlings(this.building.position, 5)
+          .filter(entity => entity !== this.building)
+          .map(entity => ({
+              type: entity.type,
+              position: { x: entity.position.x, y: entity.position.y },
+              distance: Math.abs(entity.position.y - this.building.position.y)
+          }));
   }
 
-  updateDoorHitbox() {
-    if (this.doorHitbox) {
-      this.doorHitbox.y = this.building.position.y + 1;
-    }
-  }
-
-  // Override base collision handling for parked deathMachines
-  onCollision(other) {
-    if (other.type === DarlingType.BIKE) {
-      return;
-    }
-
-    // Parked deathMachines don't move on collision, they just block
-    this.stopped = true;
-    setTimeout(() => {
-      this.stopped = false;
-    }, 500);
+  handleMovementBlocked() {
+      console.log(`[ParkedDM] Movement blocked:`, {
+          id: this.building.id,
+          position: { x: this.building.position.x, y: this.building.position.y },
+          nearbyVehicles: this.getNearbyVehicles()
+      });
+      super.handleMovementBlocked();
   }
 }
 // =========================================
@@ -2789,8 +2785,10 @@ class TutorialSystem {
     this.startButton = document.getElementById("start-button");
     this.leftHighlight = document.getElementById("left-highlight");
     this.rightHighlight = document.getElementById("right-highlight");
+    this.titleBike = document.getElementById("title-bike");
+    this.pregameTitle = document.getElementById("pregame-msg-title");
 
-    this.currentStep = "left"; // Add this to track which step we're on
+    this.currentStep = "left";
 
     // Tutorial state
     this.completedSteps = {
@@ -2802,8 +2800,9 @@ class TutorialSystem {
     this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     console.log(`📱 Device type detected: ${this.isMobile ? "Mobile" : "Desktop"}`);
 
-    // Hide start button initially
-    this.startButton.style.display = "none";
+    // Initial visibility setup
+    this.tutorialBike.style.opacity = "0";
+    this.tutorialText.style.opacity = "0";
 
     // Initialize
     this.init();
@@ -2812,19 +2811,40 @@ class TutorialSystem {
   init() {
     console.log("🎮 Starting tutorial initialization");
 
-    // Start with left control tutorial
-    this.showLeftTutorial();
+    // Show title elements
+    if (this.titleBike) this.titleBike.style.opacity = "1";
+    if (this.pregameTitle) this.pregameTitle.style.opacity = "1";
+
+    // Add timer to show tutorial elements
+    setTimeout(() => {
+      console.log("⏰ Tutorial delay complete, showing tutorial elements");
+      
+      // Show tutorial elements with fade-in effect
+      if (this.tutorialBike) {
+        this.tutorialBike.style.transition = "opacity 0.5s ease-in-out";
+        this.tutorialBike.style.opacity = "1";
+      }
+
+      if (this.tutorialText) {
+        this.tutorialText.style.transition = "opacity 0.5s ease-in-out";
+        this.tutorialText.style.opacity = "1";
+      }
+
+      // Start with left control tutorial
+      this.showLeftTutorial();
+    }, 1500);
 
     // Add event listeners
     this.addControlListeners();
     console.log("✅ Tutorial initialization complete");
   }
+  
 
   showLeftTutorial() {
     console.log("👈 Showing left control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
-      : "Press your <span class='highlight'>left arrow key</span> to move left";
+      : "Use your <span class='highlight'>left arrow key</span> to move left";
     console.log("Setting tutorial text to:", text);
     console.log("Tutorial text element:", this.tutorialText);
 
@@ -2848,7 +2868,7 @@ class TutorialSystem {
     console.log("👉 Showing right control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
-      : "Press your <span class='highlight'>right arrow key</span> to move right";
+      : "Use your <span class='highlight'>right arrow key</span> to move right";
     this.tutorialText.innerHTML = text;
     this.rightHighlight.classList.add("active");
   }
@@ -2927,39 +2947,46 @@ class TutorialSystem {
 
     // Clean up tutorial animations/styles
     this.tutorialBike.style.marginLeft = "0"; // Reset bike position
-    this.leftHighlight.classList.remove("active"); // Remove highlight
-    this.rightHighlight.classList.remove("active"); // Remove highlight
+    this.leftHighlight.classList.remove("active");
+    this.rightHighlight.classList.remove("active");
 
-    // Make controls transparent
+    // Fade out tutorial elements
+    this.tutorialBike.style.transition = "opacity 0.5s ease-in-out";
+    this.tutorialBike.style.opacity = "0";
     this.controlsDiv.style.opacity = "0";
 
-    // Show start button
-    this.startButton.style.display = "block";
+    // Show "STAY ALIVE" text
     this.tutorialText.innerHTML = "STAY ALIVE";
+
+    // Swap bike with start button
+    setTimeout(() => {
+      // Add visible class to start button
+      this.startButton.classList.add('visible');
+      
+      // Add start button listener
+      this.startButton.addEventListener("click", () => {
+        console.log("🎮 Start button clicked - beginning game");
+        this.game.start();
+
+        // Clean up tutorial elements
+        console.log("🧹 Cleaning up tutorial elements");
+        this.tutorialText.innerHTML = "";
+        document.getElementById("pregame-msg-box").style.opacity = "0";
+        
+        // Reset styles for gameplay
+        this.controlsDiv.style.opacity = "1";
+
+        // Show game info container
+        const gameInfo = document.getElementById("game-info-container");
+        if (gameInfo) {
+          gameInfo.style.visibility = "visible";
+          gameInfo.style.opacity = "1";
+        }
+      });
+    }, 500); // Wait for bike fade-out
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;
-
-    // Add start button listener that uses existing game start
-    this.startButton.addEventListener("click", () => {
-      console.log("🎮 Start button clicked - beginning game");
-      this.game.start();
-
-      // Remove tutorial elements and reset styles
-      console.log("🧹 Cleaning up tutorial elements");
-      this.tutorialText.innerHTML = "";
-      document.getElementById("pregame-msg-box").style.display = "none";
-      this.tutorialBike.style.marginLeft = "0"; // Double-check bike position reset
-
-      // Make sure controls are ready for gameplay
-      this.controlsDiv.style.opacity = "1";
-
-      // Show game info container
-      const gameInfo = document.getElementById("game-info-container");
-      if (gameInfo) {
-        gameInfo.style.visibility = "visible";
-      }
-    });
   }
 
   cleanup() {

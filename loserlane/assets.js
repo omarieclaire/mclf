@@ -9,14 +9,25 @@
 
 
 const DARLINGS = {
+    // BIKE: {
+    //     art: 
+    //     [" 0 ", 
+    //      "^|^", 
+    //      " O "],
+
+    //     width: 3,
+    //     height: 3
+    // },
     BIKE: {
         art: 
-        [" O ", 
-         "^|^", 
-         " O "],
+        ["_|_", 
+         "'o'", 
+         " ⍵ ",
+         " | "
+        ],
 
         width: 3,
-        height: 3
+        height: 4
     },
     WANDERER: {
         UP: {
@@ -62,7 +73,7 @@ const DARLINGS = {
 
     MOVINGDEATHMACHINE: {
         art: [
-            "┌.─.┐",
+            "┌⊚─⊚┐",
             "│▀▀▀│",
             "|   │",
             "│▀▀▀│",
@@ -77,14 +88,14 @@ const DARLINGS = {
             "│▀▀▀│",
             "|   │",
             "│▀▀▀│",
-            "╰.─.╯"
+            "╰⊚─⊚╯"
         ],
         width: 5,
         height: 6
     },
     DEATHMACHINE: {
         art: [
-            " ┌.─.┐",
+            " ┌⊚─⊚┐",
             " │▀▀▀│",
             " |   │ ",
             " │▀▀▀│",

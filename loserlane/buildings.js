@@ -309,7 +309,7 @@ const TORONTO_BUILDINGS = [
     {
         name: "THE_REX",
         art: [
-            "┌────────┐",
+            "┌◬◬◬◬◬◬◬◬┐",
             "│ THE    │",
             "│ REX    │",
             "│ JAZZ   │",
@@ -319,7 +319,7 @@ const TORONTO_BUILDINGS = [
     {
         name: "QUEENS_PARK",
         art: [
-            "┌────────┐",
+            "┌──⫷─⫸──┐",
             "│QUEENS  │",
             "│ PARK   │",
             "│ GREEN  │",
