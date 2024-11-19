@@ -2779,6 +2779,8 @@ class TutorialSystem {
     this.config = game.config;
 
     // Cache DOM elements
+    this.pregameMsgBox = document.getElementById("pregame-msg-box");
+
     this.tutorialBike = document.getElementById("tutorial-bike");
     this.tutorialText = document.getElementById("tutorial-text");
     this.controlsDiv = document.getElementById("controls");
@@ -2798,7 +2800,7 @@ class TutorialSystem {
 
     // Check if user is on mobile
     this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    console.log(`📱 Device type detected: ${this.isMobile ? "Mobile" : "Desktop"}`);
+    // console.log(`📱 Device type detected: ${this.isMobile ? "Mobile" : "Desktop"}`);
 
     // Initial visibility setup
     this.tutorialBike.style.opacity = "0";
@@ -2895,28 +2897,29 @@ class TutorialSystem {
       console.log(`Wrong input: got ${direction}, expected ${this.currentStep}`);
       const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
       wrongHighlight.classList.add("wrong");
-
-      // Save original text
+  
+      // Save original text and add error state
       const originalText = this.tutorialText.textContent;
-
-      // Show humorous message
+      const originalHTML = this.tutorialText.innerHTML;
+      this.tutorialText.classList.add('error');
       this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
-
+  
       // Reset everything after animation
       setTimeout(() => {
         wrongHighlight.classList.remove("wrong");
-        this.tutorialText.innerHTML = originalText;
+        this.tutorialText.classList.remove('error');
+        this.tutorialText.innerHTML = originalHTML;
       }, 500);
       return;
     }
-
+  
     // Rest of the existing handleMove code...
     console.log(`🎯 Handling ${direction} move`);
     if (this.completedSteps[direction]) return;
-
+  
     // Mark step as completed
     this.completedSteps[direction] = true;
-
+  
     // Move the bike
     if (direction === "left") {
       this.tutorialBike.style.marginLeft = "-20px";
@@ -2925,14 +2928,16 @@ class TutorialSystem {
       this.tutorialBike.style.marginLeft = "20px";
       this.currentStep = "complete";
     }
-
-    // Show success indicator
+  
+    // Show success indicator and add success state to text
     const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
     highlight.classList.remove("active");
     highlight.classList.add("success");
-
+    this.tutorialText.classList.add('success');
+  
     setTimeout(() => {
       highlight.classList.remove("success");
+      this.tutorialText.classList.remove('success');
       if (!this.completedSteps.right) {
         this.showRightTutorial();
       } else if (!this.completedSteps.left) {
@@ -2962,6 +2967,7 @@ class TutorialSystem {
     setTimeout(() => {
       // Add visible class to start button
       this.startButton.classList.add('visible');
+      this.pregameMsgBox.style.zIndex = "500";
       
       // Add start button listener
       this.startButton.addEventListener("click", () => {

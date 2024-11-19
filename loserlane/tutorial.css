@@ -31,7 +31,7 @@
 /* Control Highlight States
 -------------------------------------------------- */
 .control-highlight.success::after {
-  content: "✓";
+  /* content: "✓"; */
   animation: none;
   color: var(--green);
 }
@@ -93,6 +93,21 @@
   /* text-transform: capitalize; */
 }
 
+/* Tutorial Text States
+-------------------------------------------------- */
+#tutorial-text {
+  transition: opacity 0.5s ease-in-out, color 0.3s ease-in-out;
+  margin-bottom: 1rem;
+}
+
+#tutorial-text.success {
+  color: var(--green);
+}
+
+#tutorial-text.error {
+  color: var(--hot-pink);
+}
+
 #title-bike {
   font-size: 1.7rem;
   line-height: 31px;
@@ -141,7 +156,7 @@
   opacity: 0;
   pointer-events: none;
   animation: buttonPulse 2s infinite;
-  z-index: 10000;
+  z-index: 200;
   margin: 0;
 }
 
@@ -203,6 +218,7 @@
     right: auto;
     left: -20px;            */
   }
+  
 
   #pregame-msg-box {
     max-width: 50%;
@@ -216,9 +232,9 @@
 /* Mobile styles (<600px) */
 @media (max-width: 599px) {
   .control-highlight.active {
-    background: var(--green);
+    /* background: var(--green); */
     opacity: 1;
-    background-image: radial-gradient(var(--light-purp) 0.8px, var(--dark-grey) 0.8px);
+    background-image: radial-gradient(var(--light-purp) 0.8px, rgba(0, 0, 0, 0) 0.8px);
     background-size: 2rem 2rem;
   }
 
@@ -234,4 +250,24 @@
     font-size: 2.7rem;
     color: var(--med-purp);
   }
+}
+
+#pregame-msg-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 60%;
+  padding: 1rem;
+  z-index: 1;
+}
+
+.control-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 100;
 }
