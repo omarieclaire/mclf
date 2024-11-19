@@ -1,4 +1,11 @@
-/* Base control highlight styles */
+/* Base Layout and Common Styles
+-------------------------------------------------- */
+.highlight {
+  font-weight: bold;
+}
+
+/* Control Highlight Base Styles
+-------------------------------------------------- */
 .control-highlight {
   position: absolute;
   top: 0;
@@ -16,32 +23,141 @@
 .control-highlight.left {
   left: 0;
 }
+
 .control-highlight.right {
   right: 0;
 }
 
+/* Control Highlight States
+-------------------------------------------------- */
+.control-highlight.success::after {
+  content: "✓";
+  animation: none;
+  color: var(--green);
+}
+
+.control-highlight.wrong {
+  opacity: 1;
+  background: rgba(255, 0, 0, 0.2);
+  animation: wrongFlash 0.9s;
+}
+
+/* Message Box Styles
+-------------------------------------------------- */
+#pregame-msg-box {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 60%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--light-purp);
+  background-color: var(--dark-grey);
+  transition: all 0.5s ease-in-out;
+  z-index: 10000;
+}
+
+#pregame-msg-box.show-message {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#pregame-msg-box.hide-message {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+/* Title Box Styles
+-------------------------------------------------- */
+.title-box-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+#pregame-msg-title {
+  font-size: clamp(1rem, 2rem, 5rem);
+  color: var(--hot-pink);
+  font-weight: bolder;
+  letter-spacing: 16px;
+  text-align: center;
+}
+
+#tutorial-text{
+  text-transform: capitalize;
+}
+
+#tutorial-bike {
+  font-size: 1.6rem;
+  margin: 1rem 0;
+}
+
+/* Start Button Styles
+-------------------------------------------------- */
+#start-button {
+  display: block;
+  margin: 20px auto;
+  animation: buttonPulse 2s infinite;
+  z-index: 10000;
+}
+
+/* Animations
+-------------------------------------------------- */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes wrongFlash {
+  0%, 100% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* Media Queries
+-------------------------------------------------- */
 /* Desktop styles (≥600px) */
 @media (min-width: 600px) {
   .control-highlight.active {
     opacity: 1;
-    font-size: 10rem;
+    font-size: 5rem;
     color: var(--green);
     margin-top: 5rem;
-    
   }
 
   .control-highlight.active::after {
-    content: "←";
+    /* content: "<-";
     animation: pulse 2s infinite;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(130%, 30%);
+    top: calc(6C5% + 10px);  
+    right: 2rem;            */
   }
-
+  
   .control-highlight.right.active::after {
-    content: "→";
-    transform: translate(-130%, 30%);
+    /* content: "->";
+    right: auto;
+    left: -20px;            */
   }
 
   #pregame-msg-box {
@@ -57,137 +173,21 @@
 @media (max-width: 599px) {
   .control-highlight.active {
     background: var(--green);
-opacity: 1;
-background-image: radial-gradient(var(--light-purp) 0.8px, var(--dark-grey) 0.8px);
-background-size: 2rem 2rem;
-
+    opacity: 1;
+    background-image: radial-gradient(var(--light-purp) 0.8px, var(--dark-grey) 0.8px);
+    background-size: 2rem 2rem;
   }
-}
 
-/* State-specific styles */
-.control-highlight.success::after {
-  content: "✓";
-  animation: none;
-  color: var(--green);
-}
-
-.control-highlight.wrong {
-  opacity: 1;
-  background: rgba(255, 0, 0, 0.2);
-  animation: wrongFlash 0.5s;
-}
-
-
-/* Message box styles */
-#pregame-msg-box {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50%;
-  max-width: 60%;
-  padding: 1rem;
-  font-size: 1.5rem;
-  text-align: center;
-  color: var(--light-purp);
-  background-color: var(--overlay-background);
-  transition: all 0.5s ease-in-out;
-  z-index: 10000;
-}
-
-@media (max-width: 599px) {
-  /* Message box styles */
   #pregame-msg-box {
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 100%;
     max-width: 100%;
-    /* padding: 1rem; */
-    font-size: 1.5rem;
-    text-align: center;
-    color: var(--light-purp);
-    background-color: var(--overlay-background);
-    transition: all 0.5s ease-in-out;
-    z-index: 10000;
-    
   }
 }
 
-
-#pregame-msg-box.show-message {
-  opacity: 1;
-  transform: scale(1);
-}
-
-#pregame-msg-box.hide-message {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-/* Title box styles */
-.title-box-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-}
-
-#tutorial-bike {
-  font-size: 1.6rem;
-  margin: 1rem 0;
-}
-
-#pregame-msg-title {
-  font-size: clamp(1rem, 2rem, 5rem);
-  color: var(--hot-pink);
-  font-weight: bolder;
-  letter-spacing: 16px;
-  text-align: center;
-}
-
-/* Start button styles */
-#start-button {
-  display: block;
-  margin: 20px auto;
-  animation: buttonPulse 2s infinite;
-  z-index: 10000;
-}
-
-/* Animations */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.5;
+/* Height-based adjustments */
+@media (max-height: 600px) {
+  #pregame-msg-title {
+    font-size: 2.7rem;
+    color: var(--med-purp);
   }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes buttonPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes wrongFlash {
-  0%,
-  100% {
-    background: transparent;
-  }
-  50% {
-    background: rgba(255, 0, 0, 0.2);
-  }
-}
-
-/* Utility classes */
-.highlight {
-  font-weight: bold;
 }

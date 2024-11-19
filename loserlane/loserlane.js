@@ -218,6 +218,8 @@ class SpatialManager {
     this.spawnManager = new SpawnManager(this, config);
     // Set to store all active game darlings
     this.darlings = new Set();
+
+    
   }
   setGame(game) {
     console.log("Setting game reference in SpatialManager", {
@@ -432,7 +434,7 @@ class CollisionManager {
             case DarlingType.ONCOMING_DEATHMACHINE:
               return "ONCOMING_DEATHMACHINE";
             case DarlingType.WANDERER:
-              return "PEDESTRIAN";
+              return "WANDERER";
             case DarlingType.BUILDING:
               return "BUILDING";
             default:
@@ -2933,7 +2935,7 @@ class TutorialSystem {
 
     // Show start button
     this.startButton.style.display = "block";
-    this.tutorialText.innerHTML = "How long can you stay alive without a bike lane?";
+    this.tutorialText.innerHTML = "STAY ALIVE";
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;
@@ -3059,7 +3061,7 @@ class LoserLane {
   }
   initializeparkedDeathMachines() {
     let currentY = CONFIG.GAME.HEIGHT;
-    while (currentY > -5) {
+    while (currentY > -1) {
       const spawnConfig = {
         position: new Position(CONFIG.LANES.PARKED, currentY),
       };

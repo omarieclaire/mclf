@@ -1644,94 +1644,82 @@ class BikeBehavior extends EntityBehavior {
 // =========================================
 
 class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
-  constructor(entity) {
-    super(entity, {
-      baseSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
+    constructor(entity) {
+        super(entity, {
+            baseSpeed: CONFIG.MOVEMENT.BASE_MOVE_SPEED + CONFIG.MOVEMENT.BIKE_SPEED,
+            minDistance: entity.config.SAFE_DISTANCE.PARKED,
+            ignoreCollisions: false,
+            hasAnimation: true,
+        });
 
-      minDistance: entity.config.SAFE_DISTANCE.PARKED,
-      ignoreCollisions: false,
-      hasAnimation: true,
-    });
+        console.log(`[ParkedDM] Created new parked vehicle:`, {
+            id: entity.id,
+            position: { x: entity.position.x, y: entity.position.y },
+            baseSpeed: this.baseSpeed
+        });
 
-    this.doorState = DOOR_STATES.CLOSED;
-    this.doorTimer = 0;
-    this.doorHitbox = null;
-    this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
-    this.doorAnimationActive = false;
-    this.lastDoorUpdate = Date.now();
-    this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
+        this.doorState = DOOR_STATES.CLOSED;
+        this.doorTimer = 0;
+        this.doorHitbox = null;
+        this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
+        this.doorAnimationActive = false;
+        this.lastDoorUpdate = Date.now();
+        this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
 
-    const targetPercentage =
-      entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y +
-      Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
-    this.doorOpenY = Math.floor(this.building.config.GAME.HEIGHT * targetPercentage);
-  }
-
-  updateAnimation() {
-    if (
-      this.shouldOpenDoor &&
-      !this.doorAnimationActive &&
-      this.building.position.y >= this.doorOpenY &&
-      this.building.position.y <= this.doorOpenY + 2
-    ) {
-      this.doorAnimationActive = true;
-      this.updateDoorState();
+        const targetPercentage = 
+            entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y +
+            Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
+        this.doorOpenY = Math.floor(this.building.config.GAME.HEIGHT * targetPercentage);
     }
 
-    if (
-      this.doorAnimationActive &&
-      this.doorState < DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 &&
-      Date.now() - this.lastDoorUpdate > this.doorOpenDelay
-    ) {
-      this.updateDoorState();
+    update() {
+        if (this.building.position.y < -5) {
+            console.log(`[ParkedDM] Vehicle stuck at top:`, {
+                id: this.building.id,
+                position: { x: this.building.position.x, y: this.building.position.y },
+                stopped: this.stopped,
+                baseSpeed: this.baseSpeed
+            });
+        }
+
+        if (this.stopped) {
+            console.log(`[ParkedDM] Vehicle stopped:`, {
+                id: this.building.id,
+                position: { x: this.building.position.x, y: this.building.position.y }
+            });
+            return;
+        }
+
+        // Regular movement
+        const oldPos = { ...this.building.position };
+        super.update();
+        
+        if (oldPos.y === this.building.position.y && !this.stopped) {
+            console.log(`[ParkedDM] Vehicle not moving but not stopped:`, {
+                id: this.building.id,
+                position: { x: this.building.position.x, y: this.building.position.y },
+                baseSpeed: this.baseSpeed
+            });
+        }
+
+        if (this.hasAnimation) {
+            this.updateAnimation();
+        }
     }
 
-    this.updateDoorHitbox();
-  }
-
-  updateDoorState() {
-    this.doorState++;
-    this.lastDoorUpdate = Date.now();
-    this.building.art = DARLINGS.PARKED_DEATHMACHINE_STATES[this.doorState];
-
-    // Add door-opening animation class when door is opening
-    if (this.doorState > 0) {
-      this.building.animationClass = "parked-deathMachine door-opening animated";
-    } else {
-      this.building.animationClass = "parked-deathMachine animated";
+    handleMovementBlocked() {
+        console.log(`[ParkedDM] Movement blocked:`, {
+            id: this.building.id,
+            position: { x: this.building.position.x, y: this.building.position.y },
+            nearbyVehicles: this.getNearbyDarlings().map(d => ({
+                type: d.type,
+                position: { x: d.position.x, y: d.position.y }
+            }))
+        });
+        super.handleMovementBlocked();
     }
-
-    const doorWidths = [0, 0.8, 1, 1.5, 1.8];
-    const doorWidth = doorWidths[this.doorState];
-    const hitboxHeight = this.doorState === DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 ? 0.8 : 1.8;
-
-    this.doorHitbox = {
-      x: this.building.position.x,
-      y: this.building.position.y + 1,
-      width: doorWidth,
-      height: hitboxHeight,
-    };
-  }
-
-  updateDoorHitbox() {
-    if (this.doorHitbox) {
-      this.doorHitbox.y = this.building.position.y + 1;
-    }
-  }
-
-  // Override base collision handling for parked deathMachines
-  onCollision(other) {
-    if (other.type === DarlingType.BIKE) {
-      return;
-    }
-
-    // Parked deathMachines don't move on collision, they just block
-    this.stopped = true;
-    setTimeout(() => {
-      this.stopped = false;
-    }, 500);
-  }
 }
+
 // =========================================
 // TTCBehavior
 // =========================================
@@ -2902,23 +2890,42 @@ class LoserLane {
     }
   }
 
-  initializeparkedDeathMachines() {
+initializeparkedDeathMachines() {
+    console.log("[Init] Starting parked vehicle initialization");
     let currentY = CONFIG.GAME.HEIGHT;
-    while (currentY > -5) {
-      const spawnConfig = {
-        position: new Position(CONFIG.LANES.PARKED, currentY),
-      };
+    let attempts = 0;
+    const MAX_ATTEMPTS = 100;
+    let vehiclesSpawned = 0;
+    
+    while (currentY > -5 && attempts < MAX_ATTEMPTS) {
+        const spawnConfig = {
+            position: new Position(CONFIG.LANES.PARKED, currentY),
+        };
 
-      const deathMachine = new ParkedDeathmachine(CONFIG, spawnConfig);
-      if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(DarlingType.PARKED_DEATHMACHINE, deathMachine.position)) {
-        this.spatialManager.addEntityToSpatialManagementSystem(deathMachine);
-        currentY -= deathMachine.height + 1;
-      } else {
-        currentY -= 1;
-      }
+        console.log(`[Init] Attempting to spawn vehicle at y=${currentY}`);
+        const deathMachine = new ParkedDeathmachine(CONFIG, spawnConfig);
+        
+        if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(DarlingType.PARKED_DEATHMACHINE, deathMachine.position)) {
+            this.spatialManager.addEntityToSpatialManagementSystem(deathMachine);
+            vehiclesSpawned++;
+            console.log(`[Init] Successfully spawned vehicle ${vehiclesSpawned}:`, {
+                y: currentY,
+                totalVehicles: vehiclesSpawned
+            });
+            currentY -= deathMachine.height + 1;
+        } else {
+            console.log(`[Init] Failed to spawn vehicle at y=${currentY}`);
+            currentY -= 1;
+        }
+        attempts++;
     }
-  }
 
+    console.log(`[Init] Finished initialization:`, {
+        attempts,
+        vehiclesSpawned,
+        finalY: currentY
+    });
+}
   // 2. Core game loop methods (update, render)
 
   /**
@@ -3316,7 +3323,7 @@ class LoserLane {
   start() {
     if (this.state.isPlaying) return;
 
-    const messageBox = document.getElementById("pregame-msg-box");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.style.display = "none";
     }
@@ -3375,7 +3382,7 @@ class LoserLane {
 
     // Restart game after death duration
     setTimeout(() => {
-      const messageEl = document.getElementById("pregame-msg-box");
+      const messageEl = document.getElementById("main-msg-box");
       if (messageEl) {
         messageEl.classList.remove("show-message");
       }
@@ -3431,7 +3438,7 @@ class LoserLane {
     this.initializeGameWorld();
     this.start();
 
-    const messageBox = document.getElementById("pregame-msg-box");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
@@ -3441,7 +3448,7 @@ class LoserLane {
   togglePause() {
     this.state.isPaused = !this.state.isPaused;
 
-    const messageBox = document.getElementById("pregame-msg-box");
+    const messageBox = document.getElementById("main-msg-box");
     if (messageBox) {
       messageBox.style.display = this.state.isPaused ? "block" : "none";
       messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
@@ -3449,7 +3456,7 @@ class LoserLane {
   }
 
   showDeathMessage(reason) {
-    const messageEl = document.getElementById("pregame-msg-box");
+    const messageEl = document.getElementById("main-msg-box");
     if (!messageEl) return;
 
     // Retrieve a single random message

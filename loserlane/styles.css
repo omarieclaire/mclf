@@ -269,19 +269,7 @@ a {
   /* border: 3px dashed var(--light-purp); */
 }
 
-#pregame-msg-title {
-  font-size: 1.8rem;
-  color: var(--hot-pink);
-  font-weight: bolder;
-  letter-spacing: 16px;
-}
 
-@media (max-height: 600px) {
-  #pregame-msg-title {
-    font-size: 2.7rem;
-    color: var(--med-purp);
-  }
-}
 
 #game-title {
   color: var(--green);
