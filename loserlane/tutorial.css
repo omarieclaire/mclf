@@ -58,6 +58,7 @@
   z-index: 10000;
   gap: 20px;
   text-align: center;
+  background-color: black;
 }
 
 #pregame-msg-box.show-message {

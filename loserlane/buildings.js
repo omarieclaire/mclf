@@ -768,10 +768,23 @@ const TORONTO_BUILDINGS = [
             ":::::::::"
            
         ],
+    },
+    {
+        name: "DUFFERIN_MALL",
+        art: [
+            "::::::::::",
+            "!        !",
+            "!DUFFERIN!",
+            "! MALL   !",
+            "!   __   !",
+            "!  :  :  !",
+            "!  :  :  !",
+            "::::  ::::"           
+        ],
     } 
 ];
 
-console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
+// console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
 
 
 function checkBuildingWidth(buildings) {
@@ -780,10 +793,10 @@ function checkBuildingWidth(buildings) {
     );
 
     if (nonCompliantBuildings.length > 0) {
-        console.log("Non-compliant buildings (lines over 10 characters):");
+        // console.log("Non-compliant buildings (lines over 10 characters):");
         nonCompliantBuildings.forEach(building => console.log(building.name));
     } else {
-        console.log("All buildings are compliant.");
+        // console.log("All buildings are compliant.");
     }
 }
 

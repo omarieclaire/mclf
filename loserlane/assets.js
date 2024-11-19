@@ -80,7 +80,7 @@ const DARLINGS = {
             "╰───╯"
         ],
         width: 5,
-        height: 6
+        height: 5
     },
     ONCOMINGDEATHMACHINE: {
         art: [
@@ -91,18 +91,18 @@ const DARLINGS = {
             "╰⊚─⊚╯"
         ],
         width: 5,
-        height: 6
+        height: 5
     },
     DEATHMACHINE: {
         art: [
-            " ┌⊚─⊚┐",
-            " │▀▀▀│",
-            " |   │ ",
-            " │▀▀▀│",
-            " ╰───╯"
+            "┌⊚─⊚┐",
+            "│▀▀▀│",
+            "|   │",
+            "│▀▀▀│",
+            "╰───╯"
         ],
-        width: 7,
-        height: 6
+        width: 5,
+        height: 5
     },
     PARKED_DEATHMACHINE_STATES: [
         // State 0: Closed
