@@ -2965,6 +2965,8 @@ class TutorialSystem {
     setTimeout(() => {
       // Add visible class to start button
       this.startButton.classList.add('visible');
+      document.getElementById("pregame-msg-box").style.zIndex = "200";
+
       
       // Add start button listener
       this.startButton.addEventListener("click", () => {
@@ -2975,7 +2977,7 @@ class TutorialSystem {
         console.log("🧹 Cleaning up tutorial elements");
         this.tutorialText.innerHTML = "";
         document.getElementById("pregame-msg-box").style.opacity = "0";
-        
+
         // Reset styles for gameplay
         this.controlsDiv.style.opacity = "1";
 
