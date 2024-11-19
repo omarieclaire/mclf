@@ -373,312 +373,591 @@ class GridSystem {
   }
 }
 
+class CollisionError extends Error {
+  constructor(message, context = {}) {
+    super(message);
+    this.name = "CollisionError";
+    this.context = context;
+    this.timestamp = new Date().toISOString();
+  }
+}
+
+class ValidationError extends CollisionError {
+  constructor(message, context = {}) {
+    super(message, context);
+    this.name = "ValidationError";
+  }
+}
+
+class EntityError extends CollisionError {
+  constructor(message, context = {}) {
+    super(message, context);
+    this.name = "EntityError";
+  }
+}
+
+class HitboxError extends CollisionError {
+  constructor(message, context = {}) {
+    super(message, context);
+    this.name = "HitboxError";
+  }
+}
+
 // =========================================
 // CollisionManager - Collision Management
 // =========================================
 
 class CollisionManager {
   constructor(spatialManager) {
+    if (!spatialManager) {
+      throw new CollisionError("SpatialManager is required for collision detection");
+    }
     this.spatialManager = spatialManager;
     this.config = spatialManager.config;
     this.collisionLog = new Set();
+    this.errorLog = [];
+  }
+
+  logError(error, method) {
+    const errorInfo = {
+      timestamp: new Date().toISOString(),
+      method,
+      message: error.message,
+      stack: error.stack,
+      context: error.context || {},
+    };
+    this.errorLog.push(errorInfo);
+    console.error(`SpawnManager Error in ${method}:`, errorInfo);
   }
 
   checkCollision(hitboxA, hitboxB) {
-    return !(
-      hitboxA.x + hitboxA.width <= hitboxB.x ||
-      hitboxA.x >= hitboxB.x + hitboxB.width ||
-      hitboxA.y + hitboxA.height <= hitboxB.y ||
-      hitboxA.y >= hitboxB.y + hitboxB.height
-    );
+    try {
+      if (!hitboxA || !hitboxB || typeof hitboxA !== "object" || typeof hitboxB !== "object") {
+        throw new CollisionError("Invalid hitbox parameters", { hitboxA, hitboxB });
+      }
+
+      const requiredProps = ["x", "y", "width", "height"];
+      for (const prop of requiredProps) {
+        if (typeof hitboxA[prop] !== "number" || typeof hitboxB[prop] !== "number") {
+          throw new CollisionError(`Missing or invalid ${prop} property in hitbox`, {
+            hitboxA: hitboxA[prop],
+            hitboxB: hitboxB[prop],
+          });
+        }
+      }
+
+      return !(
+        hitboxA.x + hitboxA.width <= hitboxB.x ||
+        hitboxA.x >= hitboxB.x + hitboxB.width ||
+        hitboxA.y + hitboxA.height <= hitboxB.y ||
+        hitboxA.y >= hitboxB.y + hitboxB.height
+      );
+    } catch (error) {
+      this.logError(error, "checkCollision");
+      return false;
+    }
   }
 
   checkBikeCollisionIsSpecial(bikeHitbox, darlings, isJumping) {
-    for (const darling of darlings.darlings) {
-      // Skip checking TTC collision when jumping over tracks and it's a streetcar
-      if (isJumping && darling.type === DarlingType.TTC) {
-        const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
-        const TTCCenter = darling.position.x + darling.width / 2;
-        if (Math.abs(bikeCenter - TTCCenter) < 2) {
+    try {
+      if (!bikeHitbox || !darlings?.darlings) {
+        throw new CollisionError("Invalid parameters for bike collision check", {
+          bikeHitbox,
+          darlings,
+        });
+      }
+
+      for (const darling of darlings.darlings) {
+        // Skip checking TTC collision when jumping over tracks and it's a streetcar
+        if (isJumping && darling.type === DarlingType.TTC) {
+          const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
+          const TTCCenter = darling.position.x + darling.width / 2;
+          if (Math.abs(bikeCenter - TTCCenter) < 2) {
+            continue;
+          }
+        }
+
+        try {
+          const darlingHitbox = darling.getHitbox();
+          if (this.checkCollision(bikeHitbox, darlingHitbox)) {
+            const obstacleHitbox = darlingHitbox;
+            const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
+
+            // If obstacle is moving and hits bike from behind
+            if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
+              switch (darling.type) {
+                case DarlingType.TTC:
+                  return "TTC";
+                case DarlingType.TTC_LANE_DEATHMACHINE:
+                case DarlingType.ONCOMING_DEATHMACHINE:
+                  return "ONCOMING_DEATHMACHINE";
+                case DarlingType.WANDERER:
+                  return "WANDERER";
+                case DarlingType.BUILDING:
+                  return "BUILDING";
+                default:
+                  return "TRAFFIC";
+              }
+            }
+
+            // If bike runs into obstacle or obstacle hits from front
+            switch (darling.type) {
+              case DarlingType.TTC:
+                return "TTC";
+              case DarlingType.TTC_LANE_DEATHMACHINE:
+              case DarlingType.ONCOMING_DEATHMACHINE:
+                return "TRAFFIC";
+              case DarlingType.WANDERER:
+                return "WANDERER";
+              case DarlingType.BUILDING:
+                return "BUILDING";
+              default:
+                return "TRAFFIC";
+            }
+          }
+        } catch (error) {
+          this.logError(
+            new CollisionError("Error getting darling hitbox", {
+              darlingType: darling.type,
+              originalError: error,
+            }),
+            "checkBikeCollisionIsSpecial"
+          );
           continue;
         }
       }
 
-      if (this.checkCollision(bikeHitbox, darling.getHitbox())) {
-        const obstacleHitbox = darling.getHitbox();
-        const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
+      // Check parked vehicle collisions
+      if (!Array.isArray(darlings.parkedDeathMachines)) {
+        throw new CollisionError("Invalid parkedDeathMachines array", {
+          parkedDeathMachines: darlings.parkedDeathMachines,
+        });
+      }
 
-        // If obstacle is moving and hits bike from behind
-        if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
-          switch (darling.type) {
-            case DarlingType.TTC: return "TTC";
-            case DarlingType.TTC_LANE_DEATHMACHINE:
-            case DarlingType.ONCOMING_DEATHMACHINE: return "ONCOMING_DEATHMACHINE";
-            case DarlingType.WANDERER: return "WANDERER";
-            case DarlingType.BUILDING: return "BUILDING";
-            default: return "TRAFFIC";
+      for (const deathMachine of darlings.parkedDeathMachines) {
+        try {
+          if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
+            return "PARKEDDEATHMACHINE";
           }
+          if (deathMachine.behavior?.doorHitbox && this.checkCollision(bikeHitbox, deathMachine.behavior.doorHitbox)) {
+            return "DOOR";
+          }
+        } catch (error) {
+          this.logError(
+            new CollisionError("Error checking death machine collision", {
+              machineId: deathMachine.id,
+              originalError: error,
+            }),
+            "checkBikeCollisionIsSpecial"
+          );
+          continue;
         }
+      }
 
-        // If bike runs into obstacle or obstacle hits from front
-        switch (darling.type) {
-          case DarlingType.TTC: return "TTC";
-          case DarlingType.TTC_LANE_DEATHMACHINE:
-          case DarlingType.ONCOMING_DEATHMACHINE: return "TRAFFIC";
-          case DarlingType.WANDERER: return "WANDERER";
-          case DarlingType.BUILDING: return "BUILDING";
-          default: return "TRAFFIC";
+      // Check track collisions when not jumping
+      try {
+        const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
+        const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
+        if (!isJumping && trackPositions.includes(Math.floor(bikeCenter))) {
+          return "TRACKS";
         }
+      } catch (error) {
+        this.logError(
+          new CollisionError("Error checking track collision", {
+            config: this.config,
+            originalError: error,
+          }),
+          "checkBikeCollisionIsSpecial"
+        );
       }
-    }
 
-    // Check parked vehicle collisions
-    for (const deathMachine of darlings.parkedDeathMachines) {
-      if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
-        return "PARKEDDEATHMACHINE";
-      }
-      if (deathMachine.behavior.doorHitbox && 
-          this.checkCollision(bikeHitbox, deathMachine.behavior.doorHitbox)) {
-        return "DOOR";
-      }
+      return null;
+    } catch (error) {
+      this.logError(error, "checkBikeCollisionIsSpecial");
+      return null;
     }
-
-    // Check track collisions when not jumping
-    const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
-    const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
-    if (!isJumping && trackPositions.includes(Math.floor(bikeCenter))) {
-      return "TRACKS";
-    }
-
-    return null;
   }
 
   collisionManagerUpdate() {
-    const pairs = this.getCollisionPairs();
-    for (const [entityA, entityB] of pairs) {
-      if (entityA.type === DarlingType.BIKE || entityB.type === DarlingType.BIKE) {
-        const bike = entityA.type === DarlingType.BIKE ? entityA : entityB;
-        const obstacle = entityA.type === DarlingType.BIKE ? entityB : entityA;
-
-        const darlingsForCollision = {
-          darlings: [obstacle],
-          parkedDeathMachines: obstacle.type === DarlingType.PARKED_DEATHMACHINE ? [obstacle] : [],
-        };
-
-        const collisionType = this.checkBikeCollisionIsSpecial(
-          bike.getHitbox(), 
-          darlingsForCollision, 
-          false
-        );
-
-        if (collisionType) {
-          bike.behavior.onCollision(obstacle);
+    try {
+      const pairs = this.getCollisionPairs();
+      for (const [entityA, entityB] of pairs) {
+        if (!entityA || !entityB) {
+          throw new CollisionError("Invalid entity pair", { entityA, entityB });
         }
-      } else {
-        this.handleEntityCollision(entityA, entityB);
+
+        if (entityA.type === DarlingType.BIKE || entityB.type === DarlingType.BIKE) {
+          const bike = entityA.type === DarlingType.BIKE ? entityA : entityB;
+          const obstacle = entityA.type === DarlingType.BIKE ? entityB : entityA;
+
+          if (!bike.behavior?.onCollision) {
+            throw new CollisionError("Bike missing collision behavior", {
+              bikeId: bike.id,
+            });
+          }
+
+          const darlingsForCollision = {
+            darlings: [obstacle],
+            parkedDeathMachines: obstacle.type === DarlingType.PARKED_DEATHMACHINE ? [obstacle] : [],
+          };
+
+          try {
+            const collisionType = this.checkBikeCollisionIsSpecial(bike.getHitbox(), darlingsForCollision, false);
+
+            if (collisionType) {
+              bike.behavior.onCollision(obstacle);
+            }
+          } catch (error) {
+            this.logError(
+              new CollisionError("Error in bike collision check", {
+                bikeId: bike.id,
+                obstacleId: obstacle.id,
+                originalError: error,
+              }),
+              "collisionManagerUpdate"
+            );
+          }
+        } else {
+          this.handleEntityCollision(entityA, entityB);
+        }
       }
+    } catch (error) {
+      this.logError(error, "collisionManagerUpdate");
     }
   }
 
   handleEntityCollision(entityA, entityB) {
-    if (entityA.behavior?.ignoreCollisions || entityB.behavior?.ignoreCollisions) {
-      return;
-    }
+    try {
+      if (!entityA || !entityB) {
+        throw new CollisionError("Invalid entities for collision handling", {
+          entityA,
+          entityB,
+        });
+      }
 
-    const priorityA = this.getEntityPriority(entityA);
-    const priorityB = this.getEntityPriority(entityB);
+      if (entityA.behavior?.ignoreCollisions || entityB.behavior?.ignoreCollisions) {
+        return;
+      }
 
-    if (entityA.type === DarlingType.PARKED_DEATHMACHINE && 
-        entityB.type === DarlingType.PARKED_DEATHMACHINE) {
-      console.log('🚗 Parked Car Collision:', {
-        carA: {
-          id: entityA.id.slice(-6),
-          pos: entityA.position,
-          speed: entityA.behavior.baseSpeed
-        },
-        carB: {
-          id: entityB.id.slice(-6),
-          pos: entityB.position,
-          speed: entityB.behavior.baseSpeed
-        }
-      });
-    }
+      const priorityA = this.getEntityPriority(entityA);
+      const priorityB = this.getEntityPriority(entityB);
 
-    if (priorityA > priorityB) {
-      this.applyCollisionResponse(entityB, entityA);
-    } else if (priorityB > priorityA) {
-      this.applyCollisionResponse(entityA, entityB);
-    } else {
-      this.applyCollisionResponse(entityA, entityB);
-      this.applyCollisionResponse(entityB, entityA);
+      if (entityA.type === DarlingType.PARKED_DEATHMACHINE && entityB.type === DarlingType.PARKED_DEATHMACHINE) {
+        console.log("🚗 Parked Car Collision:", {
+          carA: {
+            id: entityA.id.slice(-6),
+            pos: entityA.position,
+            speed: entityA.behavior?.baseSpeed,
+          },
+          carB: {
+            id: entityB.id.slice(-6),
+            pos: entityB.position,
+            speed: entityB.behavior?.baseSpeed,
+          },
+        });
+      }
+
+      if (priorityA > priorityB) {
+        this.applyCollisionResponse(entityB, entityA);
+      } else if (priorityB > priorityA) {
+        this.applyCollisionResponse(entityA, entityB);
+      } else {
+        this.applyCollisionResponse(entityA, entityB);
+        this.applyCollisionResponse(entityB, entityA);
+      }
+    } catch (error) {
+      this.logError(error, "handleEntityCollision");
     }
   }
 
   applyCollisionResponse(entity, otherEntity) {
-    if (!entity.behavior) return;
+    try {
+      if (!entity || !otherEntity) {
+        throw new CollisionError("Invalid entities for collision response", {
+          entity,
+          otherEntity,
+        });
+      }
 
-    const moveDirection = Math.sign(entity.behavior.baseSpeed || 0);
-    const otherDirection = Math.sign(otherEntity.behavior.baseSpeed || 0);
+      if (!entity.behavior) return;
 
-    if (moveDirection * otherDirection < 0) {
-      entity.behavior.stopped = true;
-      setTimeout(() => {
-        entity.behavior.stopped = false;
-      }, 500);
-      return;
-    }
+      const moveDirection = Math.sign(entity.behavior.baseSpeed || 0);
+      const otherDirection = Math.sign(otherEntity.behavior?.baseSpeed || 0);
 
-    if (Math.abs(entity.behavior.baseSpeed) < Math.abs(otherEntity.behavior.baseSpeed)) {
-      entity.behavior.baseSpeed = otherEntity.behavior.baseSpeed;
+      if (moveDirection * otherDirection < 0) {
+        entity.behavior.stopped = true;
+        setTimeout(() => {
+          try {
+            entity.behavior.stopped = false;
+          } catch (error) {
+            this.logError(
+              new CollisionError("Error unstopping entity", {
+                entityId: entity.id,
+                originalError: error,
+              }),
+              "applyCollisionResponse"
+            );
+          }
+        }, 500);
+        return;
+      }
+
+      if (Math.abs(entity.behavior.baseSpeed) < Math.abs(otherEntity.behavior?.baseSpeed || 0)) {
+        entity.behavior.baseSpeed = otherEntity.behavior.baseSpeed;
+      }
+    } catch (error) {
+      this.logError(error, "applyCollisionResponse");
     }
   }
 
   validateMovement(entity, newPosition) {
-    if (entity.type === DarlingType.PARKED_DEATHMACHINE) {
-      const nearbyParkedCars = this.spatialManager.grid.getNearbyDarlings(
-        newPosition, 
-        Math.max(entity.width, entity.height) * 2
-      ).filter(other => other.type === DarlingType.PARKED_DEATHMACHINE);
-
-      console.log('=== Parked Car Position Check ===', {
-        id: entity.id.slice(-6),
-        currentX: entity.position?.x,
-        currentY: entity.position?.y,
-        proposedX: newPosition.x,
-        proposedY: newPosition.y,
-        nearbyParkedCars: nearbyParkedCars.map(other => ({
-          id: other.id.slice(-6),
-          x: other.position.x,
-          y: other.position.y,
-          xDistance: Math.abs(other.position.x - newPosition.x),
-          yDistance: Math.abs(other.position.y - newPosition.y)
-        }))
-      });
-    }
-
-    if (entity.behavior?.ignoreCollisions) {
-      return true;
-    }
-
-    const tempPosition = entity.position;
-    entity.position = newPosition;
-
-    const radius = Math.max(entity.width, entity.height) * 2;
-    const nearby = this.spatialManager.grid.getNearbyDarlings(newPosition, radius);
-
-    let isValid = true;
-    for (const other of nearby) {
-      if (other.type === DarlingType.BIKE) {
-        continue;
+    try {
+      if (!entity || !newPosition) {
+        throw new CollisionError("Invalid parameters for movement validation", {
+          entity,
+          newPosition,
+        });
       }
 
-      if (other !== entity && 
-          this.shouldCheckCollision(entity, other) && 
-          this.checkCollision(entity.getHitbox(), other.getHitbox())) {
-        if (entity.type === DarlingType.PARKED_DEATHMACHINE) {
-          console.log('🚫 Invalid Position:', {
-            entityId: entity.id.slice(-6),
-            collidingWith: other.id.slice(-6),
-            proposedPos: newPosition,
-            otherPos: other.position,
-            distance: {
-              x: Math.abs(newPosition.x - other.position.x),
-              y: Math.abs(newPosition.y - other.position.y)
+      if (entity.type === DarlingType.PARKED_DEATHMACHINE) {
+        const nearbyParkedCars = this.spatialManager.grid
+          .getNearbyDarlings(newPosition, Math.max(entity.width, entity.height) * 2)
+          .filter((other) => other.type === DarlingType.PARKED_DEATHMACHINE);
+
+        console.log("=== Parked Car Position Check ===", {
+          id: entity.id.slice(-6),
+          currentX: entity.position?.x,
+          currentY: entity.position?.y,
+          proposedX: newPosition.x,
+          proposedY: newPosition.y,
+          nearbyParkedCars: nearbyParkedCars.map((other) => ({
+            id: other.id.slice(-6),
+            x: other.position.x,
+            y: other.position.y,
+            xDistance: Math.abs(other.position.x - newPosition.x),
+            yDistance: Math.abs(other.position.y - newPosition.y),
+          })),
+        });
+      }
+
+      if (entity.behavior?.ignoreCollisions) {
+        return true;
+      }
+
+      const tempPosition = entity.position;
+      entity.position = newPosition;
+
+      try {
+        const radius = Math.max(entity.width, entity.height) * 2;
+        const nearby = this.spatialManager.grid.getNearbyDarlings(newPosition, radius);
+
+        let isValid = true;
+        for (const other of nearby) {
+          if (!other.getHitbox) {
+            throw new CollisionError("Entity missing getHitbox method", {
+              entityId: other.id,
+            });
+          }
+
+          if (other.type === DarlingType.BIKE) {
+            continue;
+          }
+
+          if (other !== entity && this.shouldCheckCollision(entity, other) && this.checkCollision(entity.getHitbox(), other.getHitbox())) {
+            if (entity.type === DarlingType.PARKED_DEATHMACHINE) {
+              console.log("🚫 Invalid Position:", {
+                entityId: entity.id.slice(-6),
+                collidingWith: other.id.slice(-6),
+                proposedPos: newPosition,
+                otherPos: other.position,
+                distance: {
+                  x: Math.abs(newPosition.x - other.position.x),
+                  y: Math.abs(newPosition.y - other.position.y),
+                },
+              });
             }
-          });
+            isValid = false;
+            break;
+          }
         }
-        isValid = false;
-        break;
-      }
-    }
 
-    entity.position = tempPosition;
-    return isValid;
+        return isValid;
+      } finally {
+        entity.position = tempPosition;
+      }
+    } catch (error) {
+      this.logError(error, "validateMovement");
+      return false;
+    }
   }
 
   getEntityPriority(entity) {
-    const priorities = {
-      [DarlingType.TTC]: 5,
-      [DarlingType.TTC_LANE_DEATHMACHINE]: 4,
-      [DarlingType.ONCOMING_DEATHMACHINE]: 3,
-      [DarlingType.PARKED_DEATHMACHINE]: 2,
-      [DarlingType.WANDERER]: 1,
-      [DarlingType.BUILDING]: 0
-    };
-    return priorities[entity.type] || 0;
+    try {
+      if (!entity?.type) {
+        throw new CollisionError("Invalid entity for priority calculation", { entity });
+      }
+
+      const priorities = {
+        [DarlingType.TTC]: 5,
+        [DarlingType.TTC_LANE_DEATHMACHINE]: 4,
+        [DarlingType.ONCOMING_DEATHMACHINE]: 3,
+        [DarlingType.PARKED_DEATHMACHINE]: 2,
+        [DarlingType.WANDERER]: 1,
+        [DarlingType.BUILDING]: 0,
+      };
+      return priorities[entity.type] || 0;
+    } catch (error) {
+      this.logError(error, "getEntityPriority");
+      return 0;
+    }
   }
 
   getCollisionPairs() {
-    const pairs = [];
-    const darlings = Array.from(this.spatialManager.darlings);
-    const processedPairs = new Set();
+    try {
+      if (!this.spatialManager?.darlings) {
+        throw new CollisionError("Invalid spatial manager state");
+      }
 
-    for (let i = 0; i < darlings.length; i++) {
-      const entityA = darlings[i];
-      const nearby = this.spatialManager.grid.getNearbyDarlings(
-        entityA.position, 
-        Math.max(entityA.width, entityA.height) * 2
-      );
+      const pairs = [];
+      const darlings = Array.from(this.spatialManager.darlings);
+      const processedPairs = new Set();
 
-      for (const entityB of nearby) {
-        if (entityA === entityB) continue;
+      for (let i = 0; i < darlings.length; i++) {
+        const entityA = darlings[i];
+        if (!entityA?.position) {
+          this.logError(
+            new CollisionError("Invalid entity position", {
+              entityId: entityA?.id,
+            }),
+            "getCollisionPairs"
+          );
+          continue;
+        }
 
-        const pairKey = [entityA.id, entityB.id].sort().join(",");
-        if (processedPairs.has(pairKey)) continue;
+        try {
+          const nearby = this.spatialManager.grid.getNearbyDarlings(entityA.position, Math.max(entityA.width, entityA.height) * 2);
 
-        if (this.shouldCheckCollision(entityA, entityB) && 
-            this.checkCollision(entityA.getHitbox(), entityB.getHitbox())) {
-          pairs.push([entityA, entityB]);
-          processedPairs.add(pairKey);
+          for (const entityB of nearby) {
+            if (entityA === entityB) continue;
+
+            if (!entityA.id || !entityB.id) {
+              this.logError(
+                new CollisionError("Entity missing ID", {
+                  entityAId: entityA?.id,
+                  entityBId: entityB?.id,
+                }),
+                "getCollisionPairs"
+              );
+              continue;
+            }
+
+            const pairKey = [entityA.id, entityB.id].sort().join(",");
+            if (processedPairs.has(pairKey)) continue;
+
+            try {
+              if (this.shouldCheckCollision(entityA, entityB) && this.checkCollision(entityA.getHitbox(), entityB.getHitbox())) {
+                pairs.push([entityA, entityB]);
+                processedPairs.add(pairKey);
+              }
+            } catch (error) {
+              this.logError(
+                new CollisionError("Error checking collision pair", {
+                  entityAId: entityA.id,
+                  entityBId: entityB.id,
+                  originalError: error,
+                }),
+                "getCollisionPairs"
+              );
+            }
+          }
+        } catch (error) {
+          this.logError(
+            new CollisionError("Error getting nearby darlings", {
+              entityId: entityA.id,
+              originalError: error,
+            }),
+            "getCollisionPairs"
+          );
+          continue;
         }
       }
-    }
 
-    return pairs;
+      return pairs;
+    } catch (error) {
+      this.logError(error, "getCollisionPairs");
+      return [];
+    }
   }
 
   shouldCheckCollision(entityA, entityB) {
-    if (entityA.behavior?.ignoreCollisions || entityB.behavior?.ignoreCollisions) {
+    try {
+      if (!entityA || !entityB) {
+        throw new CollisionError("Invalid entities for collision check", {
+          entityA,
+          entityB,
+        });
+      }
+
+      if (entityA.behavior?.ignoreCollisions || entityB.behavior?.ignoreCollisions) {
+        return false;
+      }
+
+      if (entityA.type === DarlingType.BIKE || entityB.type === DarlingType.BIKE) {
+        return true;
+      }
+
+      if (!entityA.position || !entityB.position) {
+        throw new CollisionError("Entities missing position", {
+          entityAPos: entityA.position,
+          entityBPos: entityB.position,
+        });
+      }
+
+      const xDistance = Math.abs(entityA.position.x - entityB.position.x);
+      const yDistance = Math.abs(entityA.position.y - entityB.position.y);
+
+      // More permissive spacing for parked cars
+      if (entityA.type === DarlingType.PARKED_DEATHMACHINE && entityB.type === DarlingType.PARKED_DEATHMACHINE) {
+        return xDistance < 1 && yDistance < 6; // Larger minimum spacing
+      }
+
+      if (entityA.type === DarlingType.TTC || entityB.type === DarlingType.TTC) {
+        return xDistance <= 2;
+      }
+
+      return xDistance <= 1;
+    } catch (error) {
+      this.logError(error, "shouldCheckCollision");
       return false;
     }
-  
-    if (entityA.type === DarlingType.BIKE || entityB.type === DarlingType.BIKE) {
-      return true;
-    }
-  
-    const xDistance = Math.abs(entityA.position.x - entityB.position.x);
-    const yDistance = Math.abs(entityA.position.y - entityB.position.y);
-  
-    // More permissive spacing for parked cars
-   if (entityA.type === DarlingType.PARKED_DEATHMACHINE && 
-      entityB.type === DarlingType.PARKED_DEATHMACHINE) {
-    return xDistance < 1 && yDistance < 6;  // Larger minimum spacing
-  }
-
-  
-    if (entityA.type === DarlingType.TTC || entityB.type === DarlingType.TTC) {
-      return xDistance <= 2;
-    }
-  
-    return xDistance <= 1;
   }
 
   getCollisionDirection(hitboxA, hitboxB) {
-    const centerA = {
-      x: hitboxA.x + hitboxA.width / 2,
-      y: hitboxA.y + hitboxA.height / 2
-    };
-    const centerB = {
-      x: hitboxB.x + hitboxB.width / 2,
-      y: hitboxB.y + hitboxB.height / 2
-    };
+    try {
+      if (!hitboxA || !hitboxB) {
+        throw new CollisionError("Invalid hitboxes for direction check", {
+          hitboxA,
+          hitboxB,
+        });
+      }
 
-    const dx = centerB.x - centerA.x;
-    const dy = centerB.y - centerA.y;
+      const centerA = {
+        x: hitboxA.x + hitboxA.width / 2,
+        y: hitboxA.y + hitboxA.height / 2,
+      };
+      const centerB = {
+        x: hitboxB.x + hitboxB.width / 2,
+        y: hitboxB.y + hitboxB.height / 2,
+      };
 
-    return Math.abs(dx) > Math.abs(dy) ? 
-      (dx > 0 ? "right" : "left") : 
-      (dy > 0 ? "down" : "up");
+      const dx = centerB.x - centerA.x;
+      const dy = centerB.y - centerA.y;
+
+      return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
+    } catch (error) {
+      this.logError(error, "getCollisionDirection");
+      return "up"; // Default direction if error occurs
+    }
   }
 }
 
@@ -873,10 +1152,19 @@ class MovementCoordinator {
 
 class SpawnManager {
   constructor(spatialManager, config) {
+    if (!spatialManager || !config) {
+      throw new SpawnError("SpatialManager and config are required");
+    }
     this.spatialManager = spatialManager;
     this.config = config;
     this.debugLog = false; // Set to true to debug wanderer spawning
-    this.spawnRules = this.createSpawnConfigRulesForAllDarlingTypes();
+    this.errorLog = [];
+    try {
+      this.spawnRules = this.createSpawnConfigRulesForAllDarlingTypes();
+    } catch (error) {
+      this.logError(error, "constructor");
+      this.spawnRules = new Map();
+    }
   }
 
   /**
@@ -884,117 +1172,239 @@ class SpawnManager {
    * Defines spacing, positioning, and lane rules
    * @returns {Map} Map of entity types to their spawn rules
    */
+  // createSpawnConfigRulesForAllDarlingTypes() {
+  //   return new Map([
+  //     [
+  //       DarlingType.TTC,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.TTC,
+  //         randomSpacingRange: {
+  //           min: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.3),
+  //           max: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.8),
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.TRACKS],
+  //           spawnPosition: {
+  //             x: this.config.LANES.TRACKS,
+  //             y: this.config.GAME.HEIGHT + 5,
+  //           },
+  //           direction: -1,
+  //         },
+  //       },
+  //     ],
+  //     [
+  //       DarlingType.TTC_LANE_DEATHMACHINE,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE,
+  //         randomSpacingRange: {
+  //           min: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.3),
+  //           max: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.8),
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.TRACKS + 1],
+  //           spawnPosition: {
+  //             x: this.config.LANES.TRACKS + 1,
+  //             y: this.config.GAME.HEIGHT + 1,
+  //           },
+  //           direction: -1,
+  //         },
+  //       },
+  //     ],
+  //     [
+  //       DarlingType.ONCOMING_DEATHMACHINE,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE,
+  //         randomSpacingRange: {
+  //           min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.3),
+  //           max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.8),
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.ONCOMING],
+  //           spawnPosition: {
+  //             x: this.config.LANES.ONCOMING,
+  //             y: -10,
+  //           },
+  //           direction: 1,
+  //         },
+  //       },
+  //     ],
+  //     [
+  //       DarlingType.PARKED_DEATHMACHINE,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.PARKED,
+  //         randomSpacingRange: {
+  //           min: 0,
+  //           max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.PARKED],
+  //           spawnPosition: {
+  //             x: this.config.LANES.PARKED,
+  //             y: -5,
+  //           },
+  //           direction: 1,
+  //         },
+  //       },
+  //     ],
+  //     [
+  //       DarlingType.WANDERER,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.WANDERER,
+  //         randomSpacingRange: {
+  //           min: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.3),
+  //           max: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.8),
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.SIDEWALK, this.config.LANES.SIDEWALK + 3],
+  //           spawnPosition: {
+  //             x: this.config.LANES.SIDEWALK,
+  //             y: -1,
+  //           },
+  //           direction: 1,
+  //         },
+  //       },
+  //     ],
+  //     [
+  //       DarlingType.BUILDING,
+  //       {
+  //         baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
+  //         randomSpacingRange: {
+  //           min: 0,
+  //           max: 1,
+  //         },
+  //         laneRules: {
+  //           allowedLanes: [this.config.LANES.BUILDINGS],
+  //           spawnPosition: {
+  //             x: this.config.LANES.BUILDINGS,
+  //             y: this.config.GAME.HEIGHT,
+  //           },
+  //           direction: -1,
+  //         },
+  //       },
+  //     ],
+  //   ]);
+  // }
+
   createSpawnConfigRulesForAllDarlingTypes() {
-    return new Map([
-      [
-        DarlingType.TTC,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.TTC,
-          randomSpacingRange: {
-            min: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.8),
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.TRACKS],
-            spawnPosition: {
-              x: this.config.LANES.TRACKS,
-              y: this.config.GAME.HEIGHT + 5,
+    try {
+      if (!this.config.SAFE_DISTANCE || !this.config.LANES || !this.config.GAME) {
+        throw new SpawnError("Invalid config structure", { config: this.config });
+      }
+
+      return new Map([
+        [
+          DarlingType.TTC,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.TTC,
+            randomSpacingRange: {
+              min: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.3),
+              max: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.8),
             },
-            direction: -1,
-          },
-        },
-      ],
-      [
-        DarlingType.TTC_LANE_DEATHMACHINE,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE,
-          randomSpacingRange: {
-            min: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.8),
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.TRACKS + 1],
-            spawnPosition: {
-              x: this.config.LANES.TRACKS + 1,
-              y: this.config.GAME.HEIGHT + 1,
+            laneRules: {
+              allowedLanes: [this.config.LANES.TRACKS],
+              spawnPosition: {
+                x: this.config.LANES.TRACKS,
+                y: this.config.GAME.HEIGHT + 5,
+              },
+              direction: -1,
             },
-            direction: -1,
           },
-        },
-      ],
-      [
-        DarlingType.ONCOMING_DEATHMACHINE,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE,
-          randomSpacingRange: {
-            min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.8),
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.ONCOMING],
-            spawnPosition: {
-              x: this.config.LANES.ONCOMING,
-              y: -10,
+        ],
+        [
+          DarlingType.TTC_LANE_DEATHMACHINE,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE,
+            randomSpacingRange: {
+              min: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.3),
+              max: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.8),
             },
-            direction: 1,
-          },
-        },
-      ],
-      [
-        DarlingType.PARKED_DEATHMACHINE,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.PARKED,
-          randomSpacingRange: {
-            min: 0,
-            max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.PARKED],
-            spawnPosition: {
-              x: this.config.LANES.PARKED,
-              y: -5,
+            laneRules: {
+              allowedLanes: [this.config.LANES.TRACKS + 1],
+              spawnPosition: {
+                x: this.config.LANES.TRACKS + 1,
+                y: this.config.GAME.HEIGHT + 1,
+              },
+              direction: -1,
             },
-            direction: 1,
           },
-        },
-      ],
-      [
-        DarlingType.WANDERER,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.WANDERER,
-          randomSpacingRange: {
-            min: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.3),
-            max: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.8),
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.SIDEWALK, this.config.LANES.SIDEWALK + 3],
-            spawnPosition: {
-              x: this.config.LANES.SIDEWALK,
-              y: -1,
+        ],
+        [
+          DarlingType.ONCOMING_DEATHMACHINE,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE,
+            randomSpacingRange: {
+              min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.3),
+              max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.8),
             },
-            direction: 1,
-          },
-        },
-      ],
-      [
-        DarlingType.BUILDING,
-        {
-          baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
-          randomSpacingRange: {
-            min: 0,
-            max: 1,
-          },
-          laneRules: {
-            allowedLanes: [this.config.LANES.BUILDINGS],
-            spawnPosition: {
-              x: this.config.LANES.BUILDINGS,
-              y: this.config.GAME.HEIGHT,
+            laneRules: {
+              allowedLanes: [this.config.LANES.ONCOMING],
+              spawnPosition: {
+                x: this.config.LANES.ONCOMING,
+                y: -10,
+              },
+              direction: 1,
             },
-            direction: -1,
           },
-        },
-      ],
-    ]);
+        ],
+        [
+          DarlingType.PARKED_DEATHMACHINE,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.PARKED,
+            randomSpacingRange: {
+              min: 0,
+              max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
+            },
+            laneRules: {
+              allowedLanes: [this.config.LANES.PARKED],
+              spawnPosition: {
+                x: this.config.LANES.PARKED,
+                y: -5,
+              },
+              direction: 1,
+            },
+          },
+        ],
+        [
+          DarlingType.WANDERER,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.WANDERER,
+            randomSpacingRange: {
+              min: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.3),
+              max: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.8),
+            },
+            laneRules: {
+              allowedLanes: [this.config.LANES.SIDEWALK, this.config.LANES.SIDEWALK + 3],
+              spawnPosition: {
+                x: this.config.LANES.SIDEWALK,
+                y: -1,
+              },
+              direction: 1,
+            },
+          },
+        ],
+        [
+          DarlingType.BUILDING,
+          {
+            baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
+            randomSpacingRange: {
+              min: 0,
+              max: 1,
+            },
+            laneRules: {
+              allowedLanes: [this.config.LANES.BUILDINGS],
+              spawnPosition: {
+                x: this.config.LANES.BUILDINGS,
+                y: this.config.GAME.HEIGHT,
+              },
+              direction: -1,
+            },
+          },
+        ],
+      ]);
+    } catch (error) {
+      this.logError(error, "createSpawnConfigRulesForAllDarlingTypes");
+      return new Map();
+    }
   }
 
   /**
@@ -1002,27 +1412,43 @@ class SpawnManager {
    * Handles special cases like TTC-to-TTC spacing
    */
   getRequiredSpacingBetweenDifferentDarlingTypes(entityTypeA, entityTypeB) {
-    // Special cases first
-    // Special case: TTC to TTC spacing
-    if (entityTypeA === DarlingType.TTC && entityTypeB === DarlingType.TTC) {
-      return this.config.SAFE_DISTANCE.TTC_TO_TTC;
+    try {
+      if (!entityTypeA || !entityTypeB) {
+        throw new SpawnError("Invalid entity types for spacing calculation", {
+          entityTypeA,
+          entityTypeB,
+        });
+      }
+
+      // Special cases first
+      if (entityTypeA === DarlingType.TTC && entityTypeB === DarlingType.TTC) {
+        if (!this.config.SAFE_DISTANCE.TTC_TO_TTC) {
+          throw new SpawnError("Missing TTC_TO_TTC safe distance configuration");
+        }
+        return this.config.SAFE_DISTANCE.TTC_TO_TTC;
+      }
+
+      if (
+        entityTypeA === DarlingType.TTC &&
+        (entityTypeB === DarlingType.TTC_LANE_DEATHMACHINE || entityTypeB === DarlingType.ONCOMING_DEATHMACHINE)
+      ) {
+        if (!this.config.SAFE_DISTANCE.TTC_TO_DEATHMACHINE) {
+          throw new SpawnError("Missing TTC_TO_DEATHMACHINE safe distance configuration");
+        }
+        return this.config.SAFE_DISTANCE.TTC_TO_DEATHMACHINE;
+      }
+
+      const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
+
+      if (typeof baseDistance !== "number") {
+        throw new SpawnError("Invalid base distance", { baseDistance });
+      }
+
+      return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
+    } catch (error) {
+      this.logError(error, "getRequiredSpacingBetweenDifferentDarlingTypes");
+      return this.config.SAFE_DISTANCE.DEFAULT || 5; // Safe fallback
     }
-    // Special case: TTC to vehicle spacing
-    if (entityTypeA === DarlingType.TTC && (entityTypeB === DarlingType.TTC_LANE_DEATHMACHINE || entityTypeB === DarlingType.ONCOMING_DEATHMACHINE)) {
-      return this.config.SAFE_DISTANCE.TTC_TO_DEATHMACHINE;
-    }
-
-    // Default spacing calculation
-    const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
-
-    const finalDistance = baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
-
-    // console.log("Spacing calculation:", {
-    //   baseDistance: baseDistance,
-    //   finalDistance: finalDistance,
-    // });
-
-    return finalDistance;
   }
 
   /**
@@ -1030,120 +1456,179 @@ class SpawnManager {
    * Checks lane rules and spacing requirements
    */
   canDarlingSpawnAtThisSpecificPos(darlingType, position) {
-    const rules = this.spawnRules.get(darlingType);
-    if (!rules) {
-      // console.log("No spawn rules found for entity type:", entityType);
+    try {
+      if (!darlingType || !position) {
+        throw new SpawnError("Invalid parameters", { darlingType, position });
+      }
+
+      const rules = this.spawnRules.get(darlingType);
+      if (!rules) {
+        throw new SpawnError("No spawn rules found for entity type", { darlingType });
+      }
+
+      // Check if lane is allowed
+      const isLaneAllowed = rules.laneRules.allowedLanes.includes(Math.floor(position.x));
+      if (!isLaneAllowed) {
+        return false;
+      }
+
+      if (!this.spatialManager.darlings) {
+        throw new SpawnError("Invalid spatial manager state");
+      }
+
+      // Check nearby darlings for spacing
+      try {
+        const nearbyDarlings = Array.from(this.spatialManager.darlings).filter((entity) => {
+          if (!entity?.position) {
+            throw new SpawnError("Entity missing position", { entityId: entity?.id });
+          }
+
+          const xDistance = Math.abs(entity.position.x - position.x);
+          const yDistance = Math.abs(entity.position.y - position.y);
+
+          if (yDistance > 30) return false;
+
+          // Special TTC proximity check
+          if (darlingType === DarlingType.TTC || entity.type === DarlingType.TTC) {
+            return xDistance <= 2;
+          }
+          return xDistance <= 1;
+        });
+
+        // Check spacing requirements
+        const hasEnoughSpace = nearbyDarlings.every((entity) => {
+          const distance = Math.abs(entity.position.y - position.y);
+          const requiredSpacing = this.getRequiredSpacingBetweenDifferentDarlingTypes(darlingType, entity.type);
+          return distance >= requiredSpacing;
+        });
+
+        return isLaneAllowed && hasEnoughSpace;
+      } catch (error) {
+        this.logError(error, "canDarlingSpawnAtThisSpecificPos.nearbyCheck");
+        return false;
+      }
+    } catch (error) {
+      this.logError(error, "canDarlingSpawnAtThisSpecificPos");
       return false;
     }
-
-    // Check if lane is allowed
-    const isLaneAllowed = rules.laneRules.allowedLanes.includes(Math.floor(position.x));
-    if (!isLaneAllowed) {
-      return false;
-    }
-
-    // Check nearby darlings for spacing
-    const nearbyDarlings = Array.from(this.spatialManager.darlings).filter((entity) => {
-      const xDistance = Math.abs(entity.position.x - position.x);
-      const yDistance = Math.abs(entity.position.y - position.y);
-
-      if (yDistance > 30) return false;
-
-      // Special TTC proximity check
-      if (darlingType === DarlingType.TTC || entity.type === DarlingType.TTC) {
-        return xDistance <= 2;
-      }
-      return xDistance <= 1;
-    });
-
-    // Check spacing requirements
-    const hasEnoughSpace = nearbyDarlings.every((entity) => {
-      const distance = Math.abs(entity.position.y - position.y);
-      const requiredSpacing = this.getRequiredSpacingBetweenDifferentDarlingTypes(darlingType, entity.type);
-
-      const hasSpace = distance >= requiredSpacing;
-      if (!hasSpace) {
-      }
-      return hasSpace;
-    });
-
-    return isLaneAllowed && hasEnoughSpace;
   }
-
   spawnEntity(entityType) {
-    if (entityType === DarlingType.ONCOMING_DEATHMACHINE) {
-      // console.log("\n=== Attempting to spawn oncoming deathMachine ===");
+    try {
+      if (!entityType) {
+        throw new SpawnError("Entity type is required");
+      }
 
+      if (entityType === DarlingType.ONCOMING_DEATHMACHINE) {
+        const spawnConfig = this.getSpawnConfig(entityType);
+        if (!spawnConfig) {
+          return null;
+        }
+
+        if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
+          return new OncomingDeathmachine(this.config, spawnConfig);
+        }
+        return null;
+      }
+
+      if (entityType === DarlingType.WANDERER) {
+        try {
+          const isGoingUp = Math.random() < 0.5;
+          if (this.debugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
+
+          const spawnConfig = {
+            position: new Position(
+              isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK,
+              isGoingUp ? this.config.GAME.HEIGHT + 1 : -1
+            ),
+          };
+
+          if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
+            if (this.debugLog) console.log(`Spawning wanderer at position:`, spawnConfig.position);
+            return new Wanderer(this.config, spawnConfig, isGoingUp);
+          }
+          if (this.debugLog) console.log(`Failed to spawn wanderer - position occupied`);
+          return null;
+        } catch (error) {
+          this.logError(
+            new SpawnError("Error spawning wanderer", {
+              originalError: error,
+            }),
+            "spawnEntity"
+          );
+          return null;
+        }
+      }
+
+      // Handle other entity types
       const spawnConfig = this.getSpawnConfig(entityType);
       if (!spawnConfig) {
+        if (this.debugLog) console.log(`No spawn config for ${entityType}`);
         return null;
       }
 
       if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
-        const deathMachine = new OncomingDeathmachine(this.config, spawnConfig);
-        return deathMachine;
-      } else {
-        return null;
+        const EntityClass = this.getEntityClass(entityType);
+        if (EntityClass) {
+          return new EntityClass(this.config, spawnConfig);
+        }
       }
-    }
 
-    if (entityType === DarlingType.WANDERER) {
-      const isGoingUp = Math.random() < 0.5;
-      if (this.debugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
-
-      // Configure spawn position based on direction
-      const spawnConfig = {
-        position: new Position(isGoingUp ? this.config.LANES.SIDEWALK + 3 : this.config.LANES.SIDEWALK, isGoingUp ? this.config.GAME.HEIGHT + 1 : -1),
-      };
-
-      if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
-        if (this.debugLog) console.log(`Spawning wanderer at position:`, spawnConfig.position);
-        return new Wanderer(this.config, spawnConfig, isGoingUp);
-      }
-      if (this.debugLog) console.log(`Failed to spawn wanderer - position occupied`);
+      return null;
+    } catch (error) {
+      this.logError(error, "spawnEntity");
       return null;
     }
-
-    // Handle other entity types
-    const spawnConfig = this.getSpawnConfig(entityType);
-    if (!spawnConfig) {
-      if (this.debugLog) console.log(`No spawn config for ${entityType}`);
-      return null;
-    }
-
-    if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
-      const EntityClass = this.getEntityClass(entityType);
-      if (EntityClass) {
-        return new EntityClass(this.config, spawnConfig);
-      }
-    }
-
-    return null;
   }
 
   getSpawnConfig(entityType) {
-    const rules = this.spawnRules.get(entityType);
-    if (!rules) return null;
+    try {
+      if (!entityType) {
+        throw new SpawnError("Entity type is required");
+      }
 
-    const config = {
-      position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
-      direction: rules.laneRules.direction,
-    };
+      const rules = this.spawnRules.get(entityType);
+      if (!rules) {
+        throw new SpawnError("No spawn rules found", { entityType });
+      }
 
-    return config;
+      if (!rules.laneRules?.spawnPosition) {
+        throw new SpawnError("Invalid spawn rules structure", { rules });
+      }
+
+      return {
+        position: new Position(rules.laneRules.spawnPosition.x, rules.laneRules.spawnPosition.y),
+        direction: rules.laneRules.direction,
+      };
+    } catch (error) {
+      this.logError(error, "getSpawnConfig");
+      return null;
+    }
   }
-
   getEntityClass(entityType) {
-    const entityClasses = {
-      [DarlingType.TTC]: TTC,
-      [DarlingType.TTC_LANE_DEATHMACHINE]: TTCLaneDeathmachine,
-      [DarlingType.ONCOMING_DEATHMACHINE]: OncomingDeathmachine,
-      [DarlingType.PARKED_DEATHMACHINE]: ParkedDeathmachine,
-      [DarlingType.WANDERER]: Wanderer,
-      [DarlingType.BUILDING]: Building,
-    };
+    try {
+      if (!entityType) {
+        throw new SpawnError("Entity type is required");
+      }
 
-    return entityClasses[entityType];
+      const entityClasses = {
+        [DarlingType.TTC]: TTC,
+        [DarlingType.TTC_LANE_DEATHMACHINE]: TTCLaneDeathmachine,
+        [DarlingType.ONCOMING_DEATHMACHINE]: OncomingDeathmachine,
+        [DarlingType.PARKED_DEATHMACHINE]: ParkedDeathmachine,
+        [DarlingType.WANDERER]: Wanderer,
+        [DarlingType.BUILDING]: Building,
+      };
+
+      const EntityClass = entityClasses[entityType];
+      if (!EntityClass) {
+        throw new SpawnError("Invalid entity type", { entityType });
+      }
+
+      return EntityClass;
+    } catch (error) {
+      this.logError(error, "getEntityClass");
+      return null;
+    }
   }
 }
 
