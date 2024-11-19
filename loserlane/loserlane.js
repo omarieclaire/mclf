@@ -2933,7 +2933,7 @@ class TutorialSystem {
 
     // Show start button
     this.startButton.style.display = "block";
-    this.tutorialText.innerHTML = "How long can you stay alive?";
+    this.tutorialText.innerHTML = "How long can you stay alive without a bike lane?";
 
     // Set tutorial complete flag
     this.game.state.tutorialComplete = true;
