@@ -303,6 +303,13 @@ a {
   font-size: 1rem;
 }
 
+#main-msg-box {
+  background-color: var(--dark-grey);
+  color: var(--dark-yellow);
+  display: flex;
+  font-size: 3rem;
+  z-index: 200;
+}
 
 .message-reason {
   color: var(--hot-pink);

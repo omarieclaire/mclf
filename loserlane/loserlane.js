@@ -2779,8 +2779,6 @@ class TutorialSystem {
     this.config = game.config;
 
     // Cache DOM elements
-    this.pregameMsgBox = document.getElementById("pregame-msg-box");
-
     this.tutorialBike = document.getElementById("tutorial-bike");
     this.tutorialText = document.getElementById("tutorial-text");
     this.controlsDiv = document.getElementById("controls");
@@ -2967,7 +2965,6 @@ class TutorialSystem {
     setTimeout(() => {
       // Add visible class to start button
       this.startButton.classList.add('visible');
-      this.pregameMsgBox.style.zIndex = "500";
       
       // Add start button listener
       this.startButton.addEventListener("click", () => {

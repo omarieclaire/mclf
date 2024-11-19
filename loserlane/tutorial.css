@@ -39,7 +39,7 @@
 .control-highlight.wrong {
   opacity: 1;
   background: rgba(255, 0, 0, 0.2);
-  animation: wrongFlash 0.9s;
+  animation: wrongFlash 0.3s;
 }
 
 /* Message Box Styles
