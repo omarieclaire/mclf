@@ -2822,7 +2822,7 @@ class TutorialSystem {
     console.log("👈 Showing left control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
-      : "Press the <span class='highlight'>left arrow key</span> to move left";
+      : "Press your <span class='highlight'>left arrow key</span> to move left";
     console.log("Setting tutorial text to:", text);
     console.log("Tutorial text element:", this.tutorialText);
 
@@ -2846,7 +2846,7 @@ class TutorialSystem {
     console.log("👉 Showing right control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
-      : "Press the <span class='highlight'>right arrow key</span> to move right";
+      : "Press your <span class='highlight'>right arrow key</span> to move right";
     this.tutorialText.innerHTML = text;
     this.rightHighlight.classList.add("active");
   }

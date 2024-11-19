@@ -1,47 +1,136 @@
 const ART = {
-  BIKE: {
-    art: [" O ", "^|^", " O "],
-  },
   WANDERER: {
-    art: ["○", "╽"],
+    art: [
+      "       WHY HIT FRIEND? ",
+      "                       ",
+      "               o_/    ",
+      "      __o    _/|      ",      
+      "     _\\<,_    /\\     ",
+      "___(*)/(*)___\\_\\____"
+    ],
   },
   TTC: {
-    art: ["┌0--─0┐", "│▀▀▀▀▀│", "│  T  │", "│  T  │", "│  C  │", "│     │", "└─────┘"],
+    art: [
+      "                               \\      ",
+      "       TTCCCCCC????             /      ",
+      "     __o        ┌═════════^════^═══════",      
+      "    _\\<,_      / □□□ || □ TTC □||□□ ║║",
+      " __(*)/(*)_____\\──═══────────────═══───"
+    ]
   },
-
   DEATHMACHINE: {
-    art: ["┌.─.┐", "│▀▀▀│", "|   │", "│▀▀▀│", "╰───╯"],
-    width: 5,
-    height: 6,
+    art: [
+      "         OH NO!      _____     ",
+      "     __o          __/_O│_\\_   ",      
+      "    _\\<,_      >/_ ____ _ _\\  ",
+      " __(*)/(*)_______(_)_____(_)___ "
+    ]
   },
   TRAFFIC: {
-    art: ["┌.─.┐", "│▀▀▀│", "|   │", "│▀▀▀│", "╰───╯"],
-    width: 5,
-    height: 6,
+    art: [
+      "     _____         UGH     ",
+      "   _/_│O_\\_         __o   ",      
+      " /_ ____ _ _\\<      _\\<,_",
+      "__(_)_____(_)______(*)/(*)_"
+    ]
   },
-
   PARKEDDEATHMACHINE: {
-    art: ["┌.─.┐", "│▀▀▀│", "|   │", "│▀▀▀│", "╰───╯"],
-    width: 5,
-    height: 6,
+    art: [
+      "      OUCH!      _____      ", 
+      "     __o      _/__││__\\__ ",      
+      "    _\\<,_   /_ ______ ___[ ",
+      " __(*)/(*)____(_)_____(_)___ "
+    ]
   },
   DOOR: {
-    art: ["  ┌.─.┐ ", "── ▀▀▀│ ", "  |   │ ", "  │▀▀▀│ ", "  ╰───╯ "],
+    art: [
+      "                 OOPSIE!     ",
+      "                   _____     ",
+      "     __o        __/_│O_\\    ",      
+      "    _\\<,_     /_ _\\|/___\\ ",
+      " __(*)/(*)_____(_)__/\\(_)__ "
+    ]
   },
-
   TRACKS: {
-    art: [" ||  || ", " ||  || ", " ||  || ", " ||  || "],
+    art: [
+      "   RAIL JAIL! // ",
+      "     __o   //    ",      
+      "    _\\<,_    //  ",
+      " ══(*)/(*)═══════ ",
+      " ════════════════ "
+    ],
   },
   BUILDING: {
     art: [
-      "┌────────┐",
-      "│SHE     │",
-      "│  SAID  │",
-      "│BOOM    │",
-      "└────────┘"
-    ],
-  },
+      " PLEASE DON'T   ╭═══╧════╮",
+      "   WRITE THIS   │ ░DANK░ │",
+      "     IN MY OBIT │∷╳∷∷∷∷╳∷│",
+      "                │ ░WEED░ │",
+      "     __o        │═╥═╦╦═╥═│",
+      "    _\\<,_      │ ║ ║║ ║ ║ ",
+      " ══(*)/(*)══════└≈≈≈≈≈≈≈≈┘"
+  ],
+  }
 };
+
+// const ART = {
+//   BIKE: {
+//     art: [" O ", "^|^", " O "],
+//   },
+//   WANDERER: {
+//       art: [
+//         "       WHY HIT FRIEND? ",
+//         "                       ",
+//         "               o_/    ",
+//         "      __o    _/|      ",      
+//         "     _\\<,_    /\\     ",
+//         "___(*)/(*)___\\_\\____"
+//     ],
+//   },
+//   TTC: {
+//     art: [
+//       "                               \\      ",
+//       "       TTCCCCCC????             /      ",
+//       "     __o        ┌═════════^════^═══════",      
+//       "    _\\<,_      / □□□ || □ TTC □||□□ ║║",
+//       " __(*)/(*)_____\\──═══────────────═══───"
+//   ],
+//   },
+
+//   DEATHMACHINE: {
+//     art: [
+//       "         OH NO!      _____     ",
+//       "     __o          __/_O│_\\_   ",      
+//       "    _\\<,_      >/_ ____ _ _\\  ",
+//       " __(*)/(*)_______(_)_____(_)___ "
+//     ],
+//   },
+//   TRAFFIC: {
+//     art: ["┌.─.┐", "│▀▀▀│", "|   │", "│▀▀▀│", "╰───╯"],
+//   },
+
+//   PARKEDDEATHMACHINE: {
+//     art: [
+//       "      OUCH!      _____      ", 
+//       "     __o      __/__││__\\_  ",      
+//       "    _\\<,_   /_ ______ __ \\( ",
+//       " __(*)/(*)____(_)_____(_)___ "
+//     ],
+
+//     width: 5,
+//     height: 6,
+//   },
+//   DOOR: {
+//     art: ["  ┌.─.┐ ", "── ▀▀▀│ ", "  |   │ ", "  │▀▀▀│ ", "  ╰───╯ "],
+//   },
+
+//   TRACKS: {
+//     art: [" ||  || ", " ||  || ", " ||  || ", " ||  || "],
+//   },
+//   BUILDING: {
+//     art: ["┌────────┐", "│SHE     │", "│  SAID  │", "│BOOM    │", "└────────┘"],
+//   },
+// };
 
 function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace, gameInstance) {
   const overlay = document.createElement("div");
@@ -84,22 +173,18 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // Semi-transparent overlay
   const backgroundOverlay = document.createElement("div");
-  backgroundOverlay.style.position = "absolute";
-  backgroundOverlay.style.top = "0";
-  backgroundOverlay.style.left = "0";
-  backgroundOverlay.style.width = "100%";
-  backgroundOverlay.style.height = "100%";
-  backgroundOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+  backgroundOverlay.classList.add("background-overlay"); // Add the CSS class
   socialCard.appendChild(backgroundOverlay);
 
   const entityData = ART[reason] || { art: ["N/A"] };
+  // const entityData = ART["CRASH"]; // Forces it to always use CRASH art
+
   const art = Array.isArray(entityData.art) ? entityData.art.join("\n") : "TRAFFIC";
 
   // Content container
   const contentContainer = document.createElement("div");
-  contentContainer.className = "sharebox-content-container"
-  contentContainer.style.position = "relative";
-  contentContainer.style.zIndex = "1";
+  contentContainer.className = "sharebox-content-container";
+  // contentContainer.style.zIndex = "1";
 
   // Message text
   const messageText = document.createElement("p");
@@ -114,7 +199,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   scoreText.innerHTML = `I survived ${score} seconds without a bike lane`;
   contentContainer.appendChild(scoreText);
 
-  
+
 
   const asciiWrapper = document.createElement("div");
   asciiWrapper.style.position = "relative"; // Make sure this is set
@@ -128,14 +213,14 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiArt.className = "ascii-art";
   asciiArt.innerHTML = art
     .split("")
-    .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(20deg);">${char}</span>`))
+    // .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(20deg);">${char}</span>`))
     .join("");
 
   const asciiArtOverlay = document.createElement("pre");
   asciiArtOverlay.className = "ascii-art overlay";
   asciiArtOverlay.innerHTML = art
     .split("")
-    .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(20deg);">${char}</span>`))
+    // .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(20deg);">${char}</span>`))
     .join("");
   asciiArtOverlay.style.position = "absolute";
   asciiArtOverlay.style.top = "1px";
@@ -148,7 +233,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiArtOverlay2.className = "ascii-art overlay";
   asciiArtOverlay2.innerHTML = art
     .split("")
-    .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(21deg);">${char}</span>`))
+    // .map((char) => (char === "\n" ? "<br>" : `<span style="display: inline-block; transform: rotate(21deg);">${char}</span>`))
     .join("");
   asciiArtOverlay2.style.position = "absolute";
   asciiArtOverlay2.style.top = "0";
@@ -158,18 +243,11 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiArtOverlay2.style.pointerEvents = "none";
 
   asciiWrapper.appendChild(asciiArt);
-  asciiWrapper.appendChild(asciiArtOverlay);
+  // asciiWrapper.appendChild(asciiArtOverlay);
   // asciiWrapper.appendChild(asciiArtOverlay2);
   contentContainer.appendChild(asciiWrapper);
 
-  // Sad face
-  // const faceContainer = document.createElement("div");
-  // faceContainer.style.textAlign = "center";
-  // const sadFace = document.createElement("span");
-  // sadFace.className = "cute-death-face";
-  // sadFace.innerHTML = randomFace;
-  // faceContainer.appendChild(sadFace);
-  // contentContainer.appendChild(faceContainer);
+
 
   // Score text
   // const doug = document.createElement("p");
@@ -177,13 +255,21 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   // doug.innerHTML = `WE NEED BIKE LANES`;
   // contentContainer.appendChild(doug);
 
-
   // THANKS DOUG
   const doug2 = document.createElement("p");
-  doug2.className = "cute-death-face";
+  doug2.className = "thanks-doug";
   doug2.innerHTML = `THANKS DOUG`;
   contentContainer.appendChild(doug2);
-  
+
+
+      // Sad face
+      // const faceContainer = document.createElement("div");
+      // faceContainer.style.textAlign = "center";
+      // const sadFace = document.createElement("span");
+      // sadFace.className = "cute-death-face";
+      // sadFace.innerHTML = randomFace;
+      // faceContainer.appendChild(sadFace);
+      // contentContainer.appendChild(faceContainer);
   // Add the content container to the social card
   socialCard.appendChild(contentContainer);
 
@@ -197,21 +283,21 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // First create a function to generate the image that we'll reuse
   const generateImage = () => {
-    return html2canvas(socialCard).then(canvas => canvas.toDataURL('image/png'));
+    return html2canvas(socialCard).then((canvas) => canvas.toDataURL("image/png"));
   };
 
   // Save Button
-  const saveButton = document.createElement("button");
-  saveButton.textContent = "SAVE IMAGE";
-  saveButton.onclick = () => {
-    generateImage().then((dataUrl) => {
-      const link = document.createElement("a");
-      link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`;
-      link.href = dataUrl;
-      link.click();
-    });
-  };
-  buttonContainer.appendChild(saveButton);
+  // const saveButton = document.createElement("button");
+  // saveButton.textContent = "SAVE IMAGE";
+  // saveButton.onclick = () => {
+  //   generateImage().then((dataUrl) => {
+  //     const link = document.createElement("a");
+  //     link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`;
+  //     link.href = dataUrl;
+  //     link.click();
+  //   });
+  // };
+  // buttonContainer.appendChild(saveButton);
 
   // Facebook Share Button
   const fbButton = document.createElement("button");
@@ -225,14 +311,14 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
       // For now, we'll share with just text and URL
       const shareUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent(`I survived for ${score} seconds without a bikelane! ${messageString}`);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`, '_blank');
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`, "_blank");
     });
   };
   // buttonContainer.appendChild(fbButton);
 
   // Instagram Share Button
   const igButton = document.createElement("button");
-  igButton.textContent = "COPY";
+  igButton.textContent = "SAVE IMAGE + COPY LINK";
   igButton.onclick = () => {
     generateImage().then((dataUrl) => {
       // Unfortunately, Instagram doesn't have a web API for sharing
@@ -242,18 +328,19 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
       link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`;
       link.href = dataUrl;
       link.click();
-      
+
       // Then copy the text
       const shareText = `I survived for ${score} seconds without a bikelane! ${messageString}\n\nPlay at: ${window.location.href}`;
-      navigator.clipboard.writeText(shareText)
+      navigator.clipboard
+        .writeText(shareText)
         .then(() => {
           igButton.textContent = "SAVED!";
           setTimeout(() => {
             igButton.textContent = "COPY";
           }, 2000);
-          alert("Image saved! Text copied to clipboard. You can now create a new post on Instagram with these.");
+          alert("Image saved and text copied to clipboard. Use your voice, save the bike lanes");
         })
-        .catch(() => alert("Couldn't copy text for Instagram!"));
+        .catch(() => alert("Couldn't copy text"));
     });
   };
   buttonContainer.appendChild(igButton);

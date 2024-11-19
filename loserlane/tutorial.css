@@ -1,82 +1,70 @@
-/* Tutorial-specific styles */
+/* Base control highlight styles */
 .control-highlight {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 50%;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 10;
   height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.control-highlight.left { left: 0; }
-.control-highlight.right { right: 0; }
+.control-highlight.left {
+  left: 0;
+}
+.control-highlight.right {
+  right: 0;
+}
 
-/* Desktop styles - big arrows */
+/* Desktop styles (≥600px) */
 @media (min-width: 600px) {
   .control-highlight.active {
-      opacity: 1;
-      font-size: 10rem;
-      color: var(--green);
-      margin-top: 5rem;
-       
-    }
+    opacity: 1;
+    font-size: 10rem;
+    color: var(--green);
+    margin-top: 5rem;
+  }
 
   .control-highlight.active::after {
-      content: '←';
-      animation: pulse 2s infinite;
-      top: 50%; /* Center vertically */
-      left: 50%; /* Center horizontally */
-      transform: translate(130%, 30%); /* Adjust for true center alignment */  
+    content: "←";
+    animation: pulse 2s infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(130%, 30%);
   }
 
   .control-highlight.right.active::after {
-      content: '→';
-      top: 50%; /* Center vertically */
-      left: 50%; /* Center horizontally */
-      transform: translate(-130%, 30%); /* Adjust for true center alignment */  
+    content: "→";
+    transform: translate(-130%, 30%);
+  }
+
+  #pregame-msg-box {
+    max-width: 50%;
+  }
+
+  #pregame-msg-title {
+    font-size: clamp(1rem, 3.5rem, 5rem);
   }
 }
 
-/* Mobile styles - colored backgrounds */
+/* Mobile styles (<600px) */
 @media (max-width: 599px) {
   .control-highlight.active {
-      opacity: .4;
-      background: blue;
+    opacity: 0.4;
+    background: blue;
   }
 }
 
-/* Success state for both */
+/* State-specific styles */
 .control-highlight.success::after {
-  content: '✓';
+  content: "✓";
   animation: none;
   color: var(--green);
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-/* Start button animations */
-#start-button {
-  display: block;
-  margin: 20px auto;
-  animation: buttonPulse 2s infinite;
-  z-index: 10000;
-}
-
-@keyframes buttonPulse {
-  0%, 100% { 
-      transform: scale(1); 
-  }
-  50% { 
-      transform: scale(1.1); 
-  }
 }
 
 .control-highlight.wrong {
@@ -85,42 +73,43 @@
   animation: wrongFlash 0.5s;
 }
 
-@keyframes wrongFlash {
-  0%, 100% { 
-      background: transparent; 
-  }
-  50% { 
-      background: rgba(255, 0, 0, 0.2); 
-  }
-}
 
-
+/* Message box styles */
 #pregame-msg-box {
   position: absolute;
   top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 60%;
+  padding: 1rem;
   font-size: 1.5rem;
   text-align: center;
-  width: 90%;
-  max-width: 90%;
-  z-index: 100;
   color: var(--light-purp);
   background-color: var(--overlay-background);
-  padding: 1rem;
+  transition: all 0.5s ease-in-out;
   z-index: 10000;
 }
 
-@media (min-width: 600px) {
+@media (max-width: 599px) {
+  /* Message box styles */
   #pregame-msg-box {
-    max-width: 50%;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 90%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--light-purp);
+    background-color: var(--overlay-background);
+    transition: all 0.5s ease-in-out;
+    z-index: 10000;
   }
 }
 
-/* Death message styling */
-#pregame-msg-box {
-  transition: all 0.5s ease-in-out;
-}
 
 #pregame-msg-box.show-message {
   opacity: 1;
@@ -132,41 +121,68 @@
   transform: scale(0.8);
 }
 
-
-.title-box-container{
-  display:flex;
-  flex-direction: row;  /* margin: auto; */
+/* Title box styles */
+.title-box-container {
+  display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  align-content: center;
   gap: 2rem;
 }
 
-#tutorial-bike{
+#tutorial-bike {
   font-size: 1.6rem;
   margin: 1rem 0;
-
 }
+
 #pregame-msg-title {
-  font-size: clamp(1rem, 2rem, 5rem); /* Adjusts font size between min, preferred, and max */
+  font-size: clamp(1rem, 2rem, 5rem);
   color: var(--hot-pink);
   font-weight: bolder;
   letter-spacing: 16px;
-  text-align: center; 
+  text-align: center;
 }
 
+/* Start button styles */
+#start-button {
+  display: block;
+  margin: 20px auto;
+  animation: buttonPulse 2s infinite;
+  z-index: 10000;
+}
 
-@media (min-width: 600px) {
-  #pregame-msg-title {
-    font-size: clamp(1rem, 3.5rem, 5rem)
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
-#tutorial-text {
-
+@keyframes buttonPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
-.highlight{
-  /* background-color: yellow; */
-  font-weight:bold;
+@keyframes wrongFlash {
+  0%,
+  100% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* Utility classes */
+.highlight {
+  font-weight: bold;
 }

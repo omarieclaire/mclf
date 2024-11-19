@@ -14,11 +14,14 @@
 
 .sharebox-content-container {
   position: relative;
-  /* z-index; 1; */
   display: flex;
   flex-direction: column;
   gap: 3px;
+  justify-content: center; /* Centers the items vertically */
+  align-items: center; /* Centers the items horizontally */
+  height: 100%; /* Ensure the container has a height for centering */
 }
+
 
 /* Social Deathmachined Overlay */
 .screenshot-overlay {
@@ -84,6 +87,7 @@
 .ascii-art {
   padding: 15px 0;
   /* rotate: 0deg; */
+  font-size: 1rem;
 }
 .ascii-art,
 .message-reason,
@@ -115,11 +119,18 @@
 }
 .cute-death-face {
   color: var(--light-purp);
-
   /* color: var(--med-purp); */
   font: var(--font-face);
   font-size: 1.1rem;
 }
+
+.thanks-doug {
+  color: var(--green);
+  /* color: var(--med-purp); */
+  font: var(--font-face);
+  font-size: clamp(1rem, 1.6rem, 3rem); 
+}
+
 .score-text {
   /* color: var(--dark-yellow); */
   font: var(--font-score);
@@ -150,4 +161,14 @@
 .social-card p {
   text-align: center;
   margin: 5px 0;
+}
+
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
 }

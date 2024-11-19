@@ -772,3 +772,8 @@ button:active {
   pointer-events: none;
 }
 
+
+.spacer {
+  color: rgba(0, 0, 0, 0.0);  /* completely transparent */
+  /* alternatively: color: #ffffff; if your background is white */
+}
