@@ -1157,7 +1157,7 @@ class SpawnManager {
     }
     this.spatialManager = spatialManager;
     this.config = config;
-    this.debugLog = false; // Set to true to debug wanderer spawning
+    this.wandererDebugLog = false; // Set to true to debug wanderer spawning
     this.errorLog = [];
     try {
       this.spawnRules = this.createSpawnConfigRulesForAllDarlingTypes();
@@ -1172,119 +1172,7 @@ class SpawnManager {
    * Defines spacing, positioning, and lane rules
    * @returns {Map} Map of entity types to their spawn rules
    */
-  // createSpawnConfigRulesForAllDarlingTypes() {
-  //   return new Map([
-  //     [
-  //       DarlingType.TTC,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.TTC,
-  //         randomSpacingRange: {
-  //           min: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.3),
-  //           max: Math.floor(this.config.SAFE_DISTANCE.TTC * 0.8),
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.TRACKS],
-  //           spawnPosition: {
-  //             x: this.config.LANES.TRACKS,
-  //             y: this.config.GAME.HEIGHT + 5,
-  //           },
-  //           direction: -1,
-  //         },
-  //       },
-  //     ],
-  //     [
-  //       DarlingType.TTC_LANE_DEATHMACHINE,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE,
-  //         randomSpacingRange: {
-  //           min: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.3),
-  //           max: Math.floor(this.config.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE * 0.8),
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.TRACKS + 1],
-  //           spawnPosition: {
-  //             x: this.config.LANES.TRACKS + 1,
-  //             y: this.config.GAME.HEIGHT + 1,
-  //           },
-  //           direction: -1,
-  //         },
-  //       },
-  //     ],
-  //     [
-  //       DarlingType.ONCOMING_DEATHMACHINE,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE,
-  //         randomSpacingRange: {
-  //           min: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.3),
-  //           max: Math.floor(this.config.SAFE_DISTANCE.ONCOMING_DEATHMACHINE * 0.8),
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.ONCOMING],
-  //           spawnPosition: {
-  //             x: this.config.LANES.ONCOMING,
-  //             y: -10,
-  //           },
-  //           direction: 1,
-  //         },
-  //       },
-  //     ],
-  //     [
-  //       DarlingType.PARKED_DEATHMACHINE,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.PARKED,
-  //         randomSpacingRange: {
-  //           min: 0,
-  //           max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.PARKED],
-  //           spawnPosition: {
-  //             x: this.config.LANES.PARKED,
-  //             y: -5,
-  //           },
-  //           direction: 1,
-  //         },
-  //       },
-  //     ],
-  //     [
-  //       DarlingType.WANDERER,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.WANDERER,
-  //         randomSpacingRange: {
-  //           min: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.3),
-  //           max: Math.floor(this.config.SAFE_DISTANCE.WANDERER * 0.8),
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.SIDEWALK, this.config.LANES.SIDEWALK + 3],
-  //           spawnPosition: {
-  //             x: this.config.LANES.SIDEWALK,
-  //             y: -1,
-  //           },
-  //           direction: 1,
-  //         },
-  //       },
-  //     ],
-  //     [
-  //       DarlingType.BUILDING,
-  //       {
-  //         baseSpacing: this.config.SAFE_DISTANCE.BUILDING,
-  //         randomSpacingRange: {
-  //           min: 0,
-  //           max: 1,
-  //         },
-  //         laneRules: {
-  //           allowedLanes: [this.config.LANES.BUILDINGS],
-  //           spawnPosition: {
-  //             x: this.config.LANES.BUILDINGS,
-  //             y: this.config.GAME.HEIGHT,
-  //           },
-  //           direction: -1,
-  //         },
-  //       },
-  //     ],
-  //   ]);
-  // }
-
+  
   createSpawnConfigRulesForAllDarlingTypes() {
     try {
       if (!this.config.SAFE_DISTANCE || !this.config.LANES || !this.config.GAME) {
@@ -1533,7 +1421,7 @@ class SpawnManager {
       if (entityType === DarlingType.WANDERER) {
         try {
           const isGoingUp = Math.random() < 0.5;
-          if (this.debugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
+          if (this.wandererDebugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
 
           const spawnConfig = {
             position: new Position(
@@ -1543,10 +1431,10 @@ class SpawnManager {
           };
 
           if (this.canDarlingSpawnAtThisSpecificPos(entityType, spawnConfig.position)) {
-            if (this.debugLog) console.log(`Spawning wanderer at position:`, spawnConfig.position);
+            if (this.wandererDebugLog) console.log(`Spawning wanderer at position:`, spawnConfig.position);
             return new Wanderer(this.config, spawnConfig, isGoingUp);
           }
-          if (this.debugLog) console.log(`Failed to spawn wanderer - position occupied`);
+          if (this.wandererDebugLog) console.log(`Failed to spawn wanderer - position occupied`);
           return null;
         } catch (error) {
           this.logError(
@@ -1562,7 +1450,7 @@ class SpawnManager {
       // Handle other entity types
       const spawnConfig = this.getSpawnConfig(entityType);
       if (!spawnConfig) {
-        if (this.debugLog) console.log(`No spawn config for ${entityType}`);
+        if (this.wandererDebugLog) console.log(`No spawn config for ${entityType}`);
         return null;
       }
 
