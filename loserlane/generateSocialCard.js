@@ -316,20 +316,19 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   const closeButton = document.createElement("button");
   closeButton.textContent = "CLOSE";
+  
+  // Store the auto-restart timeout
+  const autoRestartTimeout = setTimeout(() => {
+    gameInstance.restart();
+    if (overlay) overlay.remove();
+  }, 6000);
 
   closeButton.onclick = () => {
+    clearTimeout(autoRestartTimeout); // Cancel the auto-restart
     overlay.remove();
     gameInstance.restart();
   };
   buttonContainer.appendChild(closeButton);
-
-
-  // Automatically restart game after timeout
-  setTimeout(() => {
-    if (overlay) overlay.remove(); // Remove the overlay
-    gameInstance.restart(); // Restart the game
-  }, 6000); // Timeout duration in milliseconds
-
 
   overlay.appendChild(socialCard);
   overlay.appendChild(buttonContainer);

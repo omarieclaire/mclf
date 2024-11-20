@@ -3903,113 +3903,126 @@ class TutorialSystem {
 
 class LoserLane {
   constructor() {
-    // === Core Game State ===
-    this.config = CONFIG;
-    // this.state = new GameState(this.config);
-    this.eventListeners = new Map(); // Add this for event tracking
-
-    // === Game System Flags ===
-    // this.doubleJumpPendingGiveMeImmunity = false; // Track jump state before system init
-    // this.immunityTimer = null; // Track immunity window
-    this.debug = true;
-    this.frameId = null;
-
-    // === Core Systems ===
-    this.stateManager = new GameStateManager(this.config);
-    this.tutorialComplete = false;
-    this.tutorialSystem = new TutorialSystem(this);
-    this.soundManager = new SoundManager();
-
-    this.spatialManager = new SpatialManager(this.config);
-    this.spatialManager.setGame(this);
-    this.renderGrid = new RenderGrid(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
-    this.renderer = new GameRenderer(this.config, this.renderGrid);
-
-    // === Timing Systems ===
-    this.initialLastMove = performance.now();
-    this.lastFrameTime = performance.now();
-
-    // Load sounds
+    this.initializeCore();
+    this.initializeSystems();
+    this.initializeTimers();
     this.initializeSounds();
-
-    // === Game Components ===
     this.initializeGameComponents();
   }
 
-  initializeGameComponents() {
-    // Initialize world first
-    this.initializeGameWorld();
+  // === Initialization Methods ===
+  
+  initializeCore() {
+    this.config = CONFIG;
+    this.eventListeners = new Map();
+    this.debug = true;
+    this.frameId = null;
+    this.tutorialComplete = false;
+  }
 
-    // Initialize managers after world setup
+  initializeSystems() {
+    this.stateManager = new GameStateManager(this.config);
+    this.tutorialSystem = new TutorialSystem(this);
+    this.soundManager = new SoundManager();
+    
+    this.spatialManager = new SpatialManager(this.config);
+    this.spatialManager.setGame(this);
+    
+    this.renderGrid = new RenderGrid(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
+    this.renderer = new GameRenderer(this.config, this.renderGrid);
+  }
+
+  initializeTimers() {
+    this.initialLastMove = performance.now();
+    this.lastFrameTime = performance.now();
+  }
+
+  initializeSounds() {
+    this.soundManager.setupMuteButton();
+    this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
+    this.soundManager.addSound("collision", "sounds/collision.mp3");
+  }
+
+  initializeGameComponents() {
+    this.initializeGameWorld();
     this.clusterManager = new VehicleClusterManager(CONFIG);
     this.controls = new Controls(this);
     this.settingsManager = new SettingsManager(this);
   }
 
-  // 1. Initialization methods (initializeGameWorld, initializeBuildings, etc.)
-
   initializeGameWorld() {
     this.spatialManager.darlings.clear();
     this.initializeBuildings();
-    this.initializeparkedDeathMachines();
-    this.bike = this.updateBike();
+    this.initializeParkedDeathMachines();
+    this.bike = this.createBike();
     this.spatialManager.addEntityToSpatialManagementSystem(this.bike);
   }
 
-  initializeSounds() {
-    // Add game sounds
-    this.soundManager.setupMuteButton(); // Allows muting via button
-    this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
-    this.soundManager.addSound("collision", "sounds/collision.mp3");
-    // Start background music
-    // this.soundManager.play("backgroundMusic", this.config.GAME.INITIAL_SPEED / 500);
+  // === Entity Creation Methods ===
+
+  createBike() {
+    const bikeEntity = new BaseEntity(
+      this.config,
+      {
+        position: new Position(this.stateManager.currentLane, CONFIG.GAME.CYCLIST_Y),
+      },
+      DarlingType.BIKE
+    );
+
+    Object.assign(bikeEntity, {
+      width: DARLINGS.BIKE.width,
+      height: DARLINGS.BIKE.height,
+      art: DARLINGS.BIKE.art,
+      color: STYLES.BIKE,
+      behavior: new BikeBehavior(bikeEntity)
+    });
+
+    return bikeEntity;
   }
 
   initializeBuildings() {
-    // console.log("initializeBuildings spawn"); //findme
-
     let currentY = CONFIG.GAME.HEIGHT;
-    const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0; // Ensure minimum spacing
+    const minSpacing = CONFIG.SAFE_DISTANCE.BUILDING || 0;
 
     while (currentY > CONFIG.SPAWNING.MIN_BUILDING_HEIGHT) {
-      // Get current buildings sorted by Y position
-      const existingBuildings = Array.from(this.spatialManager.darlings)
-        .filter((e) => e.type === DarlingType.BUILDING)
-        .sort((a, b) => a.position.y - b.position.y);
-
+      const existingBuildings = this.getExistingBuildingsSortedByY();
       const newBuilding = new Building(CONFIG, currentY);
 
-      // Check for collisions with proper hitbox calculations
-      const hasCollision = existingBuildings.some((existing) => {
-        // Calculate overlap bounds
-        const topOverlap = currentY < existing.position.y + existing.height + minSpacing;
-        const bottomOverlap = currentY + newBuilding.height + minSpacing > existing.position.y;
-
-        // Check x-axis alignment (buildings are in same column)
-        const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
-
-        return sameColumn && topOverlap && bottomOverlap;
-      });
-
-      if (!hasCollision) {
+      if (!this.buildingCollisionExists(existingBuildings, currentY, newBuilding, minSpacing)) {
         this.spatialManager.addEntityToSpatialManagementSystem(newBuilding);
-        // Move up by building height plus minimum spacing
         currentY -= newBuilding.height + minSpacing;
       } else {
-        // If collision detected, move up by a smaller increment
         currentY -= minSpacing;
       }
     }
   }
-  initializeparkedDeathMachines() {
-    let currentY = CONFIG.GAME.HEIGHT;
-    while (currentY > -1) {
-      const spawnConfig = {
-        position: new Position(CONFIG.LANES.PARKED, currentY),
-      };
 
-      const deathMachine = new ParkedDeathmachine(CONFIG, spawnConfig);
-      if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(DarlingType.PARKED_DEATHMACHINE, deathMachine.position)) {
+  getExistingBuildingsSortedByY() {
+    return Array.from(this.spatialManager.darlings)
+      .filter(e => e.type === DarlingType.BUILDING)
+      .sort((a, b) => a.position.y - b.position.y);
+  }
+
+  buildingCollisionExists(existingBuildings, currentY, newBuilding, minSpacing) {
+    return existingBuildings.some(existing => {
+      const topOverlap = currentY < existing.position.y + existing.height + minSpacing;
+      const bottomOverlap = currentY + newBuilding.height + minSpacing > existing.position.y;
+      const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
+      return sameColumn && topOverlap && bottomOverlap;
+    });
+  }
+
+  initializeParkedDeathMachines() {
+    let currentY = CONFIG.GAME.HEIGHT;
+    
+    while (currentY > -1) {
+      const position = new Position(CONFIG.LANES.PARKED, currentY);
+      const deathMachine = new ParkedDeathmachine(CONFIG, { position });
+      
+      if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(
+        DarlingType.PARKED_DEATHMACHINE, 
+        deathMachine.position
+      )) {
         this.spatialManager.addEntityToSpatialManagementSystem(deathMachine);
         currentY -= deathMachine.height + 1;
       } else {
@@ -4018,52 +4031,18 @@ class LoserLane {
     }
   }
 
-  // 2. Core game loop methods (update, render)
+  // === Game Loop Methods ===
 
-  /**
-   * Main game update function called on each animation frame
-   */
-
-  render() {
-    // Pass stateManager instead of state
-    this.renderer.render(this.stateManager, this.spatialManager.darlings, this.bike);
-  }
-
-  movePlayer(direction) {
-    if (this.stateManager.moveBike(direction)) {
-      this.updateBikePosition();
-    }
-  }
-
-  // Replace handleJump
-  handleJump(direction) {
-    if (this.stateManager.handleJump(direction)) {
-      this.updateBikePosition();
-    }
-  }
-
-  // Update updateBikePosition
-  updateBikePosition() {
-    if (this.bike) {
-      this.bike.position = new Position(
-        this.stateManager.currentLane,
-        this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
-      );
-    }
-  }
-
-  // Update start
   start() {
     if (this.stateManager.start()) {
       this.lastFrameTime = performance.now();
-      this.frameId = requestAnimationFrame((t) => this.update(t));
+      this.frameId = requestAnimationFrame(t => this.update(t));
     }
   }
 
-  // Update update method
   update(timestamp) {
     if (!timestamp || this.stateManager.isPaused) {
-      this.frameId = requestAnimationFrame((t) => this.update(t));
+      this.scheduleNextFrame();
       return;
     }
 
@@ -4076,32 +4055,64 @@ class LoserLane {
         return;
       }
 
-      this.spatialManager.update();
-      this.updateBikePosition();
-      this.spawnDarlings();
-      this.checkBikeCollisions();
+      this.updateGameState();
     }
 
     this.render();
-    this.frameId = requestAnimationFrame((t) => this.update(t));
-
-    // const playbackSpeed = this.stateManager.state.speed / this.config.GAME.INITIAL_SPEED;
-    // this.soundManager.sounds.get("backgroundMusic").playbackRate = playbackSpeed;
+    this.scheduleNextFrame();
   }
 
-  // 4. Entity management methods (spawnDarlings, updateBike)
+  scheduleNextFrame() {
+    this.frameId = requestAnimationFrame(t => this.update(t));
+  }
+
+  updateGameState() {
+    this.spatialManager.update();
+    this.updateBikePosition();
+    this.spawnDarlings();
+    this.checkBikeCollisions();
+  }
+
+  render() {
+    this.renderer.render(this.stateManager, this.spatialManager.darlings, this.bike);
+  }
+
+  // === Player Control Methods ===
+
+  movePlayer(direction) {
+    if (this.stateManager.moveBike(direction)) {
+      this.updateBikePosition();
+    }
+  }
+
+  handleJump(direction) {
+    if (this.stateManager.handleJump(direction)) {
+      this.updateBikePosition();
+    }
+  }
+
+  updateBikePosition() {
+    if (this.bike) {
+      this.bike.position = new Position(
+        this.stateManager.currentLane,
+        this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+      );
+    }
+  }
+
+  // === Entity Management Methods ===
+
   spawnDarlings() {
-    const spawnChecks = [
+    const spawnRules = [
       { type: DarlingType.TTC, rate: CONFIG.SPAWN_RATES.TTC },
       { type: DarlingType.TTC_LANE_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.TTC_LANE_DEATHMACHINE },
       { type: DarlingType.ONCOMING_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.ONCOMING_DEATHMACHINE },
       { type: DarlingType.PARKED_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.PARKED_DEATHMACHINE },
-      { type: DarlingType.WANDERER, rate: CONFIG.SPAWN_RATES.WANDERER },
+      { type: DarlingType.WANDERER, rate: CONFIG.SPAWN_RATES.WANDERER }
     ];
 
-    spawnChecks.forEach(({ type, rate }) => {
+    spawnRules.forEach(({ type, rate }) => {
       if (Math.random() < rate) {
-        // if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
         const entity = this.spatialManager.spawnManager.spawnEntity(type);
         if (entity) {
           this.spatialManager.addEntityToSpatialManagementSystem(entity);
@@ -4110,123 +4121,152 @@ class LoserLane {
     });
   }
 
-  updateBike() {
-    const bikeEntity = new BaseEntity(
-      this.config,
-      {
-        // Get the initial lane from stateManager instead of state
-        position: new Position(this.stateManager.currentLane, CONFIG.GAME.CYCLIST_Y),
-      },
-      DarlingType.BIKE
-    );
+  // === Collision Methods ===
 
-    bikeEntity.width = DARLINGS.BIKE.width;
-    bikeEntity.height = DARLINGS.BIKE.height;
-    bikeEntity.art = DARLINGS.BIKE.art;
-    bikeEntity.color = STYLES.BIKE;
-    bikeEntity.behavior = new BikeBehavior(bikeEntity);
-
-    return bikeEntity;
-  }
-
-  // proxy method
-  togglePause() {
-    this.stateManager.togglePause();
-  }
   checkBikeCollisions() {
-    const bikeHitbox = {
-      x: this.stateManager.currentLane, // Use stateManager here
-      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y, // And here
-      width: DARLINGS.BIKE.width,
-      height: DARLINGS.BIKE.height,
-    };
-
-    const darlingsForCollision = {
-      darlings: Array.from(this.spatialManager.darlings).filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
-      parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
-    };
-
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.stateManager.isJumping); // And here
+    const bikeHitbox = this.getBikeHitbox();
+    const darlings = this.getDarlingsForCollision();
+    
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(
+      bikeHitbox, 
+      darlings, 
+      this.stateManager.isJumping
+    );
 
     if (collision) {
       this.die(collision);
     }
   }
 
-  die(reason) {
-    if (this.stateManager.state.isDead) return; // Restore the guard
-    this.stateManager.state.isPaused = true;
+  getBikeHitbox() {
+    return {
+      x: this.stateManager.currentLane,
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      width: DARLINGS.BIKE.width,
+      height: DARLINGS.BIKE.height
+    };
+  }
 
-    // Set up death state
+  getDarlingsForCollision() {
+    const allDarlings = Array.from(this.spatialManager.darlings);
+    return {
+      darlings: allDarlings.filter(e => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
+      parkedDeathMachines: allDarlings.filter(e => e.type === DarlingType.PARKED_DEATHMACHINE)
+    };
+  }
+
+  // === Game State Methods ===
+
+  die(reason) {
+    if (this.stateManager.state.isDead) return;
+    
+    this.setDeathState();
+    this.handleDeathEffects(reason);
+  }
+
+  setDeathState() {
+    this.stateManager.state.isPaused = true;
     this.stateManager.state.isDead = true;
     this.stateManager.state.deathState = {
       animation: 0,
       x: Math.round(this.stateManager.currentLane),
-      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
     };
-
-    // Get death message info
-    const messageInfo = this.stateManager.handleDeath(reason);
-
-    const gameScreen = document.getElementById("game-screen");
-    if (gameScreen) {
-      console.log("Adding death effects"); // Debug log
-      // Add effects
-      gameScreen.classList.add("screen-shake", "death-glitch-active");
-
-      // Add flash overlay
-      const flashOverlay = document.createElement("div");
-      flashOverlay.className = "death-flash";
-      document.body.appendChild(flashOverlay);
-
-      // Give more time for the glitch animation
-      setTimeout(() => {
-        console.log("Removing death effects"); // Debug log
-        gameScreen.classList.remove("screen-shake", "death-glitch-active");
-        flashOverlay.remove();
-
-        html2canvas(gameScreen).then((canvas) => {
-          generateSocialCardNoSS(canvas, reason, this.stateManager.state.score, messageInfo.message.funny, messageInfo.randomFace, this);
-        });
-      }, 1000);
-    }
   }
-  restart() {
-    console.log("\n=== Game Restart Initiated ===");
 
-    // Stop current game loop
-    if (this.frameId) {
-      cancelAnimationFrame(this.frameId);
-      this.frameId = null;
+  handleDeathEffects(reason) {
+    const gameScreen = document.getElementById("game-screen");
+    if (!gameScreen) return;
+
+    const messageInfo = this.stateManager.handleDeath(reason);
+    this.applyDeathVisualEffects(gameScreen, reason, messageInfo);
+  }
+
+  applyDeathVisualEffects(gameScreen, reason, messageInfo) {
+    gameScreen.classList.add("screen-shake", "death-glitch-active");
+    
+    const flashOverlay = document.createElement("div");
+    flashOverlay.className = "death-flash";
+    document.body.appendChild(flashOverlay);
+
+    setTimeout(() => {
+      gameScreen.classList.remove("screen-shake", "death-glitch-active");
+      flashOverlay.remove();
+
+      html2canvas(gameScreen).then(canvas => {
+        generateSocialCardNoSS(
+          canvas, 
+          reason, 
+          this.stateManager.state.score, 
+          messageInfo.message.funny, 
+          messageInfo.randomFace, 
+          this
+        );
+      });
+    }, 1000);
+  }
+
+  
+    restart() {
+      console.log("\n=== Game Restart Initiated ===");
+      
+      // 1. Stop the current game loop first
+      if (this.frameId) {
+        cancelAnimationFrame(this.frameId);
+        this.frameId = null;
+      }
+  
+      // 2. Reset audio
+      this.soundManager.resetAll();
+  
+      // 3. Reset static properties
+      Building.nextSpawnY = null;
+      Building.buildingManager = null;
+  
+      // 4. Clean up existing controls before creating new ones
+      if (this.controls) {
+        this.controls.cleanup();
+      }
+  
+      // 5. Wait a brief moment before reinitializing everything
+      setTimeout(() => {
+        // Reset game state
+        this.stateManager.restart();
+  
+        // Create new game systems
+        this.spatialManager = new SpatialManager(CONFIG);
+        this.spatialManager.setGame(this);
+        this.controls = new Controls(this);
+        this.settingsManager = new SettingsManager(this);
+        this.clusterManager = new VehicleClusterManager(CONFIG);
+  
+        // Initialize new world
+        this.initializeGameWorld();
+  
+        // Wait another brief moment before starting
+        setTimeout(() => {
+          this.start();
+        }, 50);  // Small delay before starting
+      }, 100);  // Small delay for cleanup
     }
+  
 
-    this.soundManager.resetAll();
-
-    // Reset static properties
+  resetStaticProperties() {
     Building.nextSpawnY = null;
     Building.buildingManager = null;
+  }
 
-    // Reset game state
+  reinitializeGame() {
     this.stateManager.restart();
-
-    // Clean up existing controls
-    if (this.controls) {
-      this.controls.cleanup();
-    }
-
-    // Create new game systems
     this.spatialManager = new SpatialManager(CONFIG);
     this.spatialManager.setGame(this);
     this.controls = new Controls(this);
     this.settingsManager = new SettingsManager(this);
     this.clusterManager = new VehicleClusterManager(CONFIG);
-
-    // Initialize new world
     this.initializeGameWorld();
-
-    // Start new game
-    this.start();
   }
+
+  // === Utility Methods ===
 
   addEventListenerWithTracking(element, type, handler, options = false) {
     element.addEventListener(type, handler, options);
@@ -4240,44 +4280,25 @@ class LoserLane {
     const gameScreen = document.getElementById("game-screen");
     if (!gameScreen) return;
 
-    const colors = ["#FF0000", "#000000", "#222"]; // Red flash sequence
+    const colors = ["#FF0000", "#000000", "#222"];
     let delay = 0;
 
-    colors.forEach((color) => {
-      setTimeout(() => {
-        gameScreen.style.backgroundColor = color;
-      }, delay);
-      delay += 100; // Adjust timing for each color switch
+    colors.forEach(color => {
+      setTimeout(() => gameScreen.style.backgroundColor = color, delay);
+      delay += 100;
     });
 
-    // Reset background color after the flash sequence
-    setTimeout(() => {
-      gameScreen.style.backgroundColor = ""; // Reset to default color
-    }, delay);
+    setTimeout(() => gameScreen.style.backgroundColor = "", delay);
   }
 
   cleanup() {
-    // const muteButton = document.getElementById("mute-button");
-    // if (muteButton) {
-    //   muteButton.removeEventListener("click", this.toggleMute);
-    // }
-
-    // // Remove keydown listener
-    // document.removeEventListener("keydown", this.keydownListener);
-
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
 
-    // Cleanup SoundManager
-    if (this.soundManager) {
-      this.soundManager.resetAll(); // Stop and reset all sounds
-    }
-
+    this.soundManager?.resetAll();
     this.stateManager.cleanup();
-    this.doubleJumpPending = false;
-
     this.spatialManager.cleanup();
     this.clusterManager.cleanup();
     this.renderGrid.clear();
@@ -4285,8 +4306,11 @@ class LoserLane {
     this.settingsManager.cleanup();
     this.tutorialSystem.cleanup();
 
-    // Reset timing
     this.lastFrameTime = performance.now();
+  }
+
+  togglePause() {
+    this.stateManager.togglePause();
   }
 }
 
