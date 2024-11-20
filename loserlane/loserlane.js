@@ -36,7 +36,7 @@ const CONFIG = {
     PARKED: 5,
     WANDERER: 3,
     BUILDING: 1,
-        TTC_TO_TTC: 90,
+    TTC_TO_TTC: 90,
 
     // TTC_TO_TTC: 20,
     TTC_TO_DEATHMACHINE: 15,
@@ -445,16 +445,22 @@ class GameRenderer {
   }
 
   render(stateManager, darlings, bike) {
-    // Changed state to stateManager
-    // Access state through stateManager
-    const state = stateManager.state; // Add this line
+    const state = stateManager.state;
 
-    if (state.isDead && state.deathState.animation >= 10) return;
+    // Only render death animation during first part of death sequence
+    if (state.isDead && state.deathState.animation >= 15) return; // Increased from 10 to 15
 
     this.renderGrid.clear();
     this.drawRoadFeatures();
-    this.drawBike(bike, state);
-    this.drawDarlings(darlings, state.isDead); // Pass isDead state to drawDarlings
+
+    // If dead, apply glitch effect to all entities
+    if (state.isDead) {
+      this.drawDarlings(darlings, true);
+      this.drawBike(bike, state);
+    } else {
+      this.drawDarlings(darlings, false);
+      this.drawBike(bike, state);
+    }
 
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
@@ -484,40 +490,57 @@ class GameRenderer {
   drawDarlings(darlings, isDying) {
     darlings.forEach((entity) => {
       if (entity.type !== DarlingType.BIKE) {
-        this.drawEntity(entity, isDying);
+        this.drawEntity(entity, { isDead: isDying });  // Pass an object with isDead property
       }
     });
   }
 
-  drawEntity(entity, isDying = false) {
+  drawEntity(entity, state) {
     if (!entity || !entity.art) return;
-  
-    if (entity.position.y + entity.height >= 0 && entity.position.y < this.config.GAME.HEIGHT) {
+
+    if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
+      const isDying = state.isDead;  // Now this will work correctly
+
       entity.art.forEach((line, i) => {
-        if (entity.position.y + i >= 0 && entity.position.y + i < this.config.GAME.HEIGHT) {
+        if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
-            if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < this.config.GAME.WIDTH) {
-              let effectClass = `entity ${entity.cssClass || ''}`;
+            if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
+              let effectClass = "entity ";
+              
+              // Add entity-specific classes
+              switch (entity.type) {
+                case DarlingType.TTC:
+                  effectClass += "TTC";
+                  break;
+                case DarlingType.TTC_LANE_DEATHMACHINE:
+                case DarlingType.ONCOMING_DEATHMACHINE:
+                  effectClass += "deathMachine";
+                  break;
+                case DarlingType.PARKED_DEATHMACHINE:
+                  effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "deathMachine";
+                  break;
+                case DarlingType.WANDERER:
+                  effectClass += "wanderer";
+                  break;
+                case DarlingType.BUILDING:
+                  effectClass += "building";
+                  break;
+              }
+
+              // Add death glitch classes if dying
               if (isDying) {
                 const isEdge = /[┌┐│╰╯]/.test(char);
-                const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
-                effectClass += ` ${glitchClass}`;
+                effectClass += ` char-glitch ${isEdge ? 'edge' : 'body'}`;
               }
-  
+
               const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-              this.renderGrid.updateCell(
-                Math.floor(entity.position.x + x),
-                Math.floor(entity.position.y + i),
-                wrappedChar,
-                entity.color
-              );
+              this.renderGrid.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
             }
           });
         }
       });
     }
-  }
-  
+}
 
   drawBike(bike, state) {
     // Update method signature
@@ -1759,11 +1782,7 @@ class VehicleClusterManager {
     this.clusters = new Map();
 
     // Initialize cluster settings for each vehicle type
-    [
-      DarlingType.TTC_LANE_DEATHMACHINE,
-      DarlingType.ONCOMING_DEATHMACHINE,
-      DarlingType.PARKED_DEATHMACHINE,
-    ].forEach((type) => {
+    [DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
       this.clusters.set(type, {
         active: false,
         vehiclesSpawned: 0,
@@ -1799,9 +1818,7 @@ class VehicleClusterManager {
     }
 
     // Use adjusted spawn rate during active cluster
-    const effectiveRate = cluster.active
-      ? baseSpawnRate * this.clusterConfig.clusterSpawnMultiplier
-      : baseSpawnRate;
+    const effectiveRate = cluster.active ? baseSpawnRate * this.clusterConfig.clusterSpawnMultiplier : baseSpawnRate;
 
     const shouldSpawn = Math.random() < effectiveRate;
 
@@ -1825,9 +1842,7 @@ class VehicleClusterManager {
     cluster.vehiclesSpawned = 0;
     cluster.targetSize =
       this.clusterConfig.minVehiclesInCluster +
-      Math.floor(
-        Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1)
-      );
+      Math.floor(Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1));
 
     // Optional: Log cluster start
     // console.log(`Starting cluster for ${entityType}:`, {
@@ -1863,12 +1878,7 @@ class VehicleClusterManager {
   cleanup() {
     this.clusters.clear();
     // Re-initialize clusters
-    [
-      DarlingType.TTC,
-      DarlingType.TTC_LANE_DEATHMACHINE,
-      DarlingType.ONCOMING_DEATHMACHINE,
-      DarlingType.PARKED_DEATHMACHINE,
-    ].forEach((type) => {
+    [DarlingType.TTC, DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
       this.clusters.set(type, {
         active: false,
         vehiclesSpawned: 0,
@@ -2584,7 +2594,7 @@ class CrossingBehavior extends EntityBehavior {
   convertToRegularWanderer() {
     this.entity.art = DARLINGS.WANDERER.DOWN.art;
     this.entity.position.x = this.targetX;
-    this.entity.cssClass = 'sidewalk-wanderer'; // Update CSS class
+    this.entity.cssClass = "sidewalk-wanderer"; // Update CSS class
     this.entity.behavior = new WandererBehavior(this.entity, false);
   }
 
@@ -2621,7 +2631,7 @@ class WandererBehavior extends EntityBehavior {
   update() {
     // Always move down at minimum
     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
-    
+
     // If position is available, take it
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
@@ -2633,21 +2643,15 @@ class WandererBehavior extends EntityBehavior {
 
   canMoveTo(position) {
     const nearbyDarlings = this.getNearbyDarlings();
-    return !nearbyDarlings.some(other => 
-      Math.abs(other.position.x - position.x) < 0.1 &&
-      Math.abs(other.position.y - position.y) < 1.5
-    );
+    return !nearbyDarlings.some((other) => Math.abs(other.position.x - position.x) < 0.1 && Math.abs(other.position.y - position.y) < 1.5);
   }
 
   getNearbyDarlings() {
     if (!this.entity.spatialManager) return [];
-    
+
     return this.entity.spatialManager.grid
       .getNearbyDarlings(this.entity.position, 2)
-      .filter(entity => 
-        entity !== this.entity && 
-        entity.type === DarlingType.WANDERER
-      );
+      .filter((entity) => entity !== this.entity && entity.type === DarlingType.WANDERER);
   }
 }
 
@@ -2884,7 +2888,7 @@ class Wanderer extends BaseEntity {
 
     this.color = `<span style='color: ${wandererColor}'>`;
 
-    this.cssClass = isTTCPassenger ? 'ttc-passenger' : 'sidewalk-wanderer';
+    this.cssClass = isTTCPassenger ? "ttc-passenger" : "sidewalk-wanderer";
 
     // Only modify spawn position for regular sidewalk wanderers
     if (!isTTCPassenger) {
@@ -4097,8 +4101,7 @@ class LoserLane {
 
     spawnChecks.forEach(({ type, rate }) => {
       if (Math.random() < rate) {
-
-      // if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
+        // if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
         const entity = this.spatialManager.spawnManager.spawnEntity(type);
         if (entity) {
           this.spatialManager.addEntityToSpatialManagementSystem(entity);
@@ -4151,53 +4154,50 @@ class LoserLane {
   }
 
   die(reason) {
-    if (this.stateManager.state.isDead) return;
-    // this.soundManager.play("collision");
-
-    const messageInfo = this.stateManager.handleDeath(reason); // Use state manager's handleDeath
-
-    // Handle visual effects
+    if (this.stateManager.state.isDead) return; // Restore the guard
+    this.stateManager.state.isPaused = true;
+  
+    // Set up death state
+    this.stateManager.state.isDead = true;
+    this.stateManager.state.deathState = {
+      animation: 0,
+      x: Math.round(this.stateManager.currentLane),
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+    };
+    
+    // Get death message info
+    const messageInfo = this.stateManager.handleDeath(reason);
+    
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
-      gameScreen.classList.add("screen-shake");
-
-      // Create game over overlay
-      const overlay = document.createElement("div");
-      overlay.className = "game-over";
-      document.body.appendChild(overlay);
-
-      // Clean up effects after animation
+      console.log("Adding death effects"); // Debug log
+      // Add effects
+      gameScreen.classList.add("screen-shake", "death-glitch-active");
+      
+      // Add flash overlay
+      const flashOverlay = document.createElement("div");
+      flashOverlay.className = "death-flash";
+      document.body.appendChild(flashOverlay);
+  
+      // Give more time for the glitch animation
       setTimeout(() => {
-        gameScreen.classList.remove("screen-shake");
-        overlay.remove();
-      }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-    }
-
-    // Call flashScreen for red flash effect
-    this.flashScreen();
-
-    setTimeout(() => {
-      const score = this.stateManager.state.score;
-      html2canvas(gameScreen)
-        .then((canvas) => {
-          this.stateManager.togglePause(); // Use state manager to pause
-          generateSocialCardNoSS(canvas, messageInfo.reason, score, messageInfo.message.funny, messageInfo.randomFace, this);
-        })
-        .catch((error) => {
-          console.error("Failed to capture screenshot:", error);
+        console.log("Removing death effects"); // Debug log
+        gameScreen.classList.remove("screen-shake", "death-glitch-active");
+        flashOverlay.remove();
+        
+        html2canvas(gameScreen).then((canvas) => {
+          generateSocialCardNoSS(
+            canvas,
+            reason,
+            this.stateManager.state.score,
+            messageInfo.message.funny,
+            messageInfo.randomFace,
+            this
+          );
         });
-    }, this.config.ANIMATIONS.SCREEN_SHAKE_DURATION);
-
-    // Restart game after death duration
-    setTimeout(() => {
-      const messageEl = document.getElementById("pregame-msg-box");
-      if (messageEl) {
-        messageEl.classList.remove("show-message");
-      }
-      this.restart();
-    }, this.config.ANIMATIONS.DEATH_DURATION);
+      }, 2500);
+    }
   }
-
   restart() {
     console.log("\n=== Game Restart Initiated ===");
 

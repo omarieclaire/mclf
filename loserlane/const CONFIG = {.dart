@@ -3237,6 +3237,8 @@ initializeparkedDeathMachines() {
 
               // Add death animation classes if dying
               if (isDying) {
+                      console.log("dying");
+
                 const isEdge = /[┌┐│╰╯]/.test(char);
                 const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
                 effectClass += ` ${glitchClass}`;

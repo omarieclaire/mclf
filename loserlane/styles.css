@@ -617,173 +617,15 @@ button:active {
   /* text-shadow: 0 0 1px rgba(255, 0, 0, 0.698); */
   animation: gentleWiggle 1s ease-in-out infinite;
 }
-
-/* Performance optimization */
+/* Base entity styling */
 .entity {
-  will-change: transform, text-shadow;
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
   backface-visibility: hidden;
 }
 
-/* Death animation keyframes */
-@keyframes deathExpand {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  30% {
-    transform: scale(1.5);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes deathRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(180deg);
-  }
-}
-
-@keyframes deathShake {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(-2px, 2px) rotate(-1deg);
-  }
-  50% {
-    transform: translate(2px, -2px) rotate(1deg);
-  }
-  75% {
-    transform: translate(-2px, -2px) rotate(-1deg);
-  }
-}
-
-@keyframes deathFlash {
-  0% {
-    text-shadow: 0 0 4px rgba(255, 0, 0, 0.8);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(255, 0, 0, 1);
-  }
-  100% {
-    text-shadow: 0 0 4px rgba(255, 0, 0, 0);
-  }
-}
-
-/* Death state class */
-.death-state {
-  display: inline-block;
-  animation: deathExpand 1.2s ease-out, deathRotate 1.2s ease-in, deathShake 0.6s ease-in-out, deathFlash 1.2s ease-in;
-  animation-fill-mode: forwards;
-  transform-origin: center;
-}
-
-/* Game over overlay effect */
-@keyframes gameOverPulse {
-  0%,
-  100% {
-    background-color: rgba(255, 0, 0, 0.2);
-  }
-  50% {
-    background-color: rgba(255, 0, 0, 0.3);
-  }
-}
-
-.game-over {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  animation: gameOverPulse 3s ease-in-out infinite;
-  z-index: 1000;
-}
-
-/* Screen shake on death */
-@keyframes screenShake {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(-5px, 5px);
-  }
-  50% {
-    transform: translate(5px, -5px);
-  }
-  75% {
-    transform: translate(-5px, -5px);
-  }
-}
-
-.screen-shake {
-  animation: screenShake 0.8s ease-in-out;
-}
-
-/* 
-/* social card stuff */
-
-
-
-
-
-/* Death glitch animation classes */
-.char-glitch {
-  display: inline-block !important;
-  animation: tilt 2.3s steps(1) infinite;
-}
-
-.char-glitch.edge {
-  animation-name: tiltEdge;
-}
-
-.char-glitch.body {
-  animation-name: tiltBody;
-}
-
-@keyframes tiltEdge {
-  0%,
-  5% {
-    transform: rotate(0deg);
-  }
-  10%,
-  90% {
-    transform: rotate(8deg);
-  }
-  95%,
-  100% {
-    transform: rotate(20deg);
-  }
-}
-
-@keyframes tiltBody {
-  0%,
-  5% {
-    transform: rotate(0deg);
-  }
-  10%,
-  90% {
-    transform: rotate(10deg);
-  }
-  95%,
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-
-
-
-
-
+/* Screen shake effect */
 @keyframes shake {
   10%, 90% { transform: translate3d(-1px, 0, 0); }
   20%, 80% { transform: translate3d(2px, 0, 0); }
@@ -791,16 +633,11 @@ button:active {
   40%, 60% { transform: translate3d(4px, 0, 0); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-
 .screen-shake {
   animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
+/* Death flash overlay */
 .death-flash {
   position: fixed;
   top: 0;
@@ -812,8 +649,40 @@ button:active {
   pointer-events: none;
 }
 
+/* Character glitch animations */
+.char-glitch {
+  display: inline-block !important;
+  animation: tilt 0.4s steps(1) 3;
+}
 
-.spacer {
-  color: rgba(0, 0, 0, 0.0);  /* completely transparent */
-  /* alternatively: color: #ffffff; if your background is white */
+.char-glitch.edge {
+  animation-name: tiltEdge;
+}
+
+.char-glitch.body {
+  animation-name: tiltBody;
+}
+
+@keyframes tiltEdge {
+  0%, 5% {
+    transform: rotate(0deg);
+  }
+  10%, 90% {
+    transform: rotate(8deg);
+  }
+  95%, 100% {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes tiltBody {
+  0%, 5% {
+    transform: rotate(0deg);
+  }
+  10%, 90% {
+    transform: rotate(10deg);
+  }
+  95%, 100% {
+    transform: rotate(0deg);
+  }
 }
