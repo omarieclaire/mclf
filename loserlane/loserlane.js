@@ -4134,6 +4134,8 @@ class LoserLane {
     );
 
     if (collision) {
+      // console.log(`uuuu $`);
+      
       this.die(collision);
     }
   }
