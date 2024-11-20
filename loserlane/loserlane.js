@@ -490,7 +490,7 @@ class GameRenderer {
   drawDarlings(darlings, isDying) {
     darlings.forEach((entity) => {
       if (entity.type !== DarlingType.BIKE) {
-        this.drawEntity(entity, { isDead: isDying });  // Pass an object with isDead property
+        this.drawEntity(entity, { isDead: isDying }); // Pass an object with isDead property
       }
     });
   }
@@ -499,14 +499,14 @@ class GameRenderer {
     if (!entity || !entity.art) return;
 
     if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-      const isDying = state.isDead;  // Now this will work correctly
+      const isDying = state.isDead; // Now this will work correctly
 
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
               let effectClass = "entity ";
-              
+
               // Add entity-specific classes
               switch (entity.type) {
                 case DarlingType.TTC:
@@ -530,7 +530,7 @@ class GameRenderer {
               // Add death glitch classes if dying
               if (isDying) {
                 const isEdge = /[┌┐│╰╯]/.test(char);
-                effectClass += ` char-glitch ${isEdge ? 'edge' : 'body'}`;
+                effectClass += ` char-glitch ${isEdge ? "edge" : "body"}`;
               }
 
               const wrappedChar = `<span class="${effectClass}">${char}</span>`;
@@ -540,7 +540,7 @@ class GameRenderer {
         }
       });
     }
-}
+  }
 
   drawBike(bike, state) {
     // Update method signature
@@ -4156,46 +4156,39 @@ class LoserLane {
   die(reason) {
     if (this.stateManager.state.isDead) return; // Restore the guard
     this.stateManager.state.isPaused = true;
-  
+
     // Set up death state
     this.stateManager.state.isDead = true;
     this.stateManager.state.deathState = {
       animation: 0,
       x: Math.round(this.stateManager.currentLane),
-      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
     };
-    
+
     // Get death message info
     const messageInfo = this.stateManager.handleDeath(reason);
-    
+
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
       console.log("Adding death effects"); // Debug log
       // Add effects
       gameScreen.classList.add("screen-shake", "death-glitch-active");
-      
+
       // Add flash overlay
       const flashOverlay = document.createElement("div");
       flashOverlay.className = "death-flash";
       document.body.appendChild(flashOverlay);
-  
+
       // Give more time for the glitch animation
       setTimeout(() => {
         console.log("Removing death effects"); // Debug log
         gameScreen.classList.remove("screen-shake", "death-glitch-active");
         flashOverlay.remove();
-        
+
         html2canvas(gameScreen).then((canvas) => {
-          generateSocialCardNoSS(
-            canvas,
-            reason,
-            this.stateManager.state.score,
-            messageInfo.message.funny,
-            messageInfo.randomFace,
-            this
-          );
+          generateSocialCardNoSS(canvas, reason, this.stateManager.state.score, messageInfo.message.funny, messageInfo.randomFace, this);
         });
-      }, 2500);
+      }, 1000);
     }
   }
   restart() {
