@@ -3466,7 +3466,8 @@ class KeyboardControls extends BaseControl {
 
 class TouchControls extends BaseControl {
   constructor(game) {
-    super(game); // Make sure to call super() first
+    super(game);
+    this.touchHandlers = new Map();
     this.setupTouchControls();
   }
 
@@ -3476,13 +3477,39 @@ class TouchControls extends BaseControl {
 
     if (!leftControl || !rightControl) return;
 
-    const handleTouch = (direction) => (e) => {
-      e.preventDefault();
-      this.handleInput(direction, performance.now());
-    };
+    // Store handlers so we can remove them later
+    const handleLeft = this.createTouchHandler("left");
+    const handleRight = this.createTouchHandler("right");
 
-    leftControl.addEventListener("touchstart", handleTouch("left"));
-    rightControl.addEventListener("touchstart", handleTouch("right"));
+    this.touchHandlers.set("left", handleLeft);
+    this.touchHandlers.set("right", handleRight);
+
+    // Add event listeners with tracking
+    this.addEventListenerWithTracking(leftControl, "touchstart", handleLeft);
+    this.addEventListenerWithTracking(rightControl, "touchstart", handleRight);
+  }
+
+  createTouchHandler(direction) {
+    let lastTouch = 0;
+    const TOUCH_DELAY = 100; // Minimum time between touches
+
+    return (e) => {
+      e.preventDefault();
+      const now = performance.now();
+      
+      // Prevent rapid-fire touches
+      if (now - lastTouch < TOUCH_DELAY) {
+        return;
+      }
+      
+      lastTouch = now;
+      this.handleInput(direction, now);
+    };
+  }
+
+  cleanup() {
+    super.cleanup();
+    this.touchHandlers.clear();
   }
 }
 
