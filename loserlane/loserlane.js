@@ -202,7 +202,7 @@ class SpatialManager {
   constructor(config) {
     this.config = config;
     // Initialize grid system for spatial partitioning
-    this.grid = new GridSystem(config);
+    this.grid = new SpatialGrid(config); // Use new name SpatialGrid
     // Handle collision detection and resolution between darlings
     this.collisionManager = new CollisionManager(this);
     // Manage entity movement and coordinate updates
@@ -266,52 +266,46 @@ class SpatialManager {
   getObstaclesOfASpecificType(entityType) {
     return Array.from(this.darlings).filter((entity) => entity.type === entityType);
   }
+  cleanup() {
+    this.darlings.clear();
+    this.grid = new SpatialGrid(this.config);
+    this.collisionManager = new CollisionManager(this);
+    this.movementCoordinator = new MovementCoordinator(this);
+    this.spawnManager = new SpawnManager(this, this.config);
+  }
 }
 // =========================================
-// GridSystem - Spatial Management
+// SpatialGrid - Spatial Management
 // =========================================
 // implements spatial partitioning for collision detection and proximity queries.
 // and divides the game world into a grid of cells and tracks which darlings are in each cell
-
-class GridSystem {
+// For game logic and spatial partitioning
+class SpatialGrid {
   constructor(config) {
     this.config = config;
-    // Define size of each grid cell - smaller cells are more precise but higher computational overhead
-    this.cellSize = 5;
-    // Map to store all occupied cells
-    // Key: String coordinate in format "x,y"
-    // Value: Set of entities in that cell
-    this.cells = new Map();
+    this.cellSize = 5; // Size of each grid cell for spatial partitioning
+    this.cells = new Map(); // Map to store entities in grid cells
   }
 
-  // Convert world coordinates to grid cell coordinates
-  // @returns {string} Unique key representing the cell coordinates
   getCellKey(worldXCoords, worldYCoords) {
-    // Integer division to get cell coordinates
     const cellX = Math.floor(worldXCoords / this.cellSize);
     const cellY = Math.floor(worldYCoords / this.cellSize);
-    return `${cellX},${cellY}`; // Create unique string key for the cell
+    return `${cellX},${cellY}`;
   }
 
   addDarlingToItsGridCell(darlingToAdd) {
-    // Get the cell coordinates for the entity's position
     const key = this.getCellKey(darlingToAdd.position.x, darlingToAdd.position.y);
-    // Create a new Set for this cell if it doesn't exist
     if (!this.cells.has(key)) {
       this.cells.set(key, new Set());
     }
-    // Add the entity to its cell
     this.cells.get(key).add(darlingToAdd);
   }
 
   removeDarlingFromItsGridCell(darlingToRemove) {
     const key = this.getCellKey(darlingToRemove.position.x, darlingToRemove.position.y);
     const cell = this.cells.get(key);
-
     if (cell) {
-      // Remove entity from its cell
       cell.delete(darlingToRemove);
-      // If cell is empty, remove it from the grid entirely
       if (cell.size === 0) {
         this.cells.delete(key);
       }
@@ -322,11 +316,8 @@ class GridSystem {
     const oldKey = this.getCellKey(oldPos.x, oldPos.y);
     const newKey = this.getCellKey(newPos.x, newPos.y);
 
-    // Only update if darling has moved to a different cell
     if (oldKey !== newKey) {
-      // Remove from old cell
       this.cells.get(oldKey)?.delete(theDarlingThatMoved);
-      // Create new cell if needed and add entity
       if (!this.cells.has(newKey)) {
         this.cells.set(newKey, new Set());
       }
@@ -334,26 +325,17 @@ class GridSystem {
     }
   }
 
-  // Find all darlings within a specified radius of a position
-  // @returns {Array} Array of entities within the specified radius
   getNearbyDarlings(centerPositionToSearchAround, radiusInWorldUnits) {
     const nearbyDarlings = new Set();
-
-    // Convert radius to cell units (rounded up)
     const cellRadius = Math.ceil(radiusInWorldUnits / this.cellSize);
-
-    // Calculate center cell coordinates
     const centerCellX = Math.floor(centerPositionToSearchAround.x / this.cellSize);
     const centerCellY = Math.floor(centerPositionToSearchAround.y / this.cellSize);
 
-    // Check all cells within the cell radius
     for (let dx = -cellRadius; dx <= cellRadius; dx++) {
       for (let dy = -cellRadius; dy <= cellRadius; dy++) {
         const key = `${centerCellX + dx},${centerCellY + dy}`;
         const cell = this.cells.get(key);
-
         if (cell) {
-          // For each entity in the cell, check if it's within the actual radius
           cell.forEach((entity) => {
             if (entity.position.distanceTo(centerPositionToSearchAround) <= radiusInWorldUnits) {
               nearbyDarlings.add(entity);
@@ -363,6 +345,252 @@ class GridSystem {
       }
     }
     return Array.from(nearbyDarlings);
+  }
+}
+
+// =========================================
+// RenderGrid - rendering
+// =========================================
+class RenderGrid {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+    this.grid = Array(height)
+      .fill()
+      .map(() =>
+        Array(width)
+          .fill()
+          .map(() => ({
+            content: " ",
+            style: null,
+            dirty: true,
+          }))
+      );
+    this.activeRegions = new Set();
+  }
+
+  clear() {
+    this.activeRegions.forEach((key) => {
+      const [x, y] = key.split(",").map(Number);
+      this.grid[y][x] = {
+        content: " ",
+        style: null,
+        dirty: false,
+      };
+    });
+    this.activeRegions.clear();
+  }
+
+  updateCell(x, y, content, style = null) {
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
+
+    const cell = this.grid[y][x];
+    if (cell.content !== content || cell.style !== style) {
+      cell.content = content;
+      cell.style = style;
+      cell.dirty = true;
+      this.activeRegions.add(`${x},${y}`);
+    }
+  }
+
+  render() {
+    let output = [];
+    let currentRow = [];
+    let lastStyle = null;
+
+    for (let y = 0; y < this.height; y++) {
+      currentRow = [];
+      for (let x = 0; x < this.width; x++) {
+        const cell = this.grid[y][x];
+        if (cell.style !== lastStyle) {
+          if (lastStyle !== null) currentRow.push(STYLES.RESET);
+          if (cell.style !== null) currentRow.push(cell.style);
+          lastStyle = cell.style;
+        }
+        currentRow.push(cell.content);
+      }
+      if (lastStyle !== null) currentRow.push(STYLES.RESET);
+      output.push(currentRow.join(""));
+    }
+    return output.join("\n");
+  }
+
+  getActiveCharacters() {
+    const activeChars = [];
+    this.activeRegions.forEach((key) => {
+      const [x, y] = key.split(",").map(Number);
+      const cell = this.grid[y][x];
+      if (cell.content !== " ") {
+        activeChars.push({
+          x,
+          y,
+          content: cell.content,
+          style: cell.style,
+        });
+      }
+    });
+    return activeChars;
+  }
+}
+
+// =========================================
+// GameRenderer - rendering stuff in the game!
+// =========================================
+class GameRenderer {
+  constructor(config, renderGrid) {
+    this.config = config;
+    this.renderGrid = renderGrid;
+  }
+
+  render(stateManager, darlings, bike) {
+    // Changed state to stateManager
+    // Access state through stateManager
+    const state = stateManager.state; // Add this line
+
+    if (state.isDead && state.deathState.animation >= 10) return;
+
+    this.renderGrid.clear();
+    this.drawRoadFeatures();
+    this.drawBike(bike, state);
+    this.drawDarlings(darlings, state.isDead); // Pass isDead state to drawDarlings
+
+    const gameScreen = document.getElementById("game-screen");
+    if (gameScreen) {
+      gameScreen.innerHTML = this.renderGrid.render();
+    }
+  }
+
+  // Update other methods to handle state correctly
+
+  drawRoadFeatures() {
+    for (let y = 0; y < this.config.GAME.HEIGHT; y++) {
+      this.renderGrid.updateCell(this.config.LANES.DIVIDER, y, "║", STYLES.TRAFFIC);
+      this.renderGrid.updateCell(this.config.LANES.DIVIDER + 1, y, "║", STYLES.TRAFFIC);
+      this.renderGrid.updateCell(this.config.LANES.TRACKS + 1, y, "║", STYLES.TRACKS);
+      this.renderGrid.updateCell(this.config.LANES.TRACKS + 5, y, "║", STYLES.TRACKS);
+
+      if (y % 3 === 0) {
+        this.renderGrid.updateCell(this.config.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
+      }
+
+      for (let x = this.config.LANES.SIDEWALK; x < this.config.LANES.BUILDINGS; x++) {
+        this.renderGrid.updateCell(x, y, " ", STYLES.SIDEWALK);
+      }
+    }
+  }
+
+  drawDarlings(darlings, isDying) {
+    darlings.forEach((entity) => {
+      if (entity.type !== DarlingType.BIKE) {
+        this.drawEntity(entity, isDying);
+      }
+    });
+  }
+
+  drawEntity(entity, isDying = false) {
+    if (!entity || !entity.art) return;
+
+    if (entity.position.y + entity.height >= 0 && entity.position.y < this.config.GAME.HEIGHT) {
+      entity.art.forEach((line, i) => {
+        if (entity.position.y + i >= 0 && entity.position.y + i < this.config.GAME.HEIGHT) {
+          line.split("").forEach((char, x) => {
+            if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < this.config.GAME.WIDTH) {
+              let effectClass = "entity ";
+              switch (entity.type) {
+                case DarlingType.TTC:
+                  effectClass += "TTC";
+                  break;
+                case DarlingType.TTC_LANE_DEATHMACHINE:
+                case DarlingType.ONCOMING_DEATHMACHINE:
+                  effectClass += "deathMachine";
+                  break;
+                case DarlingType.PARKED_DEATHMACHINE:
+                  effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "deathMachine";
+                  break;
+                case DarlingType.WANDERER:
+                  effectClass += "wanderer";
+                  break;
+                case DarlingType.BUILDING:
+                  effectClass += "building";
+                  break;
+              }
+
+              if (isDying) {
+                const isEdge = /[┌┐│╰╯]/.test(char);
+                const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
+                effectClass += ` ${glitchClass}`;
+              }
+
+              const wrappedChar = `<span class="${effectClass}">${char}</span>`;
+              this.renderGrid.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  drawBike(bike, state) {
+    // Update method signature
+    if (state.isDead && state.deathState.animation < 15) {
+      this.drawDeathAnimation(state.deathState);
+    } else if (!state.isDead) {
+      this.drawLiveBike(bike, state.isJumping);
+    }
+  }
+
+  drawDeathAnimation(deathState) {
+    const frameIndex = Math.min(4, Math.floor(deathState.animation / 3));
+    const frames = Object.values(EXPLOSION_FRAMES);
+    const currentFrame = frames[frameIndex];
+    const currentColor = EXPLOSION_COLOURS[Math.floor(Math.random() * EXPLOSION_COLOURS.length)];
+
+    currentFrame.forEach((line, i) => {
+      line.split("").forEach((char, x) => {
+        const deathY = deathState.y + i - 1;
+        const deathX = deathState.x + x - 2;
+
+        if (deathY < this.config.GAME.HEIGHT && deathY >= 0 && deathX < this.config.GAME.WIDTH && deathX >= 0 && char !== " ") {
+          const animatedChar = `<span class="death-particle">${char}</span>`;
+          this.renderGrid.updateCell(deathX, deathY, animatedChar, currentColor);
+        }
+      });
+    });
+
+    this.drawDeathParticles(deathState);
+  }
+
+  drawLiveBike(bike, isJumping) {
+    const bikeY = isJumping ? this.config.GAME.CYCLIST_Y - 1 : this.config.GAME.CYCLIST_Y;
+    DARLINGS.BIKE.art.forEach((line, i) => {
+      line.split("").forEach((char, x) => {
+        if (char !== " ") {
+          const gridX = Math.round(bike.position.x + x);
+          if (gridX >= 0 && gridX < this.config.GAME.WIDTH) {
+            const bikeChar = `<span class="bike">${char}</span>`;
+            this.renderGrid.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
+          }
+        }
+      });
+    });
+  }
+
+  drawDeathParticles(deathState) {
+    const particleChars = ["", "⚡", "⚡"];
+    const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, deathState.animation * 2);
+
+    for (let i = 0; i < numParticles; i++) {
+      const angle = (Math.PI * 2 * i) / numParticles;
+      const radius = deathState.animation / 2 + Math.random() * this.config.PARTICLES.PARTICLE_SPREAD;
+      const x = Math.round(deathState.x + Math.cos(angle) * radius);
+      const y = Math.round(deathState.y + Math.sin(angle) * radius);
+
+      if (y < this.config.GAME.HEIGHT && y >= 0 && x < this.config.GAME.WIDTH && x >= 0) {
+        const char = particleChars[Math.floor(Math.random() * particleChars.length)];
+        const particleColor = EXPLOSION_COLOURS[Math.floor(Math.random() * EXPLOSION_COLOURS.length)];
+        this.renderGrid.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
+      }
+    }
   }
 }
 
@@ -1632,6 +1860,19 @@ class VehicleClusterManager {
   getClusterInfo(entityType) {
     return this.clusters.get(entityType);
   }
+
+  cleanup() {
+    this.clusters.clear();
+    // Re-initialize clusters
+    [DarlingType.TTC, DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
+      this.clusters.set(type, {
+        active: false,
+        vehiclesSpawned: 0,
+        targetSize: 0,
+        gapTimer: 0,
+      });
+    });
+  }
 }
 // =========================================
 // =========================================
@@ -2834,116 +3075,170 @@ class GameState {
   }
 }
 
-// =========================================
-// OptimizedGridSystem - Visual Rendering Grid
-// =========================================
-class OptimizedGridSystem {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
-    // 2D array representing the game screen, each cell contains:
-    // - content: The character to display
-    // - style: CSS styling/color information
-    // - dirty: Whether the cell needs redrawing
-    this.grid = Array(height)
-      .fill()
-      .map(() =>
-        Array(width)
-          .fill()
-          .map(() => ({
-            content: " ",
-            style: null,
-            dirty: true,
-          }))
-      );
-    // Track which cells need updating for optimization
-    this.dirtyRegions = new Set();
+class GameStateManager {
+  constructor(config) {
+    this.config = config;
+    this.state = new GameState(config);
+    this.state.currentLane = config.LANES.BIKE; // Make sure initial lane is set
+
+    this.score = 0;
+    this.tutorialComplete = false;
   }
 
-  // Mark a rectangular region as needing redraw
-  markRegionDirty(x1, y1, x2, y2) {
-    for (let y = Math.max(0, Math.floor(y1)); y < Math.min(this.height, Math.ceil(y2)); y++) {
-      for (let x = Math.max(0, Math.floor(x1)); x < Math.min(this.width, Math.ceil(x2)); x++) {
-        this.grid[y][x].dirty = true;
-        this.dirtyRegions.add(`${x},${y}`);
-      }
+  start() {
+    if (this.state.isPlaying) return false;
+
+    const messageBox = document.getElementById("pregame-msg-box");
+    if (messageBox) {
+      messageBox.style.display = "none";
+    }
+
+    this.state.isPlaying = true;
+    return true;
+  }
+
+  update() {
+    if (this.state.isDead) {
+      return this.state.updateDeathAnimation();
+    }
+
+    this.state.incrementScore();
+    this.state.updateSpeed();
+    this.updateScoreDisplay();
+    return false;
+  }
+
+  togglePause() {
+    this.state.isPaused = !this.state.isPaused;
+
+    const messageBox = document.getElementById("pregame-msg-box");
+    if (messageBox) {
+      messageBox.style.display = this.state.isPaused ? "block" : "none";
+      messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
     }
   }
 
-  // Update a single cell's content and style
-  updateCell(x, y, content, style = null) {
-    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
-
-    const cell = this.grid[y][x];
-    // Only mark as dirty if content or style actually changed
-    if (cell.content !== content || cell.style !== style) {
-      cell.content = content;
-      cell.style = style;
-      cell.dirty = true;
-      this.dirtyRegions.add(`${x},${y}`);
+  updateScoreDisplay() {
+    const scoreElement = document.getElementById("time-alive");
+    if (scoreElement) {
+      scoreElement.textContent = `STAY ALIVE: ${this.state.score}`;
     }
   }
 
-  // Reset dirty cells to empty state
-  clear() {
-    this.dirtyRegions.forEach((key) => {
-      const [x, y] = key.split(",").map(Number);
-      this.grid[y][x] = {
-        content: " ",
-        style: null,
-        dirty: false,
+  handleDeath(reason) {
+    this.state.isDead = true;
+
+    // Store the death position using the current player position
+    this.state.deathState = {
+      animation: 0,
+      x: Math.round(this.state.currentLane),
+      y: this.state.isJumping ? this.config.GAME.CYCLIST_Y - 1 : this.config.GAME.CYCLIST_Y,
+      reason: reason,
+      frameCounter: 0,
+      colorIndex: 0,
+    };
+
+    return this.showDeathMessage(reason);
+  }
+
+  getRandomDeathMessage(type) {
+    const messages = MESSAGES.DEATH[type];
+    if (!messages?.length) {
+      console.log(`oops no death message ${type}`);
+      return {
+        reason: "X X!",
+        funny: "Sometimes things just happen",
       };
-    });
-    this.dirtyRegions.clear();
+    }
+    return messages[Math.floor(Math.random() * messages.length)];
   }
 
-  // Convert grid to HTML string for rendering
-  render() {
-    let output = [];
-    let currentRow = [];
-    let lastStyle = null;
+  showDeathMessage(reason) {
+    const messageEl = document.getElementById("pregame-msg-box");
+    if (!messageEl) return;
 
-    for (let y = 0; y < this.height; y++) {
-      currentRow = [];
-      for (let x = 0; x < this.width; x++) {
-        const cell = this.grid[y][x];
-        // Only add style tags when style changes
-        if (cell.style !== lastStyle) {
-          if (lastStyle !== null) currentRow.push(STYLES.RESET);
-          if (cell.style !== null) currentRow.push(cell.style);
-          lastStyle = cell.style;
-        }
-        currentRow.push(cell.content);
-      }
-      if (lastStyle !== null) currentRow.push(STYLES.RESET);
-      output.push(currentRow.join(""));
-    }
-    return output.join("\n");
+    const message = this.getRandomDeathMessage(reason);
+    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
+
+    messageEl.innerHTML = `
+      <p>${message.funny}</p>
+      <span class="cute-death-face">${randomFace}</span>
+    `;
+    messageEl.style.display = "block";
+
+    return { reason, message, randomFace };
   }
 
-  /**
-   * Get all active characters and their styles from the grid
-   * @returns {Array<{x: number, y: number, content: string, style: string|null}>}
-   */
-  getActiveCharacters() {
-    const activeChars = [];
+  reset() {
+    this.state = new GameState(this.config);
+    const messageBox = document.getElementById("pregame-msg-box");
+    if (messageBox) {
+      messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
+    }
+  }
 
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        const cell = this.grid[y][x];
-        // Include any cell that isn't an empty space
-        if (cell.content !== " ") {
-          activeChars.push({
-            x,
-            y,
-            content: cell.content,
-            style: cell.style,
-          });
-        }
-      }
+  moveBike(direction) {
+    if (this.state.isDead || !this.state.isPlaying) return false;
+
+    const moveAmount = direction === "left" ? -1 : 1;
+    const newLane = Math.floor(this.state.currentLane + moveAmount);
+
+    // Update position with bounds checking
+    this.state.currentLane = Math.max(this.config.LANES.ONCOMING, Math.min(newLane, this.config.LANES.BUILDINGS - 1));
+
+    return true;
+  }
+
+  handleJump(direction) {
+    if (this.state.isJumping) return false;
+
+    const moveAmount = this.config.MOVEMENT.JUMP_AMOUNT;
+    if (direction === "left") {
+      this.state.currentLane = Math.max(this.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
+    } else {
+      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, this.config.LANES.BUILDINGS - 1);
     }
 
-    return activeChars;
+    this.state.isJumping = true;
+    setTimeout(() => {
+      this.state.isJumping = false;
+    }, this.config.MOVEMENT.JUMP_DURATION);
+
+    return true;
+  }
+
+  get isPaused() {
+    return this.state.isPaused;
+  }
+
+  get isPlaying() {
+    return this.state.isPlaying;
+  }
+
+  get isDead() {
+    return this.state.isDead;
+  }
+
+  get currentLane() {
+    return this.state.currentLane;
+  }
+
+  get isJumping() {
+    return this.state.isJumping;
+  }
+  restart() {
+    // Only handle game state reset
+    this.state = new GameState(this.config);
+    this.doubleJumpPending = false;  // Add this for extra safety
+    this.state.currentLane = this.config.LANES.BIKE;
+    this.score = 0;
+    this.tutorialComplete = false;
+  }
+
+  cleanup() {
+    this.state = new GameState(this.config);
+    this.score = 0;
+    this.tutorialComplete = false;
   }
 }
 
@@ -2960,34 +3255,14 @@ class BaseControl {
     this.game = game;
     this.config = game.config;
     this.eventListeners = new Map();
-    // Add timing tracking to base class since both controls need it
     this.lastInput = {
       left: 0,
       right: 0,
     };
-    this.inputStartPosition = null; // Track starting position for both controls
+    this.inputStartPosition = null;
   }
 
-  // Handle the input consistently for both keyboard and touch
-  handleInput(direction, now) {
-    if (!this.game.state?.isPlaying) return;
-
-    // If we're in an immunity window AND on a track, do a jump
-    if (
-      this.game.doubleJumpPending &&
-      (this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || this.game.state.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
-    ) {
-      console.log("Second tap during immunity - jumping!", {
-        currentLane: this.game.state.currentLane,
-      });
-      this.game.handleJump(direction);
-    } else {
-      console.log("Regular move", {
-        currentLane: this.game.state.currentLane,
-      });
-      this.game.movePlayer(direction);
-    }
-  }
+  // Add this method to BaseControl
   addEventListenerWithTracking(element, type, handler, options = false) {
     element.addEventListener(type, handler, options);
     if (!this.eventListeners.has(element)) {
@@ -3004,11 +3279,74 @@ class BaseControl {
     });
     this.eventListeners.clear();
   }
+
+  handleInput(direction, now) {
+    if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
+      this.game.tutorialSystem.handleMove(direction);
+      return;
+    }
+
+    if (!this.game.stateManager.isPlaying) return;
+
+    // Reset any double jump/immunity flags when moving normally
+    this.game.doubleJumpPending = false;  // Add this
+
+    if (
+      this.game.doubleJumpPending &&
+      (this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
+       this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
+    ) {
+      this.game.handleJump(direction);
+    } else {
+      this.game.movePlayer(direction);
+    }
+  }
+}
+
+class KeyboardControls extends BaseControl {
+  constructor(game) {
+    super(game); // Make sure to call super() first
+    this.setupKeyboardControls();
+  }
+
+  setupKeyboardControls() {
+    this.addEventListenerWithTracking(document, "keydown", (e) => {
+      if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
+        if (e.key === "ArrowLeft") {
+          this.game.tutorialSystem.handleMove("left");
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          this.game.tutorialSystem.handleMove("right");
+          return;
+        }
+      }
+
+      if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
+        if (e.key === " " || e.key === "Spacebar") {
+          this.game.start();
+          document.getElementById("pregame-msg-box").style.display = "none";
+          let gameInfoContainer = document.getElementById("game-info-container");
+          gameInfoContainer.style.opacity = "1";
+          gameInfoContainer.style.visibility = "visible";
+        }
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        this.handleInput("left", performance.now());
+      } else if (e.key === "ArrowRight") {
+        this.handleInput("right", performance.now());
+      } else if (e.key === "p" || e.key === "P") {
+        this.game.stateManager.togglePause();
+      }
+    });
+  }
 }
 
 class TouchControls extends BaseControl {
   constructor(game) {
-    super(game);
+    super(game); // Make sure to call super() first
     this.setupTouchControls();
   }
 
@@ -3020,15 +3358,6 @@ class TouchControls extends BaseControl {
 
     const handleTouch = (direction) => (e) => {
       e.preventDefault();
-
-      // Handle tutorial mode inputs
-      if (!this.game.state.isPlaying && !this.game.state.tutorialComplete) {
-        // console.log(`Tutorial ${direction} touch detected`);
-        this.game.tutorialSystem.handleMove(direction);
-        return;
-      }
-
-      // Regular game handling
       this.handleInput(direction, performance.now());
     };
 
@@ -3037,58 +3366,9 @@ class TouchControls extends BaseControl {
   }
 }
 
-class KeyboardControls extends BaseControl {
-  constructor(game) {
-    super(game);
-    this.setupKeyboardControls();
-  }
-
-  setupKeyboardControls() {
-    this.addEventListenerWithTracking(document, "keydown", (e) => {
-      // Handle tutorial mode inputs
-      if (!this.game.state.isPlaying && !this.game.state.tutorialComplete) {
-        if (e.key === "ArrowLeft") {
-          // console.log("Tutorial left key pressed");
-          this.game.tutorialSystem.handleMove("left");
-          return;
-        }
-        if (e.key === "ArrowRight") {
-          // console.log("Tutorial right key pressed");
-          this.game.tutorialSystem.handleMove("right");
-          return;
-        }
-      }
-
-      // Check for spacebar start after tutorial complete
-      if (!this.game.state.isPlaying && this.game.state.tutorialComplete) {
-        if (e.key === " " || e.key === "Spacebar") {
-          // console.log("Starting game via spacebar");
-          this.game.start();
-          document.getElementById("pregame-msg-box").style.display = "none";
-          let gameInfoContainer = document.getElementById("game-info-container");
-          gameInfoContainer.style.opacity = "1";
-          gameInfoContainer.style.visibility = "visible";
-
-          // this.game.controlsDiv.style.opacity = "1";
-        }
-        return;
-      }
-
-      // Regular game controls
-      if (e.key === "ArrowLeft") {
-        this.handleInput("left", performance.now());
-      } else if (e.key === "ArrowRight") {
-        this.handleInput("right", performance.now());
-      } else if (e.key === "p" || e.key === "P") {
-        this.game.togglePause();
-      }
-    });
-  }
-}
-
 class UIControls extends BaseControl {
   constructor(game) {
-    super(game);
+    super(game); // Make sure we call super first
     this.setupClickHandler();
     this.setupInfoButton();
   }
@@ -3111,7 +3391,8 @@ class UIControls extends BaseControl {
           return;
         }
 
-        if (!this.game.state.isPlaying && this.game.state.tutorialComplete) {
+        // Update this line to use stateManager
+        if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
           let titleBox = document.getElementById("game-info-container");
           if (titleBox) {
             titleBox.style.width = this.config.GAME.WIDTH;
@@ -3309,7 +3590,7 @@ class TutorialSystem {
     }, 1500);
 
     // Add event listeners
-    this.addControlListeners();
+    // this.addControlListeners();
     // console.log("✅ Tutorial initialization complete");
   }
 
@@ -3463,7 +3744,8 @@ class TutorialSystem {
     }, 500); // Wait for bike fade-out
 
     // Set tutorial complete flag
-    this.game.state.tutorialComplete = true;
+    this.game.tutorialComplete = true;
+    this.game.stateManager.tutorialComplete = true;
   }
 
   cleanup() {
@@ -3481,7 +3763,7 @@ class LoserLane {
   constructor() {
     // === Core Game State ===
     this.config = CONFIG;
-    this.state = new GameState(this.config);
+    // this.state = new GameState(this.config);
     this.eventListeners = new Map(); // Add this for event tracking
 
     // === Game System Flags ===
@@ -3491,9 +3773,14 @@ class LoserLane {
     this.frameId = null;
 
     // === Core Systems ===
+    this.stateManager = new GameStateManager(this.config);
+    this.tutorialComplete = false;
+    this.tutorialSystem = new TutorialSystem(this);
+
     this.spatialManager = new SpatialManager(this.config);
     this.spatialManager.setGame(this);
-    this.gridSystem = new OptimizedGridSystem(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
+    this.renderGrid = new RenderGrid(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
+    this.renderer = new GameRenderer(this.config, this.renderGrid);
 
     // === Timing Systems ===
     this.initialLastMove = performance.now();
@@ -3501,10 +3788,6 @@ class LoserLane {
 
     // === Game Components ===
     this.initializeGameComponents();
-
-    this.tutorialComplete = false;
-
-    this.tutorialSystem = new TutorialSystem(this);
   }
 
   initializeGameComponents() {
@@ -3586,113 +3869,66 @@ class LoserLane {
    * Main game update function called on each animation frame
    */
 
+  render() {
+    // Pass stateManager instead of state
+    this.renderer.render(this.stateManager, this.spatialManager.darlings, this.bike);
+  }
+
+  movePlayer(direction) {
+    if (this.stateManager.moveBike(direction)) {
+      this.updateBikePosition();
+    }
+  }
+
+  // Replace handleJump
+  handleJump(direction) {
+    if (this.stateManager.handleJump(direction)) {
+      this.updateBikePosition();
+    }
+  }
+
+  // Update updateBikePosition
+  updateBikePosition() {
+    if (this.bike) {
+      this.bike.position = new Position(
+        this.stateManager.currentLane,
+        this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+      );
+    }
+  }
+
+  // Update start
+  start() {
+    if (this.stateManager.start()) {
+      this.lastFrameTime = performance.now();
+      this.frameId = requestAnimationFrame((t) => this.update(t));
+    }
+  }
+
+  // Update update method
   update(timestamp) {
-    if (!timestamp || this.state.isPaused) {
+    if (!timestamp || this.stateManager.isPaused) {
       this.frameId = requestAnimationFrame((t) => this.update(t));
       return;
     }
 
-    // Regular game update at fixed interval
     const deltaTime = timestamp - this.lastFrameTime;
-    if (deltaTime >= this.state.speed) {
+    if (deltaTime >= this.stateManager.state.speed) {
       this.lastFrameTime = timestamp;
 
-      if (this.state.isDead) {
-        if (this.state.updateDeathAnimation()) {
-          this.cleanup();
-          return;
-        }
-      } else {
-        // Update game state
-        this.spatialManager.update();
-        this.spawnDarlings();
-        this.state.incrementScore();
-        this.state.updateSpeed();
-        this.updateScoreDisplay();
+      if (this.stateManager.update()) {
+        this.cleanup();
+        return;
       }
+
+      this.spatialManager.update();
+      this.updateBikePosition();
+      this.spawnDarlings();
+      this.checkBikeCollisions();
     }
 
-    // Always update and render bike position
     this.render();
-
     this.frameId = requestAnimationFrame((t) => this.update(t));
-  }
-
-  render() {
-    if (this.state.isDead && this.state.deathState.animation >= 10) return;
-
-    this.gridSystem.clear();
-    this.drawRoadFeatures();
-    this.drawBike();
-    this.drawDarlings();
-
-    const gameScreen = document.getElementById("game-screen");
-    if (gameScreen) {
-      gameScreen.innerHTML = this.gridSystem.render();
-    }
-  }
-
-  // 3. Player control methods (movePlayer, handleJump)
-
-  movePlayer(direction) {
-    if (this.state.isDead || !this.state.isPlaying) return;
-
-    // console.log("\n=== Move Player Called ===");
-    // console.log("Current state:", {
-    //   currentLane: this.state.currentLane,
-    //   direction: direction,
-    //   isJumping: this.state.isJumping,
-    //   doubleJumpPending: this.doubleJumpPending,
-    // });
-
-    const moveAmount = direction === "left" ? -1 : 1;
-    const newLane = Math.floor(this.state.currentLane + moveAmount);
-
-    // console.log("Calculated move:", {
-    //   moveAmount,
-    //   newLane,
-    //   currentLane: this.state.currentLane,
-    //   delta: Math.abs(newLane - this.state.currentLane),
-    // });
-
-    // Update position
-    this.state.currentLane = Math.max(CONFIG.LANES.ONCOMING, Math.min(newLane, CONFIG.LANES.BUILDINGS - 1));
-
-    // console.log("After move:", {
-    //   finalLane: this.state.currentLane,
-    //   totalMove: Math.abs(this.state.currentLane - newLane),
-    // });
-
-    this.updateBikePosition();
-  }
-  handleJump(direction) {
-    // Don't allow new jumps while already jumping
-    if (this.state.isJumping) {
-      return;
-    }
-
-    // Move bike
-    const moveAmount = CONFIG.MOVEMENT.JUMP_AMOUNT;
-    if (direction === "left") {
-      this.state.currentLane = Math.max(this.state.currentLane - moveAmount, CONFIG.LANES.ONCOMING);
-    } else {
-      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, CONFIG.LANES.BUILDINGS - 1);
-    }
-
-    // Start jump
-    this.state.isJumping = true;
-
-    // End jump after duration
-    setTimeout(() => {
-      this.state.isJumping = false;
-    }, CONFIG.MOVEMENT.JUMP_DURATION);
-  }
-
-  updateBikePosition() {
-    if (this.bike) {
-      // Add check to ensure bike exists
-      this.bike.position = new Position(this.state.currentLane, this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y);
-    }
   }
 
   // 4. Entity management methods (spawnDarlings, updateBike)
@@ -3706,21 +3942,11 @@ class LoserLane {
     ];
 
     spawnChecks.forEach(({ type, rate }) => {
-      // if (type === DarlingType.WANDERER) {
-      //   // Handle wanderer spawning normally
-      //   if (Math.random() < rate) {
-      //     const entity = this.spatialManager.spawnManager.spawnEntity(type);
-      //     if (entity) {
-      //       this.spatialManager.addEntityToSpatialManagementSystem(entity);
-      //     }
-      //   }
-      // } else {
-        // Use cluster manager for vehicles
-        if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
-          const entity = this.spatialManager.spawnManager.spawnEntity(type);
-          if (entity) {
-            this.spatialManager.addEntityToSpatialManagementSystem(entity);
-          }
+      if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
+        const entity = this.spatialManager.spawnManager.spawnEntity(type);
+        if (entity) {
+          this.spatialManager.addEntityToSpatialManagementSystem(entity);
+        }
         // }
       }
     });
@@ -3730,7 +3956,8 @@ class LoserLane {
     const bikeEntity = new BaseEntity(
       this.config,
       {
-        position: new Position(this.state.currentLane, CONFIG.GAME.CYCLIST_Y),
+        // Get the initial lane from stateManager instead of state
+        position: new Position(this.stateManager.currentLane, CONFIG.GAME.CYCLIST_Y),
       },
       DarlingType.BIKE
     );
@@ -3744,66 +3971,14 @@ class LoserLane {
     return bikeEntity;
   }
 
-  /**
-   * Main game update function called on each animation frame
-   */
-
-  update(timestamp) {
-    if (!timestamp || this.state.isPaused) {
-      this.frameId = requestAnimationFrame((t) => this.update(t));
-      return;
-    }
-
-    // if (this.state.isPaused) {
-    //   this.frameId = requestAnimationFrame((t) => this.update(t));
-    //   return;
-    // }
-
-    // Regular game update at fixed interval
-    const deltaTime = timestamp - this.lastFrameTime;
-    if (deltaTime >= this.state.speed) {
-      this.lastFrameTime = timestamp;
-
-      if (this.state.isDead) {
-        if (this.state.updateDeathAnimation()) {
-          this.cleanup();
-          return;
-        }
-      } else {
-        // Update game state
-        this.spatialManager.update();
-        this.updateBikePosition();
-        this.spawnDarlings();
-        this.checkBikeCollisions();
-        this.state.incrementScore();
-        this.state.updateSpeed();
-        this.updateScoreDisplay();
-      }
-    }
-
-    // Always update and render bike position
-    this.render();
-
-    this.frameId = requestAnimationFrame((t) => this.update(t));
+  // proxy method
+  togglePause() {
+    this.stateManager.togglePause();
   }
-
-  // 5. Collision methods (checkBikeCollisions)
-
   checkBikeCollisions() {
-    // console.log("\n=== Checking Bike Collisions ===");
-    // console.log("Collision check state:", {
-    //   spatialManagerExists: !!this.spatialManager,
-    //   collisionManagerExists: !!this.spatialManager.collisionManager,
-    //   bikePosition: {
-    //     lane: this.state.currentLane,
-    //     y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-    //   },
-    //   totalEntities: this.spatialManager.darlings.size,
-    // });
-
     const bikeHitbox = {
-      x: this.state.currentLane,
-      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
+      x: this.stateManager.currentLane, // Use stateManager here
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y, // And here
       width: DARLINGS.BIKE.width,
       height: DARLINGS.BIKE.height,
     };
@@ -3813,207 +3988,19 @@ class LoserLane {
       parkedDeathMachines: Array.from(this.spatialManager.darlings).filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
 
-    // console.log("Collision check details:", {
-    //   numRegularDarlings: darlingsForCollision.darlings.length,
-    //   numParkedDeathMachines: darlingsForCollision.parkedDeathMachines.length,
-    //   bikeHitbox,
-    // });
-
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.state.isJumping);
-
-    // console.log("Collision result:", {
-    //   collisionDetected: !!collision,
-    //   collisionType: collision,
-    // });
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlingsForCollision, this.stateManager.isJumping); // And here
 
     if (collision) {
       this.die(collision);
     }
   }
 
-  // 6. Rendering methods (drawRoadFeatures, drawBike, etc.)
-
-  render() {
-    if (this.state.isDead && this.state.deathState.animation >= 10) return;
-
-    this.gridSystem.clear();
-    this.drawRoadFeatures();
-    this.drawBike();
-    this.drawDarlings();
-
-    const gameScreen = document.getElementById("game-screen");
-    if (gameScreen) {
-      gameScreen.innerHTML = this.gridSystem.render();
-    }
-  }
-
-  drawRoadFeatures() {
-    for (let y = 0; y < CONFIG.GAME.HEIGHT; y++) {
-      this.gridSystem.updateCell(CONFIG.LANES.DIVIDER, y, "║", STYLES.TRAFFIC);
-      this.gridSystem.updateCell(CONFIG.LANES.DIVIDER + 1, y, "║", STYLES.TRAFFIC);
-      this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 1, y, "║", STYLES.TRACKS);
-      this.gridSystem.updateCell(CONFIG.LANES.TRACKS + 5, y, "║", STYLES.TRACKS);
-
-      if (y % 3 === 0) {
-        this.gridSystem.updateCell(CONFIG.LANES.BIKE - 1, y, " ", STYLES.TRAFFIC);
-      }
-
-      for (let x = CONFIG.LANES.SIDEWALK; x < CONFIG.LANES.BUILDINGS; x++) {
-        this.gridSystem.updateCell(x, y, " ", STYLES.SIDEWALK);
-      }
-    }
-  }
-
-  drawDarlings() {
-    this.spatialManager.darlings.forEach((entity) => {
-      if (entity.type !== DarlingType.BIKE) {
-        this.drawEntity(entity);
-      }
-    });
-  }
-  drawEntity(entity) {
-    if (!entity || !entity.art) return;
-
-    if (entity.position.y + entity.height >= 0 && entity.position.y < CONFIG.GAME.HEIGHT) {
-      const isDying = this.state.isDead;
-
-      entity.art.forEach((line, i) => {
-        if (entity.position.y + i >= 0 && entity.position.y + i < CONFIG.GAME.HEIGHT) {
-          line.split("").forEach((char, x) => {
-            if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < CONFIG.GAME.WIDTH) {
-              let effectClass = "entity ";
-              switch (entity.type) {
-                case DarlingType.TTC:
-                  effectClass += "TTC";
-                  break;
-                case DarlingType.TTC_LANE_DEATHMACHINE:
-                case DarlingType.ONCOMING_DEATHMACHINE:
-                  effectClass += "deathMachine";
-                  break;
-                case DarlingType.PARKED_DEATHMACHINE:
-                  effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "deathMachine";
-                  break;
-                case DarlingType.WANDERER:
-                  effectClass += "wanderer";
-                  break;
-                case DarlingType.BUILDING:
-                  effectClass += "building";
-                  break;
-              }
-
-              // Add death animation classes if dying
-              if (isDying) {
-                const isEdge = /[┌┐│╰╯]/.test(char);
-                const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
-                effectClass += ` ${glitchClass}`;
-              }
-
-              const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-              this.gridSystem.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
-            }
-          });
-        }
-      });
-    }
-  }
-
-  drawBike() {
-    if (this.state.isDead && this.state.deathState.animation < 15) {
-      // Get current animation frame
-      const frameIndex = Math.min(4, Math.floor(this.state.deathState.animation / 3));
-      const frames = Object.values(EXPLOSION_FRAMES);
-      const currentFrame = frames[frameIndex];
-
-      // Get current color
-      // const currentColor = EXPLOSION_COLOURS[this.state.deathState.colorIndex];
-      const currentColor = EXPLOSION_COLOURS[Math.floor(Math.random() * EXPLOSION_COLOURS.length)];
-
-      // console.log(currentColor);
-
-      // Draw explosion with current frame and color
-      currentFrame.forEach((line, i) => {
-        line.split("").forEach((char, x) => {
-          const deathY = this.state.deathState.y + i - 1; // Offset slightly up
-          const deathX = this.state.deathState.x + x - 2; // Center the explosion
-
-          if (deathY < CONFIG.GAME.HEIGHT && deathY >= 0 && deathX < CONFIG.GAME.WIDTH && deathX >= 0 && char !== " ") {
-            // Add animation class and current color
-            const animatedChar = `<span class="death-particle">${char}</span>`;
-            this.gridSystem.updateCell(deathX, deathY, animatedChar, currentColor);
-          }
-        });
-      });
-
-      // Add additional particle effects
-      this.drawDeathParticles();
-    } else if (!this.state.isDead) {
-      // Regular bike drawing code remains the same
-      const bikeY = this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y;
-      DARLINGS.BIKE.art.forEach((line, i) => {
-        line.split("").forEach((char, x) => {
-          if (char !== " ") {
-            const gridX = Math.round(this.state.currentLane + x);
-            if (gridX >= 0 && gridX < CONFIG.GAME.WIDTH) {
-              // Add a CSS class to bike elements
-              const bikeChar = `<span class="bike">${char}</span>`;
-              this.gridSystem.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
-            }
-          }
-        });
-      });
-    }
-  }
-
-  drawDeathParticles() {
-    // const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
-
-    const particleChars = ["", "⚡", "⚡"];
-
-    const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, this.state.deathState.animation * 2);
-
-    for (let i = 0; i < numParticles; i++) {
-      const angle = (Math.PI * 2 * i) / numParticles;
-      const radius = this.state.deathState.animation / 2 + Math.random() * this.config.PARTICLES.PARTICLE_SPREAD;
-      const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
-      const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
-
-      if (y < CONFIG.GAME.HEIGHT && y >= 0 && x < CONFIG.GAME.WIDTH && x >= 0) {
-        const char = particleChars[Math.floor(Math.random() * particleChars.length)];
-        const particleColor = EXPLOSION_COLOURS[Math.floor(Math.random() * EXPLOSION_COLOURS.length)];
-        this.gridSystem.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
-      }
-    }
-  }
-
-  // 7. Game state methods (start, die, restart)
-
-  start() {
-    if (this.state.isPlaying) return;
-
-    const messageBox = document.getElementById("pregame-msg-box");
-    if (messageBox) {
-      messageBox.style.display = "none";
-    }
-
-    this.state.isPlaying = true;
-    this.lastFrameTime = performance.now();
-    this.frameId = requestAnimationFrame((t) => this.update(t));
-  }
-
   die(reason) {
-    this.state.isDead = true;
+    if (this.stateManager.state.isDead) return;
 
-    // Store the death position using the current player position
-    this.state.deathState = {
-      animation: 0,
-      x: Math.round(this.state.currentLane),
-      y: this.state.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
-      reason: reason,
-      frameCounter: 0,
-      colorIndex: 0,
-    };
+    const messageInfo = this.stateManager.handleDeath(reason); // Use state manager's handleDeath
 
-    // Add screen shake effect
+    // Handle visual effects
     const gameScreen = document.getElementById("game-screen");
     if (gameScreen) {
       gameScreen.classList.add("screen-shake");
@@ -4033,13 +4020,12 @@ class LoserLane {
     // Call flashScreen for red flash effect
     this.flashScreen();
 
-    const messageInfo = this.showDeathMessage(reason);
     setTimeout(() => {
-      const score = this.state.score;
+      const score = this.stateManager.state.score;
       html2canvas(gameScreen)
         .then((canvas) => {
-          this.togglePause(); // Pause the game
-          generateSocialCardNoSS(canvas, messageInfo.reason, score, messageInfo.message.funny, messageInfo.randomFace, this); // Pass 'this' as game instance
+          this.stateManager.togglePause(); // Use state manager to pause
+          generateSocialCardNoSS(canvas, messageInfo.reason, score, messageInfo.message.funny, messageInfo.randomFace, this);
         })
         .catch((error) => {
           console.error("Failed to capture screenshot:", error);
@@ -4058,138 +4044,40 @@ class LoserLane {
 
   restart() {
     console.log("\n=== Game Restart Initiated ===");
-    console.log("Before cleanup:", {
-      spatialManagerExists: !!this.spatialManager,
-      darlingCount: this.spatialManager ? this.spatialManager.darlings.size : 0,
-      collisionManagerExists: this.spatialManager ? !!this.spatialManager.collisionManager : false,
-    });
+    
+    // Stop current game loop
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
+    }
 
-    this.cleanup();
-
-    console.log("After cleanup:", {
-      spatialManagerExists: !!this.spatialManager,
-      stateExists: !!this.state,
-    });
-
+    // Reset static properties
     Building.nextSpawnY = null;
     Building.buildingManager = null;
 
-    // Create new instances
-    this.spatialManager = new SpatialManager(CONFIG);
-    console.log("New SpatialManager created:", {
-      hasCollisionManager: !!this.spatialManager.collisionManager,
-      isDarlingSetEmpty: this.spatialManager.darlings.size === 0,
-    });
+    // Reset game state
+    this.stateManager.restart();
 
-    this.state = new GameState(CONFIG);
+    // Create new game systems
+    this.spatialManager = new SpatialManager(CONFIG);
+    this.spatialManager.setGame(this);
     this.controls = new Controls(this);
     this.settingsManager = new SettingsManager(this);
     this.clusterManager = new VehicleClusterManager(CONFIG);
 
-    // Critical: Set game reference in spatial manager
-    this.spatialManager.setGame(this);
-
-    console.log("Before world initialization:", {
-      spatialManagerReady: !!this.spatialManager,
-      collisionManagerReady: !!this.spatialManager.collisionManager,
-    });
-
+    // Initialize new world
     this.initializeGameWorld();
 
-    console.log("After world initialization:", {
-      bikeRegistered: Array.from(this.spatialManager.darlings).some((entity) => entity.type === DarlingType.BIKE),
-      totalEntities: this.spatialManager.darlings.size,
-    });
-
+    // Start new game
     this.start();
-
-    const messageBox = document.getElementById("pregame-msg-box");
-    if (messageBox) {
-      messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
-    }
   }
+
   addEventListenerWithTracking(element, type, handler, options = false) {
     element.addEventListener(type, handler, options);
     if (!this.eventListeners.has(element)) {
       this.eventListeners.set(element, []);
     }
     this.eventListeners.get(element).push({ type, handler, options });
-  }
-
-  // 8. Utility methods (cleanup, flashScreen, etc.)
-
-  togglePause() {
-    this.state.isPaused = !this.state.isPaused;
-
-    const messageBox = document.getElementById("pregame-msg-box");
-    if (messageBox) {
-      messageBox.style.display = this.state.isPaused ? "block" : "none";
-      messageBox.textContent = this.state.isPaused ? "PAUSED" : "";
-    }
-  }
-
-  updateScoreDisplay() {
-    const scoreElement = document.getElementById("time-alive");
-    if (scoreElement) {
-      scoreElement.textContent = `STAY ALIVE: ${this.state.score}`;
-    }
-  }
-
-  getRandomDeathMessage(type) {
-    const messages = MESSAGES.DEATH[type];
-    if (!messages?.length) {
-      console.log(`oops no death message ${type}`);
-
-      return {
-        reason: "X X!",
-        funny: "Sometimes things just happen",
-      };
-    }
-    return messages[Math.floor(Math.random() * messages.length)];
-  }
-
-  showDeathMessage(reason) {
-    const messageEl = document.getElementById("pregame-msg-box");
-    if (!messageEl) return;
-
-    // Retrieve a single random message
-    const message = this.getRandomDeathMessage(reason);
-    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
-
-    // Construct the full message for potential further use
-    const fullMessage = `${reason}: ${message.funny} ${randomFace}`;
-
-    // Display reason, message, and face in separate elements
-    messageEl.innerHTML = `
-      <p>${message.funny}</p>
-      <span class="cute-death-face">${randomFace}</span>
-    `;
-    messageEl.style.display = "block";
-
-    // Return all parts: reason, message object, and random face
-    return { reason, message, randomFace };
-  }
-
-  showDeathMessage(reason) {
-    const messageEl = document.getElementById("pregame-msg-box");
-    if (!messageEl) return;
-
-    // Retrieve a single random message
-    const message = this.getRandomDeathMessage(reason);
-    const randomFace = cuteDeathFaces[Math.floor(Math.random() * cuteDeathFaces.length)];
-
-    // Construct the full message for potential further use
-    const fullMessage = `${reason}: ${message.funny} ${randomFace}`;
-
-    // Display reason, message, and face in separate elements
-    messageEl.innerHTML = `
-      <p>${message.funny}</p>
-      <span class="cute-death-face">${randomFace}</span>
-    `;
-    messageEl.style.display = "block";
-
-    // Return all parts: reason, message object, and random face
-    return { reason, message, randomFace };
   }
 
   flashScreen() {
@@ -4212,56 +4100,25 @@ class LoserLane {
     }, delay);
   }
 
-  drawDeathParticles() {
-    // const particleChars = ['*', '.', '°', '⚡', '✦', '⚡'];
-
-    const particleChars = ["", "⚡", "⚡"];
-
-    const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, this.state.deathState.animation * 2);
-
-    for (let i = 0; i < numParticles; i++) {
-      const angle = (Math.PI * 2 * i) / numParticles;
-      const radius = this.state.deathState.animation / 2 + Math.random() * this.config.PARTICLES.PARTICLE_SPREAD;
-      const x = Math.round(this.state.deathState.x + Math.cos(angle) * radius);
-      const y = Math.round(this.state.deathState.y + Math.sin(angle) * radius);
-
-      if (y < CONFIG.GAME.HEIGHT && y >= 0 && x < CONFIG.GAME.WIDTH && x >= 0) {
-        const char = particleChars[Math.floor(Math.random() * particleChars.length)];
-        const particleColor = EXPLOSION_COLOURS[Math.floor(Math.random() * EXPLOSION_COLOURS.length)];
-        this.gridSystem.updateCell(x, y, `<span class="death-particle-outer">${char}</span>`, particleColor);
-      }
-    }
-  }
-
   cleanup() {
-    console.log("\n=== Cleanup Started ===");
-    console.log("Before cleanup:", {
-      hasFrameId: !!this.frameId,
-      darlingCount: this.spatialManager?.darlings.size,
-      controlsExist: !!this.controls,
-    });
-
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
 
-    this.spatialManager.darlings.clear();
-    this.gridSystem.clear();
+    // Clean up all managers and systems
+    this.stateManager.cleanup();
+    this.doubleJumpPending = false;  // Add this
+
+    this.spatialManager.cleanup();
+    this.clusterManager.cleanup();
+    this.renderGrid.clear();
     this.controls.cleanup();
     this.settingsManager.cleanup();
+    this.tutorialSystem.cleanup();
 
+    // Reset timing
     this.lastFrameTime = performance.now();
-
-    if (this.tutorialSystem) {
-      this.tutorialSystem.cleanup();
-    }
-
-    console.log("After cleanup:", {
-      hasFrameId: !!this.frameId,
-      darlingCount: this.spatialManager?.darlings.size,
-      lastFrameTime: this.lastFrameTime,
-    });
   }
 }
 

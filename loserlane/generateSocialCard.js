@@ -347,9 +347,16 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   const closeButton = document.createElement("button");
   closeButton.textContent = "CLOSE";
+  // closeButton.onclick = () => {
+  //   overlay.remove();
+  //   gameInstance.stateManager.restart();  // Use stateManager instead
+  //   gameInstance.stateManager.togglePause();
+  //   gameInstance.restart();  // Use the proxy method
+  // };
+
   closeButton.onclick = () => {
     overlay.remove();
-    gameInstance.togglePause();
+    // Just call game instance restart once, which will handle everything
     gameInstance.restart();
   };
   buttonContainer.appendChild(closeButton);
