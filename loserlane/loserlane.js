@@ -1,6 +1,6 @@
 const CONFIG = {
   GAME: {
-    WIDTH: 41,
+    WIDTH: 42,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 50,
     MIN_SPEED: 300,
@@ -35,7 +35,7 @@ const CONFIG = {
     ONCOMING_DEATHMACHINE: 8,
     PARKED: 5,
     WANDERER: 3,
-    BUILDING: 0,
+    BUILDING: 1,
     TTC_TO_TTC: 20,
     TTC_TO_DEATHMACHINE: 15,
     DEFAULT: 1,
@@ -59,14 +59,14 @@ const CONFIG = {
     },
   },
   LANES: {
-    ONCOMING: 2,
-    DIVIDER: 7,
-    TRACKS: 10,
-    BIKE: 15,
-    BIKE_RIGHT: 18,
-    PARKED: 20,
-    SIDEWALK: 28,
-    BUILDINGS: 31,
+    ONCOMING: 1,
+    DIVIDER: 6,
+    TRACKS: 9,
+    BIKE: 14,
+    BIKE_RIGHT: 17,
+    PARKED: 19,
+    SIDEWALK: 27,
+    BUILDINGS: 30,
   },
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
@@ -157,13 +157,6 @@ const CONFIG = {
     MAX_Y: null, // Set dynamically based on window height
     OFFSCREEN_BUFFER: 5,
   },
-
-  // GAMEPLAY: {
-  //   SCORE_MULTIPLIER: 1,
-  //   BASE_DIFFICULTY: 1.0,
-  //   DIFFICULTY_INCREASE_RATE: 0.01,
-  //   MAX_DIFFICULTY: 2.0,
-  // },
 };
 
 const DOOR_STATES = {
@@ -1246,7 +1239,7 @@ class SpawnManager {
               allowedLanes: [this.config.LANES.PARKED],
               spawnPosition: {
                 x: this.config.LANES.PARKED,
-                y: -1,
+                y: -10,
               },
               direction: 1,
             },
@@ -1282,7 +1275,7 @@ class SpawnManager {
               allowedLanes: [this.config.LANES.BUILDINGS],
               spawnPosition: {
                 x: this.config.LANES.BUILDINGS,
-                y: this.config.GAME.HEIGHT,
+                y: -10,
               },
               direction: 1, //doesn't seem to matter
             },
@@ -1306,13 +1299,13 @@ class SpawnManager {
         // Use a fixed spacing value for parked vehicles
         return this.config.SAFE_DISTANCE.PARKED;
       }
-  
+
       const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
-  
+
       if (typeof baseDistance !== "number") {
         throw new SpawnError("Invalid base distance", { baseDistance });
       }
-  
+
       return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
     } catch (error) {
       // Error handling
@@ -1994,7 +1987,8 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
     this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
 
     const targetPercentage =
-      entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y + Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
+      entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y +
+      Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
     this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
     this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
 
@@ -2059,7 +2053,11 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
       this.updateDoorState();
     }
 
-    if (this.doorAnimationActive && this.doorState < DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 && Date.now() - this.lastDoorUpdate > this.doorOpenDelay) {
+    if (
+      this.doorAnimationActive &&
+      this.doorState < DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 &&
+      Date.now() - this.lastDoorUpdate > this.doorOpenDelay
+    ) {
       this.updateDoorState();
     }
 
@@ -2092,7 +2090,7 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
 
   updateDoorHitbox() {
     console.log("yoooo");
-    
+
     if (this.doorHitbox) {
       this.doorHitbox.y = this.entity.position.y + 1;
     }
@@ -3699,21 +3697,6 @@ class LoserLane {
 
   // 4. Entity management methods (spawnDarlings, updateBike)
   spawnDarlings() {
-    // console.log("\n=== Spawn Cycle Config ===", {
-    //   TTCRate: CONFIG.SPAWN_RATES.TTC,
-    //   TTCLaneDeathmachineRate: CONFIG.SPAWN_RATES.TTC_LANE_DEATHMACHINE,
-    //   oncomingDeathmachineRate: CONFIG.SPAWN_RATES.ONCOMING_DEATHMACHINE,
-    //   parkedDeathmachineRate: CONFIG.SPAWN_RATES.PARKED_DEATHMACHINE,
-    //   TTCLane: CONFIG.LANES.TRACKS,
-    //   TTCLaneDeathmachine: CONFIG.LANES.TRACKS + 1,
-    //   oncomingLane: CONFIG.LANES.ONCOMING,
-    //   parkedLane: CONFIG.LANES.PARKED,
-    //   TTCRate: CONFIG.SPAWN_RATES.TTC,
-    //   TTCLaneDeathmachineRate: CONFIG.SPAWN_RATES.TTC_LANE_DEATHMACHINE,
-    //   oncomingDeathmachineRate: CONFIG.SPAWN_RATES.ONCOMING_DEATHMACHINE,
-    //   parkedDeathmachineRate: CONFIG.SPAWN_RATES.PARKED_DEATHMACHINE,
-    // });
-
     const spawnChecks = [
       { type: DarlingType.TTC, rate: CONFIG.SPAWN_RATES.TTC },
       { type: DarlingType.TTC_LANE_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.TTC_LANE_DEATHMACHINE },
@@ -3723,22 +3706,22 @@ class LoserLane {
     ];
 
     spawnChecks.forEach(({ type, rate }) => {
-      if (type === DarlingType.WANDERER) {
-        // Handle wanderer spawning normally
-        if (Math.random() < rate) {
-          const entity = this.spatialManager.spawnManager.spawnEntity(type);
-          if (entity) {
-            this.spatialManager.addEntityToSpatialManagementSystem(entity);
-          }
-        }
-      } else {
+      // if (type === DarlingType.WANDERER) {
+      //   // Handle wanderer spawning normally
+      //   if (Math.random() < rate) {
+      //     const entity = this.spatialManager.spawnManager.spawnEntity(type);
+      //     if (entity) {
+      //       this.spatialManager.addEntityToSpatialManagementSystem(entity);
+      //     }
+      //   }
+      // } else {
         // Use cluster manager for vehicles
         if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
           const entity = this.spatialManager.spawnManager.spawnEntity(type);
           if (entity) {
             this.spatialManager.addEntityToSpatialManagementSystem(entity);
           }
-        }
+        // }
       }
     });
   }
