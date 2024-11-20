@@ -4,61 +4,45 @@ const ART = {
       "       WHY HIT FRIEND? ",
       "                       ",
       "               o_/    ",
-      "      __o    _/|      ",      
+      "      __o    _/|      ",
       "     _\\<,_    /\\     ",
-      "___(*)/(*)___\\_\\____"
+      "___(*)/(*)___\\_\\____",
     ],
   },
   TTC: {
     art: [
       "                               \\      ",
       "       TTCCCCCC????             /      ",
-      "     __o        ┌═════════^════^═══════",      
+      "     __o        ┌═════════^════^═══════",
       "    _\\<,_      / □□□ || □ TTC □||□□ ║║",
-      " __(*)/(*)_____\\──═══────────────═══───"
-    ]
+      " __(*)/(*)_____\\──═══────────────═══───",
+    ],
   },
   ONCOMING_DEATHMACHINE: {
     art: [
       "         OH NO!      _____     ",
-      "     __o          __/_O│_\\_   ",      
+      "     __o          __/_O│_\\_   ",
       "    _\\<,_      >/_ ____ _ _\\  ",
-      " __(*)/(*)_______(_)_____(_)___ "
-    ]
+      " __(*)/(*)_______(_)_____(_)___ ",
+    ],
   },
   TRAFFIC: {
-    art: [
-      "     _____        UGH DEATH",
-      "   _/_│O_\\_         __o   ",      
-      " /_ ____ _ _\\<      _\\<,_",
-      "__(_)_____(_)______(*)/(*)_"
-    ]
+    art: ["     _____        UGH DEATH", "   _/_│O_\\_         __o   ", " /_ ____ _ _\\<      _\\<,_", "__(_)_____(_)______(*)/(*)_"],
   },
   PARKEDDEATHMACHINE: {
-    art: [
-      "      OUCH!      _____      ", 
-      "     __o      _/__││__\\__ ",      
-      "    _\\<,_   /_ ______ ___[ ",
-      " __(*)/(*)____(_)_____(_)___ "
-    ]
+    art: ["      OUCH!      _____      ", "     __o      _/__││__\\__ ", "    _\\<,_   /_ ______ ___[ ", " __(*)/(*)____(_)_____(_)___ "],
   },
   DOOR: {
     art: [
       "                 OOPSIE!     ",
       "                   _____     ",
-      "     __o        __/_│O_\\    ",      
+      "     __o        __/_│O_\\    ",
       "    _\\<,_     /_ _\\|/___\\ ",
-      " __(*)/(*)_____(_)__/\\(_)__ "
-    ]
+      " __(*)/(*)_____(_)__/\\(_)__ ",
+    ],
   },
   TRACKS: {
-    art: [
-      "   RAIL JAIL! // ",
-      "     __o   //    ",      
-      "    _\\<,_    //  ",
-      " ══(*)/(*)═══════ ",
-      " ════════════════ "
-    ],
+    art: ["   RAIL JAIL! // ", "     __o   //    ", "    _\\<,_    //  ", " ══(*)/(*)═══════ ", " ════════════════ "],
   },
   BUILDING: {
     art: [
@@ -68,9 +52,9 @@ const ART = {
       "                │ ░WEED░ │",
       "     __o        │═╥═╦╦═╥═│",
       "    _\\<,_      │ ║ ║║ ║ ║ ",
-      " ══(*)/(*)══════└≈≈≈≈≈≈≈≈┘"
-  ],
-  }
+      " ══(*)/(*)══════└≈≈≈≈≈≈≈≈┘",
+    ],
+  },
 };
 
 // const ART = {
@@ -82,7 +66,7 @@ const ART = {
 //         "       WHY HIT FRIEND? ",
 //         "                       ",
 //         "               o_/    ",
-//         "      __o    _/|      ",      
+//         "      __o    _/|      ",
 //         "     _\\<,_    /\\     ",
 //         "___(*)/(*)___\\_\\____"
 //     ],
@@ -91,7 +75,7 @@ const ART = {
 //     art: [
 //       "                               \\      ",
 //       "       TTCCCCCC????             /      ",
-//       "     __o        ┌═════════^════^═══════",      
+//       "     __o        ┌═════════^════^═══════",
 //       "    _\\<,_      / □□□ || □ TTC □||□□ ║║",
 //       " __(*)/(*)_____\\──═══────────────═══───"
 //   ],
@@ -100,7 +84,7 @@ const ART = {
 //   DEATHMACHINE: {
 //     art: [
 //       "         OH NO!      _____     ",
-//       "     __o          __/_O│_\\_   ",      
+//       "     __o          __/_O│_\\_   ",
 //       "    _\\<,_      >/_ ____ _ _\\  ",
 //       " __(*)/(*)_______(_)_____(_)___ "
 //     ],
@@ -111,8 +95,8 @@ const ART = {
 
 //   PARKEDDEATHMACHINE: {
 //     art: [
-//       "      OUCH!      _____      ", 
-//       "     __o      __/__││__\\_  ",      
+//       "      OUCH!      _____      ",
+//       "     __o      __/__││__\\_  ",
 //       "    _\\<,_   /_ ______ __ \\( ",
 //       " __(*)/(*)____(_)_____(_)___ "
 //     ],
@@ -199,8 +183,6 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   scoreText.innerHTML = `I survived ${score} seconds without a bike lane`;
   contentContainer.appendChild(scoreText);
 
-
-
   const asciiWrapper = document.createElement("div");
   asciiWrapper.style.position = "relative"; // Make sure this is set
   asciiWrapper.style.width = "fit-content"; // Add this
@@ -247,8 +229,6 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   // asciiWrapper.appendChild(asciiArtOverlay2);
   contentContainer.appendChild(asciiWrapper);
 
-
-
   // Score text
   // const doug = document.createElement("p");
   // doug.className = "doug";
@@ -261,15 +241,14 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   doug2.innerHTML = `THANKS DOUG`;
   contentContainer.appendChild(doug2);
 
-
-      // Sad face
-      // const faceContainer = document.createElement("div");
-      // faceContainer.style.textAlign = "center";
-      // const sadFace = document.createElement("span");
-      // sadFace.className = "cute-death-face";
-      // sadFace.innerHTML = randomFace;
-      // faceContainer.appendChild(sadFace);
-      // contentContainer.appendChild(faceContainer);
+  // Sad face
+  // const faceContainer = document.createElement("div");
+  // faceContainer.style.textAlign = "center";
+  // const sadFace = document.createElement("span");
+  // sadFace.className = "cute-death-face";
+  // sadFace.innerHTML = randomFace;
+  // faceContainer.appendChild(sadFace);
+  // contentContainer.appendChild(faceContainer);
   // Add the content container to the social card
   socialCard.appendChild(contentContainer);
 
@@ -286,80 +265,71 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
     return html2canvas(socialCard).then((canvas) => canvas.toDataURL("image/png"));
   };
 
-  // Save Button
-  // const saveButton = document.createElement("button");
-  // saveButton.textContent = "SAVE IMAGE";
-  // saveButton.onclick = () => {
-  //   generateImage().then((dataUrl) => {
-  //     const link = document.createElement("a");
-  //     link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`;
-  //     link.href = dataUrl;
-  //     link.click();
-  //   });
-  // };
-  // buttonContainer.appendChild(saveButton);
-
-  // Facebook Share Button
-  const fbButton = document.createElement("button");
-  fbButton.textContent = "FB";
-  fbButton.onclick = () => {
+  const downloadImageCopyLinkBtn = document.createElement("button");
+  downloadImageCopyLinkBtn.textContent = "SAVE IMAGE + COPY LINK";
+  downloadImageCopyLinkBtn.onclick = () => {
     generateImage().then((dataUrl) => {
-      // Facebook requires an actual hosted image URL, not a data URL
-      // We'll need to either:
-      // 1. Upload the image to your server first, or
-      // 2. Use Facebook's SDK for proper image sharing
-      // For now, we'll share with just text and URL
-      const shareUrl = encodeURIComponent(window.location.href);
-      const shareText = encodeURIComponent(`I survived for ${score} seconds without a bikelane! ${messageString}`);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`, "_blank");
-    });
-  };
-  // buttonContainer.appendChild(fbButton);
-
-  // Instagram Share Button
-  const igButton = document.createElement("button");
-  igButton.textContent = "SAVE IMAGE + COPY LINK";
-  igButton.onclick = () => {
-    generateImage().then((dataUrl) => {
-      // Unfortunately, Instagram doesn't have a web API for sharing
-      // The best we can do is help users save the image and copy the text
-      // First, save the image
+      // Save the image
       const link = document.createElement("a");
       link.download = `I-survived-${score}s-without-a-bike-lane-thanks-doug.png`;
       link.href = dataUrl;
       link.click();
 
       // Then copy the text
-      const shareText = `I survived for ${score} seconds without a bikelane! ${messageString}\n\nPlay at: ${window.location.href}`;
+      const shareText = `I survived for ${score} seconds without a bike lane. How long will you survive? ${messageString}\n\nPlay at: ${window.location.href}`;
       navigator.clipboard
         .writeText(shareText)
         .then(() => {
-          igButton.textContent = "SAVED!";
+          downloadImageCopyLinkBtn.textContent = "IMAGE SAVED & LINK COPIED!";
+          showMessage("Share this image and your story. Use your voice, save the bike lanes!", "CTO");
           setTimeout(() => {
-            igButton.textContent = "COPY";
-          }, 2000);
-          alert("Image saved and text copied to clipboard. Use your voice, save the bike lanes");
+            downloadImageCopyLinkBtn.textContent = "COPY";
+          }, 9000);
         })
-        .catch(() => alert("Couldn't copy text"));
+        .catch(() => showMessage("Couldn't copy text", "error"));
     });
   };
-  buttonContainer.appendChild(igButton);
+
+  buttonContainer.appendChild(downloadImageCopyLinkBtn);
+
+  // Function to show messages in .screenshot-overlay
+  function showMessage(text, type) {
+    const overlay = document.querySelector(".screenshot-overlay");
+    if (!overlay) {
+      console.error("Error: .screenshot-overlay not found in DOM.");
+      return;
+    }
+
+    let messageContainer = overlay.querySelector("#message-container");
+    if (!messageContainer) {
+      messageContainer = document.createElement("div");
+      messageContainer.id = "message-container";
+      overlay.appendChild(messageContainer);
+    }
+
+    const messageElement = document.createElement("p");
+    messageElement.textContent = text;
+    messageElement.className = type; // Add a class for styling (e.g., "success" or "error")
+    messageContainer.innerHTML = ""; // Clear any existing messages
+    messageContainer.appendChild(messageElement);
+  }
 
   const closeButton = document.createElement("button");
   closeButton.textContent = "CLOSE";
-  // closeButton.onclick = () => {
-  //   overlay.remove();
-  //   gameInstance.stateManager.restart();  // Use stateManager instead
-  //   gameInstance.stateManager.togglePause();
-  //   gameInstance.restart();  // Use the proxy method
-  // };
 
   closeButton.onclick = () => {
     overlay.remove();
-    // Just call game instance restart once, which will handle everything
     gameInstance.restart();
   };
   buttonContainer.appendChild(closeButton);
+
+
+  // Automatically restart game after timeout
+  setTimeout(() => {
+    if (overlay) overlay.remove(); // Remove the overlay
+    gameInstance.restart(); // Restart the game
+  }, 6000); // Timeout duration in milliseconds
+
 
   overlay.appendChild(socialCard);
   overlay.appendChild(buttonContainer);

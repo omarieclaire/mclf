@@ -172,3 +172,15 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.85);
 }
+
+.CTO {
+  display: flex;
+  justify-content: center; /* Centers the items vertically */
+  align-items: center; /* Centers the items horizontally */
+  height: 100%; /* Ensure the container has a height for centering */
+  text-align: center;
+  max-width: 50%;
+  font-size: 1.5rem;
+  margin: 1rem auto;
+
+}
