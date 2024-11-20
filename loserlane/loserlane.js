@@ -4110,10 +4110,8 @@ class LoserLane {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
-
-    // Clean up all managers and systems
     this.stateManager.cleanup();
-    this.doubleJumpPending = false; // Add this
+    this.doubleJumpPending = false;
 
     this.spatialManager.cleanup();
     this.clusterManager.cleanup();
