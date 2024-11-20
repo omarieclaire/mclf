@@ -21,7 +21,7 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    TTC: 0.05,
+    TTC: 0.1,
     TTC_LANE_DEATHMACHINE: 0.8,
     ONCOMING_DEATHMACHINE: 0.4,
     PARKED_DEATHMACHINE: 0.2,
@@ -30,14 +30,14 @@ const CONFIG = {
     BUILDING: 0.9,
   },
   SAFE_DISTANCE: {
-    TTC: 9,
-    TTC_LANE_DEATHMACHINE: 5,
+    TTC: 8,
+    TTC_LANE_DEATHMACHINE: 8,
     ONCOMING_DEATHMACHINE: 8,
     PARKED: 5,
-    WANDERER: 2,
+    WANDERER: 3,
     BUILDING: 1,
-    TTC_TO_TTC: 18,
-    TTC_TO_DEATHMACHINE: 14,
+    TTC_TO_TTC: 20,
+    TTC_TO_DEATHMACHINE: 15,
     DEFAULT: 1,
   },
   TTC: {
@@ -94,7 +94,7 @@ const CONFIG = {
     // BUILDING_OVERLAP_THRESHOLD: 0.1,
   },
   SPAWNING: {
-    PARKED_DEATHMACHINE_DOOR_CHANCE: 0.2,
+    PARKED_DEATHMACHINE_DOOR_CHANCE: 0.3,
     PARKED_DEATHMACHINE_MIN_Y: 0.2,
     PARKED_DEATHMACHINE_MAX_Y: 0.3,
     BUILDING_RESPAWN_COOLDOWN: 100,
@@ -4094,7 +4094,9 @@ class LoserLane {
     ];
 
     spawnChecks.forEach(({ type, rate }) => {
-      if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
+      if (Math.random() < rate) {
+
+      // if (this.clusterManager.shouldSpawnVehicle(type, rate)) {
         const entity = this.spatialManager.spawnManager.spawnEntity(type);
         if (entity) {
           this.spatialManager.addEntityToSpatialManagementSystem(entity);
