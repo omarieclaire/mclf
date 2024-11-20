@@ -21,7 +21,7 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    TTC: 0.1,
+    TTC: 0.05,
     TTC_LANE_DEATHMACHINE: 0.8,
     ONCOMING_DEATHMACHINE: 0.4,
     PARKED_DEATHMACHINE: 0.2,
@@ -36,7 +36,9 @@ const CONFIG = {
     PARKED: 5,
     WANDERER: 3,
     BUILDING: 1,
-    TTC_TO_TTC: 20,
+        TTC_TO_TTC: 90,
+
+    // TTC_TO_TTC: 20,
     TTC_TO_DEATHMACHINE: 15,
     DEFAULT: 1,
   },
@@ -61,12 +63,12 @@ const CONFIG = {
   LANES: {
     ONCOMING: 1,
     DIVIDER: 6,
-    TRACKS: 9,
-    BIKE: 14,
-    BIKE_RIGHT: 17,
-    PARKED: 19,
-    SIDEWALK: 27,
-    BUILDINGS: 30,
+    TRACKS: 8,
+    BIKE: 15,
+    BIKE_RIGHT: 16,
+    PARKED: 17,
+    SIDEWALK: 25,
+    BUILDINGS: 28,
   },
   ANIMATIONS: {
     DOOR_OPEN_DURATION: 100,
