@@ -90,12 +90,26 @@ const EXPLOSION_COLOURS = [
 ];
 
 const peopleCol = [
-  '#FFE0BD', // Light
-  '#FF7F50', // Coral
+  // '#FFE0BD', // Light
+  // '#FF7F50', // Coral
 
-  '#FFD1AA', // Light medium
-  '#EEB38D', // Medium
-  '#C68642', // Medium dark
-  '#8D5524', // Dark
-  '#4C3024', // Very dark
+  // '#FFD1AA', // Light medium
+  // '#EEB38D', // Medium
+  // '#C68642', // Medium dark
+  // '#8D5524', // Dark
+  // '#4C3024', // Very dark
+
+  '#FFD1DC', // Pastel pink
+  '#FFB6C1', // Light pink
+  '#FFEC8B', // Light yellow
+  '#B0E57C', // Pastel green
+  '#ADD8E6', // Light blue
+  '#D1C4E9', // Lavender
+  '#F5DEB3', // Light wheat
+  '#FFC0CB', // Baby pink
+  '#FFFACD', // Lemon chiffon
+  '#FFE4E1', // Misty rose
+  '#E0FFFF', // Light cyan
+  '#F0E68C', // Khaki
+  '#FAEBD7', // Antique white
 ];

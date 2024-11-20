@@ -21,23 +21,23 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    TTC: 0.05,
+    TTC: 0.02,
     TTC_LANE_DEATHMACHINE: 0.8,
     ONCOMING_DEATHMACHINE: 0.4,
     PARKED_DEATHMACHINE: 0.2,
-    DOOR_OPENING: 0.4,
+    DOOR_OPENING: 0.1,
     WANDERER: 0.9,
     BUILDING: 0.9,
   },
   SAFE_DISTANCE: {
-    TTC: 8,
-    TTC_LANE_DEATHMACHINE: 8,
+    TTC: 9,
+    TTC_LANE_DEATHMACHINE: 5,
     ONCOMING_DEATHMACHINE: 8,
     PARKED: 5,
-    WANDERER: 3,
+    WANDERER: 2,
     BUILDING: 1,
-    TTC_TO_TTC: 20,
-    TTC_TO_DEATHMACHINE: 15,
+    TTC_TO_TTC: 24,
+    TTC_TO_DEATHMACHINE: 16,
     DEFAULT: 1,
   },
   TTC: {
@@ -495,26 +495,7 @@ class GameRenderer {
         if (entity.position.y + i >= 0 && entity.position.y + i < this.config.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < this.config.GAME.WIDTH) {
-              let effectClass = "entity ";
-              switch (entity.type) {
-                case DarlingType.TTC:
-                  effectClass += "TTC";
-                  break;
-                case DarlingType.TTC_LANE_DEATHMACHINE:
-                case DarlingType.ONCOMING_DEATHMACHINE:
-                  effectClass += "deathMachine";
-                  break;
-                case DarlingType.PARKED_DEATHMACHINE:
-                  effectClass += entity.behavior?.doorState > 0 ? "door-opening" : "deathMachine";
-                  break;
-                case DarlingType.WANDERER:
-                  effectClass += "wanderer";
-                  break;
-                case DarlingType.BUILDING:
-                  effectClass += "building";
-                  break;
-              }
-
+              let effectClass = `entity ${entity.cssClass || ""}`;
               if (isDying) {
                 const isEdge = /[┌┐│╰╯]/.test(char);
                 const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
@@ -1770,7 +1751,7 @@ class VehicleClusterManager {
     this.clusters = new Map();
 
     // Initialize cluster settings for each vehicle type
-    [DarlingType.TTC, DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
+    [DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
       this.clusters.set(type, {
         active: false,
         vehiclesSpawned: 0,
@@ -1786,7 +1767,7 @@ class VehicleClusterManager {
       maxVehiclesInCluster: 4,
       minGapAfterCluster: 15, // Minimum frames to wait after cluster
       maxGapAfterCluster: 25, // Maximum frames to wait after cluster
-      baseSpawnRate: 0.8, // Higher spawn rate during clustering
+      clusterSpawnMultiplier: 2, // Multiply base spawn rate during clusters
     };
   }
 
@@ -1805,8 +1786,8 @@ class VehicleClusterManager {
       this.startNewCluster(entityType);
     }
 
-    // Use higher spawn rate during active cluster
-    const effectiveRate = cluster.active ? this.clusterConfig.baseSpawnRate : baseSpawnRate;
+    // Use adjusted spawn rate during active cluster
+    const effectiveRate = cluster.active ? baseSpawnRate * this.clusterConfig.clusterSpawnMultiplier : baseSpawnRate;
 
     const shouldSpawn = Math.random() < effectiveRate;
 
@@ -1832,9 +1813,10 @@ class VehicleClusterManager {
       this.clusterConfig.minVehiclesInCluster +
       Math.floor(Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1));
 
+    // Optional: Log cluster start
     // console.log(`Starting cluster for ${entityType}:`, {
     //   targetSize: cluster.targetSize,
-    //   spawnRate: this.clusterConfig.baseSpawnRate,
+    //   spawnMultiplier: this.clusterConfig.clusterSpawnMultiplier,
     // });
   }
 
@@ -1850,6 +1832,7 @@ class VehicleClusterManager {
       this.clusterConfig.minGapAfterCluster +
       Math.floor(Math.random() * (this.clusterConfig.maxGapAfterCluster - this.clusterConfig.minGapAfterCluster));
 
+    // Optional: Log cluster end
     // console.log(`Ending cluster for ${entityType}, gap timer:`, cluster.gapTimer);
   }
 
@@ -1874,6 +1857,7 @@ class VehicleClusterManager {
     });
   }
 }
+
 // =========================================
 // =========================================
 // =========================================
@@ -2374,7 +2358,7 @@ class TTCBehavior extends VehicleBehaviorBase {
     const ttcWidth = 8;
     const spawnX = this.entity.position.x + ttcWidth;
     this.spawnCount = 0;
-    this.maxWanderers = Math.floor(Math.random() * 3) + 1;
+    this.maxWanderers = Math.floor(Math.random() * 2) + 1;
     this.spawnNextWanderer(spawnX, this.entity.position.y, spatialManager);
 
     this.wanderersSpawnedAtStop = true;
@@ -2452,9 +2436,9 @@ class CrossingBehavior extends EntityBehavior {
     this.moveSpeed = CONFIG.MOVEMENT.WANDERER_SPEED * 2;
     this.baseSpeed = CONFIG.MOVEMENT.WANDERER_SPEED;
     this.waitTime = 0;
-    this.minWaitTime = 5;
+    this.minWaitTime = 1;
     this.mergeAttempts = 0;
-    this.maxMergeAttempts = 10;
+    this.maxMergeAttempts = 2;
     this.lastCheckedOverlap = 0;
   }
 
@@ -2519,7 +2503,7 @@ class CrossingBehavior extends EntityBehavior {
   }
 
   canSafelyMerge() {
-    const safeDistance = 3;
+    const safeDistance = 2;
     const nearbyWanderers = this.entity.spatialManager.grid
       .getNearbyDarlings(new Position(this.targetX, this.entity.position.y), safeDistance)
       .filter((other) => other !== this.entity && other.type === DarlingType.WANDERER && Math.abs(other.position.x - this.targetX) < 0.5);
@@ -2533,6 +2517,7 @@ class CrossingBehavior extends EntityBehavior {
     this.mergeAttempts++;
     if (this.mergeAttempts > this.maxMergeAttempts) {
       const offset = Math.random() > 0.5 ? 3 : -3;
+      console.log("forcing in");
       this.entity.position.y += offset;
       this.convertToRegularWanderer();
     }
@@ -2578,13 +2563,14 @@ class CrossingBehavior extends EntityBehavior {
   convertToRegularWanderer() {
     this.entity.art = DARLINGS.WANDERER.DOWN.art;
     this.entity.position.x = this.targetX;
+    this.entity.cssClass = "sidewalk-wanderer"; // Update CSS class
     this.entity.behavior = new WandererBehavior(this.entity, false);
   }
 
   isSafeToCross() {
     if (this.waitTime > 0) return false;
 
-    const dangerZone = 2;
+    const dangerZone = 1;
     const currentLane = Math.floor(this.entity.position.x);
     const spatialManager = this.entity.spatialManager;
 
@@ -2614,7 +2600,7 @@ class WandererBehavior extends EntityBehavior {
   update() {
     // Always move down at minimum
     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
-    
+
     // If position is available, take it
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
@@ -2626,21 +2612,15 @@ class WandererBehavior extends EntityBehavior {
 
   canMoveTo(position) {
     const nearbyDarlings = this.getNearbyDarlings();
-    return !nearbyDarlings.some(other => 
-      Math.abs(other.position.x - position.x) < 0.1 &&
-      Math.abs(other.position.y - position.y) < 1.5
-    );
+    return !nearbyDarlings.some((other) => Math.abs(other.position.x - position.x) < 0.1 && Math.abs(other.position.y - position.y) < 1.5);
   }
 
   getNearbyDarlings() {
     if (!this.entity.spatialManager) return [];
-    
+
     return this.entity.spatialManager.grid
       .getNearbyDarlings(this.entity.position, 2)
-      .filter(entity => 
-        entity !== this.entity && 
-        entity.type === DarlingType.WANDERER
-      );
+      .filter((entity) => entity !== this.entity && entity.type === DarlingType.WANDERER);
   }
 }
 
@@ -2867,11 +2847,17 @@ class Wanderer extends BaseEntity {
     });
 
     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
+    const randomShape = DARLINGS.WANDERER.SHAPES[Math.floor(Math.random() * DARLINGS.WANDERER.SHAPES.length)];
+
     const template = isGoingUp ? DARLINGS.WANDERER.UP : DARLINGS.WANDERER.DOWN;
     this.width = template.width;
     this.height = template.height;
-    this.art = template.art;
+    // this.art = template.art;
+    this.art = [randomShape]; // Assign random shape to art
+
     this.color = `<span style='color: ${wandererColor}'>`;
+
+    this.cssClass = isTTCPassenger ? "ttc-passenger" : "sidewalk-wanderer";
 
     // Only modify spawn position for regular sidewalk wanderers
     if (!isTTCPassenger) {
@@ -4088,7 +4074,6 @@ class LoserLane {
         if (entity) {
           this.spatialManager.addEntityToSpatialManagementSystem(entity);
         }
-        // }
       }
     });
   }

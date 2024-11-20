@@ -30,6 +30,9 @@ const DARLINGS = {
         height: 4
     },
     WANDERER: {
+        SHAPES: [
+            "○", "*", "O", "☉", "●", "✺", "✹" // Add more shapes as desired
+        ],
         UP: {
             art: [
                 "○" 

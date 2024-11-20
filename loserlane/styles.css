@@ -358,6 +358,51 @@ a {
   animation: rainbow 6s linear infinite;
 }
 
+.wanderer {
+  /* color: lightblue; */
+  /* background-color: yellow; */
+  animation: wanderer-glow 2s infinite; /* Glow effect */
+
+}
+
+
+.ttc-passenger {
+  /* background-color: rgba(0, 128, 255, 0.2); Slightly different background */
+  /* animation: passenger-move 1s infinite; Another animation */
+}
+
+/* .sidewalk-wanderer {
+  color: orange;
+}
+
+.ttc-passenger {
+  color: green;
+} */
+
+
+.sidewalk-wanderer {
+  background-color: #333333;
+    /* animation: wander-animation 2s infinite; */
+}
+
+.ttc-passenger {
+  background-color: var(--dark-grey);
+  /* animation: passenger-animation 2s infinite; */
+}
+
+@keyframes wander-animation {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes passenger-animation {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(1px); }
+  100% { transform: translateX(0); }
+}
+
+
 @keyframes rainbow {
   from {
     filter: hue-rotate(0deg);
