@@ -21,7 +21,7 @@ const CONFIG = {
     },
   },
   SPAWN_RATES: {
-    TTC: 0.02,
+    TTC: 0.05,
     TTC_LANE_DEATHMACHINE: 0.8,
     ONCOMING_DEATHMACHINE: 0.4,
     PARKED_DEATHMACHINE: 0.2,
@@ -36,8 +36,8 @@ const CONFIG = {
     PARKED: 5,
     WANDERER: 2,
     BUILDING: 1,
-    TTC_TO_TTC: 24,
-    TTC_TO_DEATHMACHINE: 16,
+    TTC_TO_TTC: 18,
+    TTC_TO_DEATHMACHINE: 14,
     DEFAULT: 1,
   },
   TTC: {
@@ -94,7 +94,7 @@ const CONFIG = {
     // BUILDING_OVERLAP_THRESHOLD: 0.1,
   },
   SPAWNING: {
-    PARKED_DEATHMACHINE_DOOR_CHANCE: 0.3,
+    PARKED_DEATHMACHINE_DOOR_CHANCE: 0.2,
     PARKED_DEATHMACHINE_MIN_Y: 0.2,
     PARKED_DEATHMACHINE_MAX_Y: 0.3,
     BUILDING_RESPAWN_COOLDOWN: 100,
@@ -489,27 +489,33 @@ class GameRenderer {
 
   drawEntity(entity, isDying = false) {
     if (!entity || !entity.art) return;
-
+  
     if (entity.position.y + entity.height >= 0 && entity.position.y < this.config.GAME.HEIGHT) {
       entity.art.forEach((line, i) => {
         if (entity.position.y + i >= 0 && entity.position.y + i < this.config.GAME.HEIGHT) {
           line.split("").forEach((char, x) => {
             if (char !== " " && entity.position.x + x >= 0 && entity.position.x + x < this.config.GAME.WIDTH) {
-              let effectClass = `entity ${entity.cssClass || ""}`;
+              let effectClass = `entity ${entity.cssClass || ''}`;
               if (isDying) {
                 const isEdge = /[┌┐│╰╯]/.test(char);
                 const glitchClass = isEdge ? "char-glitch edge" : "char-glitch body";
                 effectClass += ` ${glitchClass}`;
               }
-
+  
               const wrappedChar = `<span class="${effectClass}">${char}</span>`;
-              this.renderGrid.updateCell(Math.floor(entity.position.x + x), Math.floor(entity.position.y + i), wrappedChar, entity.color);
+              this.renderGrid.updateCell(
+                Math.floor(entity.position.x + x),
+                Math.floor(entity.position.y + i),
+                wrappedChar,
+                entity.color
+              );
             }
           });
         }
       });
     }
   }
+  
 
   drawBike(bike, state) {
     // Update method signature
@@ -1751,7 +1757,11 @@ class VehicleClusterManager {
     this.clusters = new Map();
 
     // Initialize cluster settings for each vehicle type
-    [DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
+    [
+      DarlingType.TTC_LANE_DEATHMACHINE,
+      DarlingType.ONCOMING_DEATHMACHINE,
+      DarlingType.PARKED_DEATHMACHINE,
+    ].forEach((type) => {
       this.clusters.set(type, {
         active: false,
         vehiclesSpawned: 0,
@@ -1787,7 +1797,9 @@ class VehicleClusterManager {
     }
 
     // Use adjusted spawn rate during active cluster
-    const effectiveRate = cluster.active ? baseSpawnRate * this.clusterConfig.clusterSpawnMultiplier : baseSpawnRate;
+    const effectiveRate = cluster.active
+      ? baseSpawnRate * this.clusterConfig.clusterSpawnMultiplier
+      : baseSpawnRate;
 
     const shouldSpawn = Math.random() < effectiveRate;
 
@@ -1811,7 +1823,9 @@ class VehicleClusterManager {
     cluster.vehiclesSpawned = 0;
     cluster.targetSize =
       this.clusterConfig.minVehiclesInCluster +
-      Math.floor(Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1));
+      Math.floor(
+        Math.random() * (this.clusterConfig.maxVehiclesInCluster - this.clusterConfig.minVehiclesInCluster + 1)
+      );
 
     // Optional: Log cluster start
     // console.log(`Starting cluster for ${entityType}:`, {
@@ -1847,7 +1861,12 @@ class VehicleClusterManager {
   cleanup() {
     this.clusters.clear();
     // Re-initialize clusters
-    [DarlingType.TTC, DarlingType.TTC_LANE_DEATHMACHINE, DarlingType.ONCOMING_DEATHMACHINE, DarlingType.PARKED_DEATHMACHINE].forEach((type) => {
+    [
+      DarlingType.TTC,
+      DarlingType.TTC_LANE_DEATHMACHINE,
+      DarlingType.ONCOMING_DEATHMACHINE,
+      DarlingType.PARKED_DEATHMACHINE,
+    ].forEach((type) => {
       this.clusters.set(type, {
         active: false,
         vehiclesSpawned: 0,
@@ -2563,7 +2582,7 @@ class CrossingBehavior extends EntityBehavior {
   convertToRegularWanderer() {
     this.entity.art = DARLINGS.WANDERER.DOWN.art;
     this.entity.position.x = this.targetX;
-    this.entity.cssClass = "sidewalk-wanderer"; // Update CSS class
+    this.entity.cssClass = 'sidewalk-wanderer'; // Update CSS class
     this.entity.behavior = new WandererBehavior(this.entity, false);
   }
 
@@ -2600,7 +2619,7 @@ class WandererBehavior extends EntityBehavior {
   update() {
     // Always move down at minimum
     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
-
+    
     // If position is available, take it
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
@@ -2612,15 +2631,21 @@ class WandererBehavior extends EntityBehavior {
 
   canMoveTo(position) {
     const nearbyDarlings = this.getNearbyDarlings();
-    return !nearbyDarlings.some((other) => Math.abs(other.position.x - position.x) < 0.1 && Math.abs(other.position.y - position.y) < 1.5);
+    return !nearbyDarlings.some(other => 
+      Math.abs(other.position.x - position.x) < 0.1 &&
+      Math.abs(other.position.y - position.y) < 1.5
+    );
   }
 
   getNearbyDarlings() {
     if (!this.entity.spatialManager) return [];
-
+    
     return this.entity.spatialManager.grid
       .getNearbyDarlings(this.entity.position, 2)
-      .filter((entity) => entity !== this.entity && entity.type === DarlingType.WANDERER);
+      .filter(entity => 
+        entity !== this.entity && 
+        entity.type === DarlingType.WANDERER
+      );
   }
 }
 
@@ -2857,7 +2882,7 @@ class Wanderer extends BaseEntity {
 
     this.color = `<span style='color: ${wandererColor}'>`;
 
-    this.cssClass = isTTCPassenger ? "ttc-passenger" : "sidewalk-wanderer";
+    this.cssClass = isTTCPassenger ? 'ttc-passenger' : 'sidewalk-wanderer';
 
     // Only modify spawn position for regular sidewalk wanderers
     if (!isTTCPassenger) {
