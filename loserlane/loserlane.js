@@ -3229,7 +3229,7 @@ class GameStateManager {
   restart() {
     // Only handle game state reset
     this.state = new GameState(this.config);
-    this.doubleJumpPending = false;  // Add this for extra safety
+    this.doubleJumpPending = false; // Add this for extra safety
     this.state.currentLane = this.config.LANES.BIKE;
     this.score = 0;
     this.tutorialComplete = false;
@@ -3289,12 +3289,12 @@ class BaseControl {
     if (!this.game.stateManager.isPlaying) return;
 
     // Reset any double jump/immunity flags when moving normally
-    this.game.doubleJumpPending = false;  // Add this
+    this.game.doubleJumpPending = false; // Add this
 
     if (
       this.game.doubleJumpPending &&
-      (this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 || 
-       this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
+      (this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 ||
+        this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
     ) {
       this.game.handleJump(direction);
     } else {
@@ -4044,7 +4044,7 @@ class LoserLane {
 
   restart() {
     console.log("\n=== Game Restart Initiated ===");
-    
+
     // Stop current game loop
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
@@ -4108,7 +4108,7 @@ class LoserLane {
 
     // Clean up all managers and systems
     this.stateManager.cleanup();
-    this.doubleJumpPending = false;  // Add this
+    this.doubleJumpPending = false; // Add this
 
     this.spatialManager.cleanup();
     this.clusterManager.cleanup();
