@@ -29,7 +29,7 @@ const TORONTO_BUILDINGS = [
         art: [
             "    ┌─✺─✺┐",
             "┌───┴┬───┘",
-            "│ TIMS   │",
+            "│ BIMS   │",
             "│COFFEE  │",
             "│& FOOD  │",
             "└────────┘"
@@ -83,7 +83,7 @@ const TORONTO_BUILDINGS = [
             "⸨⎻⎻⎻◄o►⎻⎻⸩",
             "│ MIMI'S │",
             "│⊰PLACE⊱ │",
-            "│        │",
+            "│    ♡   │",
             "╚═⳺⳻⳺⳻⳺⳻═╝"
         ]
     },

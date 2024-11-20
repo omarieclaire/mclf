@@ -3713,7 +3713,7 @@ class TutorialSystem {
     this.controlsDiv.style.opacity = "0";
 
     // Show "STAY ALIVE" text
-    this.tutorialText.innerHTML = "STAY ALIVE";
+    this.tutorialText.innerHTML = "STAY ALIVE?";
 
     // Swap bike with start button
     setTimeout(() => {
@@ -4057,6 +4057,11 @@ class LoserLane {
 
     // Reset game state
     this.stateManager.restart();
+
+    // Clean up existing controls
+    if (this.controls) {
+      this.controls.cleanup();
+    }
 
     // Create new game systems
     this.spatialManager = new SpatialManager(CONFIG);
