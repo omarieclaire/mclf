@@ -33,7 +33,7 @@ const CONFIG = {
     TTC: 8,
     TTC_LANE_DEATHMACHINE: 8,
     ONCOMING_DEATHMACHINE: 8,
-    PARKED: 1,
+    PARKED: 5,
     WANDERER: 3,
     BUILDING: 0,
     TTC_TO_TTC: 20,
@@ -91,7 +91,7 @@ const CONFIG = {
   COLLISION: {
     ADJACENT_LANE_THRESHOLD: 1,
     NEARBY_ENTITY_RADIUS: 2,
-    BUILDING_OVERLAP_THRESHOLD: 0.1,
+    // BUILDING_OVERLAP_THRESHOLD: 0.1,
   },
   SPAWNING: {
     PARKED_DEATHMACHINE_DOOR_CHANCE: 0.3,
@@ -1172,7 +1172,7 @@ class SpawnManager {
    * Defines spacing, positioning, and lane rules
    * @returns {Map} Map of entity types to their spawn rules
    */
-  
+
   createSpawnConfigRulesForAllDarlingTypes() {
     try {
       if (!this.config.SAFE_DISTANCE || !this.config.LANES || !this.config.GAME) {
@@ -1240,13 +1240,13 @@ class SpawnManager {
             baseSpacing: this.config.SAFE_DISTANCE.PARKED,
             randomSpacingRange: {
               min: 0,
-              max: Math.floor(this.config.SAFE_DISTANCE.PARKED * 0.2),
+              max: 1,
             },
             laneRules: {
               allowedLanes: [this.config.LANES.PARKED],
               spawnPosition: {
                 x: this.config.LANES.PARKED,
-                y: -5,
+                y: -1,
               },
               direction: 1,
             },
@@ -1284,7 +1284,7 @@ class SpawnManager {
                 x: this.config.LANES.BUILDINGS,
                 y: this.config.GAME.HEIGHT,
               },
-              direction: -1,
+              direction: 1, //doesn't seem to matter
             },
           },
         ],
@@ -1300,6 +1300,25 @@ class SpawnManager {
    * Handles special cases like TTC-to-TTC spacing
    */
   getRequiredSpacingBetweenDifferentDarlingTypes(entityTypeA, entityTypeB) {
+    try {
+      // Special cases first
+      if (entityTypeA === DarlingType.PARKED_DEATHMACHINE && entityTypeB === DarlingType.PARKED_DEATHMACHINE) {
+        // Use a fixed spacing value for parked vehicles
+        return this.config.SAFE_DISTANCE.PARKED;
+      }
+  
+      const baseDistance = this.config.SAFE_DISTANCE[entityTypeA] || this.config.SAFE_DISTANCE.DEFAULT;
+  
+      if (typeof baseDistance !== "number") {
+        throw new SpawnError("Invalid base distance", { baseDistance });
+      }
+  
+      return baseDistance * (entityTypeA === entityTypeB ? 1.5 : 1);
+    } catch (error) {
+      // Error handling
+      return this.config.SAFE_DISTANCE.DEFAULT || 1; // Safe fallback
+    }
+
     try {
       if (!entityTypeA || !entityTypeB) {
         throw new SpawnError("Invalid entity types for spacing calculation", {
@@ -1634,7 +1653,7 @@ class VehicleClusterManager {
 
 class EntityBehavior {
   constructor(entity) {
-    this.building = entity;
+    this.entity = entity;
     this.canMove = true;
   }
 
@@ -1647,21 +1666,21 @@ class EntityBehavior {
   }
 
   canMoveTo(position) {
-    if (!this.building.spatialManager) {
-      console.warn("Entity has no spatial manager:", this.building);
+    if (!this.entity.spatialManager) {
+      console.warn("Entity has no spatial manager:", this.entity);
       return false;
     }
-    return this.building.spatialManager.validateIfEntityCanMoveToNewPos(this.building, position);
+    return this.entity.spatialManager.validateIfEntityCanMoveToNewPos(this.entity, position);
   }
 
   move(newPosition) {
     if (this.canMoveTo(newPosition)) {
-      const oldPosition = this.building.position;
-      this.building.position = newPosition;
+      const oldPosition = this.entity.position;
+      this.entity.position = newPosition;
 
       // Update grid position if spatial manager exists
-      if (this.building.spatialManager?.grid) {
-        this.building.spatialManager.grid.updateDarlingsPositionInGridSystem(this.building, oldPosition, newPosition);
+      if (this.entity.spatialManager?.grid) {
+        this.entity.spatialManager.grid.updateDarlingsPositionInGridSystem(this.entity, oldPosition, newPosition);
       }
 
       return true;
@@ -1675,9 +1694,9 @@ class EntityBehavior {
     if (!position) return false;
 
     // Check boundaries if config exists
-    if (this.building.config) {
-      if (position.x < 0 || position.x >= this.building.config.GAME.WIDTH) return false;
-      if (position.y < -10 || position.y >= this.building.config.GAME.HEIGHT + 10) return false;
+    if (this.entity.config) {
+      if (position.x < 0 || position.x >= this.entity.config.GAME.WIDTH) return false;
+      if (position.y < -10 || position.y >= this.entity.config.GAME.HEIGHT + 10) return false;
     }
 
     return true;
@@ -1685,9 +1704,9 @@ class EntityBehavior {
 
   getState() {
     return {
-      position: this.building.position,
+      position: this.entity.position,
       canMove: this.canMove,
-      type: this.building.type,
+      type: this.entity.type,
     };
   }
 }
@@ -1704,13 +1723,13 @@ class BuildingBehavior extends EntityBehavior {
 
   update() {
     // Move the building downwards by the speed value
-    this.building.position.y += CONFIG.MOVEMENT.BASE_MOVE_SPEED;
+    this.entity.position.y += CONFIG.MOVEMENT.BASE_MOVE_SPEED;
 
     // If the building has reached the bottom of the screen
-    if (this.building.position.y >= this.building.config.GAME.HEIGHT) {
+    if (this.entity.position.y >= this.entity.config.GAME.HEIGHT) {
       // Get all other buildings sorted by their Y position
-      const buildings = Array.from(this.building.spatialManager.darlings)
-        .filter((e) => e.type === DarlingType.BUILDING && e !== this.building)
+      const buildings = Array.from(this.entity.spatialManager.darlings)
+        .filter((e) => e.type === DarlingType.BUILDING && e !== this.entity)
         .sort((a, b) => a.position.y - b.position.y);
 
       // Reset the building index if it has reached the end of the available buildings
@@ -1725,7 +1744,7 @@ class BuildingBehavior extends EntityBehavior {
       // Calculate the new Y position for the building
       let newY =
         buildings.length === 0
-          ? this.building.config.SPAWNING.MIN_BUILDING_HEIGHT
+          ? this.entity.config.SPAWNING.MIN_BUILDING_HEIGHT
           : buildings[0].position.y - newBuildingHeight - CONFIG.SAFE_DISTANCE.BUILDING;
 
       // Validate the new position
@@ -1748,10 +1767,10 @@ class BuildingBehavior extends EntityBehavior {
     // });
 
     // Update the building's properties
-    this.building.position.y = newY;
-    this.building.art = newBuilding.art;
-    this.building.height = newHeight;
-    this.building.name = newBuilding.name;
+    this.entity.position.y = newY;
+    this.entity.art = newBuilding.art;
+    this.entity.height = newHeight;
+    this.entity.name = newBuilding.name;
     // Increment the building index
     Building.buildingIndex++;
   }
@@ -1790,7 +1809,7 @@ class BuildingBehavior extends EntityBehavior {
     const isValid = !existingBuildings.some((building) => {
       const topOverlap = y < building.position.y + building.height + this.minSpacing;
       const bottomOverlap = y + height + this.minSpacing > building.position.y;
-      const sameColumn = Math.abs(building.position.x - this.building.config.LANES.BUILDINGS) < 0.1;
+      const sameColumn = Math.abs(building.position.x - this.entity.config.LANES.BUILDINGS) < 0.1;
 
       // If the new building overlaps with an existing building in the same column, return true to indicate an invalid position
       if (sameColumn && topOverlap && bottomOverlap) {
@@ -1819,7 +1838,7 @@ class VehicleBehaviorBase extends EntityBehavior {
     super(entity);
     this.baseSpeed = options.baseSpeed || CONFIG.MOVEMENT.BASE_MOVE_SPEED;
     // Remove hardcoded value, use config or default
-    this.minDistance = options.minDistance || this.building.config.SAFE_DISTANCE.DEFAULT;
+    this.minDistance = options.minDistance || this.entity.config.SAFE_DISTANCE.DEFAULT;
     this.stopped = false;
     this.ignoreCollisions = options.ignoreCollisions || false;
     this.hasAnimation = options.hasAnimation || false;
@@ -1849,10 +1868,12 @@ class VehicleBehaviorBase extends EntityBehavior {
   }
 
   calculateNewPosition() {
-    return new Position(this.building.position.x, this.building.position.y + this.baseSpeed);
+    return new Position(this.entity.position.x, this.entity.position.y + this.baseSpeed);
   }
 
   handleMovementBlocked() {
+    console.log(`yo movment blocked`);
+
     this.stopped = true;
     setTimeout(() => {
       this.stopped = false;
@@ -1860,11 +1881,11 @@ class VehicleBehaviorBase extends EntityBehavior {
   }
 
   getNearbyDarlings() {
-    if (!this.building.spatialManager) return [];
+    if (!this.entity.spatialManager) return [];
 
-    return this.building.spatialManager.grid
-      .getNearbyDarlings(this.building.position, Math.max(this.building.width, this.building.height) * 2)
-      .filter((entity) => entity !== this.building && entity.type !== DarlingType.BIKE && Math.abs(entity.position.x - this.building.position.x) < 2);
+    return this.entity.spatialManager.grid
+      .getNearbyDarlings(this.entity.position, Math.max(this.entity.width, this.entity.height) * 2)
+      .filter((entity) => entity !== this.entity && entity.type !== DarlingType.BIKE && Math.abs(entity.position.x - this.entity.position.x) < 2);
   }
 
   updateAnimation() {
@@ -1878,7 +1899,7 @@ class VehicleBehaviorBase extends EntityBehavior {
 class WandererBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
-    this.building = entity;
+    this.entity = entity;
     this.config = entity.config;
     this.isGoingUp = isGoingUp;
     this.baseSpeed = isGoingUp ? -this.config.MOVEMENT.WANDERER_SPEED : this.config.MOVEMENT.WANDERER_SPEED;
@@ -1888,16 +1909,16 @@ class WandererBehavior extends EntityBehavior {
 
     // Assign lane based on direction
     this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 2 : this.config.LANES.SIDEWALK;
-    this.building.position.x = this.lane; // Set initial x position based on lane
+    this.entity.position.x = this.lane; // Set initial x position based on lane
   }
 
   shouldWait(nearbyDarlings) {
     return nearbyDarlings.some((other) => {
       // Only check for wanderers in the same lane
-      if (Math.abs(other.position.x - this.building.position.x) > 0.1) {
+      if (Math.abs(other.position.x - this.entity.position.x) > 0.1) {
         return false;
       }
-      const distance = Math.abs(other.position.y - this.building.position.y);
+      const distance = Math.abs(other.position.y - this.entity.position.y);
       return distance < this.minDistance;
     });
   }
@@ -1919,7 +1940,7 @@ class WandererBehavior extends EntityBehavior {
       return;
     }
 
-    const newPosition = new Position(this.lane, this.building.position.y + this.baseSpeed);
+    const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
 
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
@@ -1927,14 +1948,14 @@ class WandererBehavior extends EntityBehavior {
   }
 
   getNearbyDarlings() {
-    if (!this.building.spatialManager) return [];
+    if (!this.entity.spatialManager) return [];
 
-    return this.building.spatialManager.grid.getNearbyDarlings(this.building.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS).filter(
+    return this.entity.spatialManager.grid.getNearbyDarlings(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS).filter(
       (entity) =>
-        entity !== this.building &&
+        entity !== this.entity &&
         entity.type !== DarlingType.BIKE &&
         entity.type === DarlingType.WANDERER &&
-        Math.abs(entity.position.x - this.building.position.x) < 0.1 // Only consider wanderers in same lane
+        Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider wanderers in same lane
     );
   }
 }
@@ -1965,71 +1986,147 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
     this.lastPosition = { ...entity.position }; // Track last position
     this.stuckFrames = 0; // Track how long it's been stuck
 
-    console.log(`[ParkedDM] Created:`, {
-      id: entity.id,
-      position: { x: entity.position.x, y: entity.position.y },
-      baseSpeed: this.baseSpeed,
-      dimensions: { width: entity.width, height: entity.height },
-    });
+    this.doorState = DOOR_STATES.CLOSED;
+    this.doorTimer = 0;
+    this.doorHitbox = null;
+    this.doorAnimationActive = false;
+    this.lastDoorUpdate = Date.now();
+    this.doorOpenDelay = entity.config.ANIMATIONS.DOOR_OPEN_DELAY;
+
+    const targetPercentage =
+      entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y + Math.random() * (entity.config.SPAWNING.PARKED_DEATHMACHINE_MAX_Y - entity.config.SPAWNING.PARKED_DEATHMACHINE_MIN_Y);
+    this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
+    this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
+
+    // this.shouldOpenDoor = false;
+
+    // console.log(`[ParkedDM] Created:`, {
+    //   id: entity.id,
+    //   position: { x: entity.position.x, y: entity.position.y },
+    //   baseSpeed: this.baseSpeed,
+    //   dimensions: { width: entity.width, height: entity.height },
+    // });
   }
 
-  update() {
-    // Track movement
-    const hasntMoved = this.building.position.x === this.lastPosition.x && this.building.position.y === this.lastPosition.y;
+  // update() {
+  //   // Track movement
+  //   const hasntMoved = this.entity.position.x === this.lastPosition.x && this.entity.position.y === this.lastPosition.y;
 
-    if (hasntMoved) {
-      this.stuckFrames++;
-      if (this.stuckFrames % 60 === 0) {
-        // Log every second
-        console.log(`[ParkedDM] STUCK for ${this.stuckFrames} frames:`, {
-          id: this.building.id,
-          position: { x: this.building.position.x, y: this.building.position.y },
-          stopped: this.stopped,
-          baseSpeed: this.baseSpeed,
-          nearbyVehicles: this.getNearbyVehicles(),
-        });
-      }
+  //   if (hasntMoved) {
+  //     this.stuckFrames++;
+  //     if (this.stuckFrames % 60 === 0) {
+  //       // Log every second
+  //       console.log(`[ParkedDM] STUCK for ${this.stuckFrames} frames:`, {
+  //         id: this.entity.id,
+  //         position: { x: this.entity.position.x, y: this.entity.position.y },
+  //         stopped: this.stopped,
+  //         baseSpeed: this.baseSpeed,
+  //         nearbyVehicles: this.getNearbyVehicles(),
+  //       });
+  //     }
+  //   } else {
+  //     this.stuckFrames = 0;
+  //   }
+
+  //   // Regular movement handling
+  //   if (this.stopped) {
+  //     console.log(`[ParkedDM] Stopped state:`, {
+  //       id: this.entity.id,
+  //       position: { x: this.entity.position.x, y: this.entity.position.y },
+  //       stuckFrames: this.stuckFrames,
+  //     });
+  //   } else {
+  //     super.update();
+  //   }
+
+  //   // Track position for next frame
+  //   this.lastPosition = { ...this.entity.position };
+
+  //   // Animation update
+  //   if (this.hasAnimation) {
+  //     this.updateAnimation();
+  //   }
+  // }
+
+  updateAnimation() {
+    if (
+      this.shouldOpenDoor &&
+      !this.doorAnimationActive &&
+      this.entity.position.y >= this.doorOpenY &&
+      this.entity.position.y <= this.doorOpenY + 2
+    ) {
+      this.doorAnimationActive = true;
+      this.updateDoorState();
+    }
+
+    if (this.doorAnimationActive && this.doorState < DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 && Date.now() - this.lastDoorUpdate > this.doorOpenDelay) {
+      this.updateDoorState();
+    }
+
+    this.updateDoorHitbox();
+  }
+
+  updateDoorState() {
+    this.doorState++;
+    this.lastDoorUpdate = Date.now();
+    this.entity.art = DARLINGS.PARKED_DEATHMACHINE_STATES[this.doorState];
+
+    // Add door-opening animation class when door is opening
+    if (this.doorState > 0) {
+      this.entity.animationClass = "parked-car door-opening animated";
     } else {
-      this.stuckFrames = 0;
+      this.entity.animationClass = "parked-car animated";
     }
 
-    // Regular movement handling
-    if (this.stopped) {
-      console.log(`[ParkedDM] Stopped state:`, {
-        id: this.building.id,
-        position: { x: this.building.position.x, y: this.building.position.y },
-        stuckFrames: this.stuckFrames,
-      });
-    } else {
-      super.update();
+    const doorWidths = [0, 0.8, 1, 1.5, 1.8];
+    const doorWidth = doorWidths[this.doorState];
+    const hitboxHeight = this.doorState === DARLINGS.PARKED_DEATHMACHINE_STATES.length - 1 ? 0.8 : 1.8;
+
+    this.doorHitbox = {
+      x: this.entity.position.x,
+      y: this.entity.position.y + 1,
+      width: doorWidth,
+      height: hitboxHeight,
+    };
+  }
+
+  updateDoorHitbox() {
+    console.log("yoooo");
+    
+    if (this.doorHitbox) {
+      this.doorHitbox.y = this.entity.position.y + 1;
+    }
+  }
+
+  onCollision(other) {
+    if (other.type === EntityType.BIKE) {
+      return;
     }
 
-    // Track position for next frame
-    this.lastPosition = { ...this.building.position };
-
-    // Animation update
-    if (this.hasAnimation) {
-      this.updateAnimation();
-    }
+    // Parked cars don't move on collision, they just block
+    this.stopped = true;
+    setTimeout(() => {
+      this.stopped = false;
+    }, 500);
   }
 
   getNearbyVehicles() {
-    if (!this.building.spatialManager) return [];
+    if (!this.entity.spatialManager) return [];
 
-    return this.building.spatialManager.grid
-      .getNearbyDarlings(this.building.position, 5)
-      .filter((entity) => entity !== this.building)
+    return this.entity.spatialManager.grid
+      .getNearbyDarlings(this.entity.position, 5)
+      .filter((entity) => entity !== this.entity)
       .map((entity) => ({
         type: entity.type,
         position: { x: entity.position.x, y: entity.position.y },
-        distance: Math.abs(entity.position.y - this.building.position.y),
+        distance: Math.abs(entity.position.y - this.entity.position.y),
       }));
   }
 
   handleMovementBlocked() {
-    console.log(`[ParkedDM] Movement blocked:`, {
-      id: this.building.id,
-      position: { x: this.building.position.x, y: this.building.position.y },
+    console.log(`yo [ParkedDM] Movement blocked:`, {
+      id: this.entity.id,
+      position: { x: this.entity.position.x, y: this.entity.position.y },
       nearbyVehicles: this.getNearbyVehicles(),
     });
     super.handleMovementBlocked();
@@ -2060,7 +2157,7 @@ class TTCBehavior extends VehicleBehaviorBase {
     if (this.wanderersSpawnedAtStop) return; // Prevent multiple spawns per stop
 
     // Get the spatial manager from the entity
-    const spatialManager = this.building.spatialManager;
+    const spatialManager = this.entity.spatialManager;
     if (!spatialManager) return;
 
     // Determine the number of wanderers to spawn
@@ -2069,8 +2166,8 @@ class TTCBehavior extends VehicleBehaviorBase {
     for (let i = 0; i < numWanderers; i++) {
       const isGoingUp = Math.random() < 0.5;
       const offsetX = (Math.random() - 0.5) * 2; // Random offset between -1 and 1
-      const spawnX = this.building.position.x + offsetX + this.building.width / 2;
-      const spawnY = this.building.position.y + (isGoingUp ? -1 : this.building.height + 1);
+      const spawnX = this.entity.position.x + offsetX + this.entity.width / 2;
+      const spawnY = this.entity.position.y + (isGoingUp ? -1 : this.entity.height + 1);
 
       const spawnPosition = new Position(spawnX, spawnY);
 
@@ -2086,7 +2183,7 @@ class TTCBehavior extends VehicleBehaviorBase {
 
   getRandomStopTime() {
     // Choose the desired difficulty level: EASY, NORMAL, or HARD
-    const level = this.building.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
+    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
     const min = level.STOP_INTERVAL_MIN;
     const max = level.STOP_INTERVAL_MAX;
     const time = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -2095,7 +2192,7 @@ class TTCBehavior extends VehicleBehaviorBase {
   }
 
   getRandomStopDuration() {
-    const level = this.building.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
+    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
     const min = level.STOP_DURATION_MIN;
     const max = level.STOP_DURATION_MAX;
     const duration = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -2117,7 +2214,7 @@ class TTCBehavior extends VehicleBehaviorBase {
     const shouldStop = this.shouldStop(nearbyDarlings);
 
     // Track if we're stuck in the same position
-    if (this.lastPosition && this.lastPosition.y === this.building.position.y) {
+    if (this.lastPosition && this.lastPosition.y === this.entity.position.y) {
       this.stuckTimer++;
       if (this.stuckTimer > 60) {
         // About 1 second at 60fps
@@ -2143,7 +2240,7 @@ class TTCBehavior extends VehicleBehaviorBase {
       this.stuckTimer = 0;
     }
 
-    this.lastPosition = { ...this.building.position };
+    this.lastPosition = { ...this.entity.position };
 
     if (shouldStop) {
       // console.log("\n=== TTC Movement Blocked ===", {
@@ -2161,7 +2258,7 @@ class TTCBehavior extends VehicleBehaviorBase {
 
   shouldStop(nearbyDarlings) {
     const blockingDarlings = nearbyDarlings.filter((other) => {
-      const distance = Math.abs(other.position.y - this.building.position.y);
+      const distance = Math.abs(other.position.y - this.entity.position.y);
       const isTooClose = distance < this.minDistance;
 
       if (isTooClose) {
@@ -2214,7 +2311,7 @@ class TTCBehavior extends VehicleBehaviorBase {
           this.isAtStop = false;
           this.wanderersSpawnedAtStop = false; // Reset for next stop
           this.nextStopTime = this.getRandomStopTime();
-          console.log("TTC is resuming movement at position:", this.building.position);
+          console.log("TTC is resuming movement at position:", this.entity.position);
         }
         return; // Skip movement while stopped
       }
@@ -2265,7 +2362,7 @@ class OncomingDeathmachineBehavior extends VehicleBehaviorBase {
 
   update() {
     // Just move down at constant speed
-    this.building.position.y += this.baseSpeed;
+    this.entity.position.y += this.baseSpeed;
   }
 }
 // =========================================
@@ -2298,7 +2395,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       return;
     }
 
-    const currentX = this.building.position.x;
+    const currentX = this.entity.position.x;
     const distanceToLane = Math.abs(currentX - this.targetLane);
 
     let moveDirection;
@@ -2315,10 +2412,10 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     // Try multiple positions if the first one fails
     // for (let speedMultiplier of [1, 0.75, 0.5, 0.25]) {
     for (let speedMultiplier of [1, 1.25, 1.5, 1.75]) {
-      const newPosition = new Position(currentX + moveDirection * speedMultiplier, this.building.position.y + verticalSpeed);
+      const newPosition = new Position(currentX + moveDirection * speedMultiplier, this.entity.position.y + verticalSpeed);
 
-      if (this.building.spatialManager.validateIfEntityCanMoveToNewPos(this.building, newPosition)) {
-        this.building.spatialManager.movementCoordinator.moveEntity(this.building, newPosition);
+      if (this.entity.spatialManager.validateIfEntityCanMoveToNewPos(this.entity, newPosition)) {
+        this.entity.spatialManager.movementCoordinator.moveEntity(this.entity, newPosition);
 
         if (distanceToLane < 0.5) {
           // console.log("At parking position, transforming");
@@ -2337,26 +2434,26 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
   }
 
   transformToParkedDeathmachine() {
-    const spatialManager = this.building.spatialManager;
-    const targetPosition = new Position(this.targetLane, this.building.position.y);
+    const spatialManager = this.entity.spatialManager;
+    const targetPosition = new Position(this.targetLane, this.entity.position.y);
 
     // console.log("\n=== Starting Parking Transform ===");
     console.log("Original vehicle position:", {
-      x: this.building.position.x,
-      y: this.building.position.y,
+      x: this.entity.position.x,
+      y: this.entity.position.y,
     });
 
     // Get nearby darlings before transformation
-    const nearbyDarlings = spatialManager.grid.getNearbyDarlings(targetPosition, this.building.config.SAFE_DISTANCE.PARKED * 2);
+    const nearbyDarlings = spatialManager.grid.getNearbyDarlings(targetPosition, this.entity.config.SAFE_DISTANCE.PARKED * 2);
 
     const nearbyparkedDeathMachines = nearbyDarlings.filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE);
 
     // Calculate initial safe position
     let safeY = targetPosition.y;
-    const minSpacing = this.building.config.SAFE_DISTANCE.PARKED;
+    const minSpacing = this.entity.config.SAFE_DISTANCE.PARKED;
 
     // Create parked deathMachine to test positions
-    const parkedDeathmachine = new ParkedDeathmachine(this.building.config, {
+    const parkedDeathmachine = new ParkedDeathmachine(this.entity.config, {
       position: new Position(this.targetLane, safeY),
     });
     parkedDeathmachine.behavior.baseSpeed = 1;
@@ -2381,7 +2478,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       console.log("Found valid position at y:", safeY);
       // Only register the new deathMachine and remove the old one if we found a valid position
       spatialManager.addEntityToSpatialManagementSystem(parkedDeathmachine);
-      spatialManager.removeEntityFromSpatialManagementSystem(this.building);
+      spatialManager.removeEntityFromSpatialManagementSystem(this.entity);
 
       console.log("=== Parking Transform Complete ===");
       console.log("Final parked deathMachine position:", {
@@ -2412,13 +2509,13 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
   }
 
   canStartParkingManeuver() {
-    const nearbyDarlings = this.building.spatialManager.grid.getNearbyDarlings(new Position(this.targetLane, this.building.position.y), 6);
+    const nearbyDarlings = this.entity.spatialManager.grid.getNearbyDarlings(new Position(this.targetLane, this.entity.position.y), 6);
 
     const nearbyparkedDeathMachines = nearbyDarlings.filter(
       (e) => e.type === DarlingType.PARKED_DEATHMACHINE || (e.type === DarlingType.TTC_LANE_DEATHMACHINE && e.behavior.isParking)
     );
 
-    const hasSpace = !nearbyparkedDeathMachines.some((deathMachine) => Math.abs(deathMachine.position.y - this.building.position.y) < 6);
+    const hasSpace = !nearbyparkedDeathMachines.some((deathMachine) => Math.abs(deathMachine.position.y - this.entity.position.y) < 6);
 
     return hasSpace;
   }
@@ -2635,7 +2732,7 @@ class ParkedDeathmachine extends BaseEntity {
     return {
       x: this.position.x + 2,
       y: this.position.y,
-      width: 4,
+      width: 5,
       height: this.height,
     };
   }
@@ -3427,7 +3524,7 @@ class LoserLane {
   initializeGameWorld() {
     this.spatialManager.darlings.clear();
     this.initializeBuildings();
-    // this.initializeparkedDeathMachines();
+    this.initializeparkedDeathMachines();
     this.bike = this.updateBike();
     this.spatialManager.addEntityToSpatialManagementSystem(this.bike);
   }
