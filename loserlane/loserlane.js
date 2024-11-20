@@ -945,20 +945,20 @@ class CollisionManager {
           .getNearbyDarlings(newPosition, Math.max(entity.width, entity.height) * 2)
           .filter((other) => other.type === DarlingType.PARKED_DEATHMACHINE);
 
-        console.log("=== Parked Car Position Check ===", {
-          id: entity.id.slice(-6),
-          currentX: entity.position?.x,
-          currentY: entity.position?.y,
-          proposedX: newPosition.x,
-          proposedY: newPosition.y,
-          nearbyParkedCars: nearbyParkedCars.map((other) => ({
-            id: other.id.slice(-6),
-            x: other.position.x,
-            y: other.position.y,
-            xDistance: Math.abs(other.position.x - newPosition.x),
-            yDistance: Math.abs(other.position.y - newPosition.y),
-          })),
-        });
+        // console.log("=== Parked Car Position Check ===", {
+        //   id: entity.id.slice(-6),
+        //   currentX: entity.position?.x,
+        //   currentY: entity.position?.y,
+        //   proposedX: newPosition.x,
+        //   proposedY: newPosition.y,
+        //   nearbyParkedCars: nearbyParkedCars.map((other) => ({
+        //     id: other.id.slice(-6),
+        //     x: other.position.x,
+        //     y: other.position.y,
+        //     xDistance: Math.abs(other.position.x - newPosition.x),
+        //     yDistance: Math.abs(other.position.y - newPosition.y),
+        //   })),
+        // });
       }
 
       if (entity.behavior?.ignoreCollisions) {
@@ -986,16 +986,16 @@ class CollisionManager {
 
           if (other !== entity && this.shouldCheckCollision(entity, other) && this.checkCollision(entity.getHitbox(), other.getHitbox())) {
             if (entity.type === DarlingType.PARKED_DEATHMACHINE) {
-              console.log("🚫 Invalid Position:", {
-                entityId: entity.id.slice(-6),
-                collidingWith: other.id.slice(-6),
-                proposedPos: newPosition,
-                otherPos: other.position,
-                distance: {
-                  x: Math.abs(newPosition.x - other.position.x),
-                  y: Math.abs(newPosition.y - other.position.y),
-                },
-              });
+              // console.log("🚫 Invalid Position:", {
+              //   entityId: entity.id.slice(-6),
+              //   collidingWith: other.id.slice(-6),
+              //   proposedPos: newPosition,
+              //   otherPos: other.position,
+              //   distance: {
+              //     x: Math.abs(newPosition.x - other.position.x),
+              //     y: Math.abs(newPosition.y - other.position.y),
+              //   },
+              // });
             }
             isValid = false;
             break;
@@ -1661,7 +1661,7 @@ class SpawnManager {
       if (entityType === DarlingType.WANDERER) {
         try {
           const isGoingUp = Math.random() < 0.5;
-          if (this.wandererDebugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
+          // if (this.wandererDebugLog) console.log(`Spawning wanderer going ${isGoingUp ? "up" : "down"}`);
 
           const spawnConfig = {
             position: new Position(
@@ -1674,7 +1674,7 @@ class SpawnManager {
             if (this.wandererDebugLog) console.log(`Spawning wanderer at position:`, spawnConfig.position);
             return new Wanderer(this.config, spawnConfig, isGoingUp);
           }
-          if (this.wandererDebugLog) console.log(`Failed to spawn wanderer - position occupied`);
+          // if (this.wandererDebugLog) console.log(`Failed to spawn wanderer - position occupied`);
           return null;
         } catch (error) {
           this.logError(
@@ -2330,7 +2330,7 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   }
 
   updateDoorHitbox() {
-    console.log("yoooo");
+    // console.log("yoooo");
 
     if (this.doorHitbox) {
       this.doorHitbox.y = this.entity.position.y + 1;
@@ -2371,6 +2371,72 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
     super.handleMovementBlocked();
   }
 }
+
+class WandererCrossingBehavior extends EntityBehavior {
+  constructor(entity) {
+    super(entity);
+    // Use the global CONFIG instead of this.config
+    this.targetLane = CONFIG.LANES.SIDEWALK; // Sidewalk lane
+    this.directionX = -1; // Moving left towards the sidewalk
+    this.waiting = false;
+  }
+
+  update() {
+    if (this.waiting) {
+      // Check if it's safe to move
+      if (this.isSafeToMove()) {
+        this.waiting = false;
+      } else {
+        return; // Keep waiting
+      }
+    }
+
+    const newPosition = new Position(
+      this.entity.position.x + this.directionX * CONFIG.MOVEMENT.WANDERER_SPEED,
+      this.entity.position.y
+    );
+
+    if (this.canMoveTo(newPosition)) {
+      this.move(newPosition);
+
+      // Check if reached the sidewalk
+      if (Math.floor(this.entity.position.x) <= this.targetLane) {
+        // Randomly decide direction (up or down) once on sidewalk
+        const isGoingUp = Math.random() < 0.5;
+        this.entity.behavior = new WandererBehavior(this.entity, isGoingUp);
+      }
+    } else {
+      // Can't move due to obstacle; start waiting
+      this.waiting = true;
+    }
+  }
+
+  isSafeToMove() {
+    const spatialManager = this.entity.spatialManager;
+    if (!spatialManager) return false;
+
+    const nextPosition = new Position(
+      this.entity.position.x + this.directionX,
+      this.entity.position.y
+    );
+
+    const nearbyEntities = spatialManager.grid.getNearbyDarlings(nextPosition, 1);
+
+    // Check for deathmachines in the lane
+    return !nearbyEntities.some((entity) => {
+      return (
+        (entity.type === DarlingType.TTC_LANE_DEATHMACHINE ||
+          entity.type === DarlingType.ONCOMING_DEATHMACHINE ||
+          entity.type === DarlingType.TTC) &&
+        Math.floor(entity.position.x) === Math.floor(nextPosition.x)
+      );
+    });
+  }
+}
+
+
+
+
 // =========================================
 // TTCBehavior
 // =========================================
@@ -2382,6 +2448,7 @@ class TTCBehavior extends VehicleBehaviorBase {
       minDistance: entity.config.SAFE_DISTANCE.TTC,
       ignoreCollisions: false,
     });
+    this.config = entity.config; // Ensure config is accessible
     this.stuckTimer = 0;
     this.lastPosition = null;
 
@@ -2389,36 +2456,49 @@ class TTCBehavior extends VehicleBehaviorBase {
     this.isAtStop = false;
     this.stopTimer = 0;
     this.nextStopTime = this.getRandomStopTime();
-    console.log(`TTC initialized with nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
+    this.wanderersSpawnedAtStop = false;
+
+    // **Add this line**
+    this.isFullyOnScreen = false; // Track if TTC is fully visible
   }
 
   spawnWanderers() {
-    if (this.wanderersSpawnedAtStop) return; // Prevent multiple spawns per stop
-
+    if (this.wanderersSpawnedAtStop) {
+      console.log("Wanderers have already been spawned at this stop.");
+      return; // Prevent multiple spawns per stop
+    }
+  
     // Get the spatial manager from the entity
     const spatialManager = this.entity.spatialManager;
-    if (!spatialManager) return;
-
+    if (!spatialManager) {
+      console.warn("No spatial manager available for TTC entity.");
+      return;
+    }
+  
     // Determine the number of wanderers to spawn
     const numWanderers = Math.floor(Math.random() * 3) + 1; // Spawn 1 to 3 wanderers
-
+    console.log(`Spawning ${numWanderers} wanderer(s).`);
+  
     for (let i = 0; i < numWanderers; i++) {
-      const isGoingUp = Math.random() < 0.5;
-      const offsetX = (Math.random() - 0.5) * 2; // Random offset between -1 and 1
-      const spawnX = this.entity.position.x + offsetX + this.entity.width / 2;
-      const spawnY = this.entity.position.y + (isGoingUp ? -1 : this.entity.height + 1);
-
-      const spawnPosition = new Position(spawnX, spawnY);
-
+      const spawnLane = this.entity.position.x + 8; // Right-adjacent lane
+      const spawnPosition = new Position(spawnLane, this.entity.position.y);
+      console.log(`Attempting to spawn wanderer ${i + 1} at position x: ${spawnPosition.x}, y: ${spawnPosition.y}`);
+  
       // Create a new wanderer entity
-      const wanderer = new Wanderer(this.config, { position: spawnPosition }, isGoingUp);
-
+      const wanderer = new Wanderer(CONFIG, { position: spawnPosition });
+  
+      // Assign the WandererCrossingBehavior
+      wanderer.behavior = new WandererCrossingBehavior(wanderer);
+  
       // Register the wanderer with the spatial manager
       spatialManager.addEntityToSpatialManagementSystem(wanderer);
+  
+      console.log(`Wanderer ${i + 1} successfully spawned.`);
     }
-
+  
     this.wanderersSpawnedAtStop = true; // Mark as spawned for this stop
   }
+  
 
   getRandomStopTime() {
     // Choose the desired difficulty level: EASY, NORMAL, or HARD
@@ -2518,6 +2598,8 @@ class TTCBehavior extends VehicleBehaviorBase {
     // console.log(`TTC Update - isAtStop: ${this.isAtStop}, nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
 
     if (this.isAtStop) {
+      this.spawnWanderers();
+
       // TTC is at a stop
       this.stopTimer--;
       // console.log(`TTC is stopped. stopTimer decremented to: ${this.stopTimer}`);
@@ -2984,8 +3066,37 @@ class ParkedDeathmachine extends BaseEntity {
 // Wanderer Entity
 // =========================================
 
+// class Wanderer extends BaseEntity {
+//   constructor(config, spawnConfig, isGoingUp) {
+//     super(config, spawnConfig, DarlingType.WANDERER);
+
+//     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
+
+//     // Choose art based on direction
+//     const template = isGoingUp ? DARLINGS.WANDERER.UP : DARLINGS.WANDERER.DOWN;
+//     this.width = template.width;
+//     this.height = template.height;
+//     this.art = template.art;
+//     this.color = `<span style='color: ${wandererColor}'>`;
+
+//     // this.color = STYLES.RESET;
+
+//     // Modify spawn position based on direction
+//     if (isGoingUp) {
+//       spawnConfig.position.y = config.GAME.HEIGHT + 1; // Spawn at bottom for upward
+//       spawnConfig.position.x = config.LANES.SIDEWALK + 1; // Right side of sidewalk
+//     } else {
+//       spawnConfig.position.y = -1; // Spawn at top for downward
+//       spawnConfig.position.x = config.LANES.SIDEWALK; // Left side of sidewalk
+//     }
+
+//     this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
+//     this.behavior = new WandererBehavior(this, isGoingUp);
+//   }
+// }
+
 class Wanderer extends BaseEntity {
-  constructor(config, spawnConfig, isGoingUp) {
+  constructor(config, spawnConfig, isGoingUp = null) {
     super(config, spawnConfig, DarlingType.WANDERER);
 
     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
@@ -2997,9 +3108,7 @@ class Wanderer extends BaseEntity {
     this.art = template.art;
     this.color = `<span style='color: ${wandererColor}'>`;
 
-    // this.color = STYLES.RESET;
-
-    // Modify spawn position based on direction
+    // If isGoingUp is specified, modify spawn position
     if (isGoingUp) {
       spawnConfig.position.y = config.GAME.HEIGHT + 1; // Spawn at bottom for upward
       spawnConfig.position.x = config.LANES.SIDEWALK + 1; // Right side of sidewalk
@@ -3008,10 +3117,21 @@ class Wanderer extends BaseEntity {
       spawnConfig.position.x = config.LANES.SIDEWALK; // Left side of sidewalk
     }
 
+    // Set the entity's position
     this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
-    this.behavior = new WandererBehavior(this, isGoingUp);
+
+    // Log the position for debugging
+    console.log(`Wanderer created at position x: ${this.position.x}, y: ${this.position.y}`);
+
+    // Only assign default behavior if not already set
+    if (!this.behavior) {
+      this.behavior = new WandererBehavior(this, isGoingUp);
+    }
   }
 }
+
+
+
 // =========================================
 // =========================================
 // =========================================
@@ -3776,6 +3896,8 @@ class LoserLane {
     this.stateManager = new GameStateManager(this.config);
     this.tutorialComplete = false;
     this.tutorialSystem = new TutorialSystem(this);
+    this.soundManager = new SoundManager();
+
 
     this.spatialManager = new SpatialManager(this.config);
     this.spatialManager.setGame(this);
@@ -3785,6 +3907,9 @@ class LoserLane {
     // === Timing Systems ===
     this.initialLastMove = performance.now();
     this.lastFrameTime = performance.now();
+
+        // Load sounds
+        this.initializeSounds();
 
     // === Game Components ===
     this.initializeGameComponents();
@@ -3800,6 +3925,8 @@ class LoserLane {
     this.settingsManager = new SettingsManager(this);
   }
 
+  
+
   // 1. Initialization methods (initializeGameWorld, initializeBuildings, etc.)
 
   initializeGameWorld() {
@@ -3809,6 +3936,16 @@ class LoserLane {
     this.bike = this.updateBike();
     this.spatialManager.addEntityToSpatialManagementSystem(this.bike);
   }
+
+  initializeSounds() {
+    // Add game sounds
+    this.soundManager.setupMuteButton(); // Allows muting via button
+    this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
+    this.soundManager.addSound("collision", "sounds/collision.mp3");
+    // Start background music
+    // this.soundManager.play("backgroundMusic", this.config.GAME.INITIAL_SPEED / 500);
+  }
+
 
   initializeBuildings() {
     // console.log("initializeBuildings spawn"); //findme
@@ -3929,6 +4066,10 @@ class LoserLane {
 
     this.render();
     this.frameId = requestAnimationFrame((t) => this.update(t));
+
+    // const playbackSpeed = this.stateManager.state.speed / this.config.GAME.INITIAL_SPEED;
+    // this.soundManager.sounds.get("backgroundMusic").playbackRate = playbackSpeed;
+
   }
 
   // 4. Entity management methods (spawnDarlings, updateBike)
@@ -3997,6 +4138,7 @@ class LoserLane {
 
   die(reason) {
     if (this.stateManager.state.isDead) return;
+    // this.soundManager.play("collision");
 
     const messageInfo = this.stateManager.handleDeath(reason); // Use state manager's handleDeath
 
@@ -4050,6 +4192,8 @@ class LoserLane {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
+
+    this.soundManager.resetAll();
 
     // Reset static properties
     Building.nextSpawnY = null;
@@ -4106,10 +4250,27 @@ class LoserLane {
   }
 
   cleanup() {
+
+
+    // const muteButton = document.getElementById("mute-button");
+    // if (muteButton) {
+    //   muteButton.removeEventListener("click", this.toggleMute);
+    // }
+  
+    // // Remove keydown listener
+    // document.removeEventListener("keydown", this.keydownListener);
+    
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
+
+    // Cleanup SoundManager
+  if (this.soundManager) {
+    this.soundManager.resetAll(); // Stop and reset all sounds
+  }
+
+
     this.stateManager.cleanup();
     this.doubleJumpPending = false;
 
