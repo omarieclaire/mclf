@@ -32,29 +32,52 @@ const DARLINGS = {
     WANDERER: {
         UP: {
             art: [
-                "○", 
-                "╽"
+                "○" 
             ],
             width: 1,
-            height: 2
+            height: 1
         },
         DOWN: {
             art: [
-                "○", 
-                "╿"
+                "○" 
             ],
             width: 1,
-            height: 2
+            height: 1
         },
         CROSSING: {
             art: [
-                "○", 
-                "╿"
+                "○" 
             ],
             width: 1,
-            height: 2
+            height: 1
         }
     },
+    // WANDERER: {
+    //     UP: {
+    //         art: [
+    //             "○", 
+    //             "╽"
+    //         ],
+    //         width: 1,
+    //         height: 2
+    //     },
+    //     DOWN: {
+    //         art: [
+    //             "○", 
+    //             "╿"
+    //         ],
+    //         width: 1,
+    //         height: 2
+    //     },
+    //     CROSSING: {
+    //         art: [
+    //             "○", 
+    //             "╿"
+    //         ],
+    //         width: 1,
+    //         height: 2
+    //     }
+    // },
     TTC: {
         art: [
             "┌0--─0┐",

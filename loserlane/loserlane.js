@@ -51,10 +51,10 @@ const CONFIG = {
     },
     DIFFICULTY_LEVELS: {
       HARD: {
-        STOP_INTERVAL_MIN: 6, // 5 seconds
-        STOP_INTERVAL_MAX: 24, // 15 seconds
-        STOP_DURATION_MIN: 2, // 2 seconds
-        STOP_DURATION_MAX: 4, // 4 seconds
+        STOP_INTERVAL_MIN: 24, // Increased from 6
+        STOP_INTERVAL_MAX: 96, // Increased from 24
+        STOP_DURATION_MIN: 2,
+        STOP_DURATION_MAX: 4,
       },
     },
   },
@@ -2130,69 +2130,6 @@ class VehicleBehaviorBase extends EntityBehavior {
 // WandererBehavior
 // =========================================
 
-class WandererBehavior extends EntityBehavior {
-  constructor(entity, isGoingUp) {
-    super(entity);
-    this.entity = entity;
-    this.config = entity.config;
-    this.isGoingUp = isGoingUp;
-    this.baseSpeed = isGoingUp ? -this.config.MOVEMENT.WANDERER_SPEED : this.config.MOVEMENT.WANDERER_SPEED;
-    this.stopped = false;
-    this.waitTime = 0;
-    this.minDistance = this.config.SAFE_DISTANCE.WANDERER;
-
-    // Assign lane based on direction
-    this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 2 : this.config.LANES.SIDEWALK;
-    this.entity.position.x = this.lane; // Set initial x position based on lane
-  }
-
-  shouldWait(nearbyDarlings) {
-    return nearbyDarlings.some((other) => {
-      // Only check for wanderers in the same lane
-      if (Math.abs(other.position.x - this.entity.position.x) > 0.1) {
-        return false;
-      }
-      const distance = Math.abs(other.position.y - this.entity.position.y);
-      return distance < this.minDistance;
-    });
-  }
-
-  update() {
-    if (this.stopped) {
-      this.waitTime--;
-      if (this.waitTime <= 0) {
-        this.stopped = false;
-      }
-      return;
-    }
-
-    const nearbyDarlings = this.getNearbyDarlings();
-
-    if (this.shouldWait(nearbyDarlings)) {
-      this.stopped = true;
-      this.waitTime = this.config.GAME.ANIMATION_FRAMES.WANDERER_WAIT;
-      return;
-    }
-
-    const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
-
-    if (this.canMoveTo(newPosition)) {
-      this.move(newPosition);
-    }
-  }
-
-  getNearbyDarlings() {
-    if (!this.entity.spatialManager) return [];
-
-    return this.entity.spatialManager.grid.getNearbyDarlings(this.entity.position, this.config.COLLISION.NEARBY_ENTITY_RADIUS).filter(
-      (entity) =>
-        entity !== this.entity &&
-        entity.type !== DarlingType.BIKE &&
-        entity.type === DarlingType.WANDERER &&
-        Math.abs(entity.position.x - this.entity.position.x) < 0.1 // Only consider wanderers in same lane
-    );
-  }
-}
 // =========================================
 // BikeBehavior
 // =========================================
@@ -2372,75 +2309,6 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   }
 }
 
-class WandererCrossingBehavior extends EntityBehavior {
-  constructor(entity) {
-    super(entity);
-    // Use the global CONFIG instead of this.config
-    this.targetLane = CONFIG.LANES.SIDEWALK; // Sidewalk lane
-    this.directionX = -1; // Moving left towards the sidewalk
-    this.waiting = false;
-  }
-
-  update() {
-    if (this.waiting) {
-      // Check if it's safe to move
-      if (this.isSafeToMove()) {
-        this.waiting = false;
-      } else {
-        return; // Keep waiting
-      }
-    }
-
-    const newPosition = new Position(
-      this.entity.position.x + this.directionX * CONFIG.MOVEMENT.WANDERER_SPEED,
-      this.entity.position.y
-    );
-
-    if (this.canMoveTo(newPosition)) {
-      this.move(newPosition);
-
-      // Check if reached the sidewalk
-      if (Math.floor(this.entity.position.x) <= this.targetLane) {
-        // Randomly decide direction (up or down) once on sidewalk
-        const isGoingUp = Math.random() < 0.5;
-        this.entity.behavior = new WandererBehavior(this.entity, isGoingUp);
-      }
-    } else {
-      // Can't move due to obstacle; start waiting
-      this.waiting = true;
-    }
-  }
-
-  isSafeToMove() {
-    const spatialManager = this.entity.spatialManager;
-    if (!spatialManager) return false;
-
-    const nextPosition = new Position(
-      this.entity.position.x + this.directionX,
-      this.entity.position.y
-    );
-
-    const nearbyEntities = spatialManager.grid.getNearbyDarlings(nextPosition, 1);
-
-    // Check for deathmachines in the lane
-    return !nearbyEntities.some((entity) => {
-      return (
-        (entity.type === DarlingType.TTC_LANE_DEATHMACHINE ||
-          entity.type === DarlingType.ONCOMING_DEATHMACHINE ||
-          entity.type === DarlingType.TTC) &&
-        Math.floor(entity.position.x) === Math.floor(nextPosition.x)
-      );
-    });
-  }
-}
-
-
-
-
-// =========================================
-// TTCBehavior
-// =========================================
-
 class TTCBehavior extends VehicleBehaviorBase {
   constructor(entity) {
     super(entity, {
@@ -2448,202 +2316,45 @@ class TTCBehavior extends VehicleBehaviorBase {
       minDistance: entity.config.SAFE_DISTANCE.TTC,
       ignoreCollisions: false,
     });
-    this.config = entity.config; // Ensure config is accessible
+    this.config = entity.config;
     this.stuckTimer = 0;
     this.lastPosition = null;
-
-    // New properties for stopping behavior
     this.isAtStop = false;
     this.stopTimer = 0;
     this.nextStopTime = this.getRandomStopTime();
     this.wanderersSpawnedAtStop = false;
-
-    // **Add this line**
-    this.isFullyOnScreen = false; // Track if TTC is fully visible
   }
 
-  spawnWanderers() {
-    if (this.wanderersSpawnedAtStop) {
-      console.log("Wanderers have already been spawned at this stop.");
-      return; // Prevent multiple spawns per stop
-    }
-  
-    // Get the spatial manager from the entity
-    const spatialManager = this.entity.spatialManager;
-    if (!spatialManager) {
-      console.warn("No spatial manager available for TTC entity.");
-      return;
-    }
-  
-    // Determine the number of wanderers to spawn
-    const numWanderers = Math.floor(Math.random() * 3) + 1; // Spawn 1 to 3 wanderers
-    console.log(`Spawning ${numWanderers} wanderer(s).`);
-  
-    for (let i = 0; i < numWanderers; i++) {
-      const spawnLane = this.entity.position.x + 8; // Right-adjacent lane
-      const spawnPosition = new Position(spawnLane, this.entity.position.y);
-      console.log(`Attempting to spawn wanderer ${i + 1} at position x: ${spawnPosition.x}, y: ${spawnPosition.y}`);
-  
-      // Create a new wanderer entity
-      const wanderer = new Wanderer(CONFIG, { position: spawnPosition });
-  
-      // Assign the WandererCrossingBehavior
-      wanderer.behavior = new WandererCrossingBehavior(wanderer);
-  
-      // Register the wanderer with the spatial manager
-      spatialManager.addEntityToSpatialManagementSystem(wanderer);
-  
-      console.log(`Wanderer ${i + 1} successfully spawned.`);
-    }
-  
-    this.wanderersSpawnedAtStop = true; // Mark as spawned for this stop
-  }
-  
-
-  getRandomStopTime() {
-    // Choose the desired difficulty level: EASY, NORMAL, or HARD
-    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
-    const min = level.STOP_INTERVAL_MIN;
-    const max = level.STOP_INTERVAL_MAX;
-    const time = Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log(`Generated nextStopTime: ${time}`);
-    return time;
-  }
-
-  getRandomStopDuration() {
-    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD; // Change to EASY or HARD as needed
-    const min = level.STOP_DURATION_MIN;
-    const max = level.STOP_DURATION_MAX;
-    const duration = Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log(`Generated stopDuration: ${duration}`);
-    return duration;
-  }
-
-  shouldMove() {
-    if (this.stopped) {
-      // console.log("\n=== TTC Stopped ===", {
-      //   position: this.entity.position,
-      //   stopped: this.stopped,
-      //   stuckTimer: this.stuckTimer,
-      // });
-      return false;
-    }
-
-    const nearbyDarlings = this.getNearbyDarlings();
-    const shouldStop = this.shouldStop(nearbyDarlings);
-
-    // Track if we're stuck in the same position
-    if (this.lastPosition && this.lastPosition.y === this.entity.position.y) {
-      this.stuckTimer++;
-      if (this.stuckTimer > 60) {
-        // About 1 second at 60fps
-        // console.log("\n=== TTC Potentially Stuck ===", {
-        //   position: this.entity.position,
-        //   nearbyDarlings: nearbyDarlings.map((e) => ({
-        //     type: e.type,
-        //     position: e.position,
-        //     distance: Math.abs(e.position.y - this.entity.position.y),
-        //   })),
-        // });
-
-        // Auto-unstuck mechanism
-        if (this.stuckTimer > 120) {
-          // 2 seconds
-          // console.log("Attempting to unstick TTC");
-          this.stopped = false;
-          this.stuckTimer = 0;
-          return true;
-        }
-      }
-    } else {
-      this.stuckTimer = 0;
-    }
-
-    this.lastPosition = { ...this.entity.position };
-
-    if (shouldStop) {
-      // console.log("\n=== TTC Movement Blocked ===", {
-      //   position: this.entity.position,
-      //   nearbyDarlings: nearbyDarlings.map((e) => ({
-      //     type: e.type,
-      //     position: e.position,
-      //     distance: Math.abs(e.position.y - this.entity.position.y),
-      //   })),
-      // });
-    }
-
-    return !shouldStop;
-  }
-
-  shouldStop(nearbyDarlings) {
-    const blockingDarlings = nearbyDarlings.filter((other) => {
-      const distance = Math.abs(other.position.y - this.entity.position.y);
-      const isTooClose = distance < this.minDistance;
-
-      if (isTooClose) {
-        // console.log(`Entity too close to TTC:`, {
-        //   type: other.type,
-        //   position: other.position,
-        //   distance: distance,
-        //   minRequired: this.minDistance,
-        // });
-      }
-
-      return isTooClose;
-    });
-
-    return blockingDarlings.length > 0;
-  }
   update() {
-    // console.log(`TTC Update - isAtStop: ${this.isAtStop}, nextStopTime: ${this.nextStopTime}, stopTimer: ${this.stopTimer}`);
-
-    if (this.isAtStop) {
-      this.spawnWanderers();
-
-      // TTC is at a stop
-      this.stopTimer--;
-      // console.log(`TTC is stopped. stopTimer decremented to: ${this.stopTimer}`);
-      if (this.stopTimer <= 0) {
-        this.isAtStop = false;
-        this.nextStopTime = this.getRandomStopTime();
-        // console.log("TTC is resuming movement at position:", this.entity.position);
-      }
-      return; // Skip movement while stopped
-    } else {
-      // Decrement the timer until the next stop
+    // Handle stopping logic first
+    if (!this.isAtStop) {
       this.nextStopTime--;
-      // console.log(`TTC is moving. nextStopTime decremented to: ${this.nextStopTime}`);
       if (this.nextStopTime <= 0) {
         this.isAtStop = true;
         this.stopTimer = this.getRandomStopDuration();
-        // console.log("TTC is stopping at position:", this.entity.position);
-        return; // Stop moving this frame
+        this.wanderersSpawnedAtStop = false; // Reset flag when starting new stop
+        console.log("TTC stopping at:", this.entity.position);
       }
+    }
 
-      if (this.isAtStop) {
-        // TTC is at a stop
-        this.stopTimer--;
-        console.log(`TTC is stopped. stopTimer decremented to: ${this.stopTimer}`);
-
-        // Spawn wanderers if not already done
+    if (this.isAtStop) {
+      if (!this.wanderersSpawnedAtStop) {
+        console.log("Attempting to spawn wanderers at TTC stop");
         this.spawnWanderers();
-
-        if (this.stopTimer <= 0) {
-          this.isAtStop = false;
-          this.wanderersSpawnedAtStop = false; // Reset for next stop
-          this.nextStopTime = this.getRandomStopTime();
-          console.log("TTC is resuming movement at position:", this.entity.position);
-        }
-        return; // Skip movement while stopped
       }
+
+      this.stopTimer--;
+      if (this.stopTimer <= 0) {
+        this.isAtStop = false;
+        this.nextStopTime = this.getRandomStopTime();
+        console.log("TTC resuming movement");
+        return;
+      }
+      return; // Stay stopped
     }
 
-    // Existing movement logic
-    if (this.stopped) {
-      return;
-    }
-
-    if (this.shouldMove()) {
+    // Handle regular movement
+    if (!this.stopped && this.shouldMove()) {
       const newPosition = this.calculateNewPosition();
       if (this.canMoveTo(newPosition)) {
         this.move(newPosition);
@@ -2653,21 +2364,286 @@ class TTCBehavior extends VehicleBehaviorBase {
     }
   }
 
+  spawnWanderers() {
+    if (this.wanderersSpawnedAtStop) return;
+
+    const spatialManager = this.entity.spatialManager;
+    if (!spatialManager) return;
+
+    // Only spawn one wanderer at first
+    const ttcWidth = 8;
+    const spawnX = this.entity.position.x + ttcWidth;
+    this.spawnCount = 0;
+    this.maxWanderers = Math.floor(Math.random() * 3) + 1;
+    this.spawnNextWanderer(spawnX, this.entity.position.y, spatialManager);
+
+    this.wanderersSpawnedAtStop = true;
+  }
+
+  spawnNextWanderer(baseX, baseY, spatialManager) {
+    const offset = this.spawnCount;
+    const spawnPosition = new Position(baseX + offset, baseY);
+
+    const wanderer = new Wanderer(this.config, { position: spawnPosition }, null, true);
+
+    wanderer.behavior = new CrossingBehavior(wanderer);
+    spatialManager.addEntityToSpatialManagementSystem(wanderer);
+
+    this.spawnCount++;
+
+    if (this.spawnCount < this.maxWanderers) {
+      setTimeout(() => this.spawnNextWanderer(baseX, baseY, spatialManager), 500);
+    }
+  }
+
+  getRandomStopTime() {
+    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD;
+    const min = level.STOP_INTERVAL_MIN;
+    const max = level.STOP_INTERVAL_MAX;
+    const time = Math.floor(Math.random() * (max - min + 1)) + min;
+    return time;
+  }
+
+  getRandomStopDuration() {
+    const level = this.entity.config.TTC.DIFFICULTY_LEVELS.HARD;
+    const min = level.STOP_DURATION_MIN;
+    const max = level.STOP_DURATION_MAX;
+    const duration = Math.floor(Math.random() * (max - min + 1)) + min;
+    return duration;
+  }
+
+  shouldMove() {
+    if (this.stopped) return false;
+
+    const nearbyDarlings = this.getNearbyDarlings();
+    const shouldStop = this.shouldStop(nearbyDarlings);
+
+    if (this.lastPosition && this.lastPosition.y === this.entity.position.y) {
+      this.stuckTimer++;
+      if (this.stuckTimer > 120) {
+        this.stopped = false;
+        this.stuckTimer = 0;
+        return true;
+      }
+    } else {
+      this.stuckTimer = 0;
+    }
+
+    this.lastPosition = { ...this.entity.position };
+    return !shouldStop;
+  }
+
+  shouldStop(nearbyDarlings) {
+    return nearbyDarlings.some((other) => Math.abs(other.position.y - this.entity.position.y) < this.minDistance);
+  }
+
   handleMovementBlocked() {
     this.stopped = true;
-    // console.log("\n=== TTC Movement Blocked ===", {
-    //   position: this.entity.position,
-    //   stuckTimer: this.stuckTimer,
-    // });
-
     setTimeout(() => {
-      // console.log("\n=== Attempting to Resume TTC Movement ===", {
-      //   position: this.entity.position,
-      // });
       this.stopped = false;
     }, 1000);
   }
 }
+class CrossingBehavior extends EntityBehavior {
+  constructor(entity) {
+    super(entity);
+    this.state = "WAITING_TO_CROSS";
+    this.targetX = CONFIG.LANES.SIDEWALK + 1;
+    this.moveSpeed = CONFIG.MOVEMENT.WANDERER_SPEED * 2;
+    this.baseSpeed = CONFIG.MOVEMENT.WANDERER_SPEED;
+    this.waitTime = 0;
+    this.minWaitTime = 5;
+    this.mergeAttempts = 0;
+    this.maxMergeAttempts = 10;
+    this.lastCheckedOverlap = 0;
+  }
+
+  update() {
+    // Check for overlaps periodically
+    if (Date.now() - this.lastCheckedOverlap > 100) {
+      this.checkAndResolveOverlaps();
+      this.lastCheckedOverlap = Date.now();
+    }
+
+    const newY = this.entity.position.y + this.baseSpeed;
+    this.entity.position.y = newY;
+
+    switch (this.state) {
+      case "WAITING_TO_CROSS":
+        if (this.isSafeToCross()) {
+          this.state = "CROSSING";
+        }
+        break;
+
+      case "CROSSING":
+        if (!this.isSafeToCross()) {
+          this.state = "WAITING_TO_CROSS";
+          this.waitTime = this.minWaitTime;
+          break;
+        }
+
+        const newX = Math.min(this.entity.position.x + this.moveSpeed, this.targetX);
+        const newPosition = new Position(newX, newY);
+
+        if (Math.abs(newX - this.targetX) < 0.1) {
+          if (this.canSafelyMerge()) {
+            this.convertToRegularWanderer();
+          } else {
+            this.handleBlockedMerge();
+          }
+        } else if (this.canMoveTo(newPosition)) {
+          this.move(newPosition);
+        }
+        break;
+    }
+
+    if (this.waitTime > 0) this.waitTime--;
+  }
+
+  checkAndResolveOverlaps() {
+    const nearbyWanderers = this.entity.spatialManager.grid
+      .getNearbyDarlings(this.entity.position, 1)
+      .filter((other) => other !== this.entity && other.type === DarlingType.WANDERER);
+
+    for (const other of nearbyWanderers) {
+      if (this.isOverlapping(other)) {
+        // Remove the newer wanderer (this one)
+        this.entity.spatialManager.removeEntityFromSpatialManagementSystem(this.entity);
+        return;
+      }
+    }
+  }
+
+  isOverlapping(other) {
+    return Math.abs(other.position.x - this.entity.position.x) < 0.5 && Math.abs(other.position.y - this.entity.position.y) < 1;
+  }
+
+  canSafelyMerge() {
+    const safeDistance = 3;
+    const nearbyWanderers = this.entity.spatialManager.grid
+      .getNearbyDarlings(new Position(this.targetX, this.entity.position.y), safeDistance)
+      .filter((other) => other !== this.entity && other.type === DarlingType.WANDERER && Math.abs(other.position.x - this.targetX) < 0.5);
+
+    if (nearbyWanderers.length === 0) return true;
+
+    return !nearbyWanderers.some((other) => Math.abs(other.position.y - this.entity.position.y) < safeDistance);
+  }
+
+  handleBlockedMerge() {
+    this.mergeAttempts++;
+    if (this.mergeAttempts > this.maxMergeAttempts) {
+      const offset = Math.random() > 0.5 ? 3 : -3;
+      this.entity.position.y += offset;
+      this.convertToRegularWanderer();
+    }
+    this.waitTime = this.minWaitTime;
+  }
+
+  canMoveTo(position) {
+    const nearbyEntities = this.entity.spatialManager.grid.getNearbyDarlings(position, 2);
+
+    return !nearbyEntities.some((other) => {
+      if (other === this.entity) return false;
+
+      if (other.type === DarlingType.PARKED_DEATHMACHINE) {
+        return this.checkCollision(position, other);
+      }
+
+      if (other.type === DarlingType.WANDERER && Math.abs(position.x - this.targetX) < 1) {
+        return this.checkCollision(position, other);
+      }
+
+      return false;
+    });
+  }
+
+  checkCollision(position, other) {
+    const entityHitbox = {
+      x: position.x,
+      y: position.y,
+      width: this.entity.width,
+      height: this.entity.height,
+    };
+
+    const otherHitbox = other.getHitbox();
+
+    return !(
+      entityHitbox.x + entityHitbox.width <= otherHitbox.x ||
+      entityHitbox.x >= otherHitbox.x + otherHitbox.width ||
+      entityHitbox.y + entityHitbox.height <= otherHitbox.y ||
+      entityHitbox.y >= otherHitbox.y + otherHitbox.height
+    );
+  }
+
+  convertToRegularWanderer() {
+    this.entity.art = DARLINGS.WANDERER.DOWN.art;
+    this.entity.position.x = this.targetX;
+    this.entity.behavior = new WandererBehavior(this.entity, false);
+  }
+
+  isSafeToCross() {
+    if (this.waitTime > 0) return false;
+
+    const dangerZone = 2;
+    const currentLane = Math.floor(this.entity.position.x);
+    const spatialManager = this.entity.spatialManager;
+
+    if (!spatialManager?.grid) return false;
+
+    const nearbyEntities = spatialManager.grid.getNearbyDarlings(this.entity.position, dangerZone);
+
+    return !nearbyEntities.some(
+      (entity) =>
+        (entity.type === DarlingType.TTC_LANE_DEATHMACHINE || entity.type === DarlingType.ONCOMING_DEATHMACHINE) &&
+        Math.abs(entity.position.x - currentLane) < dangerZone &&
+        Math.abs(entity.position.y - this.entity.position.y) < 3
+    );
+  }
+}
+class WandererBehavior extends EntityBehavior {
+  constructor(entity, isGoingUp) {
+    super(entity);
+    this.entity = entity;
+    this.config = entity.config;
+    this.isGoingUp = isGoingUp;
+    this.baseSpeed = isGoingUp ? -this.config.MOVEMENT.WANDERER_SPEED : this.config.MOVEMENT.WANDERER_SPEED;
+    this.lane = isGoingUp ? this.config.LANES.SIDEWALK + 2 : this.config.LANES.SIDEWALK + 1;
+    this.entity.position.x = this.lane;
+  }
+
+  update() {
+    // Always move down at minimum
+    const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
+    
+    // If position is available, take it
+    if (this.canMoveTo(newPosition)) {
+      this.move(newPosition);
+    } else {
+      // If blocked, force the move to prevent complete stops
+      this.entity.position.y += this.baseSpeed;
+    }
+  }
+
+  canMoveTo(position) {
+    const nearbyDarlings = this.getNearbyDarlings();
+    return !nearbyDarlings.some(other => 
+      Math.abs(other.position.x - position.x) < 0.1 &&
+      Math.abs(other.position.y - position.y) < 1.5
+    );
+  }
+
+  getNearbyDarlings() {
+    if (!this.entity.spatialManager) return [];
+    
+    return this.entity.spatialManager.grid
+      .getNearbyDarlings(this.entity.position, 2)
+      .filter(entity => 
+        entity !== this.entity && 
+        entity.type === DarlingType.WANDERER
+      );
+  }
+}
+
 // =========================================
 // OncomingDeathmachineBehavior
 // =========================================
@@ -2881,6 +2857,59 @@ class BaseEntity {
     };
   }
 }
+
+class Wanderer extends BaseEntity {
+  constructor(config, spawnConfig, isGoingUp = null, isTTCPassenger = false) {
+    super(config, spawnConfig, DarlingType.WANDERER);
+    console.log(`Spawning ${isTTCPassenger ? "TTC passenger" : "regular sidewalk"} wanderer:`, {
+      position: spawnConfig.position,
+      isGoingUp: isGoingUp,
+    });
+
+    const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
+    const template = isGoingUp ? DARLINGS.WANDERER.UP : DARLINGS.WANDERER.DOWN;
+    this.width = template.width;
+    this.height = template.height;
+    this.art = template.art;
+    this.color = `<span style='color: ${wandererColor}'>`;
+
+    // Only modify spawn position for regular sidewalk wanderers
+    if (!isTTCPassenger) {
+      if (isGoingUp) {
+        spawnConfig.position.y = config.GAME.HEIGHT + 1;
+        spawnConfig.position.x = config.LANES.SIDEWALK + 1;
+      } else {
+        spawnConfig.position.y = -1;
+        spawnConfig.position.x = config.LANES.SIDEWALK;
+      }
+    }
+    if (!this.behavior) {
+      if (isTTCPassenger) {
+        this.behavior = new CrossingBehavior(this);
+      } else {
+        this.behavior = new WandererBehavior(this, isGoingUp);
+      }
+    }
+
+    this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
+  }
+}
+// =========================================
+// TTC Entity
+// =========================================
+
+class TTC extends BaseEntity {
+  constructor(config, spawnConfig) {
+    super(config, spawnConfig, DarlingType.TTC);
+    this.width = DARLINGS.TTC.width;
+    this.height = DARLINGS.TTC.height;
+    this.art = DARLINGS.TTC.art;
+    this.color = STYLES.TTC;
+    this.behavior = new TTCBehavior(this);
+    console.log("TTC created at position:", this.position);
+  }
+}
+
 // =========================================
 // Building Entity
 // =========================================
@@ -2966,21 +2995,7 @@ class Building extends BaseEntity {
     return color;
   }
 }
-// =========================================
-// TTC Entity
-// =========================================
 
-class TTC extends BaseEntity {
-  constructor(config, spawnConfig) {
-    super(config, spawnConfig, DarlingType.TTC);
-    this.width = DARLINGS.TTC.width;
-    this.height = DARLINGS.TTC.height;
-    this.art = DARLINGS.TTC.art;
-    this.color = STYLES.TTC;
-    this.behavior = new TTCBehavior(this);
-    console.log("TTC created at position:", this.position);
-  }
-}
 // =========================================
 // TTCLaneDeathmachine Entity
 // =========================================
@@ -3094,43 +3109,6 @@ class ParkedDeathmachine extends BaseEntity {
 //     this.behavior = new WandererBehavior(this, isGoingUp);
 //   }
 // }
-
-class Wanderer extends BaseEntity {
-  constructor(config, spawnConfig, isGoingUp = null) {
-    super(config, spawnConfig, DarlingType.WANDERER);
-
-    const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
-
-    // Choose art based on direction
-    const template = isGoingUp ? DARLINGS.WANDERER.UP : DARLINGS.WANDERER.DOWN;
-    this.width = template.width;
-    this.height = template.height;
-    this.art = template.art;
-    this.color = `<span style='color: ${wandererColor}'>`;
-
-    // If isGoingUp is specified, modify spawn position
-    if (isGoingUp) {
-      spawnConfig.position.y = config.GAME.HEIGHT + 1; // Spawn at bottom for upward
-      spawnConfig.position.x = config.LANES.SIDEWALK + 1; // Right side of sidewalk
-    } else {
-      spawnConfig.position.y = -1; // Spawn at top for downward
-      spawnConfig.position.x = config.LANES.SIDEWALK; // Left side of sidewalk
-    }
-
-    // Set the entity's position
-    this.position = new Position(spawnConfig.position.x, spawnConfig.position.y);
-
-    // Log the position for debugging
-    console.log(`Wanderer created at position x: ${this.position.x}, y: ${this.position.y}`);
-
-    // Only assign default behavior if not already set
-    if (!this.behavior) {
-      this.behavior = new WandererBehavior(this, isGoingUp);
-    }
-  }
-}
-
-
 
 // =========================================
 // =========================================
@@ -3496,12 +3474,12 @@ class TouchControls extends BaseControl {
     return (e) => {
       e.preventDefault();
       const now = performance.now();
-      
+
       // Prevent rapid-fire touches
       if (now - lastTouch < TOUCH_DELAY) {
         return;
       }
-      
+
       lastTouch = now;
       this.handleInput(direction, now);
     };
@@ -3925,7 +3903,6 @@ class LoserLane {
     this.tutorialSystem = new TutorialSystem(this);
     this.soundManager = new SoundManager();
 
-
     this.spatialManager = new SpatialManager(this.config);
     this.spatialManager.setGame(this);
     this.renderGrid = new RenderGrid(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
@@ -3935,8 +3912,8 @@ class LoserLane {
     this.initialLastMove = performance.now();
     this.lastFrameTime = performance.now();
 
-        // Load sounds
-        this.initializeSounds();
+    // Load sounds
+    this.initializeSounds();
 
     // === Game Components ===
     this.initializeGameComponents();
@@ -3951,8 +3928,6 @@ class LoserLane {
     this.controls = new Controls(this);
     this.settingsManager = new SettingsManager(this);
   }
-
-  
 
   // 1. Initialization methods (initializeGameWorld, initializeBuildings, etc.)
 
@@ -3972,7 +3947,6 @@ class LoserLane {
     // Start background music
     // this.soundManager.play("backgroundMusic", this.config.GAME.INITIAL_SPEED / 500);
   }
-
 
   initializeBuildings() {
     // console.log("initializeBuildings spawn"); //findme
@@ -4096,7 +4070,6 @@ class LoserLane {
 
     // const playbackSpeed = this.stateManager.state.speed / this.config.GAME.INITIAL_SPEED;
     // this.soundManager.sounds.get("backgroundMusic").playbackRate = playbackSpeed;
-
   }
 
   // 4. Entity management methods (spawnDarlings, updateBike)
@@ -4277,26 +4250,23 @@ class LoserLane {
   }
 
   cleanup() {
-
-
     // const muteButton = document.getElementById("mute-button");
     // if (muteButton) {
     //   muteButton.removeEventListener("click", this.toggleMute);
     // }
-  
+
     // // Remove keydown listener
     // document.removeEventListener("keydown", this.keydownListener);
-    
+
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
     }
 
     // Cleanup SoundManager
-  if (this.soundManager) {
-    this.soundManager.resetAll(); // Stop and reset all sounds
-  }
-
+    if (this.soundManager) {
+      this.soundManager.resetAll(); // Stop and reset all sounds
+    }
 
     this.stateManager.cleanup();
     this.doubleJumpPending = false;
