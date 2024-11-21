@@ -344,5 +344,5 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   const autoRestartTimeout = setTimeout(() => {
     gameInstance.restart();
     if (overlay) overlay.remove();
-  }, 19500);
+  }, 9000);
 }
