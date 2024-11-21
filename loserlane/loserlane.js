@@ -2740,7 +2740,6 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       this.transformToParkedDeathmachine();
     }
   }
-
   transformToParkedDeathmachine() {
     const spatialManager = this.entity.spatialManager;
     const targetPosition = new Position(this.targetLane, this.entity.position.y);
@@ -2759,14 +2758,17 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     let safeY = targetPosition.y;
     const minSpacing = this.entity.config.SAFE_DISTANCE.PARKED;
 
+    // Extract the current color from the span style
+    const currentColor = this.entity.color.match(/color: ([^']+)/)[1];
+
     // Create parked deathMachine to test positions
     const parkedDeathmachine = new ParkedDeathmachine(this.entity.config, {
       position: new Position(this.targetLane, safeY),
-      color: this.entity.color  // Pass the original color to the new instance
+      color: currentColor  // Pass the extracted color
     });
     parkedDeathmachine.behavior.baseSpeed = 1;
 
-    // Try to find a valid position
+    // Rest of the method remains the same...
     let validPosition = false;
     let attempts = 0;
     const maxAttempts = 15;
@@ -2783,7 +2785,6 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
 
     if (validPosition) {
       console.log("Found valid position at y:", safeY);
-      // Only register the new deathMachine and remove the old one if we found a valid position
       spatialManager.addEntityToSpatialManagementSystem(parkedDeathmachine);
       spatialManager.removeEntityFromSpatialManagementSystem(this.entity);
 
@@ -2795,7 +2796,6 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       });
     } else {
       console.warn("Failed to find valid parking position after", attempts, "attempts");
-      // Keep the original deathMachine moving if we can't find a parking spot
       this.willPark = false;
       this.isParking = false;
     }
@@ -3069,7 +3069,9 @@ class ParkedDeathmachine extends BaseEntity {
     this.width = 7;
     this.height = 5;
     this.art = DARLINGS.PARKED_DEATHMACHINE_STATES[0];
-    this.color = `<span style='color: ${this.getRandomVehicleColor()}'>`;
+    // Use provided color or generate random one
+    const vehicleColor = spawnConfig.color || this.getRandomVehicleColor();
+    this.color = `<span style='color: ${vehicleColor}'>`;
     this.behavior = new ParkedDeathmachineBehavior(this);
   }
 
