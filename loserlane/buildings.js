@@ -43,16 +43,16 @@ const TORONTO_BUILDINGS = [
     {
         name: "TIM_HORTONS",
         art: [
-            "    ┌─✺─✺┐",
+            "┌✺─✺──✺─✺┐",
             "┌───┴┬───┘",
-            "│ BIMS   │",
-            "│COFFEE  │",
-            "│& FOOD  │",
+            "│ THE    │",
+            "│COMMON  │",
+            "│        │",
             "└────────┘"
         ]
     },
     {
-        name: "DEATHFACT",
+        name: "DEATH_FACT",
         art: [
             "┌────────┐",
             "│74^^^^^ │",
@@ -289,7 +289,7 @@ const TORONTO_BUILDINGS = [
         name: "WHOSE_EMMA",
         art: [
             "┌────────┐",
-            "│ WHOSE  │",
+            "│ WHO'S  │",
             "│ EMMA   │",
             "│ <><>   │",
             "└────────┘"
@@ -311,7 +311,7 @@ const TORONTO_BUILDINGS = [
             "┌─◢───◣──┐",
             "│SNEAKY  │",
             "│ DEES   │",
-            "│ NACHOS │",
+            "│        │",
             "└─◥───◤──┘"
         ]
     },
@@ -429,16 +429,16 @@ const TORONTO_BUILDINGS = [
             "└────────┘"
         ]
     },
-    {
-        name: "CNE_EXHIBIT",
-        art: [
-            "┌✕─✕──✕─✕┐",
-            "│ CNE ░░ │",
-            "│EXHIBIT │",
-            "│ FUN ░░░│",
-            "└────────┘"
-        ]
-    },
+    // {
+    //     name: "CNE_EXHIBIT",
+    //     art: [
+    //         "┌✕─✕──✕─✕┐",
+    //         "│ CNE ░░ │",
+    //         "│EXHIBIT │",
+    //         "│ FUN ░░░│",
+    //         "└────────┘"
+    //     ]
+    // },
     {
         name: "OCAD",
         art: [
@@ -721,7 +721,7 @@ const TORONTO_BUILDINGS = [
         ],
       },
       {
-        name: "APT9",
+        name: "48_MILLION",
         art: [
           "██████████",
           "║ ◆ 48 ◆ ║",
@@ -744,7 +744,7 @@ const TORONTO_BUILDINGS = [
         ],
       },
       {
-        name: "180NAIRN",
+        name: "180_NAIRN",
         art: [
              "    ||    ",
              "  |    |  ",
