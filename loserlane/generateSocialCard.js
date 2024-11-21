@@ -27,20 +27,30 @@ const ART = {
     ],
   },
   TRAFFIC: {
-    art: ["     _____        GOODNIGHT  ", "   _/_│O_\\_         __o     ", " /_ ____ _ _\\<      _\\<,_  ", "__(_)_____(_)______(*)/(*)___"],
+    art: [
+      "     _____        HELP?      ",
+      "   _/_│O_\\_         __o     ",
+      " /_ ____ _ _\\<      _\\<,_  ",
+      "__(_)_____(_)______(*)/(*)___"
+            ],
   },
   WANDERER: {
     art: [
       "       WHY HIT FRIEND? ",
       "                       ",
-      "               o_/    ",
-      "      __o    _/|      ",
+      "               o_/     ",
+      "      __o    _/|       ",
       "     _\\<,_    /\\     ",
-      "___(*)/(*)___\\_\\____",
+      "___(*)/(*)___\\_\\_____",
     ],
   },
   PARKEDDEATHMACHINE: {
-    art: ["        NOOOO00  ______      ", "     __o      _/__││__\\__ ", "    _\\<,_   /_ ______ ___[ ", " __(*)/(*)____(_)_____(_)___ "],
+    art: [
+      "        NOOOO00  ______     ",
+      "     __o      _/__││__\\__  ",
+      "    _\\<,_   /_ ______ ___[ ", 
+      " __(*)/(*)____(_)_____(_)___ "
+    ],
   },
   DOOR: {
     art: [
@@ -314,7 +324,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
             downloadButton.innerHTML = "✓";
             setTimeout(() => {
               downloadButton.innerHTML = "↓";
-            }, 9000);
+            }, 8000);
           })
           .catch(() => showMessage("Couldn't copy text", "error"));
       });
@@ -344,5 +354,5 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   const autoRestartTimeout = setTimeout(() => {
     gameInstance.restart();
     if (overlay) overlay.remove();
-  }, 9000);
+  }, 8000);
 }
