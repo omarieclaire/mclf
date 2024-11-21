@@ -20,6 +20,7 @@
   justify-content: center; /* Centers the items vertically */
   align-items: center; /* Centers the items horizontally */
   height: 100%; /* Ensure the container has a height for centering */
+  margin: 10px;
 }
 
 /* Social Deathmachined Overlay */
@@ -119,13 +120,6 @@
   font-size: 1.1rem;
 }
 
-.thanks-doug {
-  color: var(--green);
-  /* color: var(--med-purp); */
-  font: var(--font-face);
-  font-size: clamp(1rem, 1.6rem, 3rem);
-}
-
 .score-text {
   /* color: var(--dark-yellow); */
   font: var(--font-score);
@@ -166,15 +160,35 @@
   background-color: rgba(0, 0, 0, 0.85);
 }
 
-.CTO {
-  display: flex;
-  justify-content: center; /* Centers the items vertically */
-  align-items: center; /* Centers the items horizontally */
-  height: 100%; /* Ensure the container has a height for centering */
+#CTO {
   text-align: center;
-  max-width: 80%;
-  font-size: 1.5rem;
+  /* max-width: 90%; */
   margin: 0 auto;
+  color: var(--light-purp);
+  /* letter-spacing: 0.3rem; */
+  /* border-bottom: 1px solid var(--hot-pink); */
+
+  /* color: var(--hot-pink);
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-transform: capitalize;
+  letter-spacing: 0.5rem; */
+}
+
+#CTO a {
+  text-align: center;
+  font-size: 1.2rem;
+  /* margin: 0 auto; */
+  color: var(--light-purp);
+}
+
+@media (min-width: 600px) {
+  #CTO {
+    max-width: 80%;
+  }
 }
 
 .button-container {
@@ -187,7 +201,7 @@
 
 .all-buttons-container {
   display: flex;
-  justify-content:center;
+  justify-content: center;
   gap: 7px;
   /* justify-content: center; */
 
@@ -215,4 +229,18 @@
   /* color: white; */
   font-weight: bold;
   /* font-size: ${isLarge ? '1.3rem' : '1.3rem'}; */
+}
+
+.thanks-doug {
+  color: var(--green);
+  /* color: var(--med-purp); */
+  font: var(--font-face);
+  font-size: clamp(1rem, 1.6rem, 3rem);
+  padding: 0;
+  margin: 0 auto;
+}
+
+.never-had-a-chance {
+  margin: 0 auto;
+  color: var(--light-purp);
 }

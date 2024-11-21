@@ -88,7 +88,7 @@ function createButton(backgroundColor, content, onClick, ariaLabel, isLarge = fa
     width: ${isLarge ? '12rem' : '2.5rem'};
     height: ${isLarge ? '2.1rem' : '2.1rem'};
     font-size: ${isLarge ? '1.1rem' : '1.1rem'};
-    opacity: .4;
+    opacity: .7;
 
     border: none;
     cursor: pointer;
@@ -256,10 +256,10 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiWrapper.appendChild(asciiArt);
   contentContainer.appendChild(asciiWrapper);
 
-  const neverhadachance = document.createElement("p");
-  neverhadachance.className = "thanks-doug";
-  neverhadachance.innerHTML = `you never had a chance`;
-  contentContainer.appendChild(neverhadachance);
+  // const neverhadachance = document.createElement("p");
+  // neverhadachance.className = "never-had-a-chance";
+  // neverhadachance.innerHTML = `you never had a chance`;
+  // contentContainer.appendChild(neverhadachance);
 
   const doug2 = document.createElement("p");
   doug2.className = "thanks-doug";
@@ -301,8 +301,10 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   messageContainer.id = "message-container";
 
   const messageElement = document.createElement("p");
-  messageElement.textContent = "Fight for your bike lanes!";
   messageElement.className = "CTO";
+  messageElement.id = "CTO";
+  messageElement.innerHTML = `<a target="_blank" href="https://www.ola.org/en/members/current">FIGHT FOR YOUR BIKE LANES!</a>`;  
+
   messageContainer.appendChild(messageElement);
 
   // Create a single container for all buttons
@@ -329,7 +331,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
             downloadButton.innerHTML = "✓";
             setTimeout(() => {
               downloadButton.innerHTML = "↓";
-            }, 8000);
+            }, 6000);
           })
           .catch(() => showMessage("Couldn't copy text", "error"));
       });
@@ -359,5 +361,5 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   const autoRestartTimeout = setTimeout(() => {
     gameInstance.restart();
     if (overlay) overlay.remove();
-  }, 8000);
+  }, 6000);
 }
