@@ -73,7 +73,7 @@ const TORONTO_BUILDINGS = [
             "┌────────┐",
             "│SWEATY  │",
             "│BETTY'S │",
-            "│ 『 』﹃ ﹄ │",
+            "│ 『』﹃﹄│",
             "└────────┘"
         ]
     },
@@ -369,17 +369,17 @@ const TORONTO_BUILDINGS = [
             "└────────┘"
         ]
     },
-    {
-        name: "KENSINGTON_MARKET",
-        art: [
-            "┌────────┐",
-            "│KENSING │",
-            "│TON     │",
-            "│MARKET  │",
-            "│MARKET  │",
-            "└────────┘"
-        ]
-    },
+    // {
+    //     name: "KENSINGTON_MARKET",
+    //     art: [
+    //         "┌────────┐",
+    //         "│KENSING │",
+    //         "│TON     │",
+    //         "│MARKET  │",
+    //         "│MARKET  │",
+    //         "└────────┘"
+    //     ]
+    // },
     {
         name: "CASA_LOMA",
         art: [
