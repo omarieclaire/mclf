@@ -1,3 +1,18 @@
+
+// Add a building to LoserLane?
+
+// https://marieflanagan.com/loserlane  
+
+// ~~~Tips:
+// *Max Width 10 characters / max height 9 characters
+// *No Emoji (text only)
+
+// ~~~Notes:
+// *If drawing is scary, send me a building name instead and I’ll try to draw one for you.
+// *If you want to improve an existing drawing, please do!
+
+
+
 const TORONTO_BUILDINGS = [
     {
         name: "PIZZA_PIZZA",
