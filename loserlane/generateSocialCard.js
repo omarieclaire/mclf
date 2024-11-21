@@ -256,9 +256,14 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   asciiWrapper.appendChild(asciiArt);
   contentContainer.appendChild(asciiWrapper);
 
+  const neverhadachance = document.createElement("p");
+  neverhadachance.className = "thanks-doug";
+  neverhadachance.innerHTML = `you never had a chance`;
+  contentContainer.appendChild(neverhadachance);
+
   const doug2 = document.createElement("p");
   doug2.className = "thanks-doug";
-  doug2.innerHTML = `THANKS DOUG`;
+  doug2.innerHTML = `<br>THANKS DOUG`;
   contentContainer.appendChild(doug2);
 
   socialCard.appendChild(contentContainer);
