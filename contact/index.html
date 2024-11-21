@@ -1,81 +1,214 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-77465632-1");
+    </script>
 
-<head>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <meta charset="UTF-8" />
+    <!-- helps responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="Designing and building play experiences, experimental games, installations, events, and  spaces for people." />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>MCLF</title>
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous" />
+
+    <style>
+      body {
+        /* font-family: Arial, sans-serif; */
+        /* max-width: 600px; */
+        /* margin: 40px auto; */
+        /* padding: 20px; */
+      }
+	  #newsletterForm{
+		margin-top: 2rem;
+	  }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      @media (min-width: 768px) {
+        .form-group {
+          display: flex;
+          align-items: center;
+          /* gap: 20px; */
+        }
+        label {
+          flex: 0 0 200px;
+		  text-align: left;
+          margin-bottom: 0 !important;
+        }
+        .input-wrapper {
+          flex: 1;
+        }
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      textarea {
+        height: 100px;
+        resize: vertical;
+      }
+      button {
+        background-color: #673ab7;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #5e35b1;
+      }
+      .success-message {
+        display: none;
+        background-color: #4caf50;
+        color: white;
+        padding: 20px;
+        border-radius: 4px;
+        margin-top: 20px;
+        text-align: center;
+      }
+      .error-message {
+        display: none;
+        background-color: #f44336;
+        color: white;
+        padding: 20px;
+        border-radius: 4px;
+        margin-top: 20px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <p id="welcome-name"><a href="../index.html">Marie LeBlanc Flanagan</a></p>
+        <nav>
+          <ul>
+            <!-- <li><a href="#">Home</a></li> -->
+            <li><a href="../about">About</a></li>
+            <!-- <li><a href="../works">Works</a></li> -->
+            <!-- <li><a href="../consulting">Consulting</a></li> -->
+            <li><a href="../blog">Blog</a></li>
+            <li><a href="../contact">Contact</a></li>
+            <!-- <li><a href="#">CV</a></li> -->
+          </ul>
+        </nav>
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+      </header>
+
+      <div class="container">
+        <div class="page-content">
+          <h1 class="h1">Contact</h1>
+
+          <p>
+            I'm available for collaborations, contracts and consultations. I'd love to hear from you, please
+            <a href="mailto:%20marieflanagan@gmail.com" target="_blank">say hello.</a>
+          </p>
+          <!-- <p>To receive very occasional tiny updates from me <a href="https://tinyletter.com/omarieclaire"
+						target="_blank">sign up here.</a></p> -->
+
+          <h2>Newsletter Signup</h2>
+		  <p>To receive very occasional tiny updates from me (possibly never) sign up here.</p>
+
+          <form id="newsletterForm">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <div class="input-wrapper">
+                <input type="text" id="name" name="entry.1031751655" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <div class="input-wrapper">
+                <input type="email" id="email" name="entry.381147356" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="interests">What do you want to hear about?</label>
+              <div class="input-wrapper">
+                <textarea id="interests" name="entry.685584672" required></textarea>
+              </div>
+            </div>
+
+            <button type="submit">Sign Up</button>
+          </form>
+
+          <div id="successMessage" class="success-message">Thanks for subscribing! We'll be in touch soon.</div>
+          <div id="errorMessage" class="error-message">Oops! Something went wrong. Please try again.</div>
+        </div>
+      </div>
+
+      <footer>
+        <div>
+          <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
+          <a href="https://linkedin.com/in/marieflanagan/" target="blank"
+            ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
+          /></a>
+          <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+          <a href="https://www.facebook.com/0marieclaire/" target="blank"
+            ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
+          /></a>
+          <a href="https://www.instagram.com/omarieclaire/" target="blank"
+            ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
+          /></a>
+        </div>
+      </footer>
+    </div>
+
 	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
-		gtag('config', 'UA-77465632-1');
-	</script>
-
-	<meta charset="UTF-8">
-	<!-- helps responsiveness -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="author" content="Marie Claire LeBlanc Flanagan">
-	<meta name="description"
-		content="Designing and building play experiences, experimental games, installations, events, and  spaces for people.">
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<title>MCLF</title>
-	<link href="../styles.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-		integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-</head>
-
-<body>
-	<div class="wrapper">
-		<header>
-			<a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo"></a>
-			<input type="checkbox" id="nav-toggle" class="nav-toggle">
-			<p id="welcome-name"><a href="../index.html">Marie LeBlanc Flanagan</a></p>
-			<nav>
-				<ul>
-					<!-- <li><a href="#">Home</a></li> -->
-					<li><a href="../about">About</a></li>
-					<!-- <li><a href="../works">Works</a></li> -->
-					<!-- <li><a href="../consulting">Consulting</a></li> -->
-					<li><a href="../blog">Blog</a></li>
-					<li><a href="../contact">Contact</a></li>
-					<!-- <li><a href="#">CV</a></li> -->
-				</ul>
-			</nav>
-			<label for="nav-toggle" class="nav-toggle-label">
-				<span></span>
-			</label>
-		</header>
-
-		<div class="container">
-			<div class="page-content">
-				<h1 class="h1">Contact</h1>
-
-				<p>I'm available for collaborations, contracts and
-					consultations. I'd love to hear from you, please <a href="mailto:%20marieflanagan@gmail.com"
-						target="_blank">say hello.</a></p>
-				<p>To receive very occasional tiny updates from me <a href="https://tinyletter.com/omarieclaire"
-						target="_blank">sign up here.</a></p>
-
-			</div>
-		</div>
-
-
-		<footer>
-			<div>
-				<a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg"
-						alt="email" class="feather"></a>
-				<a href="https://linkedin.com/in/marieflanagan/" target="blank"><img
-						src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"></a>
-				<a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg"
-						alt="twitter" class="feather"></a>
-				<a href="https://www.facebook.com/0marieclaire/" target="blank"><img
-						src="../img/social-icons/facebook.svg" alt="facebook" class="feather"></a>
-				<a href="https://www.instagram.com/omarieclaire/" target="blank"><img
-						src="../img/social-icons/instagram.svg" alt="instagram" class="feather"></a>
-			</div>
-		</footer>
-
-	</div>
-</body>
-
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const formData = new FormData(form);
+            
+            fetch('https://docs.google.com/forms/d/e/1FAIpQLSfPMpLeIrd85Tz4OYhsnemLjbsSr-H-qpI1RS47JsJn37tWng/formResponse', {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                // Always show success because Google Forms response is no-cors
+                form.style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            })
+            .catch(error => {
+                document.getElementById('errorMessage').style.display = 'block';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+  </body>
 </html>
