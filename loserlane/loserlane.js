@@ -200,6 +200,7 @@ class Position {
 //  SpatialManager class handles the spatial relationships and management of game darlings
 //  including their movement, collision detection, spawning, and grid-based positioning.
 
+
 class SpatialManager {
   constructor(config, soundManager = null) {
     this.config = config;
@@ -216,60 +217,61 @@ class SpatialManager {
     // Set to store all active game darlings
     this.darlings = new Set();
   }
+
   setGame(game) {
-    // console.log("Setting game reference in SpatialManager", {
-    //   hasGame: !!game,
-    //   doubleJumpPending: game.doubleJumpPending,
-    // });
     this.game = game;
     this.collisionManager = new CollisionManager(this);
   }
+
+  // Add this new method here
+  spawnEntity(entityType) {
+    const entity = this.spawnManager.spawnEntity(entityType);
+    if (entity && this.soundManager) {
+      entity.setSoundManager(this.soundManager);
+    }
+    if (entity) {
+      this.addEntityToSpatialManagementSystem(entity);
+    }
+    return entity;
+  }
+
   update() {
-    // Cleanup: Remove darlings that have moved off screen
-    // Using a 5-pixel buffer zone above and below the game height
+    // Rest of your methods...
     this.darlings.forEach((entity) => {
       if (entity.position.y > this.config.GAME.HEIGHT + 5 || entity.position.y + entity.height < -5) {
         this.removeEntityFromSpatialManagementSystem(entity);
       }
     });
 
-    // Update all subsystems in sequence:
-    // 1. Process entity movements
     this.movementCoordinator.update();
-    // 2. Check and resolve collisions
     this.collisionManager.collisionManagerUpdate();
-    // 3. Update individual entity behaviors
     this.darlings.forEach((entity) => entity.behavior.update());
   }
 
+  // Rest of your existing methods...
   validateIfEntityCanMoveToNewPos(entityTryingToMove, proposedNewPostion) {
     return this.collisionManager.validateMovement(entityTryingToMove, proposedNewPostion);
   }
 
   addEntityToSpatialManagementSystem(entityToRegister) {
-    // Set reference to this spatial manager in the entity
     entityToRegister.spatialManager = this;
-    // Add to active darlings set
     this.darlings.add(entityToRegister);
-    // Add to grid system for spatial partitioning
     this.grid.addDarlingToItsGridCell(entityToRegister);
   }
 
   removeEntityFromSpatialManagementSystem(entityToUnregister) {
-    // Remove from active darlings set
     this.darlings.delete(entityToUnregister);
-    // Remove from grid system
     this.grid.removeDarlingFromItsGridCell(entityToUnregister);
   }
 
   getAllObstaclesInASpecificLane(laneNumberToCheck) {
-    // @returns {Array} Array of darlings in the specified lane
     return Array.from(this.darlings).filter((entity) => Math.floor(entity.position.x) === laneNumberToCheck);
   }
 
   getObstaclesOfASpecificType(entityType) {
     return Array.from(this.darlings).filter((entity) => entity.type === entityType);
   }
+
   cleanup() {
     this.darlings.clear();
     this.grid = new SpatialGrid(this.config);
@@ -278,6 +280,7 @@ class SpatialManager {
     this.spawnManager = new SpawnManager(this, this.config);
   }
 }
+
 // =========================================
 // SpatialGrid - Spatial Management
 // =========================================

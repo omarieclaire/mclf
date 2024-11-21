@@ -57,9 +57,9 @@ const ART = {
   BUILDING: {
     art: [
       " PLEASE DON'T   ╭═══╧════╮",
-      "   WRITE THIS   │ ░DANK░ │",
+      "   WRITE THIS   │░ DANK ░│",
       "     IN MY OBIT │∷╳∷∷∷∷╳∷│",
-      "                │ ░WEED░ │",
+      "                │░ WEED ░│",
       "     __o        │═╥═╦╦═╥═│",
       "    _\\<,_      │ ║ ║║ ║ ║",
       " ══(*)/(*)══════└≈≈≈≈≈≈≈≈┘",
