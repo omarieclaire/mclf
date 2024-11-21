@@ -823,7 +823,19 @@ const TORONTO_BUILDINGS = [
             "!  :  :  !",
             "::::  ::::"           
         ],
-    } 
+    },
+    {
+       	name: "TAROT_CARDS",
+   	    artist: "d6",
+   	    art: [
+           	" ◢⬒⬒◣◢⬒⬒◣",
+           	"◢⊞TAROT♀⊞◣",
+           	"││♂CARDS││",
+           	"││⊞⊞∏∏⊞⊞││",
+           	"╰┴──────┴╯"
+        ]
+    }
+
 ];
 
 // console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
