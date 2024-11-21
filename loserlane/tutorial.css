@@ -59,6 +59,8 @@
   gap: 20px;
   text-align: center;
   background-color: var(--dark-grey);
+  font-size: 1.7rem;
+  z-index: 1;
 }
 
 #pregame-msg-box.show-message {
@@ -253,16 +255,7 @@
   }
 }
 
-#pregame-msg-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50%;
-  max-width: 60%;
-  padding: 1rem;
-  z-index: 1;
-}
+
 
 .control-area {
   position: absolute;

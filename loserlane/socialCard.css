@@ -22,7 +22,6 @@
   height: 100%; /* Ensure the container has a height for centering */
 }
 
-
 /* Social Deathmachined Overlay */
 .screenshot-overlay {
   position: absolute;
@@ -59,17 +58,13 @@
 }
 
 .social-card * {
-
-
 }
 
 @media (min-width: 600px) {
-    .social-card {
-        max-width: 500px; /* Restrict max width */
-        width: auto; /* Adjust the size of the card */
-
-      }
-
+  .social-card {
+    max-width: 500px; /* Restrict max width */
+    width: auto; /* Adjust the size of the card */
+  }
 }
 
 .social-card-image {
@@ -106,7 +101,7 @@
   /* font-size: 1rem; */
   text-transform: uppercase;
   /* margin-top: 2rem; */
-  font-size: clamp(1rem, 1.2rem, 5rem); 
+  font-size: clamp(1rem, 1.2rem, 5rem);
   margin: 0;
   padding: 0;
 }
@@ -128,7 +123,7 @@
   color: var(--green);
   /* color: var(--med-purp); */
   font: var(--font-face);
-  font-size: clamp(1rem, 1.6rem, 3rem); 
+  font-size: clamp(1rem, 1.6rem, 3rem);
 }
 
 .score-text {
@@ -138,8 +133,7 @@
   color: var(--hot-pink);
   background-color: rgba(0, 0, 0, 0.7); /* Soft black background with 50% opacity */
   border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
-  font-size: clamp(1rem, 2rem, 5rem); 
-
+  font-size: clamp(1rem, 2rem, 5rem);
 
   /* font-size: 1.1rem; */
   /* letter-spacing: 2px; */
@@ -163,7 +157,6 @@
   margin: 5px 0;
 }
 
-
 .background-overlay {
   position: absolute;
   top: 0;
@@ -179,8 +172,47 @@
   align-items: center; /* Centers the items horizontally */
   height: 100%; /* Ensure the container has a height for centering */
   text-align: center;
-  max-width: 50%;
+  max-width: 80%;
   font-size: 1.5rem;
-  margin: 1rem auto;
+  margin: 0 auto;
+}
 
+.button-container {
+  background-color: transparent;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.all-buttons-container {
+  display: flex;
+  justify-content:center;
+  gap: 7px;
+  /* justify-content: center; */
+
+  margin: 5rem auto 1rem auto;
+  max-width: 95vw; /* Restrict max width */
+}
+
+@media (min-width: 600px) {
+  .all-buttons-container {
+    width: 500px;
+    max-width: 500px; /* Restrict max width */
+  }
+}
+
+.share-btn {
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: ${isLarge ? '12rem' : '2.5rem'}; */
+  /* height: ${isLarge ? '2.5rem' : '2.5rem'}; */
+  transition: opacity 0.2s;
+  /* color: white; */
+  font-weight: bold;
+  /* font-size: ${isLarge ? '1.3rem' : '1.3rem'}; */
 }

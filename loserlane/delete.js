@@ -390,7 +390,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
             .share({
               files: [file],
               title: "WE NEED BIKE LANES",
-              text: `I survived for ${score} seconds without a bikelane! ${messageString} ${randomFace}`,
+              text: `I survived for ${score} seconds biking in Toronto without a bikelane! ${randomFace}`,
             })
             .catch((error) => {
               console.error("Error sharing:", error);
