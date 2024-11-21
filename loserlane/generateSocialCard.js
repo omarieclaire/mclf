@@ -152,7 +152,7 @@ function createSocialButtons(score, messageString) {
       "#e7a900",
       // "#ff77df",
 
-      "↗️", // To use icon instead: icons.share
+      "↑", // To use icon instead: icons.share
       async () => {
         try {
           await navigator.share({
