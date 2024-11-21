@@ -201,9 +201,11 @@ class Position {
 //  including their movement, collision detection, spawning, and grid-based positioning.
 
 class SpatialManager {
-  constructor(config) {
+  constructor(config, soundManager = null) {
     this.config = config;
     // Initialize grid system for spatial partitioning
+    this.soundManager = soundManager; // Store sound manager reference
+
     this.grid = new SpatialGrid(config); // Use new name SpatialGrid
     // Handle collision detection and resolution between darlings
     this.collisionManager = new CollisionManager(this);
@@ -2338,6 +2340,8 @@ class TTCBehavior extends VehicleBehaviorBase {
     this.stopTimer = 0;
     this.nextStopTime = this.getRandomStopTime();
     this.wanderersSpawnedAtStop = false;
+    this.soundManager = null; // Will be set when entity receives soundManager
+
   }
 
   update() {
@@ -2349,6 +2353,14 @@ class TTCBehavior extends VehicleBehaviorBase {
         this.stopTimer = this.getRandomStopDuration();
         this.wanderersSpawnedAtStop = false; // Reset flag when starting new stop
         console.log("TTC stopping at:", this.entity.position);
+
+        // Play stop sound
+        // if (this.soundManager) {
+        //   this.soundManager.play("ttcStop");
+        //   setTimeout(() => {
+        //     this.soundManager.play("ttcBell");
+        //   }, 500);
+        // }
       }
     }
 
@@ -2362,6 +2374,14 @@ class TTCBehavior extends VehicleBehaviorBase {
       if (this.stopTimer <= 0) {
         this.isAtStop = false;
         this.nextStopTime = this.getRandomStopTime();
+
+        // Play start sound
+        // if (this.soundManager) {
+        //   this.soundManager.play("ttcStart");
+        // }
+
+
+
         console.log("TTC resuming movement");
         return;
       }
@@ -2764,7 +2784,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     // Create parked deathMachine to test positions
     const parkedDeathmachine = new ParkedDeathmachine(this.entity.config, {
       position: new Position(this.targetLane, safeY),
-      color: currentColor  // Pass the extracted color
+      color: currentColor, // Pass the extracted color
     });
     parkedDeathmachine.behavior.baseSpeed = 1;
 
@@ -2799,7 +2819,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       this.willPark = false;
       this.isParking = false;
     }
-}
+  }
   update() {
     if (this.isParking) {
       this.handleParking();
@@ -2842,7 +2862,16 @@ class BaseEntity {
     this.art = null;
     this.color = null;
     this.spatialManager = null;
+    this.soundManager = null;
+
     this.id = Date.now() + Math.random().toString(36);
+  }
+
+  setSoundManager(soundManager) {
+    this.soundManager = soundManager;
+    if (this.behavior) {
+      this.behavior.soundManager = soundManager;
+    }
   }
 
   update() {
@@ -2916,6 +2945,11 @@ class TTC extends BaseEntity {
     this.color = STYLES.TTC;
     this.behavior = new TTCBehavior(this);
     console.log("TTC created at position:", this.position);
+  }
+
+  setSoundManager(soundManager) {
+    this.soundManager = soundManager;
+    this.behavior.soundManager = soundManager; // Pass to behavior as well
   }
 }
 
@@ -3905,7 +3939,7 @@ class LoserLane {
   }
 
   // === Initialization Methods ===
-  
+
   initializeCore() {
     this.config = CONFIG;
     this.eventListeners = new Map();
@@ -3915,13 +3949,15 @@ class LoserLane {
   }
 
   initializeSystems() {
+    this.soundManager = new SoundManager();
+
     this.stateManager = new GameStateManager(this.config);
     this.tutorialSystem = new TutorialSystem(this);
-    this.soundManager = new SoundManager();
-    
-    this.spatialManager = new SpatialManager(this.config);
+
+    // Pass the sound manager to the spatial manager
+    this.spatialManager = new SpatialManager(this.config, this.soundManager);
     this.spatialManager.setGame(this);
-    
+
     this.renderGrid = new RenderGrid(this.config.GAME.WIDTH, this.config.GAME.HEIGHT);
     this.renderer = new GameRenderer(this.config, this.renderGrid);
   }
@@ -3933,8 +3969,20 @@ class LoserLane {
 
   initializeSounds() {
     this.soundManager.setupMuteButton();
-    this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
-    this.soundManager.addSound("collision", "sounds/collision.mp3");
+
+    this.soundManager.setupMuteButton();
+    // this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
+    // this.soundManager.addSound("collision", "sounds/collision.mp3");
+    // this.soundManager.addSound("jump", "sounds/jump.mp3");
+    // this.soundManager.addSound("powerup", "sounds/powerup.mp3");
+    // this.soundManager.addSound("death", "sounds/death.mp3");
+
+    // TTC specific sounds
+    // this.soundManager.addSound("ttcBell", "sounds/ttc-bell.mp3");
+    // this.soundManager.addSound("ttcStop", "sounds/ttc-stop.mp3");
+    // this.soundManager.addSound("ttcStart", "sounds/ttc-start.mp3");
+
+    // this.soundManager.play("backgroundMusic", 1.0);
   }
 
   initializeGameComponents() {
@@ -3968,7 +4016,7 @@ class LoserLane {
       height: DARLINGS.BIKE.height,
       art: DARLINGS.BIKE.art,
       color: STYLES.BIKE,
-      behavior: new BikeBehavior(bikeEntity)
+      behavior: new BikeBehavior(bikeEntity),
     });
 
     return bikeEntity;
@@ -3993,12 +4041,12 @@ class LoserLane {
 
   getExistingBuildingsSortedByY() {
     return Array.from(this.spatialManager.darlings)
-      .filter(e => e.type === DarlingType.BUILDING)
+      .filter((e) => e.type === DarlingType.BUILDING)
       .sort((a, b) => a.position.y - b.position.y);
   }
 
   buildingCollisionExists(existingBuildings, currentY, newBuilding, minSpacing) {
-    return existingBuildings.some(existing => {
+    return existingBuildings.some((existing) => {
       const topOverlap = currentY < existing.position.y + existing.height + minSpacing;
       const bottomOverlap = currentY + newBuilding.height + minSpacing > existing.position.y;
       const sameColumn = Math.abs(existing.position.x - CONFIG.LANES.BUILDINGS) < 0.1;
@@ -4008,15 +4056,12 @@ class LoserLane {
 
   initializeParkedDeathMachines() {
     let currentY = CONFIG.GAME.HEIGHT;
-    
+
     while (currentY > -1) {
       const position = new Position(CONFIG.LANES.PARKED, currentY);
       const deathMachine = new ParkedDeathmachine(CONFIG, { position });
-      
-      if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(
-        DarlingType.PARKED_DEATHMACHINE, 
-        deathMachine.position
-      )) {
+
+      if (this.spatialManager.spawnManager.canDarlingSpawnAtThisSpecificPos(DarlingType.PARKED_DEATHMACHINE, deathMachine.position)) {
         this.spatialManager.addEntityToSpatialManagementSystem(deathMachine);
         currentY -= deathMachine.height + 1;
       } else {
@@ -4030,7 +4075,10 @@ class LoserLane {
   start() {
     if (this.stateManager.start()) {
       this.lastFrameTime = performance.now();
-      this.frameId = requestAnimationFrame(t => this.update(t));
+      this.frameId = requestAnimationFrame((t) => this.update(t));
+
+      // Start background music when game starts
+      //  this.soundManager.play("backgroundMusic", 1.0);
     }
   }
 
@@ -4057,7 +4105,7 @@ class LoserLane {
   }
 
   scheduleNextFrame() {
-    this.frameId = requestAnimationFrame(t => this.update(t));
+    this.frameId = requestAnimationFrame((t) => this.update(t));
   }
 
   updateGameState() {
@@ -4082,6 +4130,7 @@ class LoserLane {
   handleJump(direction) {
     if (this.stateManager.handleJump(direction)) {
       this.updateBikePosition();
+      // this.soundManager.play("jump", 1.0);
     }
   }
 
@@ -4102,13 +4151,15 @@ class LoserLane {
       { type: DarlingType.TTC_LANE_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.TTC_LANE_DEATHMACHINE },
       { type: DarlingType.ONCOMING_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.ONCOMING_DEATHMACHINE },
       { type: DarlingType.PARKED_DEATHMACHINE, rate: CONFIG.SPAWN_RATES.PARKED_DEATHMACHINE },
-      { type: DarlingType.WANDERER, rate: CONFIG.SPAWN_RATES.WANDERER }
+      { type: DarlingType.WANDERER, rate: CONFIG.SPAWN_RATES.WANDERER },
     ];
 
     spawnRules.forEach(({ type, rate }) => {
       if (Math.random() < rate) {
         const entity = this.spatialManager.spawnManager.spawnEntity(type);
         if (entity) {
+          // Pass soundManager to the entity
+          entity.setSoundManager(this.soundManager);
           this.spatialManager.addEntityToSpatialManagementSystem(entity);
         }
       }
@@ -4120,16 +4171,12 @@ class LoserLane {
   checkBikeCollisions() {
     const bikeHitbox = this.getBikeHitbox();
     const darlings = this.getDarlingsForCollision();
-    
-    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(
-      bikeHitbox, 
-      darlings, 
-      this.stateManager.isJumping
-    );
+
+    const collision = this.spatialManager.collisionManager.checkBikeCollisionIsSpecial(bikeHitbox, darlings, this.stateManager.isJumping);
 
     if (collision) {
       // console.log(`uuuu $`);
-      
+
       this.die(collision);
     }
   }
@@ -4139,15 +4186,15 @@ class LoserLane {
       x: this.stateManager.currentLane,
       y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
       width: DARLINGS.BIKE.width,
-      height: DARLINGS.BIKE.height
+      height: DARLINGS.BIKE.height,
     };
   }
 
   getDarlingsForCollision() {
     const allDarlings = Array.from(this.spatialManager.darlings);
     return {
-      darlings: allDarlings.filter(e => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
-      parkedDeathMachines: allDarlings.filter(e => e.type === DarlingType.PARKED_DEATHMACHINE)
+      darlings: allDarlings.filter((e) => e.type !== DarlingType.BIKE && e.type !== DarlingType.PARKED_DEATHMACHINE),
+      parkedDeathMachines: allDarlings.filter((e) => e.type === DarlingType.PARKED_DEATHMACHINE),
     };
   }
 
@@ -4155,18 +4202,22 @@ class LoserLane {
 
   die(reason) {
     if (this.stateManager.state.isDead) return;
-    
+
     this.setDeathState();
     this.handleDeathEffects(reason);
   }
 
   setDeathState() {
+    // Play death sound and stop background music
+    // this.soundManager.stop("backgroundMusic");
+    // this.soundManager.play("death", 1.0);
+
     this.stateManager.state.isPaused = true;
     this.stateManager.state.isDead = true;
     this.stateManager.state.deathState = {
       animation: 0,
       x: Math.round(this.stateManager.currentLane),
-      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
+      y: this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y,
     };
   }
 
@@ -4180,7 +4231,7 @@ class LoserLane {
 
   applyDeathVisualEffects(gameScreen, reason, messageInfo) {
     gameScreen.classList.add("screen-shake", "death-glitch-active");
-    
+
     const flashOverlay = document.createElement("div");
     flashOverlay.className = "death-flash";
     document.body.appendChild(flashOverlay);
@@ -4189,64 +4240,55 @@ class LoserLane {
       gameScreen.classList.remove("screen-shake", "death-glitch-active");
       flashOverlay.remove();
 
-      html2canvas(gameScreen).then(canvas => {
-        generateSocialCardNoSS(
-          canvas, 
-          reason, 
-          this.stateManager.state.score, 
-          messageInfo.message.funny, 
-          messageInfo.randomFace, 
-          this
-        );
+      html2canvas(gameScreen).then((canvas) => {
+        generateSocialCardNoSS(canvas, reason, this.stateManager.state.score, messageInfo.message.funny, messageInfo.randomFace, this);
       });
       // death message
     }, 1000);
   }
 
-  
-    restart() {
-      console.log("\n=== Game Restart Initiated ===");
-      
-      // 1. Stop the current game loop first
-      if (this.frameId) {
-        cancelAnimationFrame(this.frameId);
-        this.frameId = null;
-      }
-  
-      // 2. Reset audio
-      this.soundManager.resetAll();
-  
-      // 3. Reset static properties
-      Building.nextSpawnY = null;
-      Building.buildingManager = null;
-  
-      // 4. Clean up existing controls before creating new ones
-      if (this.controls) {
-        this.controls.cleanup();
-      }
-  
-      // 5. Wait a brief moment before reinitializing everything
-      setTimeout(() => {
-        // Reset game state
-        this.stateManager.restart();
-  
-        // Create new game systems
-        this.spatialManager = new SpatialManager(CONFIG);
-        this.spatialManager.setGame(this);
-        this.controls = new Controls(this);
-        this.settingsManager = new SettingsManager(this);
-        this.clusterManager = new VehicleClusterManager(CONFIG);
-  
-        // Initialize new world
-        this.initializeGameWorld();
-  
-        // Wait another brief moment before starting
-        setTimeout(() => {
-          this.start();
-        }, 50);  // Small delay before starting
-      }, 100);  // Small delay for cleanup
+  restart() {
+    console.log("\n=== Game Restart Initiated ===");
+
+    // 1. Stop the current game loop first
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
     }
-  
+
+    // 2. Reset audio
+    this.soundManager.resetAll();
+
+    // 3. Reset static properties
+    Building.nextSpawnY = null;
+    Building.buildingManager = null;
+
+    // 4. Clean up existing controls before creating new ones
+    if (this.controls) {
+      this.controls.cleanup();
+    }
+
+    // 5. Wait a brief moment before reinitializing everything
+    setTimeout(() => {
+      // Reset game state
+      this.stateManager.restart();
+
+      // Create new game systems
+      this.spatialManager = new SpatialManager(CONFIG);
+      this.spatialManager.setGame(this);
+      this.controls = new Controls(this);
+      this.settingsManager = new SettingsManager(this);
+      this.clusterManager = new VehicleClusterManager(CONFIG);
+
+      // Initialize new world
+      this.initializeGameWorld();
+
+      // Wait another brief moment before starting
+      setTimeout(() => {
+        this.start();
+      }, 50); // Small delay before starting
+    }, 100); // Small delay for cleanup
+  }
 
   resetStaticProperties() {
     Building.nextSpawnY = null;
@@ -4280,12 +4322,12 @@ class LoserLane {
     const colors = ["#FF0000", "#000000", "#222"];
     let delay = 0;
 
-    colors.forEach(color => {
-      setTimeout(() => gameScreen.style.backgroundColor = color, delay);
+    colors.forEach((color) => {
+      setTimeout(() => (gameScreen.style.backgroundColor = color), delay);
       delay += 100;
     });
 
-    setTimeout(() => gameScreen.style.backgroundColor = "", delay);
+    setTimeout(() => (gameScreen.style.backgroundColor = ""), delay);
   }
 
   cleanup() {
