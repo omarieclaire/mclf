@@ -3658,7 +3658,7 @@ class SettingsManager {
       if (e.key.toLowerCase() === "d") {
         const settingsWindow = document.getElementById("settings-window");
         if (settingsWindow) {
-          settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
+          // settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
         }
       }
     });
