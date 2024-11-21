@@ -2690,7 +2690,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     this.targetLane = entity.config.LANES.PARKED;
     this.originalSpeed = this.baseSpeed;
     this.parkingAttempts = 0;
-    this.maxAttempts = 7; // Add max attempts limit
+    this.maxAttempts = 13; // Add max attempts limit
   }
 
   handleParking() {
@@ -2745,7 +2745,6 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     const spatialManager = this.entity.spatialManager;
     const targetPosition = new Position(this.targetLane, this.entity.position.y);
 
-    // console.log("\n=== Starting Parking Transform ===");
     console.log("Original vehicle position:", {
       x: this.entity.position.x,
       y: this.entity.position.y,
@@ -2763,17 +2762,17 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     // Create parked deathMachine to test positions
     const parkedDeathmachine = new ParkedDeathmachine(this.entity.config, {
       position: new Position(this.targetLane, safeY),
+      color: this.entity.color  // Pass the original color to the new instance
     });
     parkedDeathmachine.behavior.baseSpeed = 1;
 
     // Try to find a valid position
     let validPosition = false;
     let attempts = 0;
-    const maxAttempts = 15; // Increased from 10 to give more chances
+    const maxAttempts = 15;
 
     while (!validPosition && attempts < maxAttempts) {
       validPosition = spatialManager.validateIfEntityCanMoveToNewPos(parkedDeathmachine, parkedDeathmachine.position);
-      // console.log(`Trying position at y: ${safeY}, valid: ${validPosition}`);
 
       if (!validPosition) {
         safeY += minSpacing;
@@ -2800,7 +2799,7 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
       this.willPark = false;
       this.isParking = false;
     }
-  }
+}
   update() {
     if (this.isParking) {
       this.handleParking();
@@ -2828,13 +2827,6 @@ class TTCLaneDeathmachineBehavior extends VehicleBehaviorBase {
     return hasSpace;
   }
 }
-// =========================================
-// =========================================
-// =========================================
-// =========================================
-// =========================================
-// =========================================
-
 // =========================================
 // BaseEntity
 // =========================================
