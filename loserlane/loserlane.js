@@ -3855,7 +3855,7 @@ class TutorialSystem {
     this.controlsDiv.style.opacity = "0";
 
     // Show "STAY ALIVE" text
-    this.tutorialText.innerHTML = "STAY ALIVE?";
+    this.tutorialText.innerHTML = "STAY ALIVE? <br>(you won't)";
 
     // Swap bike with start button
     setTimeout(() => {
