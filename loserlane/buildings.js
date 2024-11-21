@@ -12,6 +12,7 @@ const TORONTO_BUILDINGS = [
     },
     {
         name: "SAIGON_LOTUS",
+        artist: "mclf",
         art: [
             "┌~~~~~~~─┐",
             "│~~SAIGON│",
@@ -152,13 +153,14 @@ const TORONTO_BUILDINGS = [
     },
     {
         name: "DOUBLEDOUBLELAND",
+        artist: "mclf",
         art: [
             "╒═════╤══╕",
             "│⋰⋱⋰⋱  │",
-            "│DOUBLE│ │",
-            "│DOUBLE│ │",
-            "│ LAND │ │",
-            "└──────┘ │"
+            "│ │DOUBLE│",
+            "│ │DOUBLE│",
+            "│ │LAND  │",
+            "└ └──────│"
         ]
     },
     {
@@ -248,12 +250,13 @@ const TORONTO_BUILDINGS = [
         ]
     },
     {
-        name: "SOYBOMBB",
+        name: "SOYBOMB",
+        artist: "mclf",
         art: [
             "┌◢╱╲◣◢╱╲◣",
-            "│SOY     │",
-            "│BOMB    │",
-            "│ !!!!!  │",
+            "│SOYBOMB │",
+            "│(     ) │",
+            "│ (___)  │",
             "└────────┘"
         ]
     },
@@ -835,7 +838,6 @@ const TORONTO_BUILDINGS = [
            	"╰┴──────┴╯"
         ]
     }
-
 ];
 
 // console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
