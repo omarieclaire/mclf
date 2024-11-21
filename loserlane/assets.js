@@ -31,7 +31,7 @@ const DARLINGS = {
     },
     WANDERER: {
         SHAPES: [
-            "○", "*", "O", "☉", "●", "✺", "✹" // Add more shapes as desired
+            "○", "o", "O", "o", "●", "✺", "✹" // Add more shapes as desired
         ],
         UP: {
             art: [

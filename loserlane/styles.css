@@ -382,6 +382,7 @@ a {
 } */
 
 .sidewalk-wanderer {
+  margin: 0;
   background-color: #333333;
   /* animation: wander-animation 2s infinite; */
 }
