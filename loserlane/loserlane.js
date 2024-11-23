@@ -574,11 +574,11 @@ class GameRenderer {
     ];
   
     // Draw debug info
-    debugInfo.forEach((text, i) => {
-        text.split('').forEach((char, x) => {
-            this.renderGrid.updateCell(x, i, char, STYLES.RESET);
-        });
-    });
+    // debugInfo.forEach((text, i) => {
+    //     text.split('').forEach((char, x) => {
+    //         this.renderGrid.updateCell(x, i, char, STYLES.RESET);
+    //     });
+    // });
   
     let bikeArt = DARLINGS.BIKE.art;
     let bankingClass = '';
