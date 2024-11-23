@@ -549,22 +549,71 @@ class GameRenderer {
 
     this.drawDeathParticles(deathState);
   }
-
-  drawLiveBike(bike, isJumping) {
-    const bikeY = isJumping ? this.config.GAME.CYCLIST_Y - 1 : this.config.GAME.CYCLIST_Y;
-    DARLINGS.BIKE.art.forEach((line, i) => {
-      line.split("").forEach((char, x) => {
-        if (char !== " ") {
-          const gridX = Math.round(bike.position.x + x);
-          if (gridX >= 0 && gridX < this.config.GAME.WIDTH) {
-            const bikeChar = `<span class="bike">${char}</span>`;
-            this.renderGrid.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
-          }
-        }
-      });
+  drawLiveBike(bike, state) {
+    const bikeCenterLane = Math.floor(bike.position.x + (bike.width/2));
+    const currentBikeLane = Math.floor(bike.position.x);
+    
+    console.log('Bike Debug:', {
+        exactX: bike.position.x.toFixed(2),
+        centerX: (bike.position.x + (bike.width/2)).toFixed(2),
+        bikeCenterLane,
+        track1: this.config.LANES.TRACKS + 1,
+        track2: this.config.LANES.TRACKS + 5,
+        bankingLeft: bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5
     });
-  }
 
+    const bikeY = this.config.GAME.CYCLIST_Y;
+    
+    // Debug info at top of screen
+    const debugInfo = [
+        `Bike X: ${bike.position.x.toFixed(2)}`,
+        `Center: ${(bike.position.x + (bike.width/2)).toFixed(2)}`,
+        `Track1: ${this.config.LANES.TRACKS + 1}`,
+        `Track2: ${this.config.LANES.TRACKS + 5}`,
+        `Banking: ${bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5}`
+    ];
+  
+    // Draw debug info
+    debugInfo.forEach((text, i) => {
+        text.split('').forEach((char, x) => {
+            this.renderGrid.updateCell(x, i, char, STYLES.RESET);
+        });
+    });
+  
+    let bikeArt = DARLINGS.BIKE.art;
+    let bankingClass = '';
+    
+    // Use center position for banking, just like collision detection
+    if (bikeCenterLane === this.config.LANES.TRACKS + 1 || 
+        bikeCenterLane === this.config.LANES.TRACKS + 5) {
+        // The bike's center is on a track - show banking animation
+        const movingRight = bike.position.x > this.lastBikeX;
+        bikeArt = movingRight ? DARLINGS.BIKE.artBankRight : DARLINGS.BIKE.artBankLeft;
+        bankingClass = movingRight ? 'bike-banking-right' : 'bike-banking-left';
+    }
+    this.lastBikeX = bike.position.x; // Store position for next frame
+  
+    // Mark track positions with visual indicators
+    const trackPositions = [
+        this.config.LANES.TRACKS + 1,
+        this.config.LANES.TRACKS + 5
+    ];
+    trackPositions.forEach(x => {
+        this.renderGrid.updateCell(x, bikeY - 1, '↓', STYLES.RESET);
+    });
+  
+    bikeArt.forEach((line, i) => {
+        line.split("").forEach((char, x) => {
+            if (char !== " ") {
+                const gridX = Math.round(bike.position.x + x);
+                if (gridX >= 0 && gridX < this.config.GAME.WIDTH) {
+                    const bikeChar = `<span class="bike ${bankingClass}">${char}</span>`;
+                    this.renderGrid.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
+                }
+            }
+        });
+    });
+}
   drawDeathParticles(deathState) {
     const particleChars = ["", "⚡", "⚡"];
     const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, deathState.animation * 2);
@@ -669,7 +718,7 @@ class CollisionManager {
     }
   }
 
-  checkBikeCollisionIsSpecial(bikeHitbox, darlings, isJumping) {
+  checkBikeCollisionIsSpecial(bikeHitbox, darlings) {  // Removed isJumping parameter
     try {
       if (!bikeHitbox || !darlings?.darlings) {
         throw new CollisionError("Invalid parameters for bike collision check", {
@@ -677,23 +726,14 @@ class CollisionManager {
           darlings,
         });
       }
-
+  
       for (const darling of darlings.darlings) {
-        // Skip checking TTC collision when jumping over tracks and it's a streetcar
-        if (isJumping && darling.type === DarlingType.TTC) {
-          const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
-          const TTCCenter = darling.position.x + darling.width / 2;
-          if (Math.abs(bikeCenter - TTCCenter) < 2) {
-            continue;
-          }
-        }
-
         try {
           const darlingHitbox = darling.getHitbox();
           if (this.checkCollision(bikeHitbox, darlingHitbox)) {
             const obstacleHitbox = darlingHitbox;
             const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
-
+  
             // If obstacle is moving and hits bike from behind
             if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
               switch (darling.type) {
@@ -710,7 +750,7 @@ class CollisionManager {
                   return "TRAFFIC";
               }
             }
-
+  
             // If bike runs into obstacle or obstacle hits from front
             switch (darling.type) {
               case DarlingType.TTC:
@@ -737,14 +777,14 @@ class CollisionManager {
           continue;
         }
       }
-
+  
       // Check parked vehicle collisions
       if (!Array.isArray(darlings.parkedDeathMachines)) {
         throw new CollisionError("Invalid parkedDeathMachines array", {
           parkedDeathMachines: darlings.parkedDeathMachines,
         });
       }
-
+  
       for (const deathMachine of darlings.parkedDeathMachines) {
         try {
           if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
@@ -764,24 +804,14 @@ class CollisionManager {
           continue;
         }
       }
-
-      // Check track collisions when not jumping
-      try {
-        const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
-        const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
-        if (!isJumping && trackPositions.includes(Math.floor(bikeCenter))) {
-          return "TRACKS";
-        }
-      } catch (error) {
-        this.logError(
-          new CollisionError("Error checking track collision", {
-            config: this.config,
-            originalError: error,
-          }),
-          "checkBikeCollisionIsSpecial"
-        );
+  
+      // Simplified track collision check
+      const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
+      const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
+      if (trackPositions.includes(Math.floor(bikeCenter))) {
+        return "TRACKS";
       }
-
+  
       return null;
     } catch (error) {
       this.logError(error, "checkBikeCollisionIsSpecial");
@@ -2246,11 +2276,11 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   }
 
   handleMovementBlocked() {
-    console.log(`yo [ParkedDM] Movement blocked:`, {
-      id: this.entity.id,
-      position: { x: this.entity.position.x, y: this.entity.position.y },
-      nearbyVehicles: this.getNearbyVehicles(),
-    });
+    // console.log(`yo [ParkedDM] Movement blocked:`, {
+    //   id: this.entity.id,
+    //   position: { x: this.entity.position.x, y: this.entity.position.y },
+    //   nearbyVehicles: this.getNearbyVehicles(),
+    // });
     super.handleMovementBlocked();
   }
 }
@@ -2819,10 +2849,10 @@ class BaseEntity {
 class Wanderer extends BaseEntity {
   constructor(config, spawnConfig, isGoingUp = null, isTTCPassenger = false) {
     super(config, spawnConfig, DarlingType.WANDERER);
-    console.log(`Spawning ${isTTCPassenger ? "TTC passenger" : "regular sidewalk"} wanderer:`, {
-      position: spawnConfig.position,
-      isGoingUp: isGoingUp,
-    });
+    // console.log(`Spawning ${isTTCPassenger ? "TTC passenger" : "regular sidewalk"} wanderer:`, {
+    //   position: spawnConfig.position,
+    //   isGoingUp: isGoingUp,
+    // });
 
     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
     const randomShape = DARLINGS.WANDERER.SHAPES[Math.floor(Math.random() * DARLINGS.WANDERER.SHAPES.length)];
@@ -3152,6 +3182,12 @@ class GameStateManager {
 
     this.score = 0;
     this.tutorialComplete = false;
+
+    this.lastPress = {
+      left: 0,
+      right: 0  
+    };
+    this.doublePressWindow = 200; // milliseconds
   }
 
   start() {
@@ -3245,36 +3281,62 @@ class GameStateManager {
       messageBox.textContent = "CLICK HERE/SPACEBAR to play ";
     }
   }
-
-  moveBike(direction) {
+  moveBike(direction, timestamp = performance.now()) {
     if (this.state.isDead || !this.state.isPlaying) return false;
-
-    const moveAmount = direction === "left" ? -1 : 1;
-    const newLane = Math.floor(this.state.currentLane + moveAmount);
-
-    // Update position with bounds checking
-    this.state.currentLane = Math.max(this.config.LANES.ONCOMING, Math.min(newLane, this.config.LANES.BUILDINGS - 1));
-
-    return true;
-  }
-
-  handleJump(direction) {
-    if (this.state.isJumping) return false;
-
-    const moveAmount = this.config.MOVEMENT.JUMP_AMOUNT;
-    if (direction === "left") {
-      this.state.currentLane = Math.max(this.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
-    } else {
-      this.state.currentLane = Math.min(this.state.currentLane + moveAmount, this.config.LANES.BUILDINGS - 1);
+  
+    // More forgiving double-press window (300ms instead of 200ms)
+    const doublePressWindow = 300;
+    const isDoublePress = (timestamp - this.lastPress[direction]) < doublePressWindow;
+    this.lastPress[direction] = timestamp;
+  
+    // If we're on a track AND it's a double press, jump over in the pressed direction
+    const currentLane = Math.floor(this.state.currentLane);
+  
+    if (isDoublePress) {
+      if (currentLane === this.config.LANES.TRACKS + 1) {
+        // On first track, only allow jumping right
+        if (direction === 'right') {
+          this.state.currentLane = this.config.LANES.TRACKS + 2;
+          return true;
+        }
+      } 
+      if (currentLane === this.config.LANES.TRACKS + 5) {
+        // On second track, only allow jumping left
+        if (direction === 'left') {
+          this.state.currentLane = this.config.LANES.TRACKS + 4;
+          return true;
+        }
+      }
     }
-
-    this.state.isJumping = true;
-    setTimeout(() => {
-      this.state.isJumping = false;
-    }, this.config.MOVEMENT.JUMP_DURATION);
-
+  
+    // Regular movement
+    const moveAmount = direction === 'left' ? -1 : 1;
+    const newLane = Math.floor(this.state.currentLane + moveAmount);
+    this.state.currentLane = Math.max(
+      this.config.LANES.ONCOMING,
+      Math.min(newLane, this.config.LANES.BUILDINGS - 1)
+    );
+  
     return true;
   }
+
+  // handleJump(direction) {
+  //   if (this.state.isJumping) return false;
+
+  //   const moveAmount = this.config.MOVEMENT.JUMP_AMOUNT;
+  //   if (direction === "left") {
+  //     this.state.currentLane = Math.max(this.state.currentLane - moveAmount, this.config.LANES.ONCOMING);
+  //   } else {
+  //     this.state.currentLane = Math.min(this.state.currentLane + moveAmount, this.config.LANES.BUILDINGS - 1);
+  //   }
+
+  //   this.state.isJumping = true;
+  //   setTimeout(() => {
+  //     this.state.isJumping = false;
+  //   }, this.config.MOVEMENT.JUMP_DURATION);
+
+  //   return true;
+  // }
 
   get isPaused() {
     return this.state.isPaused;
@@ -3353,12 +3415,10 @@ class BaseControl {
       this.game.tutorialSystem.handleMove(direction);
       return;
     }
-
+  
     if (!this.game.stateManager.isPlaying) return;
-
-    // Reset any double jump/immunity flags when moving normally
-    this.game.movePlayer(direction);
-
+  
+    this.game.movePlayer(direction, now);
   }
 }
 
@@ -3970,8 +4030,8 @@ class LoserLane {
 
   // === Player Control Methods ===
 
-  movePlayer(direction) {
-    if (this.stateManager.moveBike(direction)) {
+  movePlayer(direction, timestamp) {
+    if (this.stateManager.moveBike(direction, timestamp)) {
       this.updateBikePosition();
     }
   }

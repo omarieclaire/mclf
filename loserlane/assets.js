@@ -8,6 +8,8 @@
 // console.log('Assets loaded:');
 
 
+
+
 const DARLINGS = {
     // BIKE: {
     //     art: 
@@ -25,10 +27,22 @@ const DARLINGS = {
          " ⍵ ",
          " | "
         ],
-
+        artBankLeft: [
+            "\/",
+            "/o ",
+            " ⍵ ",
+            " | "
+          ],
+          artBankRight: [
+            " \/",
+            " o\\",
+            " ⍵ ",
+            " | "
+          ],
         width: 3,
         height: 4
     },
+    
     WANDERER: {
         SHAPES: [
             "○", "o", "O", "o", "●", "✺", "✹" // Add more shapes as desired

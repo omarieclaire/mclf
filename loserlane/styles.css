@@ -327,8 +327,6 @@ a {
   /* text-align: center; */
 }
 
-
-
 .bike {
   font-weight: bolder;
   -webkit-background-clip: text;
@@ -338,8 +336,20 @@ a {
   animation: rainbow 6s linear infinite;
 }
 
+.bike-banking-left {
+  transform: rotate(-20deg);
+  transition: transform 0.1s ease-in-out;
+}
+
+.bike-banking-right {
+  transform: rotate(20deg);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Fix the invincible styles */
 .invincible-mode .bike {
   animation: invincible-pulse 1s infinite;
+  background-image: none;
   background-color: red;
   color: red;
 }
