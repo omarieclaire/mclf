@@ -59,6 +59,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="socialCard.css" />
     <link rel="stylesheet" href="tutorial.css" />
+    <link rel="stylesheet" href="settings.css" />
 
     <script src="html2canvas.js"></script>
   </head>
@@ -138,97 +139,272 @@
           <input id="volume-slider" type="range" min="0" max="1" step="0.1" value="1">
         </div> -->
 
-      <div id="settings-window">
-        <h3>Game Settings</h3>
+      <!--- Settings Panel HTML --->
+      <div id="settings-window" class="settings-panel">
+        <div class="settings-header">
+          <h3>Game Settings</h3>
+          <div class="preset-controls">
+            <label for="difficulty-preset">Difficulty:</label>
+            <select id="difficulty-preset">
+              <option value="casual">Casual Ride</option>
+              <option value="normal">Regular Rush Hour</option>
+              <option value="rush">Peak Rush Hour</option>
+              <option value="chaos">Total Chaos</option>
+              <option value="custom">Custom</option>
+            </select>
+            <button id="save-preset">Save Current</button>
+          </div>
+          <button id="close-settings" class="close-button">×</button>
+        </div>
 
-        <!-- Wanderer Speed -->
-        <label for="wanderer-speed"
-          >Wanderer Speed
-          <span id="wanderer-speed-value" class="value-display">0.5</span>
-        </label>
-        <input id="wanderer-speed" type="range" min="0.1" max="3" step="0.1" value="0.5" />
+        <!-- Debug Settings -->
+        <div class="settings-section">
+          <h4>Debug Options</h4>
+          <div class="setting-group">
+            <div class="setting-row checkbox-row">
+              <label for="bike-invincible" class="tooltip-trigger">
+                Invincibility
+                <div class="tooltip">Makes bike immune to collisions</div>
+              </label>
+              <input type="checkbox" id="bike-invincible" />
+              <span id="bike-invincible-value" class="value-display">Off</span>
+            </div>
 
-        <!-- Spawn Rates -->
-        <label for="TTC-spawn-rate"
-          >TTC Spawn Rate
-          <span id="TTC-spawn-rate-value" class="value-display">0.03</span>
-        </label>
-        <input id="TTC-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.03" />
+            <div class="setting-row checkbox-row">
+              <label for="show-hitboxes" class="tooltip-trigger">
+                Show Hitboxes
+                <div class="tooltip">Visualize collision boundaries</div>
+              </label>
+              <input type="checkbox" id="show-hitboxes" />
+              <span id="show-hitboxes-value" class="value-display">Off</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="oncoming-car-spawn-rate"
-          >Oncoming Deathmachine Spawn Rate
-          <span id="oncoming-car-spawn-rate-value" class="value-display">0.15</span>
-        </label>
-        <input id="oncoming-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
+        <!-- Core Game Speed -->
+        <div class="settings-section">
+          <h4>Core Game Speed</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="world-scroll-speed" class="tooltip-trigger">
+                Base Game Speed
+                <div class="tooltip">Foundation of game speed - how fast the world moves past the bike</div>
+              </label>
+              <input id="world-scroll-speed" type="range" min="0.05" max="3.0" step="0.05" value="1.0" />
+              <span id="world-scroll-speed-value" class="value-display">1.0</span>
+            </div>
 
-        <label for="parked-car-spawn-rate"
-          >Parked Deathmachine Spawn Rate
-          <span id="parked-car-spawn-rate-value" class="value-display">0.05</span>
-        </label>
-        <input id="parked-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.15" />
+            <div class="setting-row">
+              <label for="frame-update-rate" class="tooltip-trigger">
+                Update Rate
+                <div class="tooltip">How often game updates (16ms = 60fps, higher = slower)</div>
+              </label>
+              <input id="frame-update-rate" type="range" min="16" max="200" step="1" value="16" />
+              <span id="frame-update-rate-value" class="value-display">16</span>
+            </div>
 
-        <label for="TTC-lane-car-spawn-rate"
-          >TTC Lane Deathmachine Spawn Rate
-          <span id="TTC-lane-car-spawn-rate-value" class="value-display">0.3</span>
-        </label>
-        <input id="TTC-lane-car-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.3" />
+            <div class="setting-row">
+              <label for="speed-scaling-rate" class="tooltip-trigger">
+                Speed Scaling
+                <div class="tooltip">How quickly game accelerates (lower = faster acceleration)</div>
+              </label>
+              <input id="speed-scaling-rate" type="range" min="0.95" max="1.0" step="0.001" value="0.995" />
+              <span id="speed-scaling-rate-value" class="value-display">0.995</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="wanderer-spawn-rate"
-          >Wanderer Spawn Rate
-          <span id="wanderer-spawn-rate-value" class="value-display">0.05</span>
-        </label>
-        <input id="wanderer-spawn-rate" type="range" min="0.01" max="1" step="0.01" value="0.05" />
+        <!-- Entity Movement -->
+        <div class="settings-section">
+          <h4>Entity Movement</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="oncoming-traffic-speed" class="tooltip-trigger">
+                Oncoming Traffic Speed
+                <div class="tooltip">Relative to world scroll (1.0 = same as world)</div>
+              </label>
+              <input id="oncoming-traffic-speed" type="range" min="0.5" max="5.0" step="0.1" value="1.0" />
+              <span id="oncoming-traffic-speed-value" class="value-display">1.0</span>
+            </div>
 
-        <!-- Game Speed Controls -->
-        <label for="initial-speed"
-          >Initial Game Speed
-          <span id="initial-speed-value" class="value-display">500</span>
-        </label>
-        <input id="initial-speed" type="range" min="100" max="1000" step="10" value="500" />
+            <div class="setting-row">
+              <label for="streetcar-speed" class="tooltip-trigger">
+                Streetcar Speed
+                <div class="tooltip">How fast streetcars move relative to world scroll</div>
+              </label>
+              <input id="streetcar-speed" type="range" min="0.5" max="3.0" step="0.1" value="1.0" />
+              <span id="streetcar-speed-value" class="value-display">1.0</span>
+            </div>
 
-        <label for="min-speed"
-          >Minimum Game Speed
-          <span id="min-speed-value" class="value-display">300</span>
-        </label>
-        <input id="min-speed" type="range" min="100" max="1000" step="10" value="300" />
+            <div class="setting-row">
+              <label for="pedestrian-relative-speed" class="tooltip-trigger">
+                Pedestrian Speed
+                <div class="tooltip">How fast pedestrians move relative to world</div>
+              </label>
+              <input id="pedestrian-relative-speed" type="range" min="0.1" max="2.0" step="0.1" value="0.5" />
+              <span id="pedestrian-relative-speed-value" class="value-display">0.5</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="speed-decrease-rate"
-          >Speed Decrease Rate
-          <span id="speed-decrease-rate-value" class="value-display">0.995</span>
-        </label>
-        <input id="speed-decrease-rate" type="range" min="0.9" max="1" step="0.001" value="0.995" />
+        <!-- Traffic Density -->
+        <div class="settings-section">
+          <h4>Traffic Density</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="global-density" class="tooltip-trigger">
+                Global Density
+                <div class="tooltip">Master multiplier for all spawn rates</div>
+              </label>
+              <input id="global-density" type="range" min="0.1" max="3.0" step="0.1" value="1.0" />
+              <span id="global-density-value" class="value-display">1.0</span>
+            </div>
 
-        <!-- Gaps Between Vehicles -->
-        <label for="TTC-gap"
-          >TTC Gap
-          <span id="TTC-gap-value" class="value-display">20</span>
-        </label>
-        <input id="TTC-gap" type="range" min="10" max="50" step="1" value="20" />
+            <div class="setting-row">
+              <label for="streetcar-frequency" class="tooltip-trigger">
+                Streetcar Frequency
+                <div class="tooltip">How often streetcars spawn. Higher speeds need higher values</div>
+              </label>
+              <input id="streetcar-frequency" type="range" min="0.01" max="2.0" step="0.01" value="0.05" />
+              <span id="streetcar-frequency-value" class="value-display">0.05</span>
+            </div>
 
-        <label for="lane-car-gap"
-          >TTC Lane Deathmachine Gap
-          <span id="lane-car-gap-value" class="value-display">12</span>
-        </label>
-        <input id="lane-car-gap" type="range" min="10" max="50" step="1" value="12" />
+            <div class="setting-row">
+              <label for="streetcar-lane-traffic-frequency" class="tooltip-trigger">
+                Streetcar Lane Traffic
+                <div class="tooltip">Frequency of vehicles in streetcar lane</div>
+              </label>
+              <input id="streetcar-lane-traffic-frequency" type="range" min="0.01" max="2.0" step="0.01" value="0.3" />
+              <span id="streetcar-lane-traffic-frequency-value" class="value-display">0.3</span>
+            </div>
 
-        <label for="oncoming-car-gap"
-          >Oncoming Deathmachine Gap
-          <span id="oncoming-car-gap-value" class="value-display">8</span>
-        </label>
-        <input id="oncoming-car-gap" type="range" min="5" max="30" step="1" value="8" />
+            <div class="setting-row">
+              <label for="oncoming-traffic-frequency" class="tooltip-trigger">
+                Oncoming Traffic Rate
+                <div class="tooltip">Frequency of oncoming vehicles</div>
+              </label>
+              <input id="oncoming-traffic-frequency" type="range" min="0.01" max="2.0" step="0.01" value="0.4" />
+              <span id="oncoming-traffic-frequency-value" class="value-display">0.4</span>
+            </div>
 
-        <!-- Lane Widths and Cyclist Speed -->
-        <label for="lane-width"
-          >Lane Width
-          <span id="lane-width-value" class="value-display">45</span>
-        </label>
-        <input id="lane-width" type="range" min="20" max="60" step="1" value="45" />
+            <div class="setting-row">
+              <label for="parked-car-frequency" class="tooltip-trigger">
+                Parked Car Frequency
+                <div class="tooltip">How often parked cars spawn</div>
+              </label>
+              <input id="parked-car-frequency" type="range" min="0.01" max="2.0" step="0.01" value="0.2" />
+              <span id="parked-car-frequency-value" class="value-display">0.2</span>
+            </div>
 
-        <label for="cyclist-speed"
-          >Cyclist Speed
-          <span id="cyclist-speed-value" class="value-display">100</span>
-        </label>
-        <input id="cyclist-speed" type="range" min="50" max="200" step="5" value="100" />
+            <div class="setting-row">
+              <label for="pedestrian-frequency" class="tooltip-trigger">
+                Pedestrian Frequency
+                <div class="tooltip">How often pedestrians spawn (>1 = multiple per frame)</div>
+              </label>
+              <input id="pedestrian-frequency" type="range" min="0.01" max="3.0" step="0.01" value="0.9" />
+              <span id="pedestrian-frequency-value" class="value-display">0.9</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacing Controls -->
+        <div class="settings-section">
+          <h4>Entity Spacing</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="streetcar-spacing" class="tooltip-trigger">
+                Streetcar Spacing
+                <div class="tooltip">Minimum distance between streetcars</div>
+              </label>
+              <input id="streetcar-spacing" type="range" min="5" max="150" step="5" value="50" />
+              <span id="streetcar-spacing-value" class="value-display">50</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="traffic-vehicle-spacing" class="tooltip-trigger">
+                Traffic Spacing
+                <div class="tooltip">Minimum space between moving vehicles</div>
+              </label>
+              <input id="traffic-vehicle-spacing" type="range" min="3" max="50" step="1" value="15" />
+              <span id="traffic-vehicle-spacing-value" class="value-display">15</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="parked-car-spacing" class="tooltip-trigger">
+                Parked Car Spacing
+                <div class="tooltip">Space between parked cars</div>
+              </label>
+              <input id="parked-car-spacing" type="range" min="2" max="30" step="1" value="10" />
+              <span id="parked-car-spacing-value" class="value-display">10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Behavior Settings -->
+        <div class="settings-section">
+          <h4>Entity Behavior</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="stop-frequency" class="tooltip-trigger">
+                Streetcar Stop Frequency
+                <div class="tooltip">How often streetcars make stops</div>
+              </label>
+              <input id="stop-frequency" type="range" min="100" max="3000" step="100" value="1000" />
+              <span id="stop-frequency-value" class="value-display">1000</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="min-stop-time" class="tooltip-trigger">
+                Minimum Stop Duration
+                <div class="tooltip">Shortest possible streetcar stop</div>
+              </label>
+              <input id="min-stop-time" type="range" min="60" max="1000" step="20" value="300" />
+              <span id="min-stop-time-value" class="value-display">300</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="door-opening-chance" class="tooltip-trigger">
+                Door Opening Chance
+                <div class="tooltip">Probability of parked car doors opening</div>
+              </label>
+              <input id="door-opening-chance" type="range" min="0.0" max="1.0" step="0.05" value="0.3" />
+              <span id="door-opening-chance-value" class="value-display">0.3</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="parking-attempt-rate" class="tooltip-trigger">
+                Parking Attempt Rate
+                <div class="tooltip">How often vehicles try to park</div>
+              </label>
+              <input id="parking-attempt-rate" type="range" min="0.0" max="1.0" step="0.05" value="0.3" />
+              <span id="parking-attempt-rate-value" class="value-display">0.3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player Settings -->
+        <div class="settings-section">
+          <h4>Player Controls</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <label for="jump-distance" class="tooltip-trigger">
+                Jump Distance
+                <div class="tooltip">How many lanes covered in one jump</div>
+              </label>
+              <input id="jump-distance" type="range" min="1" max="10" step="1" value="3" />
+              <span id="jump-distance-value" class="value-display">3</span>
+            </div>
+
+            <div class="setting-row">
+              <label for="jump-duration" class="tooltip-trigger">
+                Jump Duration
+                <div class="tooltip">How long jumps last (ms)</div>
+              </label>
+              <input id="jump-duration" type="range" min="100" max="2000" step="100" value="1000" />
+              <span id="jump-duration-value" class="value-display">1000</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <script>
@@ -243,6 +419,7 @@
     <script src="messages.js"></script>
 
     <script src="generateSocialCard.js"></script>
+    <script src="settings.js"></script>
 
     <script src="loserlane.js"></script>
   </body>

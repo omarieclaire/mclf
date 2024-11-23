@@ -1,23 +1,15 @@
 const CONFIG = {
   GAME: {
+    INVINCIBLE: false,
     WIDTH: 42,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 50,
     MIN_SPEED: 300,
     SPEED_DECREASE_RATE: 0.995,
     CYCLIST_Y: Math.floor(window.innerHeight / 40),
-    DOUBLE_TAP_TIME: 350,
-    lastKeys: {
-      left: 0,
-      right: 0,
-    },
     ANIMATION_FRAMES: {
       WANDERER_WAIT: 20,
       DEATH_SEQUENCE: 15,
-    },
-    keyPressCount: {
-      left: 0,
-      right: 0,
     },
   },
   SPAWN_RATES: {
@@ -118,24 +110,6 @@ const CONFIG = {
       HEIGHTS: [0.8, 1.8],
     },
   },
-  // INPUT: {
-  //   TOUCH: {
-  //     SENSITIVITY: 1.0,
-  //     DRAG_THRESHOLD: 10,
-  //     TAP_DURATION: 200,
-  //   },
-  //   KEYBOARD: {
-  //     REPEAT_DELAY: 200,
-  //     REPEAT_RATE: 50,
-  //   },
-  // },
-  // DIFFICULTY: {
-  //   LEVELS: {
-  //     EASY: { speedMultiplier: 0.8, spawnRateMultiplier: 0.7 },
-  //     NORMAL: { speedMultiplier: 1.0, spawnRateMultiplier: 1.0 },
-  //     HARD: { speedMultiplier: 1.2, spawnRateMultiplier: 1.3 },
-  //   },
-  // },
   AUDIO: {
     VOLUME: {
       MASTER: 1.0,
@@ -199,7 +173,6 @@ class Position {
 // =========================================
 //  SpatialManager class handles the spatial relationships and management of game darlings
 //  including their movement, collision detection, spawning, and grid-based positioning.
-
 
 class SpatialManager {
   constructor(config, soundManager = null) {
@@ -1308,32 +1281,6 @@ class MovementCoordinator {
 
     return priorities[entity.type] || CONFIG.MOVEMENT.PRIORITIES.DEFAULT || 0;
   }
-  /**
-   * Validates if a lane change is safe
-   * Checks for sufficient spacing between entities
-   */
-
-  validateLaneChange(entity, newLane) {
-    const laneOccupants = this.spatialManager.getLaneOccupants(newLane);
-    const safeDistance = this.calculateSafeDistanceForLaneChangeIThink(entity);
-
-    return laneOccupants.every((occupant) => Math.abs(occupant.position.y - entity.position.y) >= safeDistance);
-  }
-  /**
-   * Calculates required safe distance for an entity type
-   * @returns {number} Safe distance in game units
-   */
-  calculateSafeDistanceForLaneChangeIThink(entity) {
-    const safeDistances = {
-      [DarlingType.TTC]: CONFIG.SAFE_DISTANCE.TTC,
-      [DarlingType.TTC_LANE_DEATHMACHINE]: CONFIG.SAFE_DISTANCE.TTC_LANE_DEATHMACHINE,
-      [DarlingType.ONCOMING_DEATHMACHINE]: CONFIG.SAFE_DISTANCE.ONCOMING_DEATHMACHINE,
-      [DarlingType.PARKED_DEATHMACHINE]: CONFIG.SAFE_DISTANCE.PARKED,
-      [DarlingType.WANDERER]: CONFIG.SAFE_DISTANCE.WANDERER,
-    };
-
-    return safeDistances[entity.type] || CONFIG.SAFE_DISTANCE.DEFAULT;
-  }
 
   moveEntity(entity, newPos) {
     if (this.validateIfMoveIsPossibleConsideringCollisions(entity, newPos)) {
@@ -1350,33 +1297,12 @@ class MovementCoordinator {
     return false;
   }
 
-  queueMovement(entity, destination, priority = 0) {
-    const plan = {
-      entity,
-      destination,
-      priority,
-      path: [destination], // Simple direct path for now
-      status: "queued",
-    };
-
-    this.activeMovements.set(entity, plan);
-    return plan;
-  }
-
   cancelMovement(entity) {
     this.activeMovements.delete(entity);
   }
 
   clearAllMovements() {
     this.activeMovements.clear();
-  }
-
-  getActiveMovements() {
-    return Array.from(this.activeMovements.values());
-  }
-
-  isMoving(entity) {
-    return this.activeMovements.has(entity);
   }
 }
 
@@ -2344,7 +2270,6 @@ class TTCBehavior extends VehicleBehaviorBase {
     this.nextStopTime = this.getRandomStopTime();
     this.wanderersSpawnedAtStop = false;
     this.soundManager = null; // Will be set when entity receives soundManager
-
   }
 
   update() {
@@ -2358,12 +2283,12 @@ class TTCBehavior extends VehicleBehaviorBase {
         console.log("TTC stopping at:", this.entity.position);
 
         // Play stop sound
-        // if (this.soundManager) {
-        //   this.soundManager.play("ttcStop");
-        //   setTimeout(() => {
-        //     this.soundManager.play("ttcBell");
-        //   }, 500);
-        // }
+        if (this.soundManager) {
+          // this.soundManager.play("ttcStop");
+          setTimeout(() => {
+            // this.soundManager.play("ttcBell");
+          }, 500);
+        }
       }
     }
 
@@ -2382,8 +2307,6 @@ class TTCBehavior extends VehicleBehaviorBase {
         // if (this.soundManager) {
         //   this.soundManager.play("ttcStart");
         // }
-
-
 
         console.log("TTC resuming movement");
         return;
@@ -3375,7 +3298,6 @@ class GameStateManager {
   restart() {
     // Only handle game state reset
     this.state = new GameState(this.config);
-    this.doubleJumpPending = false; // Add this for extra safety
     this.state.currentLane = this.config.LANES.BIKE;
     this.score = 0;
     this.tutorialComplete = false;
@@ -3435,17 +3357,8 @@ class BaseControl {
     if (!this.game.stateManager.isPlaying) return;
 
     // Reset any double jump/immunity flags when moving normally
-    this.game.doubleJumpPending = false; // Add this
+    this.game.movePlayer(direction);
 
-    if (
-      this.game.doubleJumpPending &&
-      (this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK1 ||
-        this.game.stateManager.currentLane === CONFIG.KILLERLANES.KILLERTRACK2)
-    ) {
-      this.game.handleJump(direction);
-    } else {
-      this.game.movePlayer(direction);
-    }
   }
 }
 
@@ -3629,73 +3542,6 @@ class Controls {
   }
 }
 
-// =========================================
-// SettingsManager
-// =========================================
-
-class SettingsManager {
-  constructor(game) {
-    this.game = game;
-    this.eventListeners = new Map();
-    this.initialize();
-  }
-
-  initialize() {
-    this.setupSettingsControls();
-  }
-
-  addEventListenerWithTracking(element, type, handler, options = false) {
-    element.addEventListener(type, handler, options);
-    if (!this.eventListeners.has(element)) {
-      this.eventListeners.set(element, []);
-    }
-    this.eventListeners.get(element).push({ type, handler, options });
-  }
-
-  setupSettingsControls() {
-    // Toggle settings window with 'd' key
-    this.addEventListenerWithTracking(document, "keydown", (e) => {
-      if (e.key.toLowerCase() === "d") {
-        const settingsWindow = document.getElementById("settings-window");
-        if (settingsWindow) {
-          // settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
-        }
-      }
-    });
-
-    // Setup individual settings
-    this.setupSettingControl("initial-speed", (value) => {
-      CONFIG.GAME.INITIAL_SPEED = parseInt(value);
-    });
-
-    this.setupSettingControl("min-speed", (value) => {
-      CONFIG.GAME.MIN_SPEED = parseInt(value);
-    });
-  }
-
-  setupSettingControl(id, callback) {
-    const element = document.getElementById(id);
-    const valueDisplay = document.getElementById(`${id}-value`);
-
-    if (element && valueDisplay) {
-      this.addEventListenerWithTracking(element, "input", (e) => {
-        const value = e.target.value;
-        valueDisplay.textContent = value;
-        callback(value);
-      });
-    }
-  }
-
-  cleanup() {
-    // Remove all tracked event listeners
-    this.eventListeners.forEach((listeners, element) => {
-      listeners.forEach(({ type, handler, options }) => {
-        element.removeEventListener(type, handler, options);
-      });
-    });
-    this.eventListeners.clear();
-  }
-}
 // =========================================
 // LoserLane
 // =========================================
@@ -3981,8 +3827,8 @@ class LoserLane {
     // this.soundManager.addSound("death", "sounds/death.mp3");
 
     // TTC specific sounds
-    // this.soundManager.addSound("ttcBell", "sounds/ttc-bell.mp3");
-    // this.soundManager.addSound("ttcStop", "sounds/ttc-stop.mp3");
+    // this.soundManager.addSound("ttcBell", "sounds/collision.mp3");
+    this.soundManager.addSound("ttcStop", "sounds/collision.mp3");
     // this.soundManager.addSound("ttcStart", "sounds/ttc-start.mp3");
 
     // this.soundManager.play("backgroundMusic", 1.0);
@@ -4172,6 +4018,10 @@ class LoserLane {
   // === Collision Methods ===
 
   checkBikeCollisions() {
+    if (CONFIG.GAME.INVINCIBLE) {
+      return;
+    }
+
     const bikeHitbox = this.getBikeHitbox();
     const darlings = this.getDarlingsForCollision();
 

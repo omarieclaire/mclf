@@ -327,31 +327,7 @@ a {
   /* text-align: center; */
 }
 
-#settings-window {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 250px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 15px;
-  border-radius: 8px;
-  display: none;
-  z-index: 1000;
-}
 
-#settings-window label,
-#settings-window input {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.value-display {
-  font-size: 12px;
-  margin-left: 8px;
-  color: #ccc;
-}
 
 .bike {
   font-weight: bolder;
@@ -360,6 +336,18 @@ a {
   color: transparent;
   background-image: linear-gradient(45deg, red, orange, cyan, violet);
   animation: rainbow 6s linear infinite;
+}
+
+.invincible-mode .bike {
+  animation: invincible-pulse 1s infinite;
+  background-color: red;
+  color: red;
+}
+
+@keyframes invincible-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
 .wanderer {

@@ -1,0 +1,239 @@
+#settings-window {
+    /* position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: none; */
+    /* z-index: 1000; */
+  }
+  
+  #settings-window label,
+  #settings-window input {
+    /* display: block;
+    margin-bottom: 8px;
+    font-size: 14px; */
+  }
+  
+  .value-display {
+    /* font-size: 12px;
+    margin-left: 8px;
+    color: #ccc; */
+  }
+
+.settings-panel {
+  position: fixed;
+  top: 50px;
+  left: 5%;
+  /* transform: translate(-50%, -50%); */
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 2000;
+  min-width: 300px;
+  max-width: 30vw;
+
+  display: none;
+  font-size: 1.3rem;
+}
+
+/* .settings-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1000;
+    min-width: 400px;
+    font-family: monospace;
+    border: 1px solid #333;
+    display: none;
+  } */
+  
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .preset-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .preset-controls select {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  
+  .settings-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+  }
+  
+  .settings-section h4 {
+    margin: 0 0 15px 0;
+    color: #4CAF50;
+    font-size: 1em;
+  }
+  
+  .setting-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  
+  .setting-row label {
+    flex: 1;
+    font-size: 0.9em;
+    position: relative;
+  }
+  
+  .setting-row input[type="range"] {
+    flex: 2;
+    height: 5px;
+    -webkit-appearance: none;
+    background: #444;
+    border-radius: 2px;
+  }
+  
+
+    .setting-row input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        background: #4CAF50;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      
+      .setting-row input[type="range"]::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        background: #4CAF50;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+      }
+      
+      .setting-row input[type="range"]:focus {
+        outline: none;
+      }
+      
+      .value-display {
+        flex: 0 0 60px;
+        text-align: right;
+        color: #4CAF50;
+        font-family: monospace;
+        padding: 2px 6px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+      
+      .tooltip-trigger {
+        cursor: help;
+      }
+      
+      .tooltip {
+        display: none;
+        position: absolute;
+        background: #000;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        width: 200px;
+        left: -20px;
+        top: 100%;
+        z-index: 1;
+        border: 1px solid #333;
+        pointer-events: none;
+      }
+      
+      .tooltip-trigger:hover .tooltip {
+        display: block;
+      }
+      
+      .checkbox-row input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        background: #222;
+        border: 1px solid #444;
+        border-radius: 3px;
+      }
+      
+      .checkbox-row input[type="checkbox"]:checked {
+        background: #4CAF50;
+      }
+      
+      button {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: monospace;
+      }
+      
+      button:hover {
+        background: #45a049;
+      }
+      
+      .close-button {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0 5px;
+      }
+      
+      .close-button:hover {
+        color: #4CAF50;
+      }
+      
+      /* Scrollbar Styling */
+      .settings-panel::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .settings-panel::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+      
+      .settings-panel::-webkit-scrollbar-thumb {
+        background: #4CAF50;
+        border-radius: 4px;
+      }
+      
+      /* Active States */
+      .setting-row input[type="range"]:active::-webkit-slider-thumb {
+        transform: scale(1.2);
+      }
+      
+      .setting-row label.active {
+        color: #4CAF50;
+      }
