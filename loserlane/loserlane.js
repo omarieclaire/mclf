@@ -599,7 +599,7 @@ class GameRenderer {
         this.config.LANES.TRACKS + 5
     ];
     trackPositions.forEach(x => {
-        this.renderGrid.updateCell(x, bikeY - 1, '↓', STYLES.RESET);
+        // this.renderGrid.updateCell(x, bikeY - 1, '↓', STYLES.RESET);
     });
   
     bikeArt.forEach((line, i) => {
