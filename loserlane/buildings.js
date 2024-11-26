@@ -855,15 +855,47 @@ const TORONTO_BUILDINGS = [
     },
 
 
+
+
     {
-        name: "IRONIC",
-        artist: "nexy",
+        name: "VALLO_BIKES",
+        artist: "B. R. Atislava",
         art: [
-            " ♡♥♡♥♡♥♡♥ ",
-            "││come as╮",
-            "││you are│",
-            "││☆.｡* ⚧││",
-            "╰┴──────┴╯"
+            " ︻︻︻︻︻︻︻︻ ",
+            "| VALLO’S|",
+            "|⌾BIKES⌾ |",
+            "|========|",
+            "|==〚  〛==|",
+            ".........."
+     ]
+ },
+
+ {
+    name: "IRONIC",
+    artist: "nexy",
+    art: [
+        " ♡♥♡♥♡♥♡♥ ",
+        "││come as╮",
+        "││you are│",
+        "││☆.｡* ⚧││",
+        "╰┴──────┴╯"
+
+ ]
+},
+
+
+
+
+    {
+        name: "HIVISCASTLE", 
+        artist: "KDI",
+        art: [
+            "   /\   /\\",
+            "/\ ||_/\||",
+            "||/__ ||/|",
+            "|Hi-Vis| |",
+            "|Castle| |",
+            "|______|/ "
 
      ]
  },
