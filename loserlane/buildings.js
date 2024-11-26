@@ -855,8 +855,6 @@ const TORONTO_BUILDINGS = [
     },
 
 
-
-
     {
         name: "VALLO_BIKES",
         artist: "B. R. Atislava",
@@ -882,9 +880,6 @@ const TORONTO_BUILDINGS = [
 
  ]
 },
-
-
-
 
     {
         name: "HIVISCASTLE", 
@@ -914,20 +909,6 @@ const TORONTO_BUILDINGS = [
  ]
 },
 
-{
-    name: "BAY_STREET_VIDEO",
-    artist: "katie jensen",
-    art: [
-        " ✦ ☾ ✧ ☁  ",
-        "≡█▓≡█▓≡█▓≡",
-        "⌼ BAY ☺  ⌼",
-        "⌼ STREET ⌼",
-        "⌼ VIDEO  ⌼",
- 		"⌼ « ▶ ⏏  ⌼",
-        "⌼ ⍁⍂ ⍁⍂  ⌼"
-
- ]
-},
 {
     name: "BAY_STREET_VIDEO",
     artist: "katie jensen",
@@ -992,9 +973,6 @@ const TORONTO_BUILDINGS = [
 
  ]
 },
-
-
-
 
 {
     name: "LANTERN_ROUGE_CUBHOUSE",
