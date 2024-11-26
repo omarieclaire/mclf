@@ -49,24 +49,29 @@ const DARLINGS = {
         ],
         UP: {
             art: [
-                "○" 
+                "○",
+                "╽"
+ 
             ],
             width: 1,
-            height: 1
+            height: 2
         },
         DOWN: {
             art: [
-                "○" 
+                "○",
+                "╿"
+ 
             ],
             width: 1,
-            height: 1
+            height: 2
         },
         CROSSING: {
             art: [
-                "○" 
+                "○",
+                "╽"
             ],
             width: 1,
-            height: 1
+            height: 2
         }
     },
     // WANDERER: {

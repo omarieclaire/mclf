@@ -23,7 +23,7 @@ const CONFIG = {
   },
   SAFE_DISTANCE: {
     TTC: 8,
-    TTC_LANE_DEATHMACHINE: 8,
+    TTC_LANE_DEATHMACHINE: 9,
     ONCOMING_DEATHMACHINE: 8,
     PARKED: 5,
     WANDERER: 3,
@@ -550,70 +550,66 @@ class GameRenderer {
     this.drawDeathParticles(deathState);
   }
   drawLiveBike(bike, state) {
-    const bikeCenterLane = Math.floor(bike.position.x + (bike.width/2));
+    const bikeCenterLane = Math.floor(bike.position.x + bike.width / 2);
     const currentBikeLane = Math.floor(bike.position.x);
-    
-    console.log('Bike Debug:', {
-        exactX: bike.position.x.toFixed(2),
-        centerX: (bike.position.x + (bike.width/2)).toFixed(2),
-        bikeCenterLane,
-        track1: this.config.LANES.TRACKS + 1,
-        track2: this.config.LANES.TRACKS + 5,
-        bankingLeft: bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5
+
+    console.log("Bike Debug:", {
+      exactX: bike.position.x.toFixed(2),
+      centerX: (bike.position.x + bike.width / 2).toFixed(2),
+      bikeCenterLane,
+      track1: this.config.LANES.TRACKS + 1,
+      track2: this.config.LANES.TRACKS + 5,
+      bankingLeft: bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5,
     });
 
     const bikeY = this.config.GAME.CYCLIST_Y;
-    
+
     // Debug info at top of screen
     const debugInfo = [
-        `Bike X: ${bike.position.x.toFixed(2)}`,
-        `Center: ${(bike.position.x + (bike.width/2)).toFixed(2)}`,
-        `Track1: ${this.config.LANES.TRACKS + 1}`,
-        `Track2: ${this.config.LANES.TRACKS + 5}`,
-        `Banking: ${bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5}`
+      `Bike X: ${bike.position.x.toFixed(2)}`,
+      `Center: ${(bike.position.x + bike.width / 2).toFixed(2)}`,
+      `Track1: ${this.config.LANES.TRACKS + 1}`,
+      `Track2: ${this.config.LANES.TRACKS + 5}`,
+      `Banking: ${bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5}`,
     ];
-  
+
     // Draw debug info
     // debugInfo.forEach((text, i) => {
     //     text.split('').forEach((char, x) => {
     //         this.renderGrid.updateCell(x, i, char, STYLES.RESET);
     //     });
     // });
-  
+
     let bikeArt = DARLINGS.BIKE.art;
-    let bankingClass = '';
-    
+    let bankingClass = "";
+
     // Use center position for banking, just like collision detection
-    if (bikeCenterLane === this.config.LANES.TRACKS + 1 || 
-        bikeCenterLane === this.config.LANES.TRACKS + 5) {
-        // The bike's center is on a track - show banking animation
-        const movingRight = bike.position.x > this.lastBikeX;
-        bikeArt = movingRight ? DARLINGS.BIKE.artBankRight : DARLINGS.BIKE.artBankLeft;
-        bankingClass = movingRight ? 'bike-banking-right' : 'bike-banking-left';
+    if (bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5) {
+      // The bike's center is on a track - show banking animation
+      const movingRight = bike.position.x > this.lastBikeX;
+      bikeArt = movingRight ? DARLINGS.BIKE.artBankRight : DARLINGS.BIKE.artBankLeft;
+      bankingClass = movingRight ? "bike-banking-right" : "bike-banking-left";
     }
     this.lastBikeX = bike.position.x; // Store position for next frame
-  
+
     // Mark track positions with visual indicators
-    const trackPositions = [
-        this.config.LANES.TRACKS + 1,
-        this.config.LANES.TRACKS + 5
-    ];
-    trackPositions.forEach(x => {
-        // this.renderGrid.updateCell(x, bikeY - 1, '↓', STYLES.RESET);
+    const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
+    trackPositions.forEach((x) => {
+      // this.renderGrid.updateCell(x, bikeY - 1, '↓', STYLES.RESET);
     });
-  
+
     bikeArt.forEach((line, i) => {
-        line.split("").forEach((char, x) => {
-            if (char !== " ") {
-                const gridX = Math.round(bike.position.x + x);
-                if (gridX >= 0 && gridX < this.config.GAME.WIDTH) {
-                    const bikeChar = `<span class="bike ${bankingClass}">${char}</span>`;
-                    this.renderGrid.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
-                }
-            }
-        });
+      line.split("").forEach((char, x) => {
+        if (char !== " ") {
+          const gridX = Math.round(bike.position.x + x);
+          if (gridX >= 0 && gridX < this.config.GAME.WIDTH) {
+            const bikeChar = `<span class="bike ${bankingClass}">${char}</span>`;
+            this.renderGrid.updateCell(gridX, bikeY + i, bikeChar, STYLES.BIKE);
+          }
+        }
+      });
     });
-}
+  }
   drawDeathParticles(deathState) {
     const particleChars = ["", "⚡", "⚡"];
     const numParticles = Math.min(this.config.PARTICLES.MAX_DEATH_PARTICLES, deathState.animation * 2);
@@ -718,7 +714,8 @@ class CollisionManager {
     }
   }
 
-  checkBikeCollisionIsSpecial(bikeHitbox, darlings) {  // Removed isJumping parameter
+  checkBikeCollisionIsSpecial(bikeHitbox, darlings) {
+    // Removed isJumping parameter
     try {
       if (!bikeHitbox || !darlings?.darlings) {
         throw new CollisionError("Invalid parameters for bike collision check", {
@@ -726,14 +723,14 @@ class CollisionManager {
           darlings,
         });
       }
-  
+
       for (const darling of darlings.darlings) {
         try {
           const darlingHitbox = darling.getHitbox();
           if (this.checkCollision(bikeHitbox, darlingHitbox)) {
             const obstacleHitbox = darlingHitbox;
             const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
-  
+
             // If obstacle is moving and hits bike from behind
             if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
               switch (darling.type) {
@@ -750,7 +747,7 @@ class CollisionManager {
                   return "TRAFFIC";
               }
             }
-  
+
             // If bike runs into obstacle or obstacle hits from front
             switch (darling.type) {
               case DarlingType.TTC:
@@ -777,14 +774,14 @@ class CollisionManager {
           continue;
         }
       }
-  
+
       // Check parked vehicle collisions
       if (!Array.isArray(darlings.parkedDeathMachines)) {
         throw new CollisionError("Invalid parkedDeathMachines array", {
           parkedDeathMachines: darlings.parkedDeathMachines,
         });
       }
-  
+
       for (const deathMachine of darlings.parkedDeathMachines) {
         try {
           if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
@@ -804,14 +801,14 @@ class CollisionManager {
           continue;
         }
       }
-  
+
       // Simplified track collision check
       const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
       const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
       if (trackPositions.includes(Math.floor(bikeCenter))) {
         return "TRACKS";
       }
-  
+
       return null;
     } catch (error) {
       this.logError(error, "checkBikeCollisionIsSpecial");
@@ -2456,13 +2453,17 @@ class CrossingBehavior extends EntityBehavior {
       this.lastCheckedOverlap = Date.now();
     }
 
-    const newY = this.entity.position.y + this.baseSpeed;
-    this.entity.position.y = newY;
-
     switch (this.state) {
       case "WAITING_TO_CROSS":
         if (this.isSafeToCross()) {
           this.state = "CROSSING";
+        } else {
+          // Still move forward while waiting
+          const newY = this.entity.position.y + this.baseSpeed;
+          const waitPosition = new Position(this.entity.position.x, newY);
+          if (this.canMoveTo(waitPosition)) {
+            this.move(waitPosition);
+          }
         }
         break;
 
@@ -2473,22 +2474,79 @@ class CrossingBehavior extends EntityBehavior {
           break;
         }
 
+        // Calculate next position
         const newX = Math.min(this.entity.position.x + this.moveSpeed, this.targetX);
+        const newY = this.entity.position.y + this.baseSpeed;
         const newPosition = new Position(newX, newY);
 
+        // Check if we've reached the target X position
         if (Math.abs(newX - this.targetX) < 0.1) {
           if (this.canSafelyMerge()) {
             this.convertToRegularWanderer();
           } else {
             this.handleBlockedMerge();
           }
-        } else if (this.canMoveTo(newPosition)) {
-          this.move(newPosition);
+        } else {
+          // Try to move diagonally
+          if (this.canMoveTo(newPosition)) {
+            this.move(newPosition);
+          } else {
+            // If diagonal movement is blocked, try just moving forward
+            const forwardPosition = new Position(this.entity.position.x, newY);
+            if (this.canMoveTo(forwardPosition)) {
+              this.move(forwardPosition);
+            }
+          }
         }
         break;
     }
 
     if (this.waitTime > 0) this.waitTime--;
+  }
+
+  canMoveTo(position) {
+    if (!this.entity.spatialManager) return false;
+
+    const proposedHitbox = {
+      x: position.x,
+      y: position.y,
+      width: this.entity.width,
+      height: this.entity.height
+    };
+
+    const nearbyEntities = this.entity.spatialManager.grid
+      .getNearbyDarlings(position, 3)
+      .filter(entity => 
+        entity !== this.entity && 
+        (entity.type === DarlingType.WANDERER || 
+         entity.type === DarlingType.PARKED_DEATHMACHINE)
+      );
+
+    return !nearbyEntities.some(other => {
+      if (other.type === DarlingType.WANDERER) {
+        return Math.abs(other.position.x - position.x) < 0.5 && 
+               Math.abs(other.position.y - position.y) < 2;
+      }
+      
+      if (other.type === DarlingType.PARKED_DEATHMACHINE) {
+        const carHitbox = other.getHitbox();
+        // Expanded hitbox for parked cars
+        const expandedCarHitbox = {
+          x: carHitbox.x - 1,
+          y: carHitbox.y,
+          width: carHitbox.width + 2,
+          height: carHitbox.height
+        };
+
+        return !(
+          proposedHitbox.x + proposedHitbox.width <= expandedCarHitbox.x ||
+          proposedHitbox.x >= expandedCarHitbox.x + expandedCarHitbox.width ||
+          proposedHitbox.y + proposedHitbox.height <= expandedCarHitbox.y ||
+          proposedHitbox.y >= expandedCarHitbox.y + expandedCarHitbox.height
+        );
+      }
+      return false;
+    });
   }
 
   checkAndResolveOverlaps() {
@@ -2510,7 +2568,7 @@ class CrossingBehavior extends EntityBehavior {
   }
 
   canSafelyMerge() {
-    const safeDistance = 2;
+    const safeDistance = 3;
     const nearbyWanderers = this.entity.spatialManager.grid
       .getNearbyDarlings(new Position(this.targetX, this.entity.position.y), safeDistance)
       .filter((other) => other !== this.entity && other.type === DarlingType.WANDERER && Math.abs(other.position.x - this.targetX) < 0.5);
@@ -2529,24 +2587,6 @@ class CrossingBehavior extends EntityBehavior {
       this.convertToRegularWanderer();
     }
     this.waitTime = this.minWaitTime;
-  }
-
-  canMoveTo(position) {
-    const nearbyEntities = this.entity.spatialManager.grid.getNearbyDarlings(position, 2);
-
-    return !nearbyEntities.some((other) => {
-      if (other === this.entity) return false;
-
-      if (other.type === DarlingType.PARKED_DEATHMACHINE) {
-        return this.checkCollision(position, other);
-      }
-
-      if (other.type === DarlingType.WANDERER && Math.abs(position.x - this.targetX) < 1) {
-        return this.checkCollision(position, other);
-      }
-
-      return false;
-    });
   }
 
   checkCollision(position, other) {
@@ -2593,6 +2633,7 @@ class CrossingBehavior extends EntityBehavior {
     );
   }
 }
+
 class WandererBehavior extends EntityBehavior {
   constructor(entity, isGoingUp) {
     super(entity);
@@ -2605,29 +2646,89 @@ class WandererBehavior extends EntityBehavior {
   }
 
   update() {
-    // Always move down at minimum
     const newPosition = new Position(this.lane, this.entity.position.y + this.baseSpeed);
 
-    // If position is available, take it
+    // Check for obstacles at the new position
     if (this.canMoveTo(newPosition)) {
       this.move(newPosition);
     } else {
-      // If blocked, force the move to prevent complete stops
-      this.entity.position.y += this.baseSpeed;
+      // Try alternate lane
+      const alternateLane = this.lane === this.config.LANES.SIDEWALK + 1 ? 
+                           this.config.LANES.SIDEWALK + 2 : 
+                           this.config.LANES.SIDEWALK + 1;
+      
+      const alternatePosition = new Position(alternateLane, newPosition.y);
+      
+      if (this.canMoveTo(alternatePosition)) {
+        this.lane = alternateLane;
+        this.move(alternatePosition);
+      } else {
+        // Both lanes blocked, wait
+        const slowPosition = new Position(this.entity.position.x, this.entity.position.y + this.baseSpeed * 0.1);
+        if (this.canMoveTo(slowPosition)) {
+          this.move(slowPosition);
+        }
+      }
     }
   }
 
   canMoveTo(position) {
-    const nearbyDarlings = this.getNearbyDarlings();
-    return !nearbyDarlings.some((other) => Math.abs(other.position.x - position.x) < 0.1 && Math.abs(other.position.y - position.y) < 1.5);
+    if (!this.entity.spatialManager) return false;
+
+    const proposedHitbox = {
+      x: position.x,
+      y: position.y,
+      width: this.entity.width,
+      height: this.entity.height
+    };
+
+    const nearbyEntities = this.entity.spatialManager.grid
+      .getNearbyDarlings(position, 3)
+      .filter(entity => 
+        entity !== this.entity && 
+        (entity.type === DarlingType.WANDERER || 
+         entity.type === DarlingType.PARKED_DEATHMACHINE)
+      );
+
+    return !nearbyEntities.some(other => {
+      if (other.type === DarlingType.WANDERER) {
+        return Math.abs(other.position.x - position.x) < 0.5 && 
+               Math.abs(other.position.y - position.y) < 2;
+      }
+      
+      if (other.type === DarlingType.PARKED_DEATHMACHINE) {
+        const carHitbox = other.getHitbox();
+        // Expanded hitbox for parked cars to ensure wanderers go around them
+        const expandedCarHitbox = {
+          x: carHitbox.x - 1,  // Expand left
+          y: carHitbox.y,
+          width: carHitbox.width + 2,  // Expand both sides
+          height: carHitbox.height
+        };
+
+        // Check collision with expanded hitbox
+        return !(
+          proposedHitbox.x + proposedHitbox.width <= expandedCarHitbox.x ||
+          proposedHitbox.x >= expandedCarHitbox.x + expandedCarHitbox.width ||
+          proposedHitbox.y + proposedHitbox.height <= expandedCarHitbox.y ||
+          proposedHitbox.y >= expandedCarHitbox.y + expandedCarHitbox.height
+        );
+      }
+
+      return false;
+    });
   }
 
   getNearbyDarlings() {
     if (!this.entity.spatialManager) return [];
 
     return this.entity.spatialManager.grid
-      .getNearbyDarlings(this.entity.position, 2)
-      .filter((entity) => entity !== this.entity && entity.type === DarlingType.WANDERER);
+      .getNearbyDarlings(this.entity.position, 3)
+      .filter(entity => 
+        entity !== this.entity && 
+        (entity.type === DarlingType.WANDERER || 
+         entity.type === DarlingType.PARKED_DEATHMACHINE)
+      );
   }
 }
 
@@ -2849,34 +2950,32 @@ class BaseEntity {
 class Wanderer extends BaseEntity {
   constructor(config, spawnConfig, isGoingUp = null, isTTCPassenger = false) {
     super(config, spawnConfig, DarlingType.WANDERER);
-    // console.log(`Spawning ${isTTCPassenger ? "TTC passenger" : "regular sidewalk"} wanderer:`, {
-    //   position: spawnConfig.position,
-    //   isGoingUp: isGoingUp,
-    // });
 
     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
-    const randomShape = DARLINGS.WANDERER.SHAPES[Math.floor(Math.random() * DARLINGS.WANDERER.SHAPES.length)];
-
-    const template = isGoingUp ? DARLINGS.WANDERER.UP : DARLINGS.WANDERER.DOWN;
+    
+    // Instead of using a random shape, use the full art template now that it includes body
+    const template = isGoingUp ? DARLINGS.WANDERER.UP : 
+                    isTTCPassenger ? DARLINGS.WANDERER.CROSSING : 
+                    DARLINGS.WANDERER.DOWN;
+    
     this.width = template.width;
     this.height = template.height;
-    // this.art = template.art;
-    this.art = [randomShape]; // Assign random shape to art
+    this.art = template.art; // Use the full art array instead of just a single shape
 
     this.color = `<span style='color: ${wandererColor}'>`;
-
     this.cssClass = isTTCPassenger ? "ttc-passenger" : "sidewalk-wanderer";
 
-    // Only modify spawn position for regular sidewalk wanderers
+    // Adjust spawn positions to account for increased height
     if (!isTTCPassenger) {
       if (isGoingUp) {
-        spawnConfig.position.y = config.GAME.HEIGHT + 1;
+        spawnConfig.position.y = config.GAME.HEIGHT + this.height; // Add height to ensure full spawning
         spawnConfig.position.x = config.LANES.SIDEWALK + 1;
       } else {
-        spawnConfig.position.y = -1;
+        spawnConfig.position.y = -this.height; // Negative height to ensure full spawning
         spawnConfig.position.x = config.LANES.SIDEWALK;
       }
     }
+
     if (!this.behavior) {
       if (isTTCPassenger) {
         this.behavior = new CrossingBehavior(this);
@@ -3185,7 +3284,7 @@ class GameStateManager {
 
     this.lastPress = {
       left: 0,
-      right: 0  
+      right: 0,
     };
     this.doublePressWindow = 200; // milliseconds
   }
@@ -3283,40 +3382,37 @@ class GameStateManager {
   }
   moveBike(direction, timestamp = performance.now()) {
     if (this.state.isDead || !this.state.isPlaying) return false;
-  
+
     // More forgiving double-press window (300ms instead of 200ms)
     const doublePressWindow = 300;
-    const isDoublePress = (timestamp - this.lastPress[direction]) < doublePressWindow;
+    const isDoublePress = timestamp - this.lastPress[direction] < doublePressWindow;
     this.lastPress[direction] = timestamp;
-  
+
     // If we're on a track AND it's a double press, jump over in the pressed direction
     const currentLane = Math.floor(this.state.currentLane);
-  
+
     if (isDoublePress) {
       if (currentLane === this.config.LANES.TRACKS + 1) {
         // On first track, only allow jumping right
-        if (direction === 'right') {
+        if (direction === "right") {
           this.state.currentLane = this.config.LANES.TRACKS + 2;
           return true;
         }
-      } 
+      }
       if (currentLane === this.config.LANES.TRACKS + 5) {
         // On second track, only allow jumping left
-        if (direction === 'left') {
+        if (direction === "left") {
           this.state.currentLane = this.config.LANES.TRACKS + 4;
           return true;
         }
       }
     }
-  
+
     // Regular movement
-    const moveAmount = direction === 'left' ? -1 : 1;
+    const moveAmount = direction === "left" ? -1 : 1;
     const newLane = Math.floor(this.state.currentLane + moveAmount);
-    this.state.currentLane = Math.max(
-      this.config.LANES.ONCOMING,
-      Math.min(newLane, this.config.LANES.BUILDINGS - 1)
-    );
-  
+    this.state.currentLane = Math.max(this.config.LANES.ONCOMING, Math.min(newLane, this.config.LANES.BUILDINGS - 1));
+
     return true;
   }
 
@@ -3415,9 +3511,9 @@ class BaseControl {
       this.game.tutorialSystem.handleMove(direction);
       return;
     }
-  
+
     if (!this.game.stateManager.isPlaying) return;
-  
+
     this.game.movePlayer(direction, now);
   }
 }

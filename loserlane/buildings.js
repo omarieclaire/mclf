@@ -852,7 +852,198 @@ const TORONTO_BUILDINGS = [
            	"││⊞⊞∏∏⊞⊞││",
            	"╰┴──────┴╯"
         ]
-    }
+    },
+
+
+    {
+        name: "IRONIC",
+        artist: "nexy",
+        art: [
+            " ♡♥♡♥♡♥♡♥ ",
+            "││come as╮",
+            "││you are│",
+            "││☆.｡* ⚧││",
+            "╰┴──────┴╯"
+
+     ]
+ },
+
+ {
+    name: "WHOSE_TACOS",
+    artist: "nexy",
+    art: [
+        "┌────────┐",
+        "│ ⊞ ⊞ ⊞  │",
+        "│GUSTACOS│",
+        "│  ｡𖦹°‧ │",
+		"│  ⊹ ࣪ ˖ │",
+        "└────────┘"
+
+ ]
+},
+
+{
+    name: "BAY_STREET_VIDEO",
+    artist: "katie jensen",
+    art: [
+        " ✦ ☾ ✧ ☁  ",
+        "≡█▓≡█▓≡█▓≡",
+        "⌼ BAY ☺  ⌼",
+        "⌼ STREET ⌼",
+        "⌼ VIDEO  ⌼",
+ 		"⌼ « ▶ ⏏  ⌼",
+        "⌼ ⍁⍂ ⍁⍂  ⌼"
+
+ ]
+},
+{
+    name: "BAY_STREET_VIDEO",
+    artist: "katie jensen",
+    art: [
+        " ✦ ☾ ✧ ☁  ",
+        "≡█▓≡█▓≡█▓≡",
+        "⌼ BAY ☺  ⌼",
+        "⌼ STREET ⌼",
+        "⌼ VIDEO  ⌼",
+ 		"⌼ « ▶ ⏏  ⌼",
+        "⌼ ⍁⍂ ⍁⍂  ⌼"
+
+ ]
+},
+{
+    name: "PRICE_WAR",
+    artist: "katie jensen",
+    art: [
+        " _________",
+        "↼↼↼↼↼⇀⇀⇀⇀⇀",
+        "│₱R¡¢∑ωαπ│",
+        "│⬚ ✳ ☠ $ │",
+        "╰≛≛≛≛≛≛≛≛╯"
+ ]
+},
+
+
+{
+    name: "LARRYS_FOLLY",
+    artist: "katie jensen",
+    art: [
+        "⌯⌯⌯⤚⤙⌯⌯⌯⌯⌯",
+        "│ ⊹   ⬚  │",
+        "│LARRY’S │",
+        "│FOLLY ♨ │",
+        "└───⟿───┘"
+ ]
+},
+
+{
+    name: "BEGUILING",
+    artist: "FP",
+    art: [
+        "[[[[[]]]]]",
+        "│{COMICS}│",
+        "│││\\\\│││",
+        "│││    │││",
+        "╰┴┴────┴┴╯"
+
+ ]
+},
+
+{
+    name: "HECATEBEE",
+    artist: "Bea",
+    art: [
+        " ❀⁑╲☾☽╱⁑❀",
+        "╭│⁂BEE ⁂╮",
+        "││⁂THE ⁂│",
+        "││M❂☾☽N⁂│",
+        "╰┴┴─────┴╯"
+
+ ]
+},
+
+
+
+
+{
+    name: "LANTERN_ROUGE_CUBHOUSE",
+    artist: "MOTCH",
+    art: [
+       " ◢╱╲◣ ◢╱╲◣",
+       "╭│LANTERN╮",
+       "│  ROUGE │",
+       "│CUBHOUSE│",
+       "╰┴──────┴╯"
+ ]
+},
+
+
+
+{
+    name: "WEIRD_CABIN",
+    artist: "FADA",
+    art: [
+        " ◢╱╲◣ ◢╱╲◣",
+        "╭││WEIRD│╮",
+        "│││CABIN││",
+        "│││    ♾││",
+        "╰┴┴─────┴╯"
+
+
+ ]
+},
+
+
+{
+    name: "THE_DOCK_ELLIS",
+    artist: "Nathan",
+    art: [
+        " _______",
+        "╭│THE   │╮",
+        "││ DOCK ││",
+        "││ELLIS ││",
+        "╰┴──────┴╯"
+ ]
+},
+
+{
+    name: "THE_DOCK_ELLIS",
+    artist: "Nathan",
+    art: [
+        " _________",
+        "╭ FIF-   ╮",
+        "│ TEEN   │",
+        "│TWELVE  │",
+        "|   ✂    |",
+        "╰────────╯"
+
+ ]
+},
+
+{
+    name: "RIGHT__HOOK",
+    artist: "KingBain",
+    art: [
+        "⬣⬒⬒⬒⬒⬒⬒⬒⬒⬣",
+        "⬣Right ↱ ⬣",
+        "⬣ ⇎⇎⇎⇎   ⬣",
+        "⬣   HooK ⬣",
+        "⬣⬓⬓⬓⬓⬓⬓⬓⬓⬣"
+
+ ]
+},
+
+{
+    name: "SQUIRLYS",
+    artist: "weftandweaving",
+    art: [
+        "╭SQUIRLYS╮",
+        "│││    ╭⌼│",
+        "│││    │⌼│",
+        "│││ ⊡  ╰⌼│",
+        "╰┴┴─⍌────╯"
+ ]
+}
+
 ];
 
 // console.log('Buildings loaded:', TORONTO_BUILDINGS.length);
@@ -864,10 +1055,10 @@ function checkBuildingWidth(buildings) {
     );
 
     if (nonCompliantBuildings.length > 0) {
-        // console.log("Non-compliant buildings (lines over 10 characters):");
+        console.log("Non-compliant buildings (lines over 10 characters):");
         nonCompliantBuildings.forEach(building => console.log(building.name));
     } else {
-        // console.log("All buildings are compliant.");
+        console.log("All buildings are compliant.");
     }
 }
 
