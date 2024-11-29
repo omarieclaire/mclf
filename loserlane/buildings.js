@@ -1118,7 +1118,21 @@ const TORONTO_BUILDINGS = [
         "│││ ⊡  ╰⌼│",
         "╰┴┴─⍌────╯"
  ]
-}
+},
+
+
+{
+    name: "YES_FRILLS",
+    artist: "Dharmy",
+    art: [
+    " ◢⬒⬒⬒⬒⬒⬒◣",
+    "◢⬒ GW’s ⬒◣",
+    "│|   YES|│",
+    "││FRILLS||",
+    "│$      $│",
+    "╰‰‰‰‰─⊟⊟┴╯"
+    ]
+    } 
 
 ];
 
