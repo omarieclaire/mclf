@@ -715,7 +715,6 @@ class CollisionManager {
   }
 
   checkBikeCollisionIsSpecial(bikeHitbox, darlings) {
-    // Removed isJumping parameter
     try {
       if (!bikeHitbox || !darlings?.darlings) {
         throw new CollisionError("Invalid parameters for bike collision check", {
@@ -730,7 +729,6 @@ class CollisionManager {
           if (this.checkCollision(bikeHitbox, darlingHitbox)) {
             const obstacleHitbox = darlingHitbox;
             const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
-
             // If obstacle is moving and hits bike from behind
             if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
               switch (darling.type) {
@@ -4211,7 +4209,6 @@ class LoserLane {
 
   die(reason) {
     if (this.stateManager.state.isDead) return;
-
     this.setDeathState();
     this.handleDeathEffects(reason);
   }

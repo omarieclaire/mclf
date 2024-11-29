@@ -21,7 +21,7 @@ class SettingsManager {
       if (e.key.toLowerCase() === "d") {
         const settingsWindow = document.getElementById("settings-window");
         if (settingsWindow) {
-          // settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
+          settingsWindow.style.display = settingsWindow.style.display === "none" ? "block" : "none";
         }
       }
 
@@ -36,7 +36,7 @@ class SettingsManager {
             valueDisplay.textContent = invincibleCheckbox.checked ? "On" : "Off";
           }
           // Update the CONFIG
-          // CONFIG.GAME.INVINCIBLE = invincibleCheckbox.checked;
+          CONFIG.GAME.INVINCIBLE = invincibleCheckbox.checked;
           console.log("invin");
         }
       }

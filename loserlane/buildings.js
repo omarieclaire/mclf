@@ -110,7 +110,7 @@ const TORONTO_BUILDINGS = [
             "⸨⎻⎻⎻◄o►⎻⎻⸩",
             "│ MIMI'S │",
             "│⊰PLACE⊱ │",
-            "│    ♡   │",
+            "│ 97 ♡   │",
             "╚═⳺⳻⳺⳻⳺⳻═╝"
         ]
     },
@@ -1041,6 +1041,62 @@ const TORONTO_BUILDINGS = [
 
  ]
 },
+
+{
+    name: "BMV",
+    artist: "Michael Iantorno",
+    art: [
+        "︻︻︻︻︻︻︻︻︻︻",
+        "│⬒⬒⬒B⬒⬒⬒⬒│",
+        "│⬒⬒⬒M⬒⬒⬒⬒│",
+        "│⬒⬒⬒V⬒⬒⬒⬒│",
+        "│⍂⍂⍂⌼⍂⍂⍂⍂│",
+        "︼︼︼︼︼︼︼︼︼︼"
+    ]
+},
+
+{
+    name: "CONWAYS",
+    artist: "Avery",
+    art: [
+        "◢╱╲◣◢╱╲◣",
+        "CONWAY'S│",
+        "│ ⚄GAME⚄ │",
+        "│  OF    │",
+        "│LIFE&   │",
+        "│ DEATH  │",
+        "╰┴──────┴╯"
+    ]
+},
+
+{
+    name: "ST_MIKES",
+    artist: "Daniel O",
+    art: [
+        "  ╓ ✚ ╖  ",
+        "╓ST MIKES╖",
+        "║ ▨    ▧ ║",
+        "║ ▨    ▧ ║",
+        "║ ▨    ▨ ║",
+        "╟══EMERG═╢",
+        "║   ┍━┑ ⛯║",
+        "║   │╬│⛟ ║"
+    ]
+},
+
+{
+    name: "Urbane",
+    artist: "Shreddy Acorn",
+    art: [
+        " * * * * *",
+        " ,,,,,,,,,",
+        " | URBANE|",
+        " |CYCLIST|",
+        " │ []_[] │",
+        "/========\\"
+    ]
+},
+
 
 {
     name: "SQUIRLYS",
