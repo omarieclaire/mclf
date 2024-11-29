@@ -869,12 +869,12 @@ const TORONTO_BUILDINGS = [
  },
 
  {
-    name: "IRONIC",
+    name: "ICONIC",
     artist: "nexy",
     art: [
         " ♡♥♡♥♡♥♡♥ ",
-        "││come as╮",
-        "││you are│",
+        "││COME AS╮",
+        "││YOU ARE│",
         "││☆.｡* ⚧││",
         "╰┴──────┴╯"
 
@@ -882,7 +882,7 @@ const TORONTO_BUILDINGS = [
 },
 
     {
-        name: "HIVISCASTLE", 
+        name: "HI_VIS_CASTLE", 
         artist: "KDI",
         art: [
             "   /\   /\\",
@@ -1002,6 +1002,16 @@ const TORONTO_BUILDINGS = [
  ]
 },
 
+{
+    name: "VALUE_VILLAGE",
+    artist: "katie jensen",
+    art: [
+        "▓▓▓▓▓▓▓▓▓▓",
+        "┇…VALUE⋆ ┇",
+        "┇VILLAGE ┇",
+        "└✂-✂-✂⍁-┘┇"
+ ]
+},
 
 {
     name: "THE_DOCK_ELLIS",
@@ -1016,7 +1026,7 @@ const TORONTO_BUILDINGS = [
 },
 
 {
-    name: "THE_DOCK_ELLIS",
+    name: "FIFTEEN_TWELVE",
     artist: "Nathan",
     art: [
         " _________",
