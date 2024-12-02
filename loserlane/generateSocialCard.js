@@ -303,7 +303,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   const messageElement = document.createElement("p");
   messageElement.className = "CTO";
   messageElement.id = "CTO";
-  messageElement.innerHTML = `<a target="_blank" href="https://www.ola.org/en/members/current">FIGHT FOR YOUR BIKE LANES!</a>`;  
+  messageElement.innerHTML = `<a target="_blank" href="https://win.newmode.net/stop-bill-212">FIGHT FOR YOUR BIKE LANES!</a>`;  
 
   messageContainer.appendChild(messageElement);
 
