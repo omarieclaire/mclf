@@ -67,6 +67,15 @@ export class ThreeJSApp {
     this.noMovementDetected = false;
     this.movementTimeout = null;
 
+    this.isTransformingToMoon = false;
+this.moonTransformProgress = 0;
+this.originalWaterColor = 0x001e0f;
+this.moonColor = 0x808080;
+this.debugMode = true;
+this.transformationErrors = [];
+this.moonFeatures = [];
+
+
     // this.init();
     // this.animate();
     window.addEventListener("resize", this.onWindowResize.bind(this));
@@ -129,6 +138,7 @@ export class ThreeJSApp {
 
     // Initialize OpenCV.js after the library is ready
     // this.initOpenCV();
+    this.initMoonFeatures();
 
     this.setupCamera();
   }
@@ -334,10 +344,11 @@ export class ThreeJSApp {
 
   onNoMotionDetected() {
     if (this.noMovementDetected) return;
-
+  
     this.movementTimeout = setTimeout(() => {
       this.noMovementDetected = true;
-      console.log("No motion detected for 1 second - decreasing sky turbidity");
+      this.isTransformingToMoon = true;  // Add this line
+      console.log("No motion detected - beginning moon transformation");
     }, 1000);
   }
 
@@ -577,18 +588,26 @@ export class ThreeJSApp {
     return new Promise((resolve, reject) => {
       const loader = new GLTFLoader();
       loader.setCrossOrigin("anonymous");
-      loader.load(url, (gltf) => {
-        const model = gltf.scene;
-        model.traverse((o) => {
-          if (o.isMesh) {
-            o.material = this.buildTwistMaterial(0.02);
-            o.material.needsUpdate = true;
-            o.updateMatrix();
-          }
-        });
-        model.scale.multiplyScalar(1.2);
-        resolve(model);
-      });
+      loader.load(
+        url,
+        (gltf) => {
+          const model = gltf.scene;
+          model.traverse((o) => {
+            if (o.isMesh) {
+              o.material = this.buildTwistMaterial(0.02);
+              o.material.needsUpdate = true;
+              o.updateMatrix();
+            }
+          });
+          model.scale.multiplyScalar(1.2);
+          resolve(model);
+        },
+        undefined,
+        (error) => {
+          console.error("Error loading model:", error);
+          reject(error);
+        }
+      );
     });
   }
 
@@ -694,19 +713,94 @@ export class ThreeJSApp {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  animate() {
-    requestAnimationFrame(this.animate.bind(this));
-    this.render();
-    this.controls.update();
-
-    // cv Adjust sky when no movement is detected
-    if (this.noMovementDetected) {
-      if (this.skyUniforms["turbidity"].value > 0) {
-        this.skyUniforms["turbidity"].value -= 0.01;
+  initMoonFeatures() {
+    try {
+      const craterGeometry = new THREE.CircleGeometry(5, 32);
+      const craterMaterial = new THREE.MeshStandardMaterial({
+        color: 0x606060,
+        roughness: 0.8,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0
+      });
+  
+      for (let i = 0; i < 50; i++) {
+        const crater = new THREE.Mesh(craterGeometry, craterMaterial.clone());
+        crater.rotation.x = -Math.PI / 2;
+        crater.position.set(
+          Math.random() * 1000 - 500,
+          0,
+          Math.random() * 1000 - 500
+        );
+        crater.scale.set(
+          Math.random() * 20 + 5,
+          Math.random() * 20 + 5,
+          1
+        );
+        this.moonFeatures.push(crater);
+        this.scene.add(crater);
       }
+      this.logDebug("Moon features initialized");
+    } catch (error) {
+      this.logError("Failed to initialize moon features", error);
     }
   }
-
+  
+  updateMoonTransform() {
+    try {
+      if (!this.water?.material?.uniforms) {
+        this.logError("Water uniforms not initialized");
+        return;
+      }
+      
+      const currentColor = new THREE.Color();
+      currentColor.setHex(this.originalWaterColor)
+        .lerp(new THREE.Color(this.moonColor), this.moonTransformProgress);
+      
+      this.water.material.uniforms.waterColor.value.copy(currentColor);
+      //... rest of the method
+    } catch (error) {
+      this.logError("Failed to update moon transform", error);
+    }
+  }
+  
+  logDebug(message) {
+    if (this.debugMode) {
+      console.log(`🌙 [Moon Debug]: ${message}`);
+    }
+  }
+  
+  logError(message, error) {
+    console.error(`🌙 [Moon Error]: ${message}`, error);
+    this.transformationErrors.push({
+      timestamp: new Date(),
+      message,
+      error: error.toString()
+    });
+  }
+  
+  // Modified animate method
+  animate() {
+    requestAnimationFrame(this.animate.bind(this));
+    
+    try {
+      if (this.isTransformingToMoon) {
+        if (this.moonTransformProgress < 1) {
+          this.moonTransformProgress = Math.min(1, this.moonTransformProgress + 0.005);
+          this.updateMoonTransform();
+        }
+      } else if (this.moonTransformProgress > 0) {
+        this.moonTransformProgress = Math.max(0, this.moonTransformProgress - 0.005);
+        this.updateMoonTransform();
+      }
+  
+      this.render();
+      this.controls.update();
+    } catch (error) {
+      this.logError("Animation loop failed", error);
+    }
+  }
+  
   render() {
     this.scene.traverse((child) => {
       if (child.isMesh) {
@@ -964,60 +1058,67 @@ export class ThreeJSApp {
 
 class AudioManager {
   constructor() {
+    console.log('Initializing AudioManager');
     this.friendSounds = [
-
-      this.createAudio("/audio/friendSound.mp3", 0.02),
-      this.createAudio("/audio/friend1Sound.mp3", 0.02),
-      this.createAudio("/audio/friend2Sound.mp3", 0.02),
+      this.createAudio("./audio/friendSound.mp3", 0.02),
+      this.createAudio("./audio/friend1Sound.mp3", 0.02),
+      this.createAudio("./audio/friend2Sound.mp3", 0.02),
     ];
+    
+    this.rot1 = this.createAudio("./audio/rot1Sound.mp3", 0.08);
+    this.rot2 = this.createAudio("./audio/rot2Sound.mp3", 0.08);
+    this.rot3 = this.createAudio("./audio/rot3Sound.mp3", 0.08);
+
     this.ambientMusicSounds = [
-      this.createAudio("/audio/background.mp3", 0.09),
-      this.createAudio("/audio/emmanuelle.mp3"),
-      this.createAudio("/audio/rot1Sound.mp3", 0.08),
-      this.createAudio("/audio/rot2Sound.mp3", 0.08),
-      this.createAudio("/audio/rot3Sound.mp3", 0.08),
+      this.createAudio("./audio/background.mp3", 0.09),
+      this.createAudio("./audio/emmanuelle.mp3"),
+      this.rot1,
+      this.rot2, 
+      this.rot3
     ];
-    this.sounds = [...this.friendSounds, this.createAudio("/audio/sea.mp3"), ...this.ambientMusicSounds];
-    this.soundMuted = false;
-    this.emmanuelle = this.ambientMusicSounds[1];
-  }
 
-  createAudio(src, volume = 1.0) {
-    const audio = new Audio(src);
-    audio.volume = volume;
-    return audio;
-  }
-
-  playFriendSound() {
-    if (!this.soundMuted) {
-      const sound = this.friendSounds[Math.floor(Math.random() * this.friendSounds.length)].cloneNode();
-      sound.volume = 0.03;
-      sound.play();
-    }
-  }
-
-  playSpecialSound(specialSound, length) {
-    console.log(specialSound);
-    this.pauseAmbientMusicSounds();
-    specialSound.volume = 0.08;
-    specialSound.play();
-    setTimeout(() => {
-      this.ambientMusicSounds[0].volume = 0.09;
-      this.ambientMusicSounds[0].play();
-    }, length);
+    console.log('Rot sounds initialized:', {
+      rot1: this.rot1,
+      rot2: this.rot2,
+      rot3: this.rot3
+    });
   }
 
   pauseAmbientMusicSounds() {
-    this.ambientMusicSounds.forEach((sound) => {
+    this.ambientMusicSounds.forEach(sound => {
       sound.pause();
       sound.volume = 0;
     });
   }
 
-  pauseAllSounds() {
-    this.sounds.forEach((sound) => {
-      sound.pause();
+  playSpecialSound(specialSound, length) {
+    if (!specialSound) {
+      console.error('Special sound not initialized', new Error().stack);
+      return;
+    }
+
+    this.pauseAmbientMusicSounds();
+    specialSound.volume = 0.08;
+    
+    specialSound.play()
+      .then(() => console.log('Special sound started playing'))
+      .catch(error => console.error('Play failed:', error));
+  }
+
+  createAudio(src, volume = 1.0) {
+    console.log(`Creating audio for: ${src}`);
+    const audio = new Audio(src);
+    audio.volume = volume;
+    
+    audio.addEventListener('loadeddata', () => {
+      console.log(`Successfully loaded: ${src}`);
     });
+
+    audio.addEventListener('error', (e) => {
+      console.error(`Failed to load audio: ${src}`, e);
+    });
+
+    return audio;
   }
 }
 
