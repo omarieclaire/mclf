@@ -6,6 +6,8 @@ import { Water } from "./node_modules/three/examples/jsm/objects/Water.js";
 import { Sky } from "./node_modules/three/examples/jsm/objects/Sky.js";
 import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
+THREE.ImageUtils.crossOrigin = "";
+
 // Main application class to encapsulate all functionalities
 export class ThreeJSApp {
   constructor() {
@@ -65,8 +67,8 @@ export class ThreeJSApp {
     this.noMovementDetected = false;
     this.movementTimeout = null;
 
-    this.init();
-    this.animate();
+    // this.init();
+    // this.animate();
     window.addEventListener("resize", this.onWindowResize.bind(this));
     document.addEventListener("mousemove", this.onDocumentMouseMove.bind(this));
     window.addEventListener("load", this.onWindowLoad.bind(this));
@@ -550,8 +552,8 @@ export class ThreeJSApp {
   }
 
   loadModels() {
-    const jellyFishPromise = this.loadGLTFModel("./img/oct.glb");
-    const friendShapePromise = this.loadGLTFModel("./img/friend3.glb");
+    const jellyFishPromise = this.loadGLTFModel("/img/oct.glb");
+    const friendShapePromise = this.loadGLTFModel("/img/friend3.glb");
 
     for (let i = 0; i < this.numberOfFriends; i++) {
       const position = this.mkGoodPosition();
@@ -963,18 +965,19 @@ export class ThreeJSApp {
 class AudioManager {
   constructor() {
     this.friendSounds = [
-      this.createAudio("audio/friend.mp3", 0.02),
-      this.createAudio("audio/friend1.mp3", 0.02),
-      this.createAudio("audio/friend2.mp3", 0.02),
+
+      this.createAudio("/audio/friend.mp3", 0.02),
+      this.createAudio("/audio/friend1.mp3", 0.02),
+      this.createAudio("/audio/friend2.mp3", 0.02),
     ];
     this.ambientMusicSounds = [
-      this.createAudio("audio/background.mp3", 0.09),
-      this.createAudio("audio/emmanuelle.mp3"),
-      this.createAudio("audio/rot1.mp3", 0.08),
-      this.createAudio("audio/rot2.mp3", 0.08),
-      this.createAudio("audio/rot3.mp3", 0.08),
+      this.createAudio("/audio/background.mp3", 0.09),
+      this.createAudio("/audio/emmanuelle.mp3"),
+      this.createAudio("/audio/rot1.mp3", 0.08),
+      this.createAudio("/audio/rot2.mp3", 0.08),
+      this.createAudio("/audio/rot3.mp3", 0.08),
     ];
-    this.sounds = [...this.friendSounds, this.createAudio("audio/sea.mp3"), ...this.ambientMusicSounds];
+    this.sounds = [...this.friendSounds, this.createAudio("/audio/sea.mp3"), ...this.ambientMusicSounds];
     this.soundMuted = false;
     this.emmanuelle = this.ambientMusicSounds[1];
   }
@@ -994,6 +997,7 @@ class AudioManager {
   }
 
   playSpecialSound(specialSound, length) {
+    console.log(specialSound);
     this.pauseAmbientMusicSounds();
     specialSound.volume = 0.08;
     specialSound.play();
