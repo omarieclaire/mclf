@@ -8,6 +8,59 @@ import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
 THREE.ImageUtils.crossOrigin = "";
 
+// Particle system for ambient floating effects
+class ParticleSystem {
+  constructor(scene) {
+    console.log("🎆 Initializing particle system");
+    const particleCount = 1000;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    // Initialize particles in a dome shape above the water
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      const radius = 500 * Math.random();
+      const theta = 2 * Math.PI * Math.random();
+      const y = 100 * Math.random() + 50;
+
+      positions[i] = radius * Math.cos(theta);
+      positions[i + 1] = y;
+      positions[i + 2] = radius * Math.sin(theta);
+
+      colors[i] = 0.9 + Math.random() * 0.1;
+      colors[i + 1] = 0.9 + Math.random() * 0.1;
+      colors[i + 2] = 1.0;
+    }
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 2,
+      transparent: true,
+      opacity: 0.5,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+    });
+
+    this.particles = new THREE.Points(geometry, material);
+    scene.add(this.particles);
+  }
+
+  // Update particle positions and opacity based on meditation level
+  update(stillnessLevel) {
+    const time = Date.now() * 0.0001;
+    const positions = this.particles.geometry.attributes.position.array;
+
+    for (let i = 0; i < positions.length; i += 3) {
+      positions[i + 1] += Math.sin(time + positions[i] * 0.1) * 0.1 * stillnessLevel;
+    }
+
+    this.particles.geometry.attributes.position.needsUpdate = true;
+    this.particles.material.opacity = 0.2 + stillnessLevel * 0.3;
+  }
+}
+
 // Main application class to encapsulate all functionalities
 export class ThreeJSApp {
   constructor() {
@@ -61,20 +114,85 @@ export class ThreeJSApp {
     ];
     this.audioManager = new AudioManager();
 
+    this.audioManager.seaSounds[0].loop = true; // Make sea sound loop
+    this.audioManager.seaSounds[0]
+      .play()
+      .then(() => console.log("Sea sound started"))
+      .catch((err) => console.error("Sea sound failed to start:", err));
+
+    this.stillnessLevel = 0;
+    this.lastMotionTime = Date.now();
+    this.isInMeditativeState = false;
+    this.particleSystem = null;
+    this.originalWaterColor = 0x001e0f;
+    this.meditativeWaterColor = 0x000066; // Much darker blue
+
+    this.debugMode = true;
+
     // cv stuff
     this.initOpenCV();
 
     this.noMovementDetected = false;
     this.movementTimeout = null;
 
-    this.isTransformingToMoon = false;
-this.moonTransformProgress = 0;
-this.originalWaterColor = 0x001e0f;
-this.moonColor = 0x808080;
-this.debugMode = true;
-this.transformationErrors = [];
-this.moonFeatures = [];
+    this.originalWaterColor = 0x001e0f;
+    this.debugMode = true;
 
+    this.meditationParams = {
+      // Water effects
+      waterColorStart: 0x001e0f,
+      waterColorEnd: 0xd72b65,
+      waterDistortionStart: 3.7,
+      waterDistortionEnd: 0.01,
+
+      // Sky effects
+      skyTurbidityStart: 10,
+      skyTurbidityEnd: 2,
+      skyRayleighStart: 10,
+      skyRayleighEnd: 2,
+
+      // Sparkle effects
+      sparkleThreshold: 0.8, // stillness level needed for sparkles
+      sparkleSpread: 800,
+      sparkleLightness: 0.2,
+      sparkleSize: 5,
+      sparkleQuantity: 50,
+      sparkleNumSets: 50,
+
+      // Movement effects
+      rotationSlowdown: 0.9, // how much to slow rotation (0-1)
+      objectFade: 0.4, // how much to fade objects (0-1)
+
+      // Timing
+      stillnessIncrease: 0.1, // how fast stillness builds
+      stillnessDecrease: 0.2, // how fast stillness drops
+      stillnessDelay: 1000, // ms of stillness needed
+
+      // new stuff
+
+      stillnessThresholds: {
+        gentle: 30000, // 30 seconds - first effect -- removed 3 zeros for testing
+        moderate: 60000, // 1 minute - second effect
+        deep: 90000, // 1.5 minutes - camera movement
+        profound: 200000, // 3.3 minutes - darkness
+      },
+
+      // Camera movement
+      cameraSpeed: 0.05,
+      targetCameraPosition: new THREE.Vector3(0, 100, 400),
+
+      // Particle system
+      particleOpacityMin: 0.2,
+      particleOpacityMax: 0.8,
+
+      // Color transitions
+      skyColorStart: new THREE.Color(0x87ceeb),
+      skyColorEnd: new THREE.Color(0x000033),
+
+      // Movement detection
+      motionThreshold: 0.5, // percentage of pixels that need to change
+      regionSize: 32, // size of regions to check for motion
+    };
 
     // this.init();
     // this.animate();
@@ -136,15 +254,52 @@ this.moonFeatures = [];
     this.initModals();
     this.initGUI(); // Initialize the GUI
 
-    // Initialize OpenCV.js after the library is ready
-    // this.initOpenCV();
-    this.initMoonFeatures();
-
     this.setupCamera();
+
+    if (this.debugMode) {
+      this.initDebugUI();
+    }
   }
 
-  // cv stuff
+  initDebugUI() {
+    const debugContainer = document.createElement("div");
+    debugContainer.style.position = "fixed";
+    debugContainer.style.bottom = "10px";
+    debugContainer.style.left = "10px";
+    debugContainer.style.backgroundColor = "rgba(0,0,0,0.7)";
+    debugContainer.style.color = "white";
+    debugContainer.style.padding = "10px";
+    debugContainer.style.fontFamily = "monospace";
+    debugContainer.style.zIndex = "1000";
+    debugContainer.id = "debugInfo";
+    document.body.appendChild(debugContainer);
+  }
 
+  logDebug(message) {
+    if (this.debugMode) {
+      const timeSinceMotion = Date.now() - this.lastMotionTime;
+      const debugInfo = document.getElementById("debugInfo");
+      if (debugInfo) {
+        let currentState = "Normal";
+        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
+
+        debugInfo.innerHTML = `
+        Meditation State: <span style="color: #00ff00">${currentState}</span><br>
+        Time Since Motion: ${(timeSinceMotion / 1000).toFixed(1)}s<br>
+        Stillness Level: ${this.stillnessLevel.toFixed(2)}<br>
+        <br>
+        Current Effects:<br>
+        ▸ Sparkles: ${timeSinceMotion > this.meditationParams.stillnessThresholds.gentle ? "✓" : "×"}<br>
+        ▸ Sky Changes: ${timeSinceMotion > this.meditationParams.stillnessThresholds.moderate ? "✓" : "×"}<br>
+        ▸ Camera Movement: ${timeSinceMotion > this.meditationParams.stillnessThresholds.deep ? "✓" : "×"}<br>
+        ▸ Darkening: ${timeSinceMotion > this.meditationParams.stillnessThresholds.profound ? "✓" : "×"}<br>
+      `;
+      }
+    }
+  }
   initOpenCV() {
     cv["onRuntimeInitialized"] = () => {
       console.log("OpenCV.js is fully initialized");
@@ -152,8 +307,6 @@ this.moonFeatures = [];
       this.animate();
     };
   }
-
-  // In your ThreeJSApp class:
 
   setupCamera() {
     console.log("Setting up camera...");
@@ -268,90 +421,180 @@ this.moonFeatures = [];
     }
   }
 
-  startVideoProcessing() {
-    const video = document.getElementById("videoInput");
-    const canvasOutput = document.getElementById("canvasOutput");
-
-    const cap = new cv.VideoCapture(video);
-
-    const frame1 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-    const frame2 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-    const gray1 = new cv.Mat();
-    const gray2 = new cv.Mat();
-    const diff = new cv.Mat();
-
-    let firstFrame = true;
-    let frameCount = 0;
-
-    const processVideo = () => {
-      try {
-        if (!video.paused && !video.ended) {
-          cap.read(frame2);
-          cv.cvtColor(frame2, gray2, cv.COLOR_RGBA2GRAY);
-
-          if (firstFrame) {
-            gray2.copyTo(gray1);
-            firstFrame = false;
-            console.log("First frame processed");
-          }
-
-          // Compute absolute difference between frames
-          cv.absdiff(gray1, gray2, diff);
-          cv.threshold(diff, diff, 25, 255, cv.THRESH_BINARY);
-
-          // Calculate the percentage of non-zero pixels (motion)
-          const nonZero = cv.countNonZero(diff);
-          const motionPercentage = (nonZero / (diff.rows * diff.cols)) * 100;
-
-          // Log every 30 frames to avoid console spam
-          if (frameCount % 30 === 0) {
-            console.log(`Motion detected: ${motionPercentage.toFixed(2)}%`);
-            console.log(`Current sky turbidity: ${this.skyUniforms["turbidity"].value.toFixed(2)}`);
-          }
-          frameCount++;
-
-          // If motion is detected
-          if (motionPercentage > 0.5) {
-            this.onMotionDetected();
-          } else {
-            this.onNoMotionDetected();
-          }
-
-          // Prepare for next frame
-          gray2.copyTo(gray1);
-        }
-        this.motionDetectionId = requestAnimationFrame(processVideo);
-      } catch (err) {
-        console.error("Video processing error:", err);
-      }
-    };
-
-    // Start processing
-    processVideo();
-  }
-
   onMotionDetected() {
-    this.noMovementDetected = false;
-    if (this.movementTimeout) {
-      clearTimeout(this.movementTimeout);
-      this.movementTimeout = null;
-    }
-    console.log("Motion detected - increasing sky turbidity");
-    if (this.skyUniforms["turbidity"].value < this.skyBright) {
-      this.skyUniforms["turbidity"].value += 0.1;
-    }
+    this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2); // Faster decrease
+    this.lastMotionTime = Date.now();
+    this.isInMeditativeState = false;
+    this.logDebug(`Motion detected - stillness level: ${this.stillnessLevel.toFixed(2)}`);
   }
 
   onNoMotionDetected() {
-    if (this.noMovementDetected) return;
-  
-    this.movementTimeout = setTimeout(() => {
-      this.noMovementDetected = true;
-      this.isTransformingToMoon = true;  // Add this line
-      console.log("No motion detected - beginning moon transformation");
-    }, 1000);
+    const timeSinceLastMotion = Date.now() - this.lastMotionTime;
+
+    if (timeSinceLastMotion > 1000) {
+      // Reduced to 1 second for testing
+      this.stillnessLevel = Math.min(1, this.stillnessLevel + 0.1); // Faster increase
+      this.isInMeditativeState = true;
+      this.logDebug(`Stillness detected - level: ${this.stillnessLevel.toFixed(2)}`);
+      this.updateMeditativeEffects();
+    }
   }
 
+  updateMeditativeEffects() {
+    const timeSinceMotion = Date.now() - this.lastMotionTime;
+
+    // Determine the current state
+    let currentState = "Normal";
+    if (this.isInMeditativeState) {
+        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
+        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
+    }
+
+    // Log the debug information
+    this.logDebug(
+        `🧘 ${currentState} meditation - stillness: ${this.stillnessLevel.toFixed(2)}, time: ${(timeSinceMotion / 1000).toFixed(1)}s`
+    );
+
+    // Update always-active water effects only if meditative state is active
+    if (this.isInMeditativeState) {
+        const waterColorProgress = this.stillnessLevel;
+        const currentColor = new THREE.Color(this.meditationParams.waterColorStart).lerp(
+            new THREE.Color(this.meditationParams.waterColorEnd),
+            waterColorProgress
+        );
+        this.water.material.uniforms.waterColor.value.copy(currentColor);
+
+        this.water.material.uniforms["distortionScale"].value =
+            this.meditationParams.waterDistortionStart -
+            waterColorProgress * (this.meditationParams.waterDistortionStart - this.meditationParams.waterDistortionEnd);
+    }
+
+    // Handle meditation states
+    if (this.isInMeditativeState) {
+        // Gentle state - Sparkles
+        if (
+            timeSinceMotion > this.meditationParams.stillnessThresholds.gentle &&
+            !this.meditationSparkles
+        ) {
+            this.makeSparkles(
+                this.centerObj,
+                this.meditationParams.sparkleSpread,
+                this.meditationParams.sparkleLightness,
+                this.meditationParams.sparkleSize,
+                this.meditationParams.sparkleQuantity,
+                this.meditationParams.sparkleNumSets
+            );
+            this.meditationSparkles = true;
+            console.log('✨ Sparkles activated');
+        }
+
+        // Moderate state - Sky changes
+        if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate && this.skyUniforms) {
+            const skyProgress = Math.min(
+                (timeSinceMotion - this.meditationParams.stillnessThresholds.moderate) / 30000,
+                1
+            );
+
+            this.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
+                10,
+                1,
+                skyProgress * this.stillnessLevel
+            );
+
+            this.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
+                2,
+                0.3,
+                skyProgress * this.stillnessLevel
+            );
+        }
+
+        // Deep state - Camera movement
+        if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) {
+            if (!this.originalCameraPosition) {
+                this.originalCameraPosition = this.camera.position.clone();
+                console.log('📸 Starting camera movement');
+            }
+
+            const targetY = this.originalCameraPosition.y + 50;
+            const targetZ = this.originalCameraPosition.z + 150;
+
+            this.camera.position.y += (targetY - this.camera.position.y) * 0.005;
+            this.camera.position.z += (targetZ - this.camera.position.z) * 0.005;
+        }
+
+        // Profound state - Darkening
+        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound && this.scene.fog) {
+            const darknessProgress = Math.min(
+                (timeSinceMotion - this.meditationParams.stillnessThresholds.profound) / 60000,
+                1
+            );
+
+            this.scene.fog.density = THREE.MathUtils.lerp(
+                0.0002,
+                0.001,
+                darknessProgress * this.stillnessLevel
+            );
+        }
+    } else {
+        // Reset effects when not in meditative state
+        if (this.meditationSparkles) {
+            Object.values(this.sparkleFriendMap).forEach(sparkle => {
+                if (sparkle && sparkle.parent) {
+                    sparkle.parent.remove(sparkle);
+                }
+            });
+            this.sparkleFriendMap = {};
+            this.meditationSparkles = false;
+            console.log('✨ Sparkles deactivated');
+        }
+
+        if (this.originalCameraPosition) {
+            this.camera.position.y += (this.originalCameraPosition.y - this.camera.position.y) * 0.05;
+            this.camera.position.z += (this.originalCameraPosition.z - this.camera.position.z) * 0.05;
+        }
+
+        if (this.skyUniforms) {
+            this.skyUniforms["turbidity"].value += (10 - this.skyUniforms["turbidity"].value) * 0.1;
+            this.skyUniforms["rayleigh"].value += (2 - this.skyUniforms["rayleigh"].value) * 0.1;
+        }
+
+        if (this.scene.fog) {
+            this.scene.fog.density = 0.0002;
+        }
+    }
+}
+
+
+  // Add this method to detect motion in specific regions
+  detectRegionalMotion(frame1, frame2) {
+    const regions = [];
+    const regionSize = this.meditationParams.regionSize;
+
+    for (let y = 0; y < frame1.rows; y += regionSize) {
+      for (let x = 0; x < frame1.cols; x += regionSize) {
+        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
+        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
+
+        const diff = new cv.Mat();
+        cv.absdiff(roi1, roi2, diff);
+
+        const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+        regions.push({
+          x: x,
+          y: y,
+          motion: motionAmount,
+        });
+
+        diff.delete();
+        roi1.delete();
+        roi2.delete();
+      }
+    }
+
+    return regions;
+  }
   // cv stuff end
 
   initWater() {
@@ -359,10 +602,10 @@ this.moonFeatures = [];
     this.water = new Water(waterGeometry, {
       textureWidth: 512,
       textureHeight: 512,
-      waterNormals: new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
+      waterNormals: new THREE.TextureLoader().load("../img/waternormals.jpeg", function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }),
-      alpha: 1.0,
+      alpha: 0.,
       sunDirection: new THREE.Vector3(),
       sunColor: 0xffffff,
       waterColor: 0x001e0f,
@@ -563,8 +806,8 @@ this.moonFeatures = [];
   }
 
   loadModels() {
-    const jellyFishPromise = this.loadGLTFModel("./img/oct.glb");
-    const friendShapePromise = this.loadGLTFModel("./img/friend3.glb");
+    const jellyFishPromise = this.loadGLTFModel("../img/oct.glb");
+    const friendShapePromise = this.loadGLTFModel("../img/friend3.glb");
 
     for (let i = 0; i < this.numberOfFriends; i++) {
       const position = this.mkGoodPosition();
@@ -648,50 +891,56 @@ this.moonFeatures = [];
   initGUI() {
     // const gui = new GUI();
     const gui = new GUI({ autoPlace: true, load: false });
+    const audioFolder = gui.addFolder("Audio");
 
-    // Sky parameters
-    const skyFolder = gui.addFolder("Sky");
-    skyFolder.add(this.skyUniforms["turbidity"], "value", 0.0, 20.0, 0.1).name("Turbidity");
-    skyFolder.add(this.skyUniforms["rayleigh"], "value", 0.0, 4.0, 0.001).name("Rayleigh");
-    skyFolder.add(this.skyUniforms["mieCoefficient"], "value", 0.0, 0.1, 0.001).name("Mie Coefficient");
-    skyFolder.add(this.skyUniforms["mieDirectionalG"], "value", 0.0, 1.0, 0.001).name("Mie Directional G");
-    skyFolder
-      .add(this.parameters, "inclination", 0, 1, 0.0001)
-      .name("Inclination")
-      .onChange(() => {
-        const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-        this.updateSun(this.parameters, pmremGenerator);
-      });
-    skyFolder
-      .add(this.parameters, "azimuth", 0, 1, 0.0001)
-      .name("Azimuth")
-      .onChange(() => {
-        const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-        this.updateSun(this.parameters, pmremGenerator);
-      });
+    audioFolder
+      .add(
+        {
+          startAudio: () => {
+            this.audioManager.seaSounds[0].loop = true;
+            this.audioManager.seaSounds[0]
+              .play()
+              .then(() => console.log("Sea sound started"))
+              .catch((err) => console.error("Sea sound failed to start:", err));
+          },
+        },
+        "startAudio"
+      )
+      .name("Start Sea Sound");
 
-    // Water parameters
-    const waterFolder = gui.addFolder("Water");
-    waterFolder.add(this.water.material.uniforms["distortionScale"], "value", 0.0, 8.0, 0.1).name("Distortion Scale");
-    waterFolder.add(this.water.material.uniforms["alpha"], "value", 0.0, 1.0, 0.01).name("Alpha");
-    waterFolder
-      .addColor({ waterColor: this.water.material.uniforms["waterColor"].value.getHex() }, "waterColor")
-      .name("Water Color")
+    audioFolder
+      .add(
+        {
+          toggleMute: () => {
+            const seaSound = this.audioManager.seaSounds[0];
+            if (seaSound.volume > 0) {
+              seaSound.volume = 0;
+            } else {
+              seaSound.volume = 0.09;
+            }
+          },
+        },
+        "toggleMute"
+      )
+      .name("Toggle Mute");
+
+    // Add volume control
+    audioFolder
+      .add({ volume: 0.09 }, "volume", 0, 1)
+      .name("Sea Volume")
       .onChange((value) => {
-        this.water.material.uniforms["waterColor"].value.setHex(value);
+        this.audioManager.seaSounds[0].volume = value;
       });
+
+    audioFolder.open();
 
     // Objects parameters
     const objectsFolder = gui.addFolder("Objects");
     objectsFolder.add(this.centerObj.scale, "x", 0.1, 5).name("Center Object Scale");
-    objectsFolder.add(this.centerObj.rotation, "x", 0, Math.PI * 2).name("Center Object Rotation X");
-    objectsFolder.add(this.centerObj.rotation, "y", 0, Math.PI * 2).name("Center Object Rotation Y");
-    objectsFolder.add(this.centerObj.rotation, "z", 0, Math.PI * 2).name("Center Object Rotation Z");
-
     // Example of adjusting opacity for all friend objects
     objectsFolder
       .add({ opacity: 0.5 }, "opacity", 0.1, 1.0, 0.01)
-      .name("Friends Opacity")
+      .name("FriendsOpacity")
       .onChange((value) => {
         this.boxGroup.children.forEach((child) => {
           child.traverse((o) => {
@@ -701,6 +950,109 @@ this.moonFeatures = [];
           });
         });
       });
+
+    // In initGUI(), replace the meditation folder section with:
+
+    const meditationFolder = gui.addFolder("Meditation Effects");
+
+    // Timing controls
+    const timingFolder = meditationFolder.addFolder("Timing Thresholds");
+    timingFolder.add(this.meditationParams.stillnessThresholds, "gentle", 1000, 60000).name("First Effect (ms)");
+    timingFolder.add(this.meditationParams.stillnessThresholds, "moderate", 1000, 120000).name("Second Effect (ms)");
+    timingFolder.add(this.meditationParams.stillnessThresholds, "deep", 1000, 180000).name("Camera Move (ms)");
+    timingFolder.add(this.meditationParams.stillnessThresholds, "profound", 1000, 300000).name("Darkness (ms)");
+
+    // Stillness sensitivity
+    const stillnessFolder = meditationFolder.addFolder("Stillness Settings");
+    stillnessFolder.add(this.meditationParams, "stillnessIncrease", 0.01, 0.5).name("Build Speed");
+    stillnessFolder.add(this.meditationParams, "stillnessDecrease", 0.01, 0.5).name("Drop Speed");
+    stillnessFolder.add(this.meditationParams, "stillnessDelay", 0, 5000).name("Delay (ms)");
+
+    // Water effects
+    const waterFolder = meditationFolder.addFolder("Water Effects");
+    waterFolder
+      .addColor({ color: this.meditationParams.waterColorStart }, "color")
+      .name("Start Color")
+      .onChange((value) => (this.meditationParams.waterColorStart = value));
+    waterFolder
+      .addColor({ color: this.meditationParams.waterColorEnd }, "color")
+      .name("End Color")
+      .onChange((value) => (this.meditationParams.waterColorEnd = value));
+    waterFolder.add(this.meditationParams, "waterDistortionStart", 0, 8).name("Start Distortion");
+    waterFolder.add(this.meditationParams, "waterDistortionEnd", 0, 8).name("End Distortion");
+
+    // Sky effects
+    const skyFolder = meditationFolder.addFolder("Sky Effects");
+    skyFolder.add(this.meditationParams, "skyTurbidityStart", 0, 20).name("Start Turbidity");
+    skyFolder.add(this.meditationParams, "skyTurbidityEnd", 0, 20).name("End Turbidity");
+    skyFolder.add(this.meditationParams, "skyRayleighStart", 0, 10).name("Start Rayleigh");
+    skyFolder.add(this.meditationParams, "skyRayleighEnd", 0, 10).name("End Rayleigh");
+
+    // Particle controls
+    const particleFolder = meditationFolder.addFolder("Particle Effects");
+    particleFolder.add(this.meditationParams, "particleOpacityMin", 0, 1).name("Min Opacity");
+    particleFolder.add(this.meditationParams, "particleOpacityMax", 0, 1).name("Max Opacity");
+
+    // Camera movement
+    const cameraFolder = meditationFolder.addFolder("Camera Movement");
+    cameraFolder.add(this.meditationParams, "cameraSpeed", 0.001, 0.1).name("Move Speed");
+
+    // Debug info
+    const debugFolder = meditationFolder.addFolder("Debug Info");
+    const debugInfo = { currentStillness: 0, timeSinceMotion: 0 };
+    debugFolder.add(debugInfo, "currentStillness").name("Stillness Level").listen();
+    debugFolder.add(debugInfo, "timeSinceMotion").name("Time (s)").listen();
+
+    // Update debug values in render loop
+    setInterval(() => {
+      debugInfo.currentStillness = this.stillnessLevel;
+      debugInfo.timeSinceMotion = ((Date.now() - this.lastMotionTime) / 1000).toFixed(1);
+    }, 100);
+
+    const testingFolder = meditationFolder.addFolder("Testing Controls");
+    const testingParams = {
+      timingMode: "Normal", // Default to normal timings
+    };
+
+    // Add a dropdown to switch between timing modes
+    testingFolder
+      .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
+      .name("Timing Mode")
+      .onChange((value) => {
+        switch (value) {
+          case "Normal":
+            this.meditationParams.stillnessThresholds = {
+              gentle: 30000, // 30 seconds
+              moderate: 60000, // 1 minute
+              deep: 90000, // 1.5 minutes
+              profound: 120000, // 2 minutes
+            };
+            break;
+          case "Quick Test":
+            this.meditationParams.stillnessThresholds = {
+              gentle: 10000, // 10 seconds
+              moderate: 20000, // 20 seconds
+              deep: 30000, // 30 seconds
+              profound: 40000, // 40 seconds
+            };
+            break;
+          case "Very Quick Test":
+            this.meditationParams.stillnessThresholds = {
+              gentle: 3000, // 3 seconds
+              moderate: 6000, // 6 seconds
+              deep: 9000, // 9 seconds
+              profound: 12000, // 12 seconds
+            };
+            break;
+        }
+      });
+
+    testingFolder.open();
+
+    meditationFolder.open();
+    timingFolder.open();
+    stillnessFolder.open();
+    debugFolder.open();
 
     skyFolder.open();
     waterFolder.open();
@@ -713,94 +1065,17 @@ this.moonFeatures = [];
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  initMoonFeatures() {
-    try {
-      const craterGeometry = new THREE.CircleGeometry(5, 32);
-      const craterMaterial = new THREE.MeshStandardMaterial({
-        color: 0x606060,
-        roughness: 0.8,
-        metalness: 0.2,
-        transparent: true,
-        opacity: 0
-      });
-  
-      for (let i = 0; i < 50; i++) {
-        const crater = new THREE.Mesh(craterGeometry, craterMaterial.clone());
-        crater.rotation.x = -Math.PI / 2;
-        crater.position.set(
-          Math.random() * 1000 - 500,
-          0,
-          Math.random() * 1000 - 500
-        );
-        crater.scale.set(
-          Math.random() * 20 + 5,
-          Math.random() * 20 + 5,
-          1
-        );
-        this.moonFeatures.push(crater);
-        this.scene.add(crater);
-      }
-      this.logDebug("Moon features initialized");
-    } catch (error) {
-      this.logError("Failed to initialize moon features", error);
-    }
-  }
-  
-  updateMoonTransform() {
-    try {
-      if (!this.water?.material?.uniforms) {
-        this.logError("Water uniforms not initialized");
-        return;
-      }
-      
-      const currentColor = new THREE.Color();
-      currentColor.setHex(this.originalWaterColor)
-        .lerp(new THREE.Color(this.moonColor), this.moonTransformProgress);
-      
-      this.water.material.uniforms.waterColor.value.copy(currentColor);
-      //... rest of the method
-    } catch (error) {
-      this.logError("Failed to update moon transform", error);
-    }
-  }
-  
-  logDebug(message) {
-    if (this.debugMode) {
-      console.log(`🌙 [Moon Debug]: ${message}`);
-    }
-  }
-  
-  logError(message, error) {
-    console.error(`🌙 [Moon Error]: ${message}`, error);
-    this.transformationErrors.push({
-      timestamp: new Date(),
-      message,
-      error: error.toString()
-    });
-  }
-  
-  // Modified animate method
   animate() {
     requestAnimationFrame(this.animate.bind(this));
-    
+
     try {
-      if (this.isTransformingToMoon) {
-        if (this.moonTransformProgress < 1) {
-          this.moonTransformProgress = Math.min(1, this.moonTransformProgress + 0.005);
-          this.updateMoonTransform();
-        }
-      } else if (this.moonTransformProgress > 0) {
-        this.moonTransformProgress = Math.max(0, this.moonTransformProgress - 0.005);
-        this.updateMoonTransform();
-      }
-  
       this.render();
       this.controls.update();
     } catch (error) {
       this.logError("Animation loop failed", error);
     }
   }
-  
+
   render() {
     this.scene.traverse((child) => {
       if (child.isMesh) {
@@ -810,6 +1085,8 @@ this.moonFeatures = [];
         }
       }
     });
+
+    this.updateMeditativeEffects();
 
     const time = performance.now() * 0.0001;
 
@@ -1016,7 +1293,7 @@ this.moonFeatures = [];
 
   makeSparkles(source, spread, lightness, size, quantity, numOfSets) {
     const sparkUniforms = {
-      pointTexture: { value: new THREE.TextureLoader().load("./img/spark1.png") },
+      pointTexture: { value: new THREE.TextureLoader().load("../img/spark1.png") },
     };
     const shaderMaterial = new THREE.ShaderMaterial({
       uniforms: sparkUniforms,
@@ -1058,34 +1335,36 @@ this.moonFeatures = [];
 
 class AudioManager {
   constructor() {
-    console.log('Initializing AudioManager');
+    console.log("Initializing AudioManager");
     this.friendSounds = [
-      this.createAudio("./audio/friendSound.mp3", 0.02),
-      this.createAudio("./audio/friend1Sound.mp3", 0.02),
-      this.createAudio("./audio/friend2Sound.mp3", 0.02),
+      this.createAudio("../audio/friendSound.mp3", 0.02),
+      this.createAudio("../audio/friend1Sound.mp3", 0.02),
+      this.createAudio("../audio/friend2Sound.mp3", 0.02),
     ];
-    
-    this.rot1 = this.createAudio("./audio/rot1Sound.mp3", 0.08);
-    this.rot2 = this.createAudio("./audio/rot2Sound.mp3", 0.08);
-    this.rot3 = this.createAudio("./audio/rot3Sound.mp3", 0.08);
+
+    this.rot1 = this.createAudio("../audio/rot1Sound.mp3", 0.08);
+    this.rot2 = this.createAudio("../audio/rot2Sound.mp3", 0.08);
+    this.rot3 = this.createAudio("../audio/rot3Sound.mp3", 0.08);
 
     this.ambientMusicSounds = [
-      this.createAudio("./audio/background.mp3", 0.09),
-      this.createAudio("./audio/emmanuelle.mp3"),
+      this.createAudio("../audio/background.mp3", 0.09),
+      this.createAudio("../audio/emmanuelle.mp3"),
       this.rot1,
-      this.rot2, 
-      this.rot3
+      this.rot2,
+      this.rot3,
     ];
 
-    console.log('Rot sounds initialized:', {
+    this.seaSounds = [this.createAudio("../audio/sea.mp3", 0.09), this.createAudio("../audio/sea.wav")];
+
+    console.log("Rot sounds initialized:", {
       rot1: this.rot1,
       rot2: this.rot2,
-      rot3: this.rot3
+      rot3: this.rot3,
     });
   }
 
   pauseAmbientMusicSounds() {
-    this.ambientMusicSounds.forEach(sound => {
+    this.ambientMusicSounds.forEach((sound) => {
       sound.pause();
       sound.volume = 0;
     });
@@ -1093,28 +1372,29 @@ class AudioManager {
 
   playSpecialSound(specialSound, length) {
     if (!specialSound) {
-      console.error('Special sound not initialized', new Error().stack);
+      console.error("Special sound not initialized", new Error().stack);
       return;
     }
 
     this.pauseAmbientMusicSounds();
     specialSound.volume = 0.08;
-    
-    specialSound.play()
-      .then(() => console.log('Special sound started playing'))
-      .catch(error => console.error('Play failed:', error));
+
+    specialSound
+      .play()
+      .then(() => console.log("Special sound started playing"))
+      .catch((error) => console.error("Play failed:", error));
   }
 
   createAudio(src, volume = 1.0) {
     console.log(`Creating audio for: ${src}`);
     const audio = new Audio(src);
     audio.volume = volume;
-    
-    audio.addEventListener('loadeddata', () => {
+
+    audio.addEventListener("loadeddata", () => {
       console.log(`Successfully loaded: ${src}`);
     });
 
-    audio.addEventListener('error', (e) => {
+    audio.addEventListener("error", (e) => {
       console.error(`Failed to load audio: ${src}`, e);
     });
 
