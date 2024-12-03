@@ -802,7 +802,7 @@ export class ThreeJSApp {
 
     if (
       this.checkIntersection(this.rot1, () => {
-        this.audioManager.playSpecialSound(this.audioManager.rot1Sound, 240000);
+        this.audioManager.playSpecialSound(this.audioManager.rot1, 240000);
         this.showRotatingCreatures(this.jellyfish, this.jellyfishOnScreen, 0);
       })
     )
@@ -810,7 +810,7 @@ export class ThreeJSApp {
 
     if (
       this.checkIntersection(this.rot2, () => {
-        this.audioManager.playSpecialSound(this.audioManager.rot2Sound, 240000);
+        this.audioManager.playSpecialSound(this.audioManager.rot2, 240000);
         this.showRotatingCreatures(this.flyingCrullers, this.flyingCrullersOnScreen, 1);
       })
     )
@@ -818,7 +818,7 @@ export class ThreeJSApp {
 
     if (
       this.checkIntersection(this.rot3, () => {
-        this.audioManager.playSpecialSound(this.audioManager.rot3Sound, 240000);
+        this.audioManager.playSpecialSound(this.audioManager.rot3, 240000);
         this.showRotatingCreatures(this.flyingSpheres, this.flyingSpheresOnScreen, 2);
       })
     )
@@ -966,16 +966,16 @@ class AudioManager {
   constructor() {
     this.friendSounds = [
 
-      this.createAudio("/audio/friend.mp3", 0.02),
-      this.createAudio("/audio/friend1.mp3", 0.02),
-      this.createAudio("/audio/friend2.mp3", 0.02),
+      this.createAudio("/audio/friendSound.mp3", 0.02),
+      this.createAudio("/audio/friend1Sound.mp3", 0.02),
+      this.createAudio("/audio/friend2Sound.mp3", 0.02),
     ];
     this.ambientMusicSounds = [
       this.createAudio("/audio/background.mp3", 0.09),
       this.createAudio("/audio/emmanuelle.mp3"),
-      this.createAudio("/audio/rot1.mp3", 0.08),
-      this.createAudio("/audio/rot2.mp3", 0.08),
-      this.createAudio("/audio/rot3.mp3", 0.08),
+      this.createAudio("/audio/rot1Sound.mp3", 0.08),
+      this.createAudio("/audio/rot2Sound.mp3", 0.08),
+      this.createAudio("/audio/rot3Sound.mp3", 0.08),
     ];
     this.sounds = [...this.friendSounds, this.createAudio("/audio/sea.mp3"), ...this.ambientMusicSounds];
     this.soundMuted = false;
