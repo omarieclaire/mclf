@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="styles.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet">
+  <title>Softie Credits</title>
+</head>
+
+<body>
+  <div id="creditsDiv">
+    <p class="creditsMsg" id="credits1">Sanctuary es un espacio amable, delicado y tranquilo para la introspección y
+      conexión ambiental desarrollado por <a target='_blank' href='https://marieflanagan.com/'>Marie Claire LeBlanc
+        Flanagan para Proyecto Bios.</a></p>
+    <p class="creditsMsg" id="credits2">Gracias a: Luján Oulton, La Embajada de Canadá para Argentina y Paraguay, Aaron
+      Levin, J por las medusas y el soporte en Blender, los creadores y colaboradores de Three.js library, y a
+      Soundbible. Gracias especiales a todos los playtesters: AndyWaro, Bee Cavello, Craig Fahner, Ellen LeBlanc
+      Flanagan, Erik O, Eryn Tempest, Ethan Muller, Hanna Thomas Uose, Ida Toft, Imaginary Residency, Jack, Jan van der
+      Lugt, Joel LeBlanc, John W, Kevin Ray, King Demitri, Kofi O, Lu, Liane Décary-Chen, Marie D, Martina Flanagan,
+      Nick Rachel Weldon, Raphaël de Courville, Robert F, Sagan Y, Shobhit Sharma, Stephen R. Smith, and rich.gg.
+      Gracias también a todos quienes contribuyeron en el desarrollo de preguntas interesantes y significativas:
+      Alexander King., Amanda Grant, Bertine van Hövell, Eva Chérie, jkac, Mariám Zakarian, Nathalie Pozzi, Nicola Oddy,
+      Steven Tu, Sulyn Cedar, Zach Gage.</p>
+  </div>
+  <script>
+    let credits1 = document.getElementById("credits1");
+    let credits2 = document.getElementById("credits2");
+    let lang = localStorage.getItem('lang');
+    console.log(lang);
+
+    function handleLanguageUpdate() {
+      if (lang == 'en') {
+        credits1.innerHTML = "Sanctuary is a peaceful, gentle, soft space for slow and ambient connection with others made by <a target='_blank' href='https://marieflanagan.com/'>Marie Claire LeBlanc Flanagan for Proyecto Bios.</a>";
+        credits2.innerHTML = "Thank you Luján Oulton, The Canadian Embassy, Imaginary Residency, Aaron Levin, Emmanuelle Parrenin for the beautiful song 'Thibault et l'arbre d'or', J for the jellyfish and Blender support, the creators and stewards of the Three.js library, and Soundbible. Special thanks to the playtesters who generously gave feedback: AndyWaro, Bee Cavello, Craig Fahner, Daniel Brandes, Ellen LeBlanc Flanagan, Evelyne Drouin, Erik O, eryn tempest, Ethan Muller, Hanna Thomas Uose, Ida Toft, Isabella Stefanescu, Jack, Jan van der Lugt, John W, Kay Dyson Tam, Kevin Ray, King Demitri, Kofi O, Liane Décary-Chen, Lynn Hughes, Marie D, Martin Mathiesen Kvale, Martina Flanagan, Nathalie Pozzi, Nick Morrison, Rachel Weldon, Raphaël de Courville, Robert F, Sagan Y, Shobhit Sharma, Stephen R. Smith, and rich.gg. Thank you to everyone who contributed to the conversation on questions: Alexander King, Amanda Grant, Bertine van Hövell, Danielle Baskin, Eileen Wennekers, Eva Chérie, Jennifer Schoenberger, jkac, Mariám Zakarian, Nicola Oddy, Rachel Uwa, Steven Tu, Sulyn Cedar, Zach Gage.";
+
+      } else {
+        credits1.innerHTML = "Sanctuary es un espacio amable, delicado y tranquilo para la introspección y conexión ambiental desarrollado por <a target='_blank' href='https://marieflanagan.com/'>Marie Claire LeBlanc Flanagan para Proyecto Bios.</a>";
+        credits2.innerHTML = "Gracias a: Luján Oulton, La Embajada de Canadá para Argentina y Paraguay, Aaron Levin, Emmanuelle Parrenin por la hermosa canción 'Thibault et l'arbre d'or', J por las medusas y el soporte en Blender, los creadores y colaboradores de Three.js library, y a Soundbible. Gracias especiales a todos los playtesters: AndyWaro, Bee Cavello, Craig Fahner, Ellen LeBlanc Flanagan, Erik O, Eryn Tempest, Ethan Muller, Hanna Thomas Uose, Ida Toft, Imaginary Residency, Jack, Jan van der Lugt, Joel LeBlanc, John W, Kevin Ray, King Demitri, Kofi O, Lu, Liane Décary-Chen, Marie D, Martina Flanagan, Nick Rachel Weldon, Raphaël de Courville, Robert F, Sagan Y, Shobhit Sharma, Stephen R. Smith, and rich.gg. Gracias también a todos quienes contribuyeron en el desarrollo de preguntas interesantes y significativas: Alexander King., Amanda Grant, Bertine van Hövell, Eva Chérie, jkac, Mariám Zakarian, Nathalie Pozzi, Nicola Oddy, Steven Tu, Sulyn Cedar, Zach Gage.";
+      }
+    }
+
+    handleLanguageUpdate();
+  </script>
+</body>
+
+</html>
