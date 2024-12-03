@@ -359,7 +359,7 @@ this.moonFeatures = [];
     this.water = new Water(waterGeometry, {
       textureWidth: 512,
       textureHeight: 512,
-      waterNormals: new THREE.TextureLoader().load("../img/waternormals.jpeg", function (texture) {
+      waterNormals: new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }),
       alpha: 1.0,
@@ -563,8 +563,8 @@ this.moonFeatures = [];
   }
 
   loadModels() {
-    const jellyFishPromise = this.loadGLTFModel("../img/oct.glb");
-    const friendShapePromise = this.loadGLTFModel("../img/friend3.glb");
+    const jellyFishPromise = this.loadGLTFModel("./img/oct.glb");
+    const friendShapePromise = this.loadGLTFModel("./img/friend3.glb");
 
     for (let i = 0; i < this.numberOfFriends; i++) {
       const position = this.mkGoodPosition();
@@ -1016,7 +1016,7 @@ this.moonFeatures = [];
 
   makeSparkles(source, spread, lightness, size, quantity, numOfSets) {
     const sparkUniforms = {
-      pointTexture: { value: new THREE.TextureLoader().load("../img/spark1.png") },
+      pointTexture: { value: new THREE.TextureLoader().load("./img/spark1.png") },
     };
     const shaderMaterial = new THREE.ShaderMaterial({
       uniforms: sparkUniforms,
@@ -1060,18 +1060,18 @@ class AudioManager {
   constructor() {
     console.log('Initializing AudioManager');
     this.friendSounds = [
-      this.createAudio("../audio/friendSound.mp3", 0.02),
-      this.createAudio("../audio/friend1Sound.mp3", 0.02),
-      this.createAudio("../audio/friend2Sound.mp3", 0.02),
+      this.createAudio("./audio/friendSound.mp3", 0.02),
+      this.createAudio("./audio/friend1Sound.mp3", 0.02),
+      this.createAudio("./audio/friend2Sound.mp3", 0.02),
     ];
     
-    this.rot1 = this.createAudio("../audio/rot1Sound.mp3", 0.08);
-    this.rot2 = this.createAudio("../audio/rot2Sound.mp3", 0.08);
-    this.rot3 = this.createAudio("../audio/rot3Sound.mp3", 0.08);
+    this.rot1 = this.createAudio("./audio/rot1Sound.mp3", 0.08);
+    this.rot2 = this.createAudio("./audio/rot2Sound.mp3", 0.08);
+    this.rot3 = this.createAudio("./audio/rot3Sound.mp3", 0.08);
 
     this.ambientMusicSounds = [
-      this.createAudio("../audio/background.mp3", 0.09),
-      this.createAudio("../audio/emmanuelle.mp3"),
+      this.createAudio("./audio/background.mp3", 0.09),
+      this.createAudio("./audio/emmanuelle.mp3"),
       this.rot1,
       this.rot2, 
       this.rot3
