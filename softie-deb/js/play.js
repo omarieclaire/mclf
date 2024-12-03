@@ -168,6 +168,8 @@ export class ThreeJSApp {
       stillnessDecrease: 0.2, // how fast stillness drops
       stillnessDelay: 1000, // ms of stillness needed
 
+      cameraMaxZ: 500,
+
       // new stuff
 
       stillnessThresholds: {
@@ -446,128 +448,114 @@ export class ThreeJSApp {
     // Determine the current state
     let currentState = "Normal";
     if (this.isInMeditativeState) {
-        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
+      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
+      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
+      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
     }
 
     // Log the debug information
-    this.logDebug(
-        `🧘 ${currentState} meditation - stillness: ${this.stillnessLevel.toFixed(2)}, time: ${(timeSinceMotion / 1000).toFixed(1)}s`
-    );
+    this.logDebug(`🧘 ${currentState} meditation - stillness: ${this.stillnessLevel.toFixed(2)}, time: ${(timeSinceMotion / 1000).toFixed(1)}s`);
 
     // Update always-active water effects only if meditative state is active
     if (this.isInMeditativeState) {
-        const waterColorProgress = this.stillnessLevel;
-        const currentColor = new THREE.Color(this.meditationParams.waterColorStart).lerp(
-            new THREE.Color(this.meditationParams.waterColorEnd),
-            waterColorProgress
-        );
-        this.water.material.uniforms.waterColor.value.copy(currentColor);
+      const waterColorProgress = this.stillnessLevel;
+      const currentColor = new THREE.Color(this.meditationParams.waterColorStart).lerp(
+        new THREE.Color(this.meditationParams.waterColorEnd),
+        waterColorProgress
+      );
+      this.water.material.uniforms.waterColor.value.copy(currentColor);
 
-        this.water.material.uniforms["distortionScale"].value =
-            this.meditationParams.waterDistortionStart -
-            waterColorProgress * (this.meditationParams.waterDistortionStart - this.meditationParams.waterDistortionEnd);
+      this.water.material.uniforms["distortionScale"].value =
+        this.meditationParams.waterDistortionStart -
+        waterColorProgress * (this.meditationParams.waterDistortionStart - this.meditationParams.waterDistortionEnd);
     }
 
     // Handle meditation states
     if (this.isInMeditativeState) {
-        // Gentle state - Sparkles
-        if (
-            timeSinceMotion > this.meditationParams.stillnessThresholds.gentle &&
-            !this.meditationSparkles
-        ) {
-            this.makeSparkles(
-                this.centerObj,
-                this.meditationParams.sparkleSpread,
-                this.meditationParams.sparkleLightness,
-                this.meditationParams.sparkleSize,
-                this.meditationParams.sparkleQuantity,
-                this.meditationParams.sparkleNumSets
-            );
-            this.meditationSparkles = true;
-            console.log('✨ Sparkles activated');
+      // Gentle state - Sparkles
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle && !this.meditationSparkles) {
+        this.makeSparkles(
+          this.centerObj,
+          this.meditationParams.sparkleSpread,
+          this.meditationParams.sparkleLightness,
+          this.meditationParams.sparkleSize,
+          this.meditationParams.sparkleQuantity,
+          this.meditationParams.sparkleNumSets
+        );
+        this.meditationSparkles = true;
+        console.log("✨ Sparkles activated");
+      }
+
+      // Moderate state - Sky changes
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate && this.skyUniforms) {
+        const skyProgress = Math.min(
+          (timeSinceMotion - this.meditationParams.stillnessThresholds.moderate) / this.meditationParams.skyTransitionDuration,
+          1
+        );
+
+        this.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
+          this.meditationParams.skyTurbidityStart,
+          this.meditationParams.skyTurbidityEnd,
+          skyProgress * this.stillnessLevel
+        );
+
+        this.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
+          this.meditationParams.skyRayleighStart,
+          this.meditationParams.skyRayleighEnd,
+          skyProgress * this.stillnessLevel
+        );
+      }
+
+      // Deep state - Camera movement
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) {
+        if (!this.originalCameraPosition) {
+          this.originalCameraPosition = this.camera.position.clone();
+          console.log("📸 Starting camera movement");
         }
 
-        // Moderate state - Sky changes
-        if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate && this.skyUniforms) {
-            const skyProgress = Math.min(
-                (timeSinceMotion - this.meditationParams.stillnessThresholds.moderate) / 30000,
-                1
-            );
+        const targetY = this.originalCameraPosition.y + 50;
+        const targetZ = this.originalCameraPosition.z + 150;
 
-            this.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
-                10,
-                1,
-                skyProgress * this.stillnessLevel
-            );
-
-            this.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
-                2,
-                0.3,
-                skyProgress * this.stillnessLevel
-            );
-        }
-
-        // Deep state - Camera movement
-        if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) {
-            if (!this.originalCameraPosition) {
-                this.originalCameraPosition = this.camera.position.clone();
-                console.log('📸 Starting camera movement');
-            }
-
-            const targetY = this.originalCameraPosition.y + 50;
-            const targetZ = this.originalCameraPosition.z + 150;
-
-            this.camera.position.y += (targetY - this.camera.position.y) * 0.005;
-            this.camera.position.z += (targetZ - this.camera.position.z) * 0.005;
-        }
-
-        // Profound state - Darkening
-        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound && this.scene.fog) {
-            const darknessProgress = Math.min(
-                (timeSinceMotion - this.meditationParams.stillnessThresholds.profound) / 60000,
-                1
-            );
-
-            this.scene.fog.density = THREE.MathUtils.lerp(
-                0.0002,
-                0.001,
-                darknessProgress * this.stillnessLevel
-            );
-        }
+        this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, targetY, this.meditationParams.cameraSpeed);
+        this.camera.position.z = THREE.MathUtils.lerp(this.camera.position.z, targetZ, this.meditationParams.cameraSpeed);
+      }
     } else {
-        // Reset effects when not in meditative state
-        if (this.meditationSparkles) {
-            Object.values(this.sparkleFriendMap).forEach(sparkle => {
-                if (sparkle && sparkle.parent) {
-                    sparkle.parent.remove(sparkle);
-                }
-            });
-            this.sparkleFriendMap = {};
-            this.meditationSparkles = false;
-            console.log('✨ Sparkles deactivated');
-        }
+      // Reset effects when not in meditative state
+      if (this.meditationSparkles) {
+        Object.values(this.sparkleFriendMap).forEach((sparkle) => {
+          if (sparkle && sparkle.parent) {
+            sparkle.parent.remove(sparkle);
+          }
+        });
+        this.sparkleFriendMap = {};
+        this.meditationSparkles = false;
+        console.log("✨ Sparkles deactivated");
+      }
 
-        if (this.originalCameraPosition) {
-            this.camera.position.y += (this.originalCameraPosition.y - this.camera.position.y) * 0.05;
-            this.camera.position.z += (this.originalCameraPosition.z - this.camera.position.z) * 0.05;
-        }
+      // Reset Camera
+      if (this.originalCameraPosition) {
+        this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, this.originalCameraPosition.y, this.meditationParams.cameraSpeed);
+        this.camera.position.z = THREE.MathUtils.lerp(this.camera.position.z, this.originalCameraPosition.z, this.meditationParams.cameraSpeed);
 
-        if (this.skyUniforms) {
-            this.skyUniforms["turbidity"].value += (10 - this.skyUniforms["turbidity"].value) * 0.1;
-            this.skyUniforms["rayleigh"].value += (2 - this.skyUniforms["rayleigh"].value) * 0.1;
+        // Stop adjusting once reset is complete
+        if (
+          Math.abs(this.camera.position.y - this.originalCameraPosition.y) < 0.01 &&
+          Math.abs(this.camera.position.z - this.originalCameraPosition.z) < 0.01
+        ) {
+          this.originalCameraPosition = null;
         }
+      }
 
-        if (this.scene.fog) {
-            this.scene.fog.density = 0.0002;
-        }
+      // Reset Sky
+      if (this.skyUniforms) {
+        this.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(this.skyUniforms["turbidity"].value, this.meditationParams.skyTurbidityStart, 0.1);
+        this.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(this.skyUniforms["rayleigh"].value, this.meditationParams.skyRayleighStart, 0.1);
+      }
     }
-}
+  }
 
-
-  // Add this method to detect motion in specific regions
+  // detect motion in specific regions
   detectRegionalMotion(frame1, frame2) {
     const regions = [];
     const regionSize = this.meditationParams.regionSize;
@@ -605,7 +593,7 @@ export class ThreeJSApp {
       waterNormals: new THREE.TextureLoader().load("../img/waternormals.jpeg", function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }),
-      alpha: 0.,
+      alpha: 0,
       sunDirection: new THREE.Vector3(),
       sunColor: 0xffffff,
       waterColor: 0x001e0f,
