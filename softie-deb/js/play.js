@@ -146,7 +146,7 @@ export class ThreeJSApp {
         OPACITY: 0.54,
       },
       ROTATOR: {
-        OPACITY: 0.4
+        OPACITY: 0.4,
       },
     },
     ANIMATION: {
@@ -931,8 +931,20 @@ export class ThreeJSApp {
       ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.y,
       ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.z
     );
-    this.rot2 = this.makeRotatorObjInstance(torusKnotGeometry, 0x171717, 30, 0, -17.32);
-    this.rot3 = this.makeRotatorObjInstance(torusKnotGeometry, 0x17971a, 0, 0, 34.64);
+    this.rot2 = this.makeRotatorObjInstance(
+      torusKnotGeometry,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT2.color,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT2.x,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT2.y,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT2.z
+    );
+    this.rot3 = this.makeRotatorObjInstance(
+      torusKnotGeometry,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT3.color,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT3.x,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT3.y,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT3.z
+    );
   }
 
   makeRotatorObjInstance(geometry, color, x, y, z) {
@@ -1689,7 +1701,7 @@ class AudioManager {
       this.rot3,
     ];
 
-    this.seaSounds = [this.createAudio("../audio/sea.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SEA), , this.createAudio("../audio/sea.wav")];
+    this.seaSounds = [this.createAudio("../audio/sea.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SEA), this.createAudio("../audio/sea.wav")];
 
     console.log("Rot sounds initialized:", {
       rot1: this.rot1,
