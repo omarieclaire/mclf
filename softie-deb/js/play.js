@@ -8,71 +8,190 @@ import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
 THREE.ImageUtils.crossOrigin = "";
 
-// Particle system for ambient floating effects
-class ParticleSystem {
-  constructor(scene) {
-    console.log("🎆 Initializing particle system");
-    const particleCount = 1000;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-
-    // Initialize particles in a dome shape above the water
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      const radius = 500 * Math.random();
-      const theta = 2 * Math.PI * Math.random();
-      const y = 100 * Math.random() + 50;
-
-      positions[i] = radius * Math.cos(theta);
-      positions[i + 1] = y;
-      positions[i + 2] = radius * Math.sin(theta);
-
-      colors[i] = 0.9 + Math.random() * 0.1;
-      colors[i + 1] = 0.9 + Math.random() * 0.1;
-      colors[i + 2] = 1.0;
-    }
-
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-
-    const material = new THREE.PointsMaterial({
-      size: 2,
-      transparent: true,
-      opacity: 0.5,
-      vertexColors: true,
-      blending: THREE.AdditiveBlending,
-    });
-
-    this.particles = new THREE.Points(geometry, material);
-    scene.add(this.particles);
-  }
-
-  // Update particle positions and opacity based on meditation level
-  update(stillnessLevel) {
-    const time = Date.now() * 0.0001;
-    const positions = this.particles.geometry.attributes.position.array;
-
-    for (let i = 0; i < positions.length; i += 3) {
-      positions[i + 1] += Math.sin(time + positions[i] * 0.1) * 0.1 * stillnessLevel;
-    }
-
-    this.particles.geometry.attributes.position.needsUpdate = true;
-    this.particles.material.opacity = 0.2 + stillnessLevel * 0.3;
-  }
-}
-
 // Main application class to encapsulate all functionalities
 export class ThreeJSApp {
+  static CONFIG = {
+    COUNTS: {
+      FRIENDS: 40,
+      MEDI_QUESTIONS: 3,
+    },
+    SKY: {
+      BRIGHTNESS: 10,
+      RAYLEIGH: 10,
+      MIE_COEFFICIENT: 0.009,
+      MIE_DIRECTIONAL_G: 0.8,
+      DEFAULT_TURBIDITY: 10,
+    },
+    WATER: {
+      DISTORTION_SCALE: 3.7,
+      DEFAULT_COLOR: 0x001e0f,
+      GEOMETRY_SIZE: 10000,
+      TEXTURE_SIZE: 512,
+    },
+    CAMERA: {
+      FOV: 55,
+      NEAR: 1,
+      FAR: 20000,
+      INITIAL_POSITION: {
+        x: 0,
+        y: 0,
+        z: 200,
+      },
+      MAX_POLAR_ANGLE: Math.PI * 0.499,
+      MIN_DISTANCE: 10.0,
+      MAX_DISTANCE: 800.0,
+      DAMPING_FACTOR: 0.05,
+      KEY_PAN_SPEED: 50,
+    },
+    FLYING_OBJECTS: {
+      CRULLER: {
+        RADIUS: 0.8,
+        TUBE: 0.1,
+        TUBULAR_SEGMENTS: 300,
+        RADIAL_SEGMENTS: 7,
+        P: 5,
+        Q: 7,
+        TWIST_AMOUNT: 0.5,
+      },
+      GIANT_LOOP: {
+        RADIUS: 18,
+        TUBE: 0.8,
+        RADIAL_SEGMENTS: 21,
+        TUBULAR_SEGMENTS: 100,
+        ARC: 6.3,
+        TWIST_AMOUNT: 0.2,
+      },
+    },
+    OBJECTS: {
+      CENTER: {
+        TORUS_KNOT: {
+          RADIUS: 2.7,
+          TUBE: 1.1,
+          TUBULAR_SEGMENTS: 300,
+          RADIAL_SEGMENTS: 20,
+          P: 2,
+          Q: 3,
+          SCALE: 0.75,
+        },
+        SPHERE: {
+          RADIUS: 2,
+          WIDTH_SEGMENTS: 30,
+          HEIGHT_SEGMENTS: 20,
+          PHI_SEGMENTS: 30,
+          SCALE: 3.5,
+        },
+      },
+      ROTATOR: {
+        POSITIONS: {
+          ROT1: { x: -30, y: 0, z: -17.32, color: 0x686868 },
+          ROT2: { x: 30, y: 0, z: -17.32, color: 0x171717 },
+          ROT3: { x: 0, y: 0, z: 34.64, color: 0x17971a },
+        },
+        SPHERE: {
+          RADIUS: 2,
+          WIDTH_SEGMENTS: 30,
+          HEIGHT_SEGMENTS: 20,
+          PHI_SEGMENTS: 30,
+          SCALE: 1.5,
+          MATERIAL: {
+            COLOR: 0x7d7d7d,
+            OPACITY: 0.2,
+          },
+        },
+        SPHERE_SCALE: 1.5,
+      },
+    },
+    AUDIO: {
+      VOLUMES: {
+        FRIEND: 0.03,
+        SPECIAL: 0.08,
+        SEA: 0.09,
+        BACKGROUND: 0.09,
+      },
+    },
+    LIGHTS: {
+      AMBIENT: {
+        COLOR: 0x555555,
+      },
+      DIRECTIONAL: {
+        LIGHT1: {
+          COLOR: 0xffffff,
+          INTENSITY: 0.5,
+          POSITION: { x: 5, y: 10, z: 2 },
+        },
+        LIGHT2: {
+          COLOR: 0xffffff,
+          INTENSITY: 1,
+          POSITION: { x: -1, y: 2, z: 4 },
+        },
+        LIGHT3: {
+          COLOR: 0xff8c19,
+          INTENSITY: 1,
+          POSITION: { x: 0, y: 0, z: 1 },
+        },
+      },
+      FOG: {
+        COLOR: 15655413,
+        DENSITY: 0.0002,
+      },
+    },
+    MATERIALS: {
+      DEFAULT_OPACITY: 0.5,
+      EMISSIVE_COLOR: 0xff0000,
+      CENTER_SPHERE: {
+        COLOR: 0x7d7d7d,
+        OPACITY: 0.2,
+      },
+      TWIST: {
+        OPACITY: 0.54,
+      },
+      ROTATOR: {
+        OPACITY: 0.4
+      },
+    },
+    ANIMATION: {
+      CENTER_OBJECT: {
+        Y_AMPLITUDE: 20,
+        Y_OFFSET: 5,
+        ROTATION_X_SPEED: 0.5,
+        ROTATION_Z_SPEED: 0.51,
+      },
+      FRIENDS: {
+        Y_AMPLITUDE: 40,
+        Y_OFFSET: 35,
+        ROTATION_X_AMPLITUDE: 2,
+        ROTATION_X_OFFSET: 1,
+        ROTATION_Z_AMPLITUDE: 5,
+        ROTATION_Z_OFFSET: 1,
+      },
+    },
+    POSITIONING: {
+      RANDOM: {
+        X: { MIN: -500, MAX: 400 }, // -500 to (900-500=400)
+        Y: { MIN: -5, MAX: 145 }, // -5 to (150-5=145)
+        Z: { MIN: -600, MAX: 300 }, // -600 to (900-600=300)
+      },
+    },
+  };
+
+  activeEffects = {
+    gentle: false,
+    moderate: false,
+    deep: false,
+    profound: false,
+  };
+
   constructor() {
     this.container = document.getElementById("container");
     this.currentLanguage = localStorage.getItem("lang") || "es";
     this.mouse = new THREE.Vector2();
     this.INTERSECTED = null;
     this.theta = 0;
-    this.skyBright = 10;
-    this.numberOfFriends = 40;
+    this.numberOfFriends = ThreeJSApp.CONFIG.COUNTS.FRIENDS;
+    this.numberOfMediQuestions = ThreeJSApp.CONFIG.COUNTS.MEDI_QUESTIONS;
+    this.skyBright = ThreeJSApp.CONFIG.SKY.BRIGHTNESS;
+
     this.fadeAmount = 1 / this.numberOfFriends;
-    this.numberOfMediQuestions = 3;
     this.soundMuted = false;
     this.initialFriendYPositions = Array.from({ length: this.numberOfFriends * 10 }, () => Math.random());
     this.sparkleFriendMap = {};
@@ -85,9 +204,9 @@ export class ThreeJSApp {
     this.flyingSpheres = [];
     this.flyingSpheresOnScreen = [];
     this.mediQuestions = [
-      "Close your eyes and take 3 slow deep breaths.",
-      "Stretch your muscles. Stretch your hands, your feet, your legs, your arms, your face, your neck, your back, and sink into your own softness.",
-      "What do you need right now? Can you give it to yourself, even in the smallest way?",
+      "We love you as you are",
+      "Stretch your muscles? Stretch your hands, your feet, your legs, your arms, your face, your neck, your back. Sink into your own softness.",
+      "I made this game for you. Yes, you are winning",
     ];
     this.friendQuestions = [
       "What did you learn today?",
@@ -123,13 +242,13 @@ export class ThreeJSApp {
     this.stillnessLevel = 0;
     this.lastMotionTime = Date.now();
     this.isInMeditativeState = false;
-    this.particleSystem = null;
     this.originalWaterColor = 0x001e0f;
     this.meditativeWaterColor = 0x000066; // Much darker blue
 
     this.debugMode = true;
 
     // cv stuff
+
     this.initOpenCV();
 
     this.noMovementDetected = false;
@@ -151,13 +270,20 @@ export class ThreeJSApp {
       skyRayleighStart: 10,
       skyRayleighEnd: 2,
 
+      skyTransitionDuration: 3000,
+
       // Sparkle effects
       sparkleThreshold: 0.8, // stillness level needed for sparkles
       sparkleSpread: 800,
       sparkleLightness: 0.2,
       sparkleSize: 5,
-      sparkleQuantity: 50,
-      sparkleNumSets: 50,
+      sparkleQuantity: 100,
+      sparkleNumSets: 100,
+
+      sunIntensity: 1,
+      stillnessThreshold: 0.8,
+      transitionSpeed: 0.1,
+      effectIntensity: 1,
 
       // Movement effects
       rotationSlowdown: 0.9, // how much to slow rotation (0-1)
@@ -217,9 +343,15 @@ export class ThreeJSApp {
 
   mkGoodPosition() {
     return {
-      x: Math.random() * 900 - 500,
-      y: Math.random() * 150 - 5,
-      z: Math.random() * 900 - 600,
+      x:
+        Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN) +
+        ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN,
+      y:
+        Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN) +
+        ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN,
+      z:
+        Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN) +
+        ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN,
     };
   }
 
@@ -341,7 +473,7 @@ export class ThreeJSApp {
         console.error("Error accessing the camera:", err.name, err.message);
       });
   }
-
+  // Replace your startVideoProcessing() with:
   startVideoProcessing() {
     if (typeof cv === "undefined") {
       console.error("OpenCV is not loaded!");
@@ -353,7 +485,6 @@ export class ThreeJSApp {
 
     console.log("OpenCV is loaded, starting video processing");
 
-    // Make canvas visible during testing
     canvasOutput.style.display = "block";
     canvasOutput.style.position = "fixed";
     canvasOutput.style.top = "260px";
@@ -364,35 +495,46 @@ export class ThreeJSApp {
 
     try {
       const cap = new cv.VideoCapture(video);
-      console.log("VideoCapture created");
-
       const frame1 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
       const frame2 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
       const gray1 = new cv.Mat();
       const gray2 = new cv.Mat();
       const diff = new cv.Mat();
 
-      console.log("Matrices created");
-
       let firstFrame = true;
       let frameCount = 0;
+      let isProcessing = true; // Flag to control processing
+
+      const cleanup = () => {
+        frame1.delete();
+        frame2.delete();
+        gray1.delete();
+        gray2.delete();
+        diff.delete();
+        isProcessing = false;
+      };
+
+      // Add cleanup on page unload
+      window.addEventListener("beforeunload", cleanup);
 
       const processVideo = () => {
         try {
-          if (!video.paused && !video.ended) {
+          if (!isProcessing || video.paused || video.ended) {
+            cleanup();
+            return;
+          }
+
+          if (cap !== null) {
             cap.read(frame2);
             cv.cvtColor(frame2, gray2, cv.COLOR_RGBA2GRAY);
 
             if (firstFrame) {
               gray2.copyTo(gray1);
               firstFrame = false;
-              console.log("First frame processed");
             }
 
             cv.absdiff(gray1, gray2, diff);
             cv.threshold(diff, diff, 25, 255, cv.THRESH_BINARY);
-
-            // Show the processed frame
             cv.imshow("canvasOutput", diff);
 
             const nonZero = cv.countNonZero(diff);
@@ -414,6 +556,7 @@ export class ThreeJSApp {
           this.motionDetectionId = requestAnimationFrame(processVideo);
         } catch (err) {
           console.error("Video processing error:", err);
+          cleanup();
         }
       };
 
@@ -424,9 +567,33 @@ export class ThreeJSApp {
   }
 
   onMotionDetected() {
-    this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2); // Faster decrease
+    this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2);
     this.lastMotionTime = Date.now();
     this.isInMeditativeState = false;
+
+    // Reset active effects tracking
+    this.activeEffects = {
+      gentle: false,
+      moderate: false,
+      deep: false,
+      profound: false,
+    };
+
+    // Force reset sky colors
+    if (this.skyUniforms) {
+      this.skyUniforms["turbidity"].value = this.meditationParams.skyTurbidityStart;
+      this.skyUniforms["rayleigh"].value = this.meditationParams.skyRayleighStart;
+    }
+
+    // Force reset water color
+    if (this.water) {
+      this.water.material.uniforms.waterColor.value.setHex(this.meditationParams.waterColorStart);
+      this.water.material.uniforms["distortionScale"].value = this.meditationParams.waterDistortionStart;
+    }
+
+    this.parameters.inclination = 0.49; // Back to daytime
+    this.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+
     this.logDebug(`Motion detected - stillness level: ${this.stillnessLevel.toFixed(2)}`);
   }
 
@@ -448,10 +615,15 @@ export class ThreeJSApp {
     // Determine the current state
     let currentState = "Normal";
     if (this.isInMeditativeState) {
-      if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
-      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
-      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
-      else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) {
+        currentState = "Profound";
+      } else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) {
+        currentState = "Deep";
+      } else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) {
+        currentState = "Moderate";
+      } else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) {
+        currentState = "Gentle";
+      }
     }
 
     // Log the debug information
@@ -469,12 +641,10 @@ export class ThreeJSApp {
       this.water.material.uniforms["distortionScale"].value =
         this.meditationParams.waterDistortionStart -
         waterColorProgress * (this.meditationParams.waterDistortionStart - this.meditationParams.waterDistortionEnd);
-    }
 
-    // Handle meditation states
-    if (this.isInMeditativeState) {
+      // Handle meditation states
       // Gentle state - Sparkles
-      if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle && !this.meditationSparkles) {
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle && !this.activeEffects.gentle) {
         this.makeSparkles(
           this.centerObj,
           this.meditationParams.sparkleSpread,
@@ -484,48 +654,67 @@ export class ThreeJSApp {
           this.meditationParams.sparkleNumSets
         );
         this.meditationSparkles = true;
+        this.activeEffects.gentle = true;
         console.log("✨ Sparkles activated");
       }
 
       // Moderate state - Sky changes
-      if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate && this.skyUniforms) {
-        const skyProgress = Math.min(
-          (timeSinceMotion - this.meditationParams.stillnessThresholds.moderate) / this.meditationParams.skyTransitionDuration,
-          1
-        );
+      if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate && !this.activeEffects.moderate) {
+        this.activeEffects.moderate = true;
+      }
+      if (this.activeEffects.moderate && this.skyUniforms) {
+        const skyProgress = this.stillnessLevel; // Use stillness level directly instead of time-based transition
 
         this.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
           this.meditationParams.skyTurbidityStart,
           this.meditationParams.skyTurbidityEnd,
-          skyProgress * this.stillnessLevel
+          skyProgress
         );
 
         this.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
           this.meditationParams.skyRayleighStart,
           this.meditationParams.skyRayleighEnd,
-          skyProgress * this.stillnessLevel
+          skyProgress
         );
       }
 
       // Deep state - Camera movement
       if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) {
-        if (!this.originalCameraPosition) {
+        if (!this.activeEffects.deep) {
           this.originalCameraPosition = this.camera.position.clone();
+          this.activeEffects.deep = true;
           console.log("📸 Starting camera movement");
         }
 
+        // Calculate overall darkness progress
+        const progress = Math.min(
+          (timeSinceMotion - this.meditationParams.stillnessThresholds.deep) /
+            (this.meditationParams.stillnessThresholds.profound - this.meditationParams.stillnessThresholds.deep),
+          1
+        );
+
+        // Smoothly transition both camera and sky
         const targetY = this.originalCameraPosition.y + 50;
         const targetZ = this.originalCameraPosition.z + 150;
-
         this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, targetY, this.meditationParams.cameraSpeed);
         this.camera.position.z = THREE.MathUtils.lerp(this.camera.position.z, targetZ, this.meditationParams.cameraSpeed);
+
+        // Transition from day to full night based on progress
+        const inclination = THREE.MathUtils.lerp(0.49, -0.5, progress);
+        this.parameters.inclination = inclination;
+        this.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
       }
     } else {
       // Reset effects when not in meditative state
       if (this.meditationSparkles) {
-        Object.values(this.sparkleFriendMap).forEach((sparkle) => {
-          if (sparkle && sparkle.parent) {
-            sparkle.parent.remove(sparkle);
+        Object.values(this.sparkleFriendMap).forEach((sparkleArray) => {
+          if (Array.isArray(sparkleArray)) {
+            // Check if it's an array
+            sparkleArray.forEach((sparkle) => {
+              if (sparkle && sparkle.parent) {
+                sparkle.parent.remove(sparkle);
+              }
+            });
           }
         });
         this.sparkleFriendMap = {};
@@ -586,18 +775,18 @@ export class ThreeJSApp {
   // cv stuff end
 
   initWater() {
-    const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
+    const waterGeometry = new THREE.PlaneGeometry(ThreeJSApp.CONFIG.WATER.GEOMETRY_SIZE, ThreeJSApp.CONFIG.WATER.GEOMETRY_SIZE);
     this.water = new Water(waterGeometry, {
-      textureWidth: 512,
-      textureHeight: 512,
+      textureWidth: ThreeJSApp.CONFIG.WATER.TEXTURE_SIZE,
+      textureHeight: ThreeJSApp.CONFIG.WATER.TEXTURE_SIZE,
       waterNormals: new THREE.TextureLoader().load("../img/waternormals.jpeg", function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }),
       alpha: 0,
       sunDirection: new THREE.Vector3(),
       sunColor: 0xffffff,
-      waterColor: 0x001e0f,
-      distortionScale: 3.7,
+      waterColor: ThreeJSApp.CONFIG.WATER.DEFAULT_COLOR,
+      distortionScale: ThreeJSApp.CONFIG.WATER.DISTORTION_SCALE,
       fog: this.scene.fog !== undefined,
     });
     this.water.rotation.x = -Math.PI / 2;
@@ -610,13 +799,13 @@ export class ThreeJSApp {
     this.scene.add(this.sky);
 
     this.skyUniforms = this.sky.material.uniforms;
-    this.skyUniforms["turbidity"].value = this.skyBright;
-    this.skyUniforms["rayleigh"].value = 10;
-    this.skyUniforms["mieCoefficient"].value = 0.009;
-    this.skyUniforms["mieDirectionalG"].value = 0.8;
+    this.skyUniforms["turbidity"].value = ThreeJSApp.CONFIG.SKY.DEFAULT_TURBIDITY;
+    this.skyUniforms["rayleigh"].value = ThreeJSApp.CONFIG.SKY.RAYLEIGH;
+    this.skyUniforms["mieCoefficient"].value = ThreeJSApp.CONFIG.SKY.MIE_COEFFICIENT;
+    this.skyUniforms["mieDirectionalG"].value = ThreeJSApp.CONFIG.SKY.MIE_DIRECTIONAL_G;
 
     this.parameters = {
-      inclination: 0.49,
+      inclination: -0.5,
       azimuth: 0.205,
     };
 
@@ -638,45 +827,78 @@ export class ThreeJSApp {
   }
 
   initLights() {
-    const ambient = new THREE.AmbientLight(0x555555);
-    this.scene.add(ambient);
-
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight1.position.set(5, 10, 2);
+    const ambient = new THREE.AmbientLight(ThreeJSApp.CONFIG.LIGHTS.AMBIENT.COLOR);
+    const directionalLight1 = new THREE.DirectionalLight(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT1.COLOR,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT1.INTENSITY
+    );
+    directionalLight1.position.set(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT1.POSITION.x,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT1.POSITION.y,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT1.POSITION.z
+    );
     this.scene.add(directionalLight1);
 
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight2.position.set(-1, 2, 4);
+    const directionalLight2 = new THREE.DirectionalLight(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT2.COLOR,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT2.INTENSITY
+    );
+    directionalLight2.position.set(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT2.POSITION.x,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT2.POSITION.y,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT2.POSITION.z
+    );
+
     this.scene.add(directionalLight2);
 
-    const directionalLight3 = new THREE.DirectionalLight(0xff8c19);
-    directionalLight3.position.set(0, 0, 1);
+    const directionalLight3 = new THREE.DirectionalLight(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT3.COLOR,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT3.INTENSITY
+    );
+    directionalLight3.position.set(
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT3.POSITION.x,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT3.POSITION.y,
+      ThreeJSApp.CONFIG.LIGHTS.DIRECTIONAL.LIGHT3.POSITION.z
+    );
+
     this.scene.add(directionalLight3);
 
-    this.scene.fog = new THREE.FogExp2(15655413, 0.0002);
+    this.scene.fog = new THREE.FogExp2(ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR, ThreeJSApp.CONFIG.LIGHTS.FOG.DENSITY);
     this.renderer.setClearColor(this.scene.fog.color);
   }
 
   initControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.maxPolarAngle = Math.PI * 0.499;
+    this.controls.maxPolarAngle = ThreeJSApp.CONFIG.CAMERA.MAX_POLAR_ANGLE;
     this.controls.target.set(0, 10, 0);
-    this.controls.minDistance = 10.0;
-    this.controls.maxDistance = 800.0;
+    this.controls.minDistance = ThreeJSApp.CONFIG.CAMERA.MIN_DISTANCE;
+    this.controls.maxDistance = ThreeJSApp.CONFIG.CAMERA.MAX_DISTANCE;
     this.controls.listenToKeyEvents(window);
     this.controls.screenSpacePanning = false;
     this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.05;
-    this.controls.keyPanSpeed = 50;
+    this.controls.dampingFactor = ThreeJSApp.CONFIG.CAMERA.DAMPING_FACTOR;
+    this.controls.keyPanSpeed = ThreeJSApp.CONFIG.CAMERA.KEY_PAN_SPEED;
     this.controls.update();
   }
 
   initCenterObjects() {
-    const torusKnotGeometry = new THREE.TorusKnotGeometry(2.7, 1.1, 300, 20, 2, 3);
-    const sphereGeometry = new THREE.SphereGeometry(2, 30, 20, 30);
+    const torusKnotGeometry = new THREE.TorusKnotGeometry(
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+    );
+    const sphereGeometry = new THREE.SphereGeometry(
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.RADIUS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.WIDTH_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.HEIGHT_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.PHI_SEGMENTS
+    );
     const centerObjSphereMaterial = new THREE.MeshLambertMaterial({
-      color: 0x7d7d7d,
-      opacity: 0.2,
+      color: ThreeJSApp.CONFIG.MATERIALS.CENTER_SPHERE.COLOR,
+      opacity: ThreeJSApp.CONFIG.MATERIALS.CENTER_SPHERE.OPACITY,
       transparent: true,
       emissive: 0x000000,
     });
@@ -686,15 +908,29 @@ export class ThreeJSApp {
     this.centerObjects.push(centerWorldContainer);
 
     this.centerObj = new THREE.Mesh(torusKnotGeometry, this.buildTwistMaterial(20.0));
-    this.centerObj.scale.set(0.75, 0.75, 0.75);
+    this.centerObj.scale.set(
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE
+    );
     centerWorldContainer.add(this.centerObj);
     this.centerObjects.push(this.centerObj);
 
     const centerObjSphere = new THREE.Mesh(sphereGeometry, centerObjSphereMaterial);
-    centerObjSphere.scale.set(3.5, 3.5, 3.5);
+    centerObjSphere.scale.set(
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.CENTER.SPHERE.SCALE
+    );
     this.centerObj.add(centerObjSphere);
 
-    this.rot1 = this.makeRotatorObjInstance(torusKnotGeometry, 0x686868, -30, 0, -17.32);
+    this.rot1 = this.makeRotatorObjInstance(
+      torusKnotGeometry,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.color,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.x,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.y,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.POSITIONS.ROT1.z
+    );
     this.rot2 = this.makeRotatorObjInstance(torusKnotGeometry, 0x171717, 30, 0, -17.32);
     this.rot3 = this.makeRotatorObjInstance(torusKnotGeometry, 0x17971a, 0, 0, 34.64);
   }
@@ -702,7 +938,7 @@ export class ThreeJSApp {
   makeRotatorObjInstance(geometry, color, x, y, z) {
     const rotatorMaterial = new THREE.MeshLambertMaterial({
       color: color,
-      opacity: 0.4,
+      opacity: ThreeJSApp.CONFIG.MATERIALS.ROTATOR.OPACITY,
       transparent: true,
       emissive: 0x000000,
     });
@@ -711,22 +947,31 @@ export class ThreeJSApp {
     this.centerObjects.push(rotatorObjInstance);
     this.scene.add(rotatorObjInstance);
 
-    const sphereGeometry = new THREE.SphereGeometry(2, 30, 20, 30);
+    const sphereGeometry = new THREE.SphereGeometry(
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.RADIUS,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.WIDTH_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.HEIGHT_SEGMENTS,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.PHI_SEGMENTS
+    );
     const centerObjSphereMaterial = new THREE.MeshLambertMaterial({
-      color: 0x7d7d7d,
-      opacity: 0.2,
+      color: ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.MATERIAL.COLOR,
+      opacity: ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.MATERIAL.OPACITY,
       transparent: true,
       emissive: 0x000000,
     });
     const rotatorSphere = new THREE.Mesh(sphereGeometry, centerObjSphereMaterial);
-    rotatorSphere.scale.set(1.5, 1.5, 1.5);
+    rotatorSphere.scale.set(
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.SCALE,
+      ThreeJSApp.CONFIG.OBJECTS.ROTATOR.SPHERE.SCALE
+    );
     rotatorObjInstance.add(rotatorSphere);
     return rotatorObjInstance;
   }
 
   buildTwistMaterial(amount) {
     const material = new THREE.MeshNormalMaterial();
-    material.opacity = 0.54;
+    material.opacity = ThreeJSApp.CONFIG.MATERIALS.TWIST.OPACITY;
     material.transparent = true;
     material.onBeforeCompile = function (shader) {
       shader.uniforms.time = { value: 0 };
@@ -843,15 +1088,28 @@ export class ThreeJSApp {
   }
 
   createFlyingCruller(x, y, z) {
-    const geometry = new THREE.TorusKnotGeometry(0.8, 0.1, 300, 7, 5, 7);
-    const cruller = new THREE.Mesh(geometry, this.buildTwistMaterial(0.5));
+    const geometry = new THREE.TorusKnotGeometry(
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.RADIUS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.TUBE,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.TUBULAR_SEGMENTS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.RADIAL_SEGMENTS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.P,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.Q
+    );
+    const cruller = new THREE.Mesh(geometry, this.buildTwistMaterial(ThreeJSApp.CONFIG.FLYING_OBJECTS.CRULLER.TWIST_AMOUNT));
     cruller.position.set(x, y, z);
     return cruller;
   }
 
   createGiantLoop(x, y, z) {
-    const geometry = new THREE.TorusGeometry(18, 0.8, 21, 100, 6.3);
-    const loop = new THREE.Mesh(geometry, this.buildTwistMaterial(0.2));
+    const geometry = new THREE.TorusGeometry(
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.RADIUS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.TUBE,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.RADIAL_SEGMENTS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.TUBULAR_SEGMENTS,
+      ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.ARC
+    );
+    const loop = new THREE.Mesh(geometry, this.buildTwistMaterial(ThreeJSApp.CONFIG.FLYING_OBJECTS.GIANT_LOOP.TWIST_AMOUNT));
     loop.position.set(x, y, z);
     return loop;
   }
@@ -863,7 +1121,7 @@ export class ThreeJSApp {
         o.friendID = id;
         o.material = new THREE.MeshLambertMaterial({
           color: Math.random() * 0xffffff,
-          opacity: 0.5,
+          opacity: ThreeJSApp.CONFIG.MATERIALS.DEFAULT_OPACITY,
           transparent: true,
         });
       }
@@ -877,10 +1135,10 @@ export class ThreeJSApp {
   }
 
   initGUI() {
-    // const gui = new GUI();
     const gui = new GUI({ autoPlace: true, load: false });
-    const audioFolder = gui.addFolder("Audio");
 
+    // Audio Folder
+    const audioFolder = gui.addFolder("Audio");
     audioFolder
       .add(
         {
@@ -912,7 +1170,6 @@ export class ThreeJSApp {
       )
       .name("Toggle Mute");
 
-    // Add volume control
     audioFolder
       .add({ volume: 0.09 }, "volume", 0, 1)
       .name("Sea Volume")
@@ -920,12 +1177,9 @@ export class ThreeJSApp {
         this.audioManager.seaSounds[0].volume = value;
       });
 
-    audioFolder.open();
-
     // Objects parameters
     const objectsFolder = gui.addFolder("Objects");
     objectsFolder.add(this.centerObj.scale, "x", 0.1, 5).name("Center Object Scale");
-    // Example of adjusting opacity for all friend objects
     objectsFolder
       .add({ opacity: 0.5 }, "opacity", 0.1, 1.0, 0.01)
       .name("FriendsOpacity")
@@ -939,8 +1193,7 @@ export class ThreeJSApp {
         });
       });
 
-    // In initGUI(), replace the meditation folder section with:
-
+    // Meditation Folder and Sub-folders
     const meditationFolder = gui.addFolder("Meditation Effects");
 
     // Timing controls
@@ -956,6 +1209,26 @@ export class ThreeJSApp {
     stillnessFolder.add(this.meditationParams, "stillnessDecrease", 0.01, 0.5).name("Drop Speed");
     stillnessFolder.add(this.meditationParams, "stillnessDelay", 0, 5000).name("Delay (ms)");
 
+    // Sky effects
+    const skyFolder = meditationFolder.addFolder("Sky Effects");
+    skyFolder.add(this.skyUniforms["rayleigh"], "value", 0, 10).name("Current Rayleigh");
+    skyFolder.add(this.skyUniforms["turbidity"], "value", 0, 20).name("Current Turbidity");
+    skyFolder.add(this.skyUniforms["mieCoefficient"], "value", 0, 1).name("Mie Coefficient");
+    skyFolder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Mie Directional");
+    skyFolder
+      .add(this.parameters, "inclination", -0.5, 0.5) // Instead of 0 to 1
+
+      .onChange(() => {
+        this.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+      })
+      .name("Inclination (Day/Night)");
+    skyFolder
+      .add(this.parameters, "azimuth", 0, 1)
+      .onChange(() => {
+        this.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+      })
+      .name("Azimuth (Sun Position)");
+
     // Water effects
     const waterFolder = meditationFolder.addFolder("Water Effects");
     waterFolder
@@ -968,13 +1241,70 @@ export class ThreeJSApp {
       .onChange((value) => (this.meditationParams.waterColorEnd = value));
     waterFolder.add(this.meditationParams, "waterDistortionStart", 0, 8).name("Start Distortion");
     waterFolder.add(this.meditationParams, "waterDistortionEnd", 0, 8).name("End Distortion");
+    waterFolder.add(this.water.material.uniforms.distortionScale, "value", 0, 10).name("Live Distortion");
+    waterFolder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Water Alpha");
+    waterFolder
+      .addColor(
+        {
+          color: this.water.material.uniforms.waterColor.value.getHex(),
+        },
+        "color"
+      )
+      .onChange((value) => {
+        this.water.material.uniforms.waterColor.value.setHex(value);
+      })
+      .name("Live Water Color");
+    waterFolder
+      .addColor(
+        {
+          color: this.water.material.uniforms.sunColor.value.getHex(),
+        },
+        "color"
+      )
+      .onChange((value) => {
+        this.water.material.uniforms.sunColor.value.setHex(value);
+      })
+      .name("Water Sun Color");
 
-    // Sky effects
-    const skyFolder = meditationFolder.addFolder("Sky Effects");
-    skyFolder.add(this.meditationParams, "skyTurbidityStart", 0, 20).name("Start Turbidity");
-    skyFolder.add(this.meditationParams, "skyTurbidityEnd", 0, 20).name("End Turbidity");
-    skyFolder.add(this.meditationParams, "skyRayleighStart", 0, 10).name("Start Rayleigh");
-    skyFolder.add(this.meditationParams, "skyRayleighEnd", 0, 10).name("End Rayleigh");
+    // Environment/Fog
+    const envFolder = meditationFolder.addFolder("Environment");
+    envFolder.add(this.scene.fog, "density", 0, 0.01).name("Fog Density");
+    envFolder
+      .addColor(
+        {
+          color: this.scene.fog.color.getHex(),
+        },
+        "color"
+      )
+      .onChange((value) => {
+        this.scene.fog.color.setHex(value);
+        this.renderer.setClearColor(this.scene.fog.color);
+      })
+      .name("Fog Color");
+
+    // Lighting
+    const lightFolder = meditationFolder.addFolder("Lighting");
+    const directionalLight1 = this.scene.children.find((child) => child.type === "DirectionalLight");
+    if (directionalLight1) {
+      lightFolder.add(directionalLight1, "intensity", 0, 2).name("Sun Light Intensity");
+      lightFolder
+        .addColor(
+          {
+            color: directionalLight1.color.getHex(),
+          },
+          "color"
+        )
+        .onChange((value) => {
+          directionalLight1.color.setHex(value);
+        })
+        .name("Sun Light Color");
+    }
+
+    // Meditation State Parameters
+    const stateFolder = meditationFolder.addFolder("State Parameters");
+    stateFolder.add(this.meditationParams, "stillnessThreshold", 0, 1).name("Stillness Threshold");
+    stateFolder.add(this.meditationParams, "transitionSpeed", 0.01, 1).name("Effect Speed");
+    stateFolder.add(this.meditationParams, "effectIntensity", 0, 2).name("Effect Intensity");
 
     // Particle controls
     const particleFolder = meditationFolder.addFolder("Particle Effects");
@@ -991,18 +1321,14 @@ export class ThreeJSApp {
     debugFolder.add(debugInfo, "currentStillness").name("Stillness Level").listen();
     debugFolder.add(debugInfo, "timeSinceMotion").name("Time (s)").listen();
 
-    // Update debug values in render loop
     setInterval(() => {
       debugInfo.currentStillness = this.stillnessLevel;
       debugInfo.timeSinceMotion = ((Date.now() - this.lastMotionTime) / 1000).toFixed(1);
     }, 100);
 
+    // Testing Controls
     const testingFolder = meditationFolder.addFolder("Testing Controls");
-    const testingParams = {
-      timingMode: "Normal", // Default to normal timings
-    };
-
-    // Add a dropdown to switch between timing modes
+    const testingParams = { timingMode: "Normal" };
     testingFolder
       .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
       .name("Timing Mode")
@@ -1010,41 +1336,41 @@ export class ThreeJSApp {
         switch (value) {
           case "Normal":
             this.meditationParams.stillnessThresholds = {
-              gentle: 30000, // 30 seconds
-              moderate: 60000, // 1 minute
-              deep: 90000, // 1.5 minutes
-              profound: 120000, // 2 minutes
+              gentle: 30000,
+              moderate: 60000,
+              deep: 90000,
+              profound: 120000,
             };
             break;
           case "Quick Test":
             this.meditationParams.stillnessThresholds = {
-              gentle: 10000, // 10 seconds
-              moderate: 20000, // 20 seconds
-              deep: 30000, // 30 seconds
-              profound: 40000, // 40 seconds
+              gentle: 10000,
+              moderate: 20000,
+              deep: 30000,
+              profound: 40000,
             };
             break;
           case "Very Quick Test":
             this.meditationParams.stillnessThresholds = {
-              gentle: 3000, // 3 seconds
-              moderate: 6000, // 6 seconds
-              deep: 9000, // 9 seconds
-              profound: 12000, // 12 seconds
+              gentle: 3000,
+              moderate: 6000,
+              deep: 9000,
+              profound: 12000,
             };
             break;
         }
       });
 
-    testingFolder.open();
-
+    // Open folders
+    audioFolder.open();
+    objectsFolder.open();
     meditationFolder.open();
     timingFolder.open();
     stillnessFolder.open();
     debugFolder.open();
-
     skyFolder.open();
     waterFolder.open();
-    objectsFolder.open();
+    testingFolder.open();
   }
 
   onWindowResize() {
@@ -1185,7 +1511,11 @@ export class ThreeJSApp {
 
     const intersectsFriend = this.raycaster.intersectObjects(this.boxGroup.children, true);
     if (intersectsFriend.length > 0) {
-      this.audioManager.playFriendSound();
+      try {
+        this.audioManager.playFriendSound();
+      } catch (error) {
+        console.error("Error playing friend sound:", error);
+      }
       const currFriendID = intersectsFriend[0].object.friendID;
       const currModalID = `friendModalDivID${currFriendID}`;
       const currFriendModalDiv = document.getElementById(currModalID);
@@ -1280,27 +1610,31 @@ export class ThreeJSApp {
   }
 
   makeSparkles(source, spread, lightness, size, quantity, numOfSets) {
-    const sparkUniforms = {
-      pointTexture: { value: new THREE.TextureLoader().load("../img/spark1.png") },
-    };
-    const shaderMaterial = new THREE.ShaderMaterial({
-      uniforms: sparkUniforms,
-      vertexShader: document.getElementById("vertexshader").textContent,
-      fragmentShader: document.getElementById("fragmentshader").textContent,
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      transparent: true,
-      vertexColors: true,
-    });
+    if (!this.sparkleFriendMap[source.friendID]) {
+      this.sparkleFriendMap[source.friendID] = [];
+    }
 
-    const sparkGeometry = new THREE.BufferGeometry();
-    const sparkPositions = [];
-    const sparkColors = [];
-    const sparkSizes = [];
-    const sparkColor = new THREE.Color();
+    // Clear existing sparkles
+    this.sparkleFriendMap[source.friendID].forEach((sparkle) => {
+      if (sparkle && sparkle.parent) {
+        sparkle.parent.remove(sparkle);
+        sparkle.geometry.dispose();
+        sparkle.material.dispose();
+      }
+    });
+    this.sparkleFriendMap[source.friendID] = [];
 
     for (let x = 0; x < numOfSets; x++) {
-      for (let i = 0; i < quantity; i++) {
+      // Create single geometry for all particles in this set
+      const sparkGeometry = new THREE.BufferGeometry();
+      const sparkPositions = [];
+      const sparkColors = [];
+      const sparkSizes = [];
+      const sparkColor = new THREE.Color();
+
+      // Create many more particles for each set
+      for (let i = 0; i < quantity * numOfSets; i++) {
+        // Multiply by numOfSets to get more particles
         sparkPositions.push((Math.random() * 2 - 1) * spread);
         sparkPositions.push((Math.random() * 2 - 1) * spread);
         sparkPositions.push((Math.random() * 2 - 1) * spread);
@@ -1314,8 +1648,22 @@ export class ThreeJSApp {
       sparkGeometry.setAttribute("color", new THREE.Float32BufferAttribute(sparkColors, 3));
       sparkGeometry.setAttribute("size", new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
 
+      const sparkUniforms = {
+        pointTexture: { value: new THREE.TextureLoader().load("../img/spark1.png") },
+      };
+
+      const shaderMaterial = new THREE.ShaderMaterial({
+        uniforms: sparkUniforms,
+        vertexShader: document.getElementById("vertexshader").textContent,
+        fragmentShader: document.getElementById("fragmentshader").textContent,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+        vertexColors: true,
+      });
+
       const sparkleSystem = new THREE.Points(sparkGeometry, shaderMaterial);
-      this.sparkleFriendMap[source.friendID] = sparkleSystem;
+      this.sparkleFriendMap[source.friendID].push(sparkleSystem);
       source.add(sparkleSystem);
     }
   }
@@ -1323,26 +1671,25 @@ export class ThreeJSApp {
 
 class AudioManager {
   constructor() {
-    console.log("Initializing AudioManager");
     this.friendSounds = [
-      this.createAudio("../audio/friendSound.mp3", 0.02),
-      this.createAudio("../audio/friend1Sound.mp3", 0.02),
-      this.createAudio("../audio/friend2Sound.mp3", 0.02),
+      this.createAudio("../audio/friendSound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.FRIEND),
+      this.createAudio("../audio/friend1Sound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.FRIEND),
+      this.createAudio("../audio/friend2Sound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.FRIEND),
     ];
 
-    this.rot1 = this.createAudio("../audio/rot1Sound.mp3", 0.08);
-    this.rot2 = this.createAudio("../audio/rot2Sound.mp3", 0.08);
-    this.rot3 = this.createAudio("../audio/rot3Sound.mp3", 0.08);
+    this.rot1 = this.createAudio("../audio/rot1Sound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SPECIAL);
+    this.rot2 = this.createAudio("../audio/rot2Sound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SPECIAL);
+    this.rot3 = this.createAudio("../audio/rot3Sound.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SPECIAL);
 
     this.ambientMusicSounds = [
-      this.createAudio("../audio/background.mp3", 0.09),
+      this.createAudio("../audio/background.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.BACKGROUND),
       this.createAudio("../audio/emmanuelle.mp3"),
       this.rot1,
       this.rot2,
       this.rot3,
     ];
 
-    this.seaSounds = [this.createAudio("../audio/sea.mp3", 0.09), this.createAudio("../audio/sea.wav")];
+    this.seaSounds = [this.createAudio("../audio/sea.mp3", ThreeJSApp.CONFIG.AUDIO.VOLUMES.SEA), , this.createAudio("../audio/sea.wav")];
 
     console.log("Rot sounds initialized:", {
       rot1: this.rot1,
@@ -1358,6 +1705,13 @@ class AudioManager {
     });
   }
 
+  playFriendSound() {
+    let thisFriendSound = this.friendSounds[Math.floor(Math.random() * this.friendSounds.length)];
+    thisFriendSound = thisFriendSound.cloneNode();
+    thisFriendSound.volume = ThreeJSApp.CONFIG.AUDIO.VOLUMES.FRIEND;
+    thisFriendSound.play();
+  }
+
   playSpecialSound(specialSound, length) {
     if (!specialSound) {
       console.error("Special sound not initialized", new Error().stack);
@@ -1365,7 +1719,7 @@ class AudioManager {
     }
 
     this.pauseAmbientMusicSounds();
-    specialSound.volume = 0.08;
+    specialSound.volume = ThreeJSApp.CONFIG.AUDIO.VOLUMES.SPECIAL;
 
     specialSound
       .play()
