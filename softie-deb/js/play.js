@@ -779,7 +779,7 @@ export class ThreeJSApp {
     this.water = new Water(waterGeometry, {
       textureWidth: ThreeJSApp.CONFIG.WATER.TEXTURE_SIZE,
       textureHeight: ThreeJSApp.CONFIG.WATER.TEXTURE_SIZE,
-      waterNormals: new THREE.TextureLoader().load("../img/waternormals.jpeg", function (texture) {
+      waterNormals: new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }),
       alpha: 0,
@@ -1051,8 +1051,8 @@ export class ThreeJSApp {
   }
 
   loadModels() {
-    const jellyFishPromise = this.loadGLTFModel("../img/oct.glb");
-    const friendShapePromise = this.loadGLTFModel("../img/friend3.glb");
+    const jellyFishPromise = this.loadGLTFModel("./img/friend3.glb");
+    const friendShapePromise = this.loadGLTFModel("./img/friend3.glb");
 
     for (let i = 0; i < this.numberOfFriends; i++) {
       const position = this.mkGoodPosition();
@@ -1661,7 +1661,7 @@ export class ThreeJSApp {
       sparkGeometry.setAttribute("size", new THREE.Float32BufferAttribute(sparkSizes, 1).setUsage(THREE.DynamicDrawUsage));
 
       const sparkUniforms = {
-        pointTexture: { value: new THREE.TextureLoader().load("../img/spark1.png") },
+        pointTexture: { value: new THREE.TextureLoader().load("./img/spark1.png") },
       };
 
       const shaderMaterial = new THREE.ShaderMaterial({
