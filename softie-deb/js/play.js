@@ -135,7 +135,7 @@ class CameraProcessor {
         const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
 
         if (this.frameCount % 30 === 0) {
-          console.log(`Motion: ${motionPercentage.toFixed(2)}%`);
+          // console.log(`Motion: ${motionPercentage.toFixed(2)}%`);
         }
         this.frameCount++;
 
@@ -395,8 +395,8 @@ class MeditationEffects {
   }
 
   updateCameraPosition(progress) {
-    const targetY = this.originalCameraPosition.y + 50;
-    const targetZ = this.originalCameraPosition.z + 150;
+    const targetY = this.originalCameraPosition.y + 20;
+    const targetZ = this.originalCameraPosition.z + 10;
 
     this.app.camera.position.y = THREE.MathUtils.lerp(this.app.camera.position.y, targetY, this.app.meditationParams.cameraSpeed);
 
@@ -705,8 +705,6 @@ export class ThreeJSApp {
 
     this.debugMode = true;
     this.meditationEffects = new MeditationEffects(this);
-
-    // cv stuff
 
     this.initOpenCV();
 
