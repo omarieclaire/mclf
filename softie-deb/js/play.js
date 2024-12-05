@@ -203,56 +203,23 @@ class CameraProcessor {
     return regions;
   }
 }
-
 class MeditationEffects {
   constructor(app) {
-    if (!app) {
-      throw new Error("App reference is required for MeditationEffects");
-    }
-    // Store reference to main app for accessing ThreeJS objects
+    if (!app) throw new Error("App reference is required for MeditationEffects");
     this.app = app;
 
-    // Initialize meditation state
     this.stillnessLevel = 0;
+    this.movementLevel = 0;
     this.lastMotionTime = Date.now();
+    this.lastStillTime = Date.now();
     this.isInMeditativeState = false;
     this.meditationSparkles = false;
     this.originalCameraPosition = null;
+    this.sparkleSystems = null;
 
-    // Copy active effects from app if they exist, otherwise create new
-    this.activeEffects = app.activeEffects || {
-      gentle: false,
-      moderate: false,
-      deep: false,
-      profound: false,
-    };
-  }
+    this.lastWaterColor = new THREE.Color(ThreeJSApp.CONFIG.WATER.DEFAULT_COLOR);
 
-  logDebug(message) {
-    if (this.app && this.app.logDebug) {
-      this.app.logDebug(message);
-    } else {
-      console.log(message);
-    }
-  }
-
-  getCurrentState(timeSinceMotion) {
-    if (!this.isInMeditativeState) return "Normal";
-
-    const thresholds = this.app.meditationParams.stillnessThresholds;
-    if (timeSinceMotion > thresholds.profound) return "Profound";
-    if (timeSinceMotion > thresholds.deep) return "Deep";
-    if (timeSinceMotion > thresholds.moderate) return "Moderate";
-    if (timeSinceMotion > thresholds.gentle) return "Gentle";
-    return "Normal";
-  }
-
-  onMotionDetected() {
-    this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2);
-    this.lastMotionTime = Date.now();
-    this.isInMeditativeState = false;
-
-    // Add these reset actions
+    // Keep original activeEffects structure
     this.activeEffects = {
       gentle: false,
       moderate: false,
@@ -260,54 +227,129 @@ class MeditationEffects {
       profound: false,
     };
 
-    // Reset sky colors
+    // Add new movement effects tracking
+    this.movementEffects = {
+      waterRipples: { active: false, progress: 0 },
+      colorPulse: { active: false, progress: 0 },
+      gentleWaves: { active: false, progress: 0 },
+    };
+
+    this.movementStates = {
+      calm: { color: new THREE.Color(0x001e0f), rippleIntensity: 0 },
+      gentle: { color: new THREE.Color(0x004488), rippleIntensity: 0.3 },
+      active: { color: new THREE.Color(0x0088aa), rippleIntensity: 0.6 },
+      energetic: { color: new THREE.Color(0x00aacc), rippleIntensity: 1.0 },
+    };
+    this.currentMovementState = "calm";
+
+    // Movement parameters
+    this.movementParams = {
+      waterRipples: {
+        frequency: 2,
+        amplitude: 0.8,
+        layers: 3, // Add multiple ripple layers
+      },
+      colorPulse: {
+        baseColor: new THREE.Color(0x001e0f),
+        pulseColor: new THREE.Color(0x004488),
+        frequency: 1.5,
+        intensity: 0.7,
+      },
+      gentleWaves: {
+        height: 1.2,
+        speed: 0.8,
+        waveCount: 2, // Multiple wave patterns
+      },
+    };
+
+    this.movementThresholds = [
+      { name: "waterRipples", time: 500, transitionDuration: 500 }, // Start faster
+      { name: "colorPulse", time: 1500, transitionDuration: 1000 },
+      { name: "gentleWaves", time: 2500, transitionDuration: 1500 },
+    ];
+  }
+
+  onMotionDetected() {
+    this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2);
+    this.movementLevel = Math.min(1, this.movementLevel + 0.1);
+    this.lastMotionTime = Date.now();
+    this.isInMeditativeState = false;
+
+    // Reset original effects
+    this.activeEffects = {
+      gentle: false,
+      moderate: false,
+      deep: false,
+      profound: false,
+    };
+
+    // Reset visuals
     if (this.app.skyUniforms) {
       this.app.skyUniforms["turbidity"].value = this.app.meditationParams.skyTurbidityStart;
       this.app.skyUniforms["rayleigh"].value = this.app.meditationParams.skyRayleighStart;
     }
 
-    // Reset water
+    // Reset stillness effects
+    this.activeEffects = {
+      gentle: false,
+      moderate: false,
+      deep: false,
+      profound: false,
+    };
+
+    // Keep movement effects active
+    if (this.movementLevel > 0) {
+      // Object.keys(this.movementEffects).forEach((effect) => {
+      //   this.movementEffects[effect].active = true;
+      // });
+    }
+
     if (this.app.water) {
       this.app.water.material.uniforms.waterColor.value.setHex(this.app.meditationParams.waterColorStart);
       this.app.water.material.uniforms["distortionScale"].value = this.app.meditationParams.waterDistortionStart;
     }
 
-    // Reset sun
     this.app.parameters.inclination = 0.49;
     this.app.updateSun(this.app.parameters, new THREE.PMREMGenerator(this.app.renderer));
   }
 
   onNoMotionDetected() {
-    const timeSinceLastMotion = Date.now() - this.lastMotionTime;
+    const now = Date.now();
+    this.lastStillTime = now;
+    this.movementLevel = Math.max(0, this.movementLevel - 0.05);
+
+    const timeSinceLastMotion = now - this.lastMotionTime;
     if (timeSinceLastMotion > 1000) {
       this.stillnessLevel = Math.min(1, this.stillnessLevel + 0.1);
       this.isInMeditativeState = true;
     }
+
+    // Deactivate movement effects
+    Object.keys(this.movementEffects).forEach((effect) => {
+      this.movementEffects[effect].progress = Math.max(0, this.movementEffects[effect].progress - 2);
+    });
   }
+
   update() {
     const timeSinceMotion = Date.now() - this.lastMotionTime;
     const currentState = this.getCurrentState(timeSinceMotion);
 
     if (this.app.debugMode) {
-      this.app.logDebug(`🧘 meditation - stillness: ${this.stillnessLevel.toFixed(2)}, ` + `time: ${(timeSinceMotion / 1000).toFixed(1)}s`);
+      this.app.logDebug(
+        `🧘 meditation - stillness: ${this.stillnessLevel.toFixed(2)}, movement: ${this.movementLevel.toFixed(2)}, time: ${(
+          timeSinceMotion / 1000
+        ).toFixed(1)}s`
+      );
     }
 
-    // Remove this since updateActiveEffects already does these things
-    // if (this.isInMeditativeState) {
-    //   const progress = this.stillnessLevel;
-    //   this.updateWaterEffects();
-    //   this.updateSparkles(timeSinceMotion);
-    //   this.updateSky(timeSinceMotion);
-    //   this.updateCamera(timeSinceMotion);
-    // } else {
-    //   this.resetEffects();
-    // }
-
-    // Just do this instead:
     if (this.isInMeditativeState) {
       this.updateActiveEffects(timeSinceMotion);
     } else {
       this.resetEffects();
+      // Update movement effects even when not in meditative state
+      if (this.movementLevel > 0) {
+        this.updateMovementEffects(Date.now() - this.lastStillTime);
+      }
     }
   }
 
@@ -323,6 +365,11 @@ class MeditationEffects {
 
     // Update camera
     this.updateCamera(timeSinceMotion);
+
+    // Update movement effects if active
+    if (this.movementLevel > 0) {
+      this.updateMovementEffects(Date.now() - this.lastStillTime);
+    }
   }
 
   updateWaterEffects() {
@@ -394,6 +441,98 @@ class MeditationEffects {
     }
   }
 
+  updateMovementEffects(movementDuration) {
+    const FADE_SPEED = 0.01; // Slower fade
+    const MOVEMENT_THRESHOLD = 0.3; // Need this much movement to trigger effects
+
+    Object.keys(this.movementEffects).forEach((effectName) => {
+      const effect = this.movementEffects[effectName];
+
+      if (this.movementLevel > MOVEMENT_THRESHOLD) {
+        // Smoothly increase when moving
+        effect.progress = Math.min(100, effect.progress + FADE_SPEED);
+      } else {
+        // Gently decrease when still
+        effect.progress = Math.max(0, effect.progress - FADE_SPEED);
+      }
+
+      if (effect.progress > 0) {
+        switch (effectName) {
+          case "waterRipples":
+            this.updateWaterRipples(effect.progress / 100);
+            break;
+          case "colorPulse":
+            this.updateColorPulse(effect.progress / 100);
+            break;
+          case "gentleWaves":
+            this.updateGentleWaves(effect.progress / 100);
+            break;
+        }
+      }
+    });
+  }
+
+  updateWaterRipples(progress) {
+    const params = this.movementParams.waterRipples;
+    const time = Date.now() * 0.001;
+
+    if (this.app.water) {
+      let rippleEffect = 0;
+      // Layer multiple ripples
+      for (let i = 0; i < params.layers; i++) {
+        rippleEffect += Math.sin(time * params.frequency * (i + 1)) * params.amplitude * progress * (1 / (i + 1));
+      }
+
+      const baseDistortion = this.app.water.material.uniforms["distortionScale"].value;
+      this.app.water.material.uniforms["distortionScale"].value = baseDistortion + rippleEffect;
+    }
+  }
+
+  updateGentleWaves(progress) {
+    const params = this.movementParams.gentleWaves;
+    const time = Date.now() * 0.001;
+
+    if (this.app.centerObj) {
+      let waveEffect = 0;
+      // Combine multiple wave patterns
+      for (let i = 0; i < params.waveCount; i++) {
+        waveEffect += Math.sin(time * params.speed * (i + 1)) * params.height * progress * (1 / (i + 1));
+      }
+
+      const baseY = this.app.centerObj.position.y;
+      this.app.centerObj.position.y = baseY + waveEffect;
+    }
+  }
+
+  updateColorPulse(progress) {
+    const currentState = this.getMovementState();
+    if (currentState !== this.currentMovementState) {
+      this.currentMovementState = currentState;
+    }
+
+    const targetColor = this.movementStates[this.currentMovementState].color;
+    this.lastWaterColor.lerp(targetColor, 0.01);
+    this.app.water.material.uniforms.waterColor.value.copy(this.lastWaterColor);
+  }
+
+  getMovementState() {
+    if (this.movementLevel < 0.25) return "calm";
+    if (this.movementLevel < 0.5) return "gentle";
+    if (this.movementLevel < 0.75) return "active";
+    return "energetic";
+  }
+
+  updateGentleWaves(progress) {
+    const params = this.movementParams.gentleWaves;
+    const time = Date.now() * 0.001;
+
+    if (this.app.centerObj) {
+      const baseY = this.app.centerObj.position.y;
+      const waveEffect = Math.sin(time * params.speed) * params.height * progress;
+      this.app.centerObj.position.y = baseY + waveEffect;
+    }
+  }
+
   updateCameraPosition(progress) {
     const targetY = this.originalCameraPosition.y + 20;
     const targetZ = this.originalCameraPosition.z + 10;
@@ -413,6 +552,12 @@ class MeditationEffects {
     this.resetSparkles();
     this.resetCamera();
     this.resetSky();
+
+    // Reset movement effects
+    Object.keys(this.movementEffects).forEach((effect) => {
+      this.movementEffects[effect].active = false;
+      this.movementEffects[effect].progress = 0;
+    });
   }
 
   resetSparkles() {
@@ -469,6 +614,44 @@ class MeditationEffects {
         0.1
       );
     }
+  }
+
+  getCurrentState(timeSinceMotion) {
+    if (!this.isInMeditativeState) return "Normal";
+
+    const thresholds = this.app.meditationParams.stillnessThresholds;
+    if (timeSinceMotion > thresholds.profound) return "Profound";
+    if (timeSinceMotion > thresholds.deep) return "Deep";
+    if (timeSinceMotion > thresholds.moderate) return "Moderate";
+    if (timeSinceMotion > thresholds.gentle) return "Gentle";
+    return "Normal";
+  }
+
+  logDebug() {
+    if (!this.app.debugMode) return;
+
+    const state = this.getCurrentState(Date.now() - this.lastMotionTime);
+    const timeSinceMotion = ((Date.now() - this.lastMotionTime) / 1000).toFixed(1);
+
+    const activeMovementEffects = Object.entries(this.movementEffects)
+      .filter(([_, effect]) => effect.active)
+      .map(([name]) => `${name}(${effect.progress.toFixed(2)})`)
+      .join(", ");
+
+    console.log(`
+      State: ${state}
+      Stillness Level: ${this.stillnessLevel.toFixed(2)}
+      Movement Level: ${this.movementLevel.toFixed(2)} ${this.movementLevel > 0 ? "🏃" : "🧘"}
+      Time Since Motion: ${timeSinceMotion}s
+      Active Stillness: ${
+        Object.entries(this.activeEffects)
+          .filter(([_, active]) => active)
+          .map(([name]) => name)
+          .join(", ") || "None"
+      }
+      Movement Effects: ${activeMovementEffects || "None"}
+      Color Speed: ${(1 + this.movementLevel * 2).toFixed(1)}x
+    `);
   }
 }
 
@@ -875,29 +1058,32 @@ export class ThreeJSApp {
   }
 
   logDebug(message) {
-    if (this.debugMode) {
-      const timeSinceMotion = Date.now() - this.meditationEffects.lastMotionTime;
-      const debugInfo = document.getElementById("debugInfo");
-      if (debugInfo) {
-        let currentState = "Normal";
-        if (timeSinceMotion > this.meditationParams.stillnessThresholds.profound) currentState = "Profound";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.deep) currentState = "Deep";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.moderate) currentState = "Moderate";
-        else if (timeSinceMotion > this.meditationParams.stillnessThresholds.gentle) currentState = "Gentle";
+    if (!this.debugMode) return;
+    const debugInfo = document.getElementById("debugInfo");
+    if (!debugInfo) return;
 
-        debugInfo.innerHTML = `
-          Meditation State: <span style="color: #00ff00">${currentState}</span><br>
-          Time Since Motion: ${(timeSinceMotion / 1000).toFixed(1)}s<br>
-          Stillness Level: ${this.meditationEffects.stillnessLevel.toFixed(2)}<br>
-          <br>
-          Current Effects:<br>
-          ▸ Sparkles: ${timeSinceMotion > this.meditationParams.stillnessThresholds.gentle ? "✓" : "×"}<br>
-          ▸ Sky Changes: ${timeSinceMotion > this.meditationParams.stillnessThresholds.moderate ? "✓" : "×"}<br>
-          ▸ Camera Movement: ${timeSinceMotion > this.meditationParams.stillnessThresholds.deep ? "✓" : "×"}<br>
-          ▸ Darkening: ${timeSinceMotion > this.meditationParams.stillnessThresholds.profound ? "✓" : "×"}<br>
-        `;
-      }
-    }
+    const timeSinceMotion = this.meditationEffects.lastMotionTime ? Date.now() - this.meditationEffects.lastMotionTime : 0;
+    const currentState = this.meditationEffects.getCurrentState(timeSinceMotion);
+
+    debugInfo.innerHTML = `
+      Meditation State: <span style="color: #00ff00">${currentState}</span><br>
+      Time Since Motion: ${(timeSinceMotion / 1000).toFixed(1)}s<br>
+      Stillness Level: ${this.meditationEffects.stillnessLevel.toFixed(2)}<br>
+      Movement Level: ${this.meditationEffects.movementLevel.toFixed(2)}<br>
+      <br>
+      Stillness Effects:<br>
+      ▸ Sparkles: ${timeSinceMotion > this.meditationParams.stillnessThresholds.gentle ? "✓" : "×"}<br>
+      ▸ Sky Changes: ${timeSinceMotion > this.meditationParams.stillnessThresholds.moderate ? "✓" : "×"}<br>
+      ▸ Camera Movement: ${timeSinceMotion > this.meditationParams.stillnessThresholds.deep ? "✓" : "×"}<br>
+      ▸ Darkening: ${timeSinceMotion > this.meditationParams.stillnessThresholds.profound ? "✓" : "×"}<br>
+      
+      <br>
+      Movement Effects:<br>
+      ▸ Water Ripples: ${this.meditationEffects.movementEffects.waterRipples.progress.toFixed(2)}%<br>
+▸ Color Pulse: ${this.meditationEffects.movementEffects.colorPulse.progress.toFixed(2)}% (${
+      this.meditationEffects.currentMovementState
+    })<br>      ▸ Gentle Waves: ${this.meditationEffects.movementEffects.gentleWaves.progress.toFixed(2)}%<br>
+      `;
   }
   initOpenCV() {
     cv["onRuntimeInitialized"] = () => {
