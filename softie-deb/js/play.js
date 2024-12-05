@@ -8,6 +8,203 @@ import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
 THREE.ImageUtils.crossOrigin = "";
 
+
+class CameraProcessor {
+  static CONFIG = {
+    MOTION: {
+      THRESHOLD: 0.5,  // percentage of pixels that need to change
+      REGION_SIZE: 32  // size of regions to check for motion
+    }
+  };
+  constructor(meditationParams, onMotionDetected, onNoMotionDetected, debugMode = false) {
+    this.meditationParams = {
+      motionThreshold: CameraProcessor.CONFIG.MOTION.THRESHOLD,
+      regionSize: CameraProcessor.CONFIG.MOTION.REGION_SIZE,
+      ...meditationParams
+    };
+    this.onMotionDetected = onMotionDetected;
+    this.onNoMotionDetected = onNoMotionDetected;
+    this.debugMode = debugMode;
+    this.motionDetectionId = null;
+    this.isProcessing = true;
+  }
+
+  setupCamera() {
+    console.log("Setting up camera...");
+    this.video = document.getElementById("videoInput");
+    if (!this.video) {
+      throw new Error("Video element 'videoInput' not found");
+    }
+
+    // Make video visible during testing
+    if (this.debugMode) {
+      this.video.style.display = "block";
+      this.video.style.position = "fixed";
+      this.video.style.top = "10px";
+      this.video.style.left = "10px";
+      this.video.style.width = "320px";
+      this.video.style.height = "240px";
+      this.video.style.zIndex = "1000";
+    }
+
+    return navigator.mediaDevices
+      .getUserMedia({ video: true, audio: false })
+      .then((stream) => {
+        console.log("Camera access granted");
+        this.video.srcObject = stream;
+        return new Promise((resolve) => {
+          this.video.onloadedmetadata = () => {
+            console.log("Video metadata loaded");
+            this.video.play();
+            console.log("Video playing");
+            resolve();
+          };
+        });
+      })
+      .catch((err) => {
+        console.error("Error accessing the camera:", err.name, err.message);
+        throw err;
+      });
+  }
+
+  startVideoProcessing() {
+    if (typeof cv === "undefined") {
+      console.error("OpenCV is not loaded!");
+      return;
+    }
+
+    const canvasOutput = document.getElementById("canvasOutput");
+    if (!canvasOutput) {
+      throw new Error("Canvas element 'canvasOutput' not found");
+    }
+    console.log("OpenCV is loaded, starting video processing");
+
+    if (this.debugMode) {
+      canvasOutput.style.display = "block";
+      canvasOutput.style.position = "fixed";
+      canvasOutput.style.top = "260px";
+      canvasOutput.style.left = "10px";
+      canvasOutput.style.width = "320px";
+      canvasOutput.style.height = "240px";
+      canvasOutput.style.zIndex = "1000";
+    }
+
+    try {
+      this.setupProcessing();
+      this.processVideo();
+
+      // Add cleanup on page unload
+      window.addEventListener("beforeunload", () => this.cleanup());
+    } catch (err) {
+      console.error("Error in startVideoProcessing:", err);
+      this.cleanup();
+    }
+  }
+
+  setupProcessing() {
+    this.cap = new cv.VideoCapture(this.video);
+    this.frame1 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
+    this.frame2 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
+    this.gray1 = new cv.Mat();
+    this.gray2 = new cv.Mat();
+    this.diff = new cv.Mat();
+    this.firstFrame = true;
+    this.frameCount = 0;
+  }
+
+  processVideo() {
+    try {
+      if (!this.isProcessing || this.video.paused || this.video.ended) {
+        this.cleanup();
+        return;
+      }
+
+      if (this.cap !== null) {
+        this.cap.read(this.frame2);
+        cv.cvtColor(this.frame2, this.gray2, cv.COLOR_RGBA2GRAY);
+
+        if (this.firstFrame) {
+          this.gray2.copyTo(this.gray1);
+          this.firstFrame = false;
+        }
+
+        cv.absdiff(this.gray1, this.gray2, this.diff);
+        cv.threshold(this.diff, this.diff, 25, 255, cv.THRESH_BINARY);
+        cv.imshow("canvasOutput", this.diff);
+
+        const nonZero = cv.countNonZero(this.diff);
+        const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
+
+        if (this.frameCount % 30 === 0) {
+          console.log(`Motion: ${motionPercentage.toFixed(2)}%`);
+        }
+        this.frameCount++;
+
+        if (motionPercentage > this.meditationParams.motionThreshold) {
+          this.onMotionDetected();
+        } else {
+          this.onNoMotionDetected();
+        }
+
+        this.gray2.copyTo(this.gray1);
+      }
+      this.motionDetectionId = requestAnimationFrame(() => this.processVideo());
+    } catch (err) {
+      console.error("Video processing error:", err);
+      this.cleanup();
+    }
+  }
+
+  cleanup() {
+    this.isProcessing = false;
+    if (this.motionDetectionId) {
+      cancelAnimationFrame(this.motionDetectionId);
+    }
+    
+    // Clean up OpenCV resources
+    if (this.frame1) this.frame1.delete();
+    if (this.frame2) this.frame2.delete();
+    if (this.gray1) this.gray1.delete();
+    if (this.gray2) this.gray2.delete();
+    if (this.diff) this.diff.delete();
+
+    // Stop video stream
+    if (this.video && this.video.srcObject) {
+      const tracks = this.video.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      this.video.srcObject = null;
+    }
+  }
+
+  detectRegionalMotion(frame1, frame2) {
+    const regions = [];
+    const regionSize = this.meditationParams.regionSize;
+
+    for (let y = 0; y < frame1.rows; y += regionSize) {
+      for (let x = 0; x < frame1.cols; x += regionSize) {
+        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
+        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
+
+        const diff = new cv.Mat();
+        cv.absdiff(roi1, roi2, diff);
+
+        const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+        regions.push({
+          x: x,
+          y: y,
+          motion: motionAmount,
+        });
+
+        diff.delete();
+        roi1.delete();
+        roi2.delete();
+      }
+    }
+
+    return regions;
+  }
+}
+
 // Main application class to encapsulate all functionalities
 export class ThreeJSApp {
   static CONFIG = {
@@ -243,7 +440,7 @@ export class ThreeJSApp {
     this.lastMotionTime = Date.now();
     this.isInMeditativeState = false;
     this.originalWaterColor = 0x001e0f;
-    this.meditativeWaterColor = 0x000066; // Much darker blue
+    // this.meditativeWaterColor = 0x000066; // Much darker blue
 
     this.debugMode = true;
 
@@ -251,10 +448,14 @@ export class ThreeJSApp {
 
     this.initOpenCV();
 
-    this.noMovementDetected = false;
-    this.movementTimeout = null;
+    this.cameraProcessor = new CameraProcessor(
+      {}, // We don't need to pass meditation params for motion detection anymore
+      () => this.onMotionDetected(),
+      () => this.onNoMotionDetected(),
+      this.debugMode
+    );
 
-    this.originalWaterColor = 0x001e0f;
+    // this.originalWaterColor = 0x001e0f;
     this.debugMode = true;
 
     this.meditationParams = {
@@ -318,8 +519,8 @@ export class ThreeJSApp {
       skyColorEnd: new THREE.Color(0x000033),
 
       // Movement detection
-      motionThreshold: 0.5, // percentage of pixels that need to change
-      regionSize: 32, // size of regions to check for motion
+      // motionThreshold: 0.5, // percentage of pixels that need to change
+      // regionSize: 32, // size of regions to check for motion
     };
 
     // this.init();
@@ -388,7 +589,7 @@ export class ThreeJSApp {
     this.initModals();
     this.initGUI(); // Initialize the GUI
 
-    this.setupCamera();
+    // this.setupCamera();
 
     if (this.debugMode) {
       this.initDebugUI();
@@ -437,134 +638,19 @@ export class ThreeJSApp {
   initOpenCV() {
     cv["onRuntimeInitialized"] = () => {
       console.log("OpenCV.js is fully initialized");
-      this.init(); // Proceed with the rest of your initialization
-      this.animate();
+      this.init();
+      this.cameraProcessor.setupCamera()
+        .then(() => {
+          this.cameraProcessor.startVideoProcessing();
+          this.animate();
+        })
+        .catch(error => {
+          console.error("Failed to initialize camera:", error);
+          // Decide how to handle camera initialization failure
+        });
     };
   }
 
-  setupCamera() {
-    console.log("Setting up camera...");
-    const video = document.getElementById("videoInput");
-
-    // Make video visible during testing
-    video.style.display = "block";
-    video.style.position = "fixed";
-    video.style.top = "10px";
-    video.style.left = "10px";
-    video.style.width = "320px";
-    video.style.height = "240px";
-    video.style.zIndex = "1000";
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        console.log("Camera access granted");
-        video.srcObject = stream;
-        video.onloadedmetadata = () => {
-          console.log("Video metadata loaded");
-          video.play();
-          console.log("Video playing");
-
-          // Start processing after video is ready
-          this.startVideoProcessing();
-        };
-      })
-      .catch((err) => {
-        console.error("Error accessing the camera:", err.name, err.message);
-      });
-  }
-  // Replace your startVideoProcessing() with:
-  startVideoProcessing() {
-    if (typeof cv === "undefined") {
-      console.error("OpenCV is not loaded!");
-      return;
-    }
-
-    const video = document.getElementById("videoInput");
-    const canvasOutput = document.getElementById("canvasOutput");
-
-    console.log("OpenCV is loaded, starting video processing");
-
-    canvasOutput.style.display = "block";
-    canvasOutput.style.position = "fixed";
-    canvasOutput.style.top = "260px";
-    canvasOutput.style.left = "10px";
-    canvasOutput.style.width = "320px";
-    canvasOutput.style.height = "240px";
-    canvasOutput.style.zIndex = "1000";
-
-    try {
-      const cap = new cv.VideoCapture(video);
-      const frame1 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-      const frame2 = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-      const gray1 = new cv.Mat();
-      const gray2 = new cv.Mat();
-      const diff = new cv.Mat();
-
-      let firstFrame = true;
-      let frameCount = 0;
-      let isProcessing = true; // Flag to control processing
-
-      const cleanup = () => {
-        frame1.delete();
-        frame2.delete();
-        gray1.delete();
-        gray2.delete();
-        diff.delete();
-        isProcessing = false;
-      };
-
-      // Add cleanup on page unload
-      window.addEventListener("beforeunload", cleanup);
-
-      const processVideo = () => {
-        try {
-          if (!isProcessing || video.paused || video.ended) {
-            cleanup();
-            return;
-          }
-
-          if (cap !== null) {
-            cap.read(frame2);
-            cv.cvtColor(frame2, gray2, cv.COLOR_RGBA2GRAY);
-
-            if (firstFrame) {
-              gray2.copyTo(gray1);
-              firstFrame = false;
-            }
-
-            cv.absdiff(gray1, gray2, diff);
-            cv.threshold(diff, diff, 25, 255, cv.THRESH_BINARY);
-            cv.imshow("canvasOutput", diff);
-
-            const nonZero = cv.countNonZero(diff);
-            const motionPercentage = (nonZero / (diff.rows * diff.cols)) * 100;
-
-            if (frameCount % 30 === 0) {
-              console.log(`Motion: ${motionPercentage.toFixed(2)}%, Sky: ${this.skyUniforms["turbidity"].value.toFixed(2)}`);
-            }
-            frameCount++;
-
-            if (motionPercentage > 0.5) {
-              this.onMotionDetected();
-            } else {
-              this.onNoMotionDetected();
-            }
-
-            gray2.copyTo(gray1);
-          }
-          this.motionDetectionId = requestAnimationFrame(processVideo);
-        } catch (err) {
-          console.error("Video processing error:", err);
-          cleanup();
-        }
-      };
-
-      processVideo();
-    } catch (err) {
-      console.error("Error in startVideoProcessing:", err);
-    }
-  }
 
   onMotionDetected() {
     this.stillnessLevel = Math.max(0, this.stillnessLevel - 0.2);
@@ -744,35 +830,6 @@ export class ThreeJSApp {
     }
   }
 
-  // detect motion in specific regions
-  detectRegionalMotion(frame1, frame2) {
-    const regions = [];
-    const regionSize = this.meditationParams.regionSize;
-
-    for (let y = 0; y < frame1.rows; y += regionSize) {
-      for (let x = 0; x < frame1.cols; x += regionSize) {
-        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
-        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-
-        const diff = new cv.Mat();
-        cv.absdiff(roi1, roi2, diff);
-
-        const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
-        regions.push({
-          x: x,
-          y: y,
-          motion: motionAmount,
-        });
-
-        diff.delete();
-        roi1.delete();
-        roi2.delete();
-      }
-    }
-
-    return regions;
-  }
-  // cv stuff end
 
   initWater() {
     const waterGeometry = new THREE.PlaneGeometry(ThreeJSApp.CONFIG.WATER.GEOMETRY_SIZE, ThreeJSApp.CONFIG.WATER.GEOMETRY_SIZE);
@@ -1755,15 +1812,20 @@ class AudioManager {
     return audio;
   }
 }
+let app = null;
 
-window.initializeApp = function () {
-  console.log("Initializing ThreeJSApp");
-  new ThreeJSApp();
+window.initializeApp = function() {
+  // Don't create an instance here, just wait for OpenCV
+  console.log("Waiting for OpenCV to initialize...");
 };
 
-window.onOpenCvReady = function () {
+window.onOpenCvReady = function() {
   console.log("OpenCV.js is ready");
-  new ThreeJSApp();
+  if (!app) {
+    app = new ThreeJSApp();
+  } else {
+    console.warn("ThreeJSApp already initialized");
+  }
 };
 
 console.log("play.js module loaded");
