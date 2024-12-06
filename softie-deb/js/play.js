@@ -718,7 +718,7 @@ export class ThreeJSApp {
           RADIAL_SEGMENTS: 20,
           P: 2,
           Q: 3,
-          SCALE: 0.75,
+          SCALE: 1.75,
         },
         SPHERE: {
           RADIUS: 2,
@@ -1681,18 +1681,115 @@ export class ThreeJSApp {
 
     // Objects parameters
     const objectsFolder = gui.addFolder("Objects");
-    objectsFolder.add(this.centerObj.scale, "x", 0.1, 5).name("Center Object Scale");
+
     objectsFolder
-      .add({ opacity: 0.5 }, "opacity", 0.1, 1.0, 0.01)
-      .name("FriendsOpacity")
+      .add({ scale: ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE }, "scale", 0.1, 5)
+      .name("Center Object Scale")
       .onChange((value) => {
-        this.boxGroup.children.forEach((child) => {
-          child.traverse((o) => {
-            if (o.isMesh) {
-              o.material.opacity = value;
-            }
-          });
-        });
+        this.centerObj.scale.set(value, value, value); // Uniformly scale the object
+      });
+
+    objectsFolder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBE", 0.1, 5)
+      .name("Torus Knot Tube")
+      .onChange((value) => {
+        // Update the CONFIG value
+        ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE = value;
+
+        // Recreate the geometry with the updated parameter
+        const newGeometry = new THREE.TorusKnotGeometry(
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+          value,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+        );
+
+        // Replace the geometry while keeping the material and transformations
+        this.centerObj.geometry.dispose(); // Clean up the old geometry
+        this.centerObj.geometry = newGeometry;
+      });
+
+    objectsFolder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBULAR_SEGMENTS", 3, 500, 1)
+      .name("Tubular Segments")
+      .onChange((value) => {
+        // Ensure it's an integer
+        value = Math.floor(value);
+        ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS = value;
+
+        const newGeometry = new THREE.TorusKnotGeometry(
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+          value,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+        );
+
+        this.centerObj.geometry.dispose();
+        this.centerObj.geometry = newGeometry;
+      });
+
+    objectsFolder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "RADIAL_SEGMENTS", 3, 50, 1)
+      .name("Radial Segments")
+      .onChange((value) => {
+        value = Math.floor(value);
+        ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS = value;
+
+        const newGeometry = new THREE.TorusKnotGeometry(
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+          value,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+        );
+
+        this.centerObj.geometry.dispose();
+        this.centerObj.geometry = newGeometry;
+      });
+
+    objectsFolder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "P", 1, 10, 1)
+      .name("P (Twist)")
+      .onChange((value) => {
+        value = Math.floor(value);
+        ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P = value;
+
+        const newGeometry = new THREE.TorusKnotGeometry(
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+          value,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+        );
+
+        this.centerObj.geometry.dispose();
+        this.centerObj.geometry = newGeometry;
+      });
+
+    objectsFolder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "Q", 1, 10, 1)
+      .name("Q (Twist)")
+      .onChange((value) => {
+        value = Math.floor(value);
+        ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q = value;
+
+        const newGeometry = new THREE.TorusKnotGeometry(
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+          value
+        );
+
+        this.centerObj.geometry.dispose();
+        this.centerObj.geometry = newGeometry;
       });
 
     // Meditation Folder and Sub-folders
