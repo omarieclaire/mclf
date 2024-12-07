@@ -453,6 +453,8 @@ export class ThreeJSApp {
     this.renderer.domElement.addEventListener("touchend", this.onTouch.bind(this), false);
 
     this.scene = new THREE.Scene();
+    this.meditationManager.sparkleManager.initialize(this.scene);
+
     this.camera = new THREE.PerspectiveCamera(
       ThreeJSApp.CONFIG.CAMERA.FOV,
       window.innerWidth / window.innerHeight,
@@ -944,11 +946,10 @@ export class ThreeJSApp {
     //     colorAttribute.needsUpdate = true;
     //   });
     // });
-    
-    this.meditationManager.sparkleManager.updateSparkles();
-
 
     // this.meditationEffects.update();
+
+    this.meditationManager.sparkleManager.updateSparkles();
 
     this.meditationManager.update();
 
@@ -1159,7 +1160,6 @@ export class ThreeJSApp {
   }
 }
 
-
 const MEDITATION_CONFIG = {
   STATES: {
     FRANTIC: {
@@ -1200,14 +1200,14 @@ const MEDITATION_CONFIG = {
       duration: 0,
       level: 0,
       effects: {
-        water: { 
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR, 
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE 
+        water: {
+          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
+          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
         },
-        sky: { 
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY, 
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH, 
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION 
+        sky: {
+          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
+          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH,
+          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1218,14 +1218,14 @@ const MEDITATION_CONFIG = {
       duration: 3000,
       level: 1,
       effects: {
-        water: { 
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR, 
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE 
+        water: {
+          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
+          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
         },
-        sky: { 
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.01, 
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.01, 
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.01
+        sky: {
+          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.01,
+          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.01,
+          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.01,
         },
         sparkles: true,
         cameraMovement: false,
@@ -1236,14 +1236,14 @@ const MEDITATION_CONFIG = {
       duration: 6000,
       level: 2,
       effects: {
-        water: { 
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR - 0.03, 
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE  - 0.03, 
+        water: {
+          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR - 0.03,
+          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE - 0.03,
         },
-        sky: { 
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY  - 0.03,
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.03,  
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.03
+        sky: {
+          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.03,
+          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.03,
+          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.03,
         },
         sparkles: true,
         cameraMovement: false,
@@ -1273,9 +1273,9 @@ const MEDITATION_CONFIG = {
     },
   },
   SPARKLES: {
-    SPREAD: 200,
+    SPREAD: 800,
     LIGHTNESS: 0.2,
-    SIZE: 50,
+    SIZE: 5,
     QUANTITY: 100,
     NUM_SETS: 100,
   },
@@ -1291,49 +1291,52 @@ class SparkleManager {
   constructor() {
     this.sparkleMap = new Map();
     this.active = false;
+    this.initialized = false;
+    this.centerContainer = null;
+    this.scene = null;
 
-    // Default sparkle parameters
     this.defaults = {
-      NUM_SETS: 50,
-      QUANTITY: 100,
-      SPREAD: 800,
-      SIZE: 5,
-      LIGHTNESS: 0.2,
-      THRESHOLD: 0.8
+      NUM_SETS: 20,
+      QUANTITY: 200,
+      SPREAD: 5, // Even tighter grouping for more visible clusters
+      SIZE: 15, // Slightly larger
+      LIGHTNESS: 0.8, // Brighter
+      ORBIT_RADIUS: 30, // Slightly larger orbit
+      ORBIT_SPEED: 0.3, // Slower for better visibility
     };
 
-    // Verify shader elements exist
-    const vertexShader = document.getElementById("vertexshader");
-    const fragmentShader = document.getElementById("fragmentshader");
-    console.log("Shader elements found:", {
-      vertexShader: !!vertexShader,
-      fragmentShader: !!fragmentShader
-    });
+    console.log("[SparkleManager] Created, waiting for scene initialization");
+  }
 
-    console.log("SparkleManager initialized");
+  initialize(scene) {
+    if (this.initialized) return;
+
+    this.scene = scene;
+    this.centerContainer = this.createCenterContainer();
+    this.initialized = true;
+    console.log("[SparkleManager] Initialized with scene");
+  }
+
+  createCenterContainer() {
+    if (!this.scene) {
+      console.error("[SparkleManager] Cannot create container: scene not initialized");
+      return null;
+    }
+
+    const container = new THREE.Object3D();
+    // Position the container more prominently in view
+    container.position.set(0, 15, -30); // Closer to camera
+    this.scene.add(container);
+    return container;
   }
 
   createSparkles(source, config = {}) {
-    console.log("Creating sparkles with config:", config);
-    console.log("Source object:", source);
-
-    if (!source) {
-      console.error("No source object provided for sparkles");
+    if (!this.initialized || !this.centerContainer) {
+      console.error("[SparkleManager] Cannot create sparkles: not properly initialized");
       return;
     }
 
-    // Check shader elements again at creation time
-    const vertexShader = document.getElementById("vertexshader");
-    const fragmentShader = document.getElementById("fragmentshader");
-    if (!vertexShader || !fragmentShader) {
-      console.error("Shader elements not found at sparkle creation time");
-      return;
-    }
-
-    // Merge config with defaults
     const params = { ...this.defaults, ...config };
-    console.log("Merged parameters:", params);
-
     const id = source.sparkleId || `sparkle_${Date.now()}`;
     source.sparkleId = id;
 
@@ -1341,118 +1344,149 @@ class SparkleManager {
     this.sparkleMap.set(id, []);
 
     try {
+      const sparkleContainer = new THREE.Object3D();
+      this.centerContainer.add(sparkleContainer);
+
       for (let x = 0; x < params.NUM_SETS; x++) {
-        console.log(`Creating sparkle set ${x + 1}/${params.NUM_SETS}`);
-        
-        const sparkGeometry = new THREE.BufferGeometry();
-        const sparkPositions = [];
-        const sparkColors = [];
-        const sparkSizes = [];
-        const sparkColor = new THREE.Color();
+        const sparkSystem = this.createSparkleSystem(params);
+        if (sparkSystem) {
+          // Create orbital parameters for this system
+          sparkSystem.userData.orbit = {
+            radius: params.ORBIT_RADIUS * (0.8 + Math.random() * 0.4),
+            speed: params.ORBIT_SPEED * (0.8 + Math.random() * 0.4),
+            phase: Math.random() * Math.PI * 2,
+            yOffset: Math.random() * 20 - 10,
+            verticalSpeed: 0.2 + Math.random() * 0.3,
+          };
 
-        for (let i = 0; i < params.QUANTITY; i++) {
-          sparkPositions.push(
-            (source.position.x + Math.random() * 2 - 1) * params.SPREAD * 0.5,
-            (source.position.y + Math.random() * 2 - 1) * params.SPREAD * 0.5,
-            (source.position.z + Math.random() * 2 - 1) * params.SPREAD * 0.5
-          );
+          // Initial position
+          this.updateSparklePosition(sparkSystem, 0);
 
-          sparkColor.setHSL(Math.random(), 1.0, params.LIGHTNESS);
-          sparkColors.push(sparkColor.r, sparkColor.g, sparkColor.b);
-          sparkSizes.push(params.SIZE);
+          const sparkles = this.sparkleMap.get(id);
+          sparkles.push(sparkSystem);
+          sparkleContainer.add(sparkSystem);
         }
-
-        sparkGeometry.setAttribute("position", new THREE.Float32BufferAttribute(sparkPositions, 3));
-        sparkGeometry.setAttribute("color", new THREE.Float32BufferAttribute(sparkColors, 3));
-        sparkGeometry.setAttribute("size", new THREE.Float32BufferAttribute(sparkSizes, 1));
-
-        console.log("Creating sparkle material");
-        const sparkMaterial = new THREE.ShaderMaterial({
-          uniforms: {
-            pointTexture: {
-              value: new THREE.TextureLoader().load("./img/spark1.png", 
-                (texture) => console.log("Spark texture loaded successfully"),
-                undefined,
-                (error) => console.error("Failed to load spark texture:", error)
-              ),
-            },
-          },
-          vertexShader: vertexShader.textContent,
-          fragmentShader: fragmentShader.textContent,
-          blending: THREE.AdditiveBlending,
-          depthTest: false,
-          transparent: true,
-          vertexColors: true,
-        });
-
-        const sparkleSystem = new THREE.Points(sparkGeometry, sparkMaterial);
-        console.log("Sparkle system created:", sparkleSystem);
-
-        const sparkles = this.sparkleMap.get(id);
-        sparkles.push(sparkleSystem);
-        
-        console.log("Adding sparkle system to source object");
-        source.add(sparkleSystem);
       }
 
       this.active = true;
-      console.log("Sparkle creation completed successfully");
     } catch (error) {
-      console.error("Error creating sparkles:", error);
+      console.error("[SparkleManager] Error creating sparkles:", error);
     }
+  }
+
+  updateSparklePosition(sparkSystem, time) {
+    const orbit = sparkSystem.userData.orbit;
+    sparkSystem.position.x = Math.cos(time * orbit.speed + orbit.phase) * orbit.radius;
+    sparkSystem.position.z = Math.sin(time * orbit.speed + orbit.phase) * orbit.radius;
+    sparkSystem.position.y = Math.sin(time * orbit.verticalSpeed) * 10 + orbit.yOffset;
+  }
+
+  createSparkleSystem(params) {
+    const sparkGeometry = new THREE.BufferGeometry();
+    const positions = [];
+    const colors = [];
+    const sizes = [];
+    const color = new THREE.Color();
+
+    for (let i = 0; i < params.QUANTITY; i++) {
+      // Create a tighter cluster of particles
+      positions.push(
+        (Math.random() * 2 - 1) * params.SPREAD * 0.5,
+        (Math.random() * 2 - 1) * params.SPREAD * 0.5,
+        (Math.random() * 2 - 1) * params.SPREAD * 0.5
+      );
+
+      // Brighter, more varied colors
+      const hue = Math.random();
+      const saturation = 0.8 + Math.random() * 0.2; // High saturation
+      color.setHSL(hue, saturation, params.LIGHTNESS);
+      colors.push(color.r, color.g, color.b);
+
+      // More varied sizes
+      sizes.push(params.SIZE * (0.3 + Math.random() * 0.7));
+    }
+
+    sparkGeometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    sparkGeometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    sparkGeometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
+
+    const sparkMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        pointTexture: {
+          value: new THREE.TextureLoader().load("./img/spark1.png"),
+        },
+      },
+      vertexShader: document.getElementById("vertexshader").textContent,
+      fragmentShader: document.getElementById("fragmentshader").textContent,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      transparent: true,
+      vertexColors: true,
+    });
+
+    return new THREE.Points(sparkGeometry, sparkMaterial);
   }
 
   updateSparkles() {
-    this.sparkleMap.forEach((sparkles) => {
-      sparkles.forEach((sparkleSystem) => {
-        const colorAttribute = sparkleSystem.geometry.attributes.color;
-        const time = performance.now() * 0.005;
+    if (!this.active || !this.initialized) return;
 
-        for (let i = 0; i < colorAttribute.count; i++) {
-          const hue = (time + i * 0.1) % 1; // Gradual color change
-          const color = new THREE.Color().setHSL(hue, 1.0, 0.5);
-          colorAttribute.array[i * 3] = color.r;
-          colorAttribute.array[i * 3 + 1] = color.g;
-          colorAttribute.array[i * 3 + 2] = color.b;
+    const time = performance.now() * 0.001;
+
+    this.sparkleMap.forEach((sparkles, id) => {
+      sparkles.forEach((system) => {
+        // Update position for orbital motion
+        this.updateSparklePosition(system, time);
+
+        // Update colors
+        if (system && system.geometry.attributes.color) {
+          const colorAttribute = system.geometry.attributes.color;
+
+          for (let i = 0; i < colorAttribute.count; i++) {
+            const hue = (time * 0.1 + i * 0.01) % 1;
+            const color = new THREE.Color().setHSL(hue, 0.9, 0.6);
+            colorAttribute.array[i * 3] = color.r;
+            colorAttribute.array[i * 3 + 1] = color.g;
+            colorAttribute.array[i * 3 + 2] = color.b;
+          }
+
+          colorAttribute.needsUpdate = true;
         }
-
-        colorAttribute.needsUpdate = true;
       });
     });
+
+    // Subtle rotation of the entire container
+    if (this.centerContainer) {
+      this.centerContainer.rotation.y += 0.0005;
+    }
   }
 
   clearSparkles(id = null) {
-    console.log("Clearing sparkles", id ? `for id: ${id}` : "for all");
-    
     if (id && this.sparkleMap.has(id)) {
       const sparkles = this.sparkleMap.get(id);
-      this.removeSparkles(sparkles);
+      sparkles.forEach((sparkle) => {
+        if (sparkle.parent) {
+          sparkle.parent.remove(sparkle);
+        }
+        if (sparkle.geometry) sparkle.geometry.dispose();
+        if (sparkle.material) sparkle.material.dispose();
+      });
       this.sparkleMap.delete(id);
     } else {
       this.sparkleMap.forEach((sparkles) => {
-        this.removeSparkles(sparkles);
+        sparkles.forEach((sparkle) => {
+          if (sparkle.parent) {
+            sparkle.parent.remove(sparkle);
+          }
+          if (sparkle.geometry) sparkle.geometry.dispose();
+          if (sparkle.material) sparkle.material.dispose();
+        });
       });
       this.sparkleMap.clear();
     }
+
     this.active = false;
   }
-
-  removeSparkles(sparkles) {
-    sparkles.forEach((sparkle, index) => {
-      if (sparkle?.parent) {
-        console.log(`Removing sparkle system ${index + 1}`);
-        sparkle.parent.remove(sparkle);
-        sparkle.geometry.dispose();
-        sparkle.material.dispose();
-      }
-    });
-  }
-
-  isActive() {
-    return this.active;
-  }
 }
-
 
 class UnifiedMeditationManager {
   constructor(app) {
@@ -1466,7 +1500,7 @@ class UnifiedMeditationManager {
     this.stillnessStartTime = null;
     this.lastStateChange = Date.now();
 
-    this.sparkleManager = new SparkleManager();
+    this.sparkleManager = new SparkleManager(this.scene);
 
     // Store initial camera position
     this.originalCameraPosition = null;
@@ -1610,20 +1644,15 @@ class UnifiedMeditationManager {
   }
 
   updateSparkles(shouldSparkle) {
-    // console.log("UpdateSparkles called:", { 
-    //   shouldSparkle, 
-    //   currentEffects: this.currentEffects.sparkles,
-    //   centerObj: !!this.app?.centerObj
-    // });
-    
+    if (!this.sparkleManager.initialized) {
+      console.warn("SparkleManager not yet initialized, skipping sparkle update");
+      return;
+    }
+
     if (shouldSparkle && !this.currentEffects.sparkles) {
-      if (this.app?.centerObj) {
-        console.log("Creating new sparkles");
-        this.sparkleManager.createSparkles(this.app.centerObj, MEDITATION_CONFIG.SPARKLES);
-        this.currentEffects.sparkles = true;
-      }
+      this.sparkleManager.createSparkles({}, MEDITATION_CONFIG.SPARKLES);
+      this.currentEffects.sparkles = true;
     } else if (!shouldSparkle && this.currentEffects.sparkles) {
-      console.log("Clearing sparkles");
       this.sparkleManager.clearSparkles();
       this.currentEffects.sparkles = false;
     }
