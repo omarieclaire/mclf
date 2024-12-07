@@ -941,6 +941,7 @@ export class ThreeJSApp {
   }
 
   render() {
+    
     // Update shader time for all meshes
     this.scene.traverse((child) => {
       if (child.isMesh) {
@@ -992,15 +993,21 @@ export class ThreeJSApp {
       if (this.INTERSECTED !== intersects[0].object) {
         if (this.INTERSECTED) {
           this.INTERSECTED.traverse((o) => {
-            if (o.isMesh) {
+            // Only try to set emissive if the material supports it
+            if (o.isMesh && o.material && o.material.emissive && o.currentHex !== undefined) {
               o.material.emissive.setHex(o.currentHex);
             }
           });
         }
+        
         this.INTERSECTED = intersects[0].object;
         this.INTERSECTED.traverse((o) => {
-          if (o.isMesh) {
-            o.currentHex = o.material.emissive.getHex();
+          // Only store and set emissive if the material supports it
+          if (o.isMesh && o.material && o.material.emissive) {
+            // Store the current emissive color if we haven't already
+            if (o.currentHex === undefined) {
+              o.currentHex = o.material.emissive.getHex();
+            }
             o.material.emissive.setHex(0xff0000);
           }
         });
@@ -1008,7 +1015,7 @@ export class ThreeJSApp {
     } else {
       if (this.INTERSECTED) {
         this.INTERSECTED.traverse((o) => {
-          if (o.isMesh) {
+          if (o.isMesh && o.material && o.material.emissive && o.currentHex !== undefined) {
             o.material.emissive.setHex(o.currentHex);
           }
         });
