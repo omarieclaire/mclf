@@ -1241,9 +1241,9 @@ const MEDITATION_CONFIG = {
           distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE - 0.03,
         },
         sky: {
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.03,
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.03,
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.03,
+          turbidity: 8.9,
+          rayleigh: 4.5,
+          inclination: 0.49,
         },
         sparkles: true,
         cameraMovement: false,
@@ -1255,7 +1255,7 @@ const MEDITATION_CONFIG = {
       level: 3,
       effects: {
         water: { color: "#001133", distortion: 0.5 },
-        sky: { turbidity: 5.2, rayleigh: 2.2, inclination: 0.2 },
+        sky: { turbidity: 9.2, rayleigh: 4.2, inclination: 0.2 }, 
         sparkles: true,
         cameraMovement: true,
       },
@@ -1266,7 +1266,7 @@ const MEDITATION_CONFIG = {
       level: 4,
       effects: {
         water: { color: "#000022", distortion: 0.3 },
-        sky: { turbidity: 1.5, rayleigh: 0.5, inclination: -0.2 },
+        sky: { turbidity: 4.0, rayleigh: 4.0, inclination: 0.15 }, 
         sparkles: true,
         cameraMovement: true,
       },
@@ -1761,6 +1761,91 @@ class GUIManager {
   initGUI() {
     const gui = new GUI({ autoPlace: true, load: false });
 
+    const SKY_PRESETS = {
+      DEFAULT: {
+        name: "Default",
+        turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
+        rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH,
+        mieCoefficient: ThreeJSApp.CONFIG.SKY.STARTING_MIE_COEFFICIENT,
+        mieDirectionalG: ThreeJSApp.CONFIG.SKY.STARTING_MIE_DIRECTIONAL_G,
+        inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION,
+        azimuth: ThreeJSApp.CONFIG.SKY.STARTING_AZIMUTH,
+      },
+      DEEPER_SUNSET: {
+        name: "Deeper Sunset",
+        turbidity: 6, // Same base
+        rayleigh: 6, // Double rayleigh for more blue
+        mieCoefficient: 0.003, // Less sun influence
+        mieDirectionalG: 0.7,
+        inclination: 0.49, // High sun
+        azimuth: 0.25,
+      },
+
+      ROUNDER_SUNSET: {
+        name: "RounderSunset",
+        turbidity: 4.0, // Between Default and Crystal
+        rayleigh: 2.0, // Moderate
+        mieCoefficient: 0.003, // Very subtle
+        mieDirectionalG: 0.8, // Moderate
+        inclination: 0.49, // High sun like the working ones
+        azimuth: 0.25, // Same position
+      },
+      DARKNESS: {
+        name: "Darkness",
+        turbidity: 4.0,
+        rayleigh: 4.0,
+        mieCoefficient: 0.035,
+        mieDirectionalG: 0.7,
+        inclination: 0.15,
+        azimuth: 0.75,
+      },
+      MELLOW_SUNSET: {
+        name: "Mellow Sunset",
+        turbidity: 1.0, // Extremely clear
+        rayleigh: 2.0,
+        mieCoefficient: 0.002,
+        mieDirectionalG: 0.999,
+        inclination: 0.49,
+        azimuth: 0.25,
+      },
+      SUN_MELTS: {
+        name: "Sun Melts",
+        turbidity: 8.9, // Extremely clear
+        rayleigh: 4.5,
+        mieCoefficient: 0.006,
+        mieDirectionalG: 0.96,
+        inclination: 0.49,
+        azimuth: 0.25,
+      },
+    };
+
+    const WATER_PRESETS = {
+      DEFAULT: {
+        name: "Default",
+        distortionScale: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
+        size: ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE,
+        alpha: 1.0,
+        waterColor: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
+        sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
+      },
+      CALM: {
+        name: "Calm",
+        distortionScale: 1.8,
+        size: 10000,
+        alpha: 0.8,
+        waterColor: 0x001e0f,
+        sunColor: 0xffffff,
+      },
+      ROUGH: {
+        name: "Rough",
+        distortionScale: 5.0,
+        size: 10000,
+        alpha: 1.0,
+        waterColor: 0x001e0f,
+        sunColor: 0xffffff,
+      },
+    };
+
     // Audio Folder
     const audioFolder = gui.addFolder("Audio");
     audioFolder
@@ -1913,8 +1998,81 @@ class GUIManager {
 
     // Sky effects
     const skyFolder = meditationFolder.addFolder("Sky Effects");
+
+    // Enhanced Sky controls - add these to skyFolder
+    skyFolder
+      .add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1)
+      .name("Sun Size")
+      .onChange((value) => {
+        this.skyUniforms["mieCoefficient"].value = value;
+      });
+
+    skyFolder
+      .add(this.skyUniforms["mieDirectionalG"], "value", 0, 1)
+      .name("Sun Sharpness")
+      .onChange((value) => {
+        this.skyUniforms["mieDirectionalG"].value = value;
+      });
+
+    // Create sky controls object
+    const skyControls = {
+      preset: "Default",
+    };
+
+    // Add all sky controls in the correct order
+    skyFolder
+      .add(
+        skyControls,
+        "preset",
+        Object.keys(SKY_PRESETS).map((key) => SKY_PRESETS[key].name)
+      )
+      .name("Sky Presets")
+      .onChange((presetName) => {
+        const preset = Object.values(SKY_PRESETS).find((p) => p.name === presetName);
+        if (!preset) return;
+
+        // Update all sky uniforms
+        this.skyUniforms["turbidity"].value = preset.turbidity;
+        this.skyUniforms["rayleigh"].value = preset.rayleigh;
+        this.skyUniforms["mieCoefficient"].value = preset.mieCoefficient;
+        this.skyUniforms["mieDirectionalG"].value = preset.mieDirectionalG;
+        this.parameters.azimuth = preset.azimuth;
+
+        this.parameters.inclination = preset.inclination;
+
+        // Update the Sun
+        this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+
+        // Update GUI controllers
+        Object.values(skyFolder.__controllers).forEach((controller) => {
+          if (controller.property === "value") {
+            if (controller.object === this.skyUniforms["turbidity"]) {
+              controller.setValue(preset.turbidity);
+            } else if (controller.object === this.skyUniforms["rayleigh"]) {
+              controller.setValue(preset.rayleigh);
+            } else if (controller.object === this.skyUniforms["mieCoefficient"]) {
+              controller.setValue(preset.mieCoefficient);
+            } else if (controller.object === this.skyUniforms["mieDirectionalG"]) {
+              controller.setValue(preset.mieDirectionalG);
+            }
+          }
+          if (controller.property === "inclination") {
+            controller.setValue(preset.inclination);
+          }
+        });
+      });
+
+    // Add individual sky parameter controls
     skyFolder.add(this.skyUniforms["rayleigh"], "value", 0, 10).name("Rayleigh");
     skyFolder.add(this.skyUniforms["turbidity"], "value", 0, 20).name("Turbidity");
+    skyFolder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1).name("Mie Coefficient");
+    skyFolder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Mie Directional G");
+    skyFolder
+      .add(this.parameters, "azimuth", 0, 1)
+      .onChange(() => {
+        this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+      })
+      .name("Azimuth (Sun Position)");
     skyFolder
       .add(this.parameters, "inclination", -0.5, 0.5)
       .onChange(() => {
@@ -1922,9 +2080,67 @@ class GUIManager {
       })
       .name("Inclination (Day/Night)");
 
+//       skyFolder.add(this.skyUniforms["sunPosition"], "value").name("Sun Position Vector");
+// skyFolder.add(this.skyUniforms["up"], "value").name("Sky Up Vector");
     // Water effects
     const waterFolder = meditationFolder.addFolder("Water Effects");
     waterFolder.add(this.water.material.uniforms.distortionScale, "value", 0, 10).name("Wave Distortion");
+
+    waterFolder.add(this.water.material, "transparent").name("Enable Transparency");
+waterFolder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Transparency");
+
+    const waterControls = {
+      preset: "Default",
+    };
+
+    waterFolder
+      .add(
+        waterControls,
+        "preset",
+        Object.keys(WATER_PRESETS).map((key) => WATER_PRESETS[key].name)
+      )
+      .name("Water Presets");
+
+    // Water parameters
+    waterFolder
+      .add(this.water.material.uniforms.distortionScale, "value", 0, 10)
+      .name("Wave Distortion")
+      .onChange((value) => {
+        this.water.material.uniforms.distortionScale.value = value;
+      });
+
+    waterFolder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Water Transparency");
+
+    waterFolder
+      .addColor(
+        {
+          waterColor: this.water.material.uniforms.waterColor.value.getHex(),
+        },
+        "waterColor"
+      )
+      .name("Water Color")
+      .onChange((value) => {
+        this.water.material.uniforms.waterColor.value.setHex(value);
+      });
+
+    waterFolder
+      .addColor(
+        {
+          sunColor: this.water.material.uniforms.sunColor.value.getHex(),
+        },
+        "sunColor"
+      )
+      .name("Sun Reflection Color")
+      .onChange((value) => {
+        this.water.material.uniforms.sunColor.value.setHex(value);
+      });
+
+      // Wave speed
+waterFolder.add(this.water.material.uniforms.time, "value", 0, 10).name("Wave Speed");
+
+// Normal map scale
+waterFolder.add(this.water.material.uniforms.normalSampler.value.repeat, "x", 0, 10).name("Wave Pattern X");
+waterFolder.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0, 10).name("Wave Pattern Y");
 
     // Environment/Fog
     const envFolder = meditationFolder.addFolder("Environment");
