@@ -527,20 +527,34 @@ export class ThreeJSApp {
   }
 
   initWater() {
-    const waterGeometry = new THREE.PlaneGeometry(ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE, ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE);
+    const waterGeometry = new THREE.PlaneGeometry(
+      ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE, 
+      ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE
+    );
+  
+    // Create water normal map texture with proper settings
+    const waterNormals = new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(1, 1); // Default scale for normal map
+    });
+  
     this.water = new Water(waterGeometry, {
       textureWidth: ThreeJSApp.CONFIG.WATER.STARTING_TEXTURE_SIZE,
       textureHeight: ThreeJSApp.CONFIG.WATER.STARTING_TEXTURE_SIZE,
-      waterNormals: new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      }),
-      alpha: 0,
+      waterNormals: waterNormals,
       sunDirection: new THREE.Vector3(),
       sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
       waterColor: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
       distortionScale: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
-      fog: this.scene.fog !== undefined,
+      fog: true, // Enable fog interaction
+      alpha: 1.0 // Start fully opaque
     });
+  
+    // Additional uniform initialization
+    this.water.material.uniforms.time = { value: 0 };
+    this.water.material.uniforms.normalSampler.value = waterNormals;
+    this.water.material.transparent = true;
+    
     this.water.rotation.x = -Math.PI / 2;
     this.scene.add(this.water);
   }
@@ -605,9 +619,13 @@ export class ThreeJSApp {
 
     this.scene.add(directionalLight3);
 
-    this.scene.fog = new THREE.FogExp2(ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR, ThreeJSApp.CONFIG.LIGHTS.FOG.DENSITY);
-    this.renderer.setClearColor(this.scene.fog.color);
-  }
+    const normalState = MEDITATION_CONFIG.STATES.NORMAL.effects;
+  this.scene.fog = new THREE.FogExp2(
+    normalState.fog.color,
+    normalState.fog.density
+  );
+  this.renderer.setClearColor(this.scene.fog.color);
+}
 
   initControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -923,6 +941,7 @@ export class ThreeJSApp {
   }
 
   render() {
+    // Update shader time for all meshes
     this.scene.traverse((child) => {
       if (child.isMesh) {
         const shader = child.material.userData.shader;
@@ -931,52 +950,44 @@ export class ThreeJSApp {
         }
       }
     });
-
-    // Object.values(this.sparkleFriendMap).forEach((sparkleArray) => {
-    //   sparkleArray.forEach((sparkleSystem) => {
-    //     const colorAttribute = sparkleSystem.geometry.attributes.color;
-    //     const time = performance.now() * 0.005;
-    //     for (let i = 0; i < colorAttribute.count; i++) {
-    //       const hue = (time + i * 0.1) % 1; // Gradual color change
-    //       const color = new THREE.Color().setHSL(hue, 1.0, 0.5);
-    //       colorAttribute.array[i * 3] = color.r;
-    //       colorAttribute.array[i * 3 + 1] = color.g;
-    //       colorAttribute.array[i * 3 + 2] = color.b;
-    //     }
-    //     colorAttribute.needsUpdate = true;
-    //   });
-    // });
-
-    // this.meditationEffects.update();
-
+  
+    // Update meditation effects
     this.meditationManager.sparkleManager.updateSparkles();
-
     this.meditationManager.update();
-
+  
     const time = performance.now() * 0.0001;
-
+  
+    // Update center object
     this.centerObj.position.y = Math.sin(time) * 20 + 5;
     this.centerObj.rotation.x = time * 0.5;
     this.centerObj.rotation.z = time * 0.51;
-
+  
+    // Update box group children
     for (let i = 0; i < this.boxGroup.children.length; i++) {
       const offset = this.initialFriendYPositions[i] * 15;
       this.boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
       this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
       this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
     }
-
+  
+    // Update center objects rotation
     this.centerObjects.forEach((obj) => {
       obj.rotation.y = time;
     });
-
-    this.water.material.uniforms["time"].value += 1.0 / 60.0;
-
+  
+    // Update water animation
+    if (this.water && this.water.material.uniforms.time) {
+      const waveSpeed = this.water.userData.waveSpeed || 1.0;
+      this.water.material.uniforms.time.value += waveSpeed / 60.0;
+    }
+  
+    // Update raycasting for interaction
     this.camera.updateMatrixWorld();
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const hoverableObjects = this.boxGroup.children.concat(this.centerObjects);
     const intersects = this.raycaster.intersectObjects(hoverableObjects, true);
-
+  
+    // Handle hover effects
     if (intersects.length > 0) {
       if (this.INTERSECTED !== intersects[0].object) {
         if (this.INTERSECTED) {
@@ -1004,7 +1015,8 @@ export class ThreeJSApp {
       }
       this.INTERSECTED = null;
     }
-
+  
+    // Render the scene
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -1162,24 +1174,60 @@ export class ThreeJSApp {
 
 const MEDITATION_CONFIG = {
   STATES: {
-    FRANTIC: {
+    ACTIVE_EVEN_LONGER: {
       type: "movement",
       duration: 9000,
       level: 3,
       effects: {
-        water: { color: "#00aacc", distortion: 4.5 },
-        sky: { turbidity: 8, rayleigh: 4, inclination: 0.49 },
+        water: { 
+          color: "#00aacc", 
+          distortion: 4.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 1.0,
+          normalMapScale: { x: 4, y: 4 }
+        },
+        sky: { 
+          turbidity: 8, 
+          rayleigh: 4, 
+          inclination: 0.49,
+          azimuth: 0.25,
+          mieCoefficient: 0.005,
+          mieDirectionalG: 0.7
+        },
+        fog: {
+          density: 0.0002,
+          color: 0xeeeeff
+        },
         sparkles: false,
         cameraMovement: false,
       },
     },
-    BUSY: {
+    ACTIVE_LONGER: {
       type: "movement",
       duration: 6000,
       level: 2,
       effects: {
-        water: { color: "#0088aa", distortion: 3.5 },
-        sky: { turbidity: 7, rayleigh: 3.5, inclination: 0.49 },
+        water: { 
+          color: "#0088aa", 
+          distortion: 3.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 0.8,
+          normalMapScale: { x: 3, y: 3 }
+        },
+        sky: { 
+          turbidity: 7, 
+          rayleigh: 3.5, 
+          inclination: 0.49,
+          azimuth: 0.25,
+          mieCoefficient: 0.005,
+          mieDirectionalG: 0.7
+        },
+        fog: {
+          density: 0.00015,
+          color: 0xeeeeff
+        },
         sparkles: false,
         cameraMovement: false,
       },
@@ -1189,8 +1237,26 @@ const MEDITATION_CONFIG = {
       duration: 3000,
       level: 1,
       effects: {
-        water: { color: "#004488", distortion: 2.5 },
-        sky: { turbidity: 6, rayleigh: 3, inclination: 0.49 },
+        water: { 
+          color: "#004488", 
+          distortion: 2.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 0.7,
+          normalMapScale: { x: 2.5, y: 2.5 }
+        },
+        sky: { 
+          turbidity: 6, 
+          rayleigh: 3, 
+          inclination: 0.49,
+          azimuth: 0.25,
+          mieCoefficient: 0.005,
+          mieDirectionalG: 0.7
+        },
+        fog: {
+          density: 0.0001,
+          color: 0xeeeeff
+        },
         sparkles: false,
         cameraMovement: false,
       },
@@ -1203,11 +1269,22 @@ const MEDITATION_CONFIG = {
         water: {
           color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
           distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
+          alpha: 1.0,
+          sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
+          waveSpeed: 1.0,
+          normalMapScale: { x: 1, y: 1 }
         },
         sky: {
           turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
           rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH,
           inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION,
+          azimuth: ThreeJSApp.CONFIG.SKY.STARTING_AZIMUTH,
+          mieCoefficient: ThreeJSApp.CONFIG.SKY.STARTING_MIE_COEFFICIENT,
+          mieDirectionalG: ThreeJSApp.CONFIG.SKY.STARTING_MIE_DIRECTIONAL_G
+        },
+        fog: {
+          density: ThreeJSApp.CONFIG.LIGHTS.FOG.DENSITY,
+          color: ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR
         },
         sparkles: false,
         cameraMovement: false,
@@ -1221,11 +1298,22 @@ const MEDITATION_CONFIG = {
         water: {
           color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
           distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
+          alpha: 0.95,
+          sunColor: 0xffffee,
+          waveSpeed: 0.6,
+          normalMapScale: { x: 1.5, y: 1.5 }
         },
         sky: {
           turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.01,
           rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.01,
           inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.01,
+          azimuth: 0.25,
+          mieCoefficient: 0.004,
+          mieDirectionalG: 0.75
+        },
+        fog: {
+          density: 0.00012,
+          color: 0xeeeeff
         },
         sparkles: true,
         cameraMovement: false,
@@ -1237,13 +1325,24 @@ const MEDITATION_CONFIG = {
       level: 2,
       effects: {
         water: {
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR - 0.03,
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE - 0.03,
+          color: "#001e0f",
+          distortion: 1.5,
+          alpha: 0.9,
+          sunColor: 0xddddff,
+          waveSpeed: 0.4,
+          normalMapScale: { x: 1.2, y: 1.2 }
         },
         sky: {
           turbidity: 8.9,
           rayleigh: 4.5,
           inclination: 0.49,
+          azimuth: 0.25,
+          mieCoefficient: 0.004,
+          mieDirectionalG: 0.8
+        },
+        fog: {
+          density: 0.00008,
+          color: 0xddddff
         },
         sparkles: true,
         cameraMovement: false,
@@ -1254,8 +1353,26 @@ const MEDITATION_CONFIG = {
       duration: 9000,
       level: 3,
       effects: {
-        water: { color: "#001133", distortion: 0.5 },
-        sky: { turbidity: 9.2, rayleigh: 4.2, inclination: 0.2 }, 
+        water: { 
+          color: "#001133", 
+          distortion: 0.5,
+          alpha: 0.7,
+          sunColor: 0x8888ff,
+          waveSpeed: 0.2,
+          normalMapScale: { x: 1, y: 1 }
+        },
+        sky: { 
+          turbidity: 9.2, 
+          rayleigh: 4.2, 
+          inclination: 0.2,
+          azimuth: 0.25,
+          mieCoefficient: 0.003,
+          mieDirectionalG: 0.9
+        },
+        fog: {
+          density: 0.00005,
+          color: 0xaaaaff
+        },
         sparkles: true,
         cameraMovement: true,
       },
@@ -1265,8 +1382,26 @@ const MEDITATION_CONFIG = {
       duration: 12000,
       level: 4,
       effects: {
-        water: { color: "#000022", distortion: 0.3 },
-        sky: { turbidity: 4.0, rayleigh: 4.0, inclination: 0.15 }, 
+        water: { 
+          color: "#000022", 
+          distortion: 0.3,
+          alpha: 0.6,
+          sunColor: 0x4444ff,
+          waveSpeed: 0.1,
+          normalMapScale: { x: 0.5, y: 0.5 }
+        },
+        sky: { 
+          turbidity: 4.0, 
+          rayleigh: 4.0, 
+          inclination: 0.15,
+          azimuth: 0.25,
+          mieCoefficient: 0.002,
+          mieDirectionalG: 0.95
+        },
+        fog: {
+          density: 0.00003,
+          color: 0x8888ff
+        },
         sparkles: true,
         cameraMovement: true,
       },
@@ -1278,13 +1413,24 @@ const MEDITATION_CONFIG = {
     SIZE: 5,
     QUANTITY: 100,
     NUM_SETS: 100,
+    ORBIT: {
+      RADIUS: 30,
+      SPEED: 0.3,
+      VERTICAL_RANGE: 20
+    }
   },
-
   TRANSITION_SPEEDS: {
     water: 0.1,
     sky: 0.02,
     camera: 0.05,
+    fog: 0.03,
+    sparkles: 0.08
   },
+  CAMERA_MOVEMENT: {
+    VERTICAL_OFFSET: 20,
+    ZOOM_OFFSET: 10,
+    ROTATION_SPEED: 0.0005
+  }
 };
 
 class SparkleManager {
@@ -1586,10 +1732,10 @@ class UnifiedMeditationManager {
     if (this.isMoving && this.movementStartTime) {
       const movementDuration = now - this.movementStartTime;
 
-      if (movementDuration > MEDITATION_CONFIG.STATES.FRANTIC.duration) {
-        newState = "FRANTIC";
-      } else if (movementDuration > MEDITATION_CONFIG.STATES.BUSY.duration) {
-        newState = "BUSY";
+      if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
+        newState = "ACTIVE_EVEN_LONGER";
+      } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration) {
+        newState = "ACTIVE_LONGER";
       } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE.duration) {
         newState = "ACTIVE";
       }
@@ -1616,31 +1762,113 @@ class UnifiedMeditationManager {
 
   applyStateEffects() {
     const targetEffects = MEDITATION_CONFIG.STATES[this.currentState].effects;
-
-    // Update water
+  
+    // Update all effects
     this.updateWater(targetEffects.water);
-
-    // Update sky
     this.updateSky(targetEffects.sky);
-
-    //   // Update sparkles using SparkleManager
+    this.updateFog(targetEffects.fog);
     this.updateSparkles(targetEffects.sparkles);
-
-    // Update camera
     this.updateCamera(targetEffects.cameraMovement);
   }
 
   updateWater(targetWater) {
     if (!this.app.water) return;
-
+  
+    // Update color
     const targetColor = new THREE.Color(targetWater.color);
-    this.app.water.material.uniforms.waterColor.value.lerp(targetColor, MEDITATION_CONFIG.TRANSITION_SPEEDS.water);
-
+    this.app.water.material.uniforms.waterColor.value.lerp(
+      targetColor, 
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.water
+    );
+  
+    // Update distortion
     this.app.water.material.uniforms["distortionScale"].value = THREE.MathUtils.lerp(
       this.app.water.material.uniforms["distortionScale"].value,
       targetWater.distortion,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.water
     );
+  
+    // Update transparency
+    this.app.water.material.uniforms.alpha.value = THREE.MathUtils.lerp(
+      this.app.water.material.uniforms.alpha.value,
+      targetWater.alpha,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.water
+    );
+  
+    // Update sun color
+    const targetSunColor = new THREE.Color(targetWater.sunColor);
+    this.app.water.material.uniforms.sunColor.value.lerp(
+      targetSunColor,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.water
+    );
+  
+    // Update wave speed
+    this.app.water.material.uniforms.time.value += targetWater.waveSpeed / 60.0;
+  
+    // Update normal map scale
+    this.app.water.material.uniforms.normalSampler.value.repeat.set(
+      targetWater.normalMapScale.x,
+      targetWater.normalMapScale.y
+    );
+  }
+  
+  updateSky(targetSky) {
+    if (!this.app.skyUniforms) return;
+  
+    // Update all sky parameters
+    this.app.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
+      this.app.skyUniforms["turbidity"].value,
+      targetSky.turbidity,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
+      this.app.skyUniforms["rayleigh"].value,
+      targetSky.rayleigh,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.skyUniforms["mieCoefficient"].value = THREE.MathUtils.lerp(
+      this.app.skyUniforms["mieCoefficient"].value,
+      targetSky.mieCoefficient,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.skyUniforms["mieDirectionalG"].value = THREE.MathUtils.lerp(
+      this.app.skyUniforms["mieDirectionalG"].value,
+      targetSky.mieDirectionalG,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.parameters.inclination = THREE.MathUtils.lerp(
+      this.app.parameters.inclination,
+      targetSky.inclination,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.parameters.azimuth = THREE.MathUtils.lerp(
+      this.app.parameters.azimuth,
+      targetSky.azimuth,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
+    );
+  
+    this.app.updateSun(this.app.parameters, new THREE.PMREMGenerator(this.app.renderer));
+  }
+  
+  updateFog(targetFog) {
+    if (!this.app.scene.fog) return;
+  
+    // Update fog density
+    this.app.scene.fog.density = THREE.MathUtils.lerp(
+      this.app.scene.fog.density,
+      targetFog.density,
+      MEDITATION_CONFIG.TRANSITION_SPEEDS.fog
+    );
+  
+    // Update fog color
+    const targetColor = new THREE.Color(targetFog.color);
+    this.app.scene.fog.color.lerp(targetColor, MEDITATION_CONFIG.TRANSITION_SPEEDS.fog);
+    this.app.renderer.setClearColor(this.app.scene.fog.color);
   }
 
   updateSparkles(shouldSparkle) {
@@ -1657,30 +1885,7 @@ class UnifiedMeditationManager {
       this.currentEffects.sparkles = false;
     }
   }
-  updateSky(targetSky) {
-    if (!this.app.skyUniforms) return;
 
-    // Smoothly interpolate sky parameters
-    this.app.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
-      this.app.skyUniforms["turbidity"].value,
-      targetSky.turbidity,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
-    );
-
-    this.app.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
-      this.app.skyUniforms["rayleigh"].value,
-      targetSky.rayleigh,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
-    );
-
-    this.app.parameters.inclination = THREE.MathUtils.lerp(
-      this.app.parameters.inclination,
-      targetSky.inclination,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
-    );
-
-    this.app.updateSun(this.app.parameters, new THREE.PMREMGenerator(this.app.renderer));
-  }
 
   updateCamera(shouldMove) {
     if (!shouldMove) {
@@ -1756,12 +1961,8 @@ class GUIManager {
     this.skyUniforms = skyUniforms;
     this.parameters = parameters;
     this.centerObj = centerObj;
-  }
-
-  initGUI() {
-    const gui = new GUI({ autoPlace: true, load: false });
-
-    const SKY_PRESETS = {
+    
+    this.SKY_PRESETS = {
       DEFAULT: {
         name: "Default",
         turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
@@ -1773,22 +1974,21 @@ class GUIManager {
       },
       DEEPER_SUNSET: {
         name: "Deeper Sunset",
-        turbidity: 6, // Same base
-        rayleigh: 6, // Double rayleigh for more blue
-        mieCoefficient: 0.003, // Less sun influence
+        turbidity: 6,
+        rayleigh: 6,
+        mieCoefficient: 0.003,
         mieDirectionalG: 0.7,
-        inclination: 0.49, // High sun
+        inclination: 0.49,
         azimuth: 0.25,
       },
-
       ROUNDER_SUNSET: {
         name: "RounderSunset",
-        turbidity: 4.0, // Between Default and Crystal
-        rayleigh: 2.0, // Moderate
-        mieCoefficient: 0.003, // Very subtle
-        mieDirectionalG: 0.8, // Moderate
-        inclination: 0.49, // High sun like the working ones
-        azimuth: 0.25, // Same position
+        turbidity: 4.0,
+        rayleigh: 2.0,
+        mieCoefficient: 0.003,
+        mieDirectionalG: 0.8,
+        inclination: 0.49,
+        azimuth: 0.25,
       },
       DARKNESS: {
         name: "Darkness",
@@ -1801,7 +2001,7 @@ class GUIManager {
       },
       MELLOW_SUNSET: {
         name: "Mellow Sunset",
-        turbidity: 1.0, // Extremely clear
+        turbidity: 1.0,
         rayleigh: 2.0,
         mieCoefficient: 0.002,
         mieDirectionalG: 0.999,
@@ -1810,7 +2010,7 @@ class GUIManager {
       },
       SUN_MELTS: {
         name: "Sun Melts",
-        turbidity: 8.9, // Extremely clear
+        turbidity: 8.9,
         rayleigh: 4.5,
         mieCoefficient: 0.006,
         mieDirectionalG: 0.96,
@@ -1819,377 +2019,347 @@ class GUIManager {
       },
     };
 
-    const WATER_PRESETS = {
+    this.WATER_PRESETS = {
       DEFAULT: {
         name: "Default",
-        distortionScale: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
-        size: ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE,
+        distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
         alpha: 1.0,
+        waveSpeed: 1.0,
+        normalScale: { x: 1, y: 1 },
         waterColor: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
         sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
       },
       CALM: {
         name: "Calm",
-        distortionScale: 1.8,
-        size: 10000,
-        alpha: 0.8,
+        distortion: 0.5,
+        alpha: 0.9,
+        waveSpeed: 0.3,
+        normalScale: { x: 1, y: 1 },
         waterColor: 0x001e0f,
         sunColor: 0xffffff,
       },
-      ROUGH: {
-        name: "Rough",
-        distortionScale: 5.0,
-        size: 10000,
+      STORMY: {
+        name: "Stormy",
+        distortion: 4.0,
         alpha: 1.0,
-        waterColor: 0x001e0f,
-        sunColor: 0xffffff,
+        waveSpeed: 1.5,
+        normalScale: { x: 3, y: 3 },
+        waterColor: 0x001133,
+        sunColor: 0x88aaff,
       },
+      MYSTICAL: {
+        name: "Mystical",
+        distortion: 2.0,
+        alpha: 0.7,
+        waveSpeed: 0.8,
+        normalScale: { x: 2, y: 2 },
+        waterColor: 0x000066,
+        sunColor: 0xaaaaff,
+      },
+      DEEP: {
+        name: "Deep",
+        distortion: 0.3,
+        alpha: 0.6,
+        waveSpeed: 0.2,
+        normalScale: { x: 0.5, y: 0.5 },
+        waterColor: 0x000022,
+        sunColor: 0x4444ff,
+      }
     };
+  }
 
-    // Audio Folder
-    const audioFolder = gui.addFolder("Audio");
-    audioFolder
-      .add(
-        {
-          startAudio: () => {
-            this.audioManager.seaSounds[0].loop = true;
-            this.audioManager.seaSounds[0]
-              .play()
-              .then(() => console.log("Sea sound started"))
-              .catch((err) => console.error("Sea sound failed to start:", err));
-          },
-        },
-        "startAudio"
-      )
-      .name("Start Sea Sound");
+  initGUI() {
+    this.gui = new GUI({ autoPlace: true, load: false });
 
-    audioFolder
-      .add(
-        {
-          toggleMute: () => {
-            const seaSound = this.audioManager.seaSounds[0];
-            if (seaSound.volume > 0) {
-              seaSound.volume = 0;
-            } else {
-              seaSound.volume = 0.09;
-            }
-          },
-        },
-        "toggleMute"
-      )
-      .name("Toggle Mute");
+    const audioFolder = this.initAudioFolder();
+    const objectsFolder = this.initObjectsFolder();
+    const meditationFolder = this.gui.addFolder("Meditation Effects");
+    
+    const skyFolder = this.initSkyFolder(meditationFolder);
+    const waterFolder = this.initWaterFolder(meditationFolder);
+    const fogFolder = this.initFogFolder(meditationFolder);
+    const lightFolder = this.initLightingFolder(meditationFolder);
+    const testingFolder = this.initTestingFolder(meditationFolder);
 
-    audioFolder
-      .add({ volume: 0.09 }, "volume", 0, 1)
+    this.openFolders(audioFolder, objectsFolder, meditationFolder, skyFolder, waterFolder, fogFolder);
+  }
+
+  initAudioFolder() {
+    const folder = this.gui.addFolder("Audio");
+    
+    folder.add({
+      startAudio: () => {
+        this.audioManager.seaSounds[0].loop = true;
+        this.audioManager.seaSounds[0]
+          .play()
+          .then(() => console.log("Sea sound started"))
+          .catch((err) => console.error("Sea sound failed to start:", err));
+      }
+    }, "startAudio")
+    .name("Start Sea Sound");
+
+    folder.add({
+      toggleMute: () => {
+        const seaSound = this.audioManager.seaSounds[0];
+        seaSound.volume = seaSound.volume > 0 ? 0 : 0.09;
+      }
+    }, "toggleMute")
+    .name("Toggle Mute");
+
+    folder.add({ volume: 0.09 }, "volume", 0, 1)
       .name("Sea Volume")
       .onChange((value) => {
         this.audioManager.seaSounds[0].volume = value;
       });
 
-    // Objects parameters
-    const objectsFolder = gui.addFolder("Objects");
+    return folder;
+  }
 
-    objectsFolder
-      .add({ scale: ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE }, "scale", 0.1, 5)
+  initObjectsFolder() {
+    const folder = this.gui.addFolder("Objects");
+    
+    folder.add({ scale: ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE }, "scale", 0.1, 5)
       .name("Center Object Scale")
       .onChange((value) => {
         this.centerObj.scale.set(value, value, value);
       });
 
-    objectsFolder
-      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBE", 0.1, 5)
+    // Create utility function for geometry updates
+    const updateGeometry = (params) => {
+      const newGeometry = new THREE.TorusKnotGeometry(
+        params.radius || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
+        params.tube || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
+        params.tubularSegments || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
+        params.radialSegments || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
+        params.p || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
+        params.q || ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
+      );
+      this.centerObj.geometry.dispose();
+      this.centerObj.geometry = newGeometry;
+    };
+
+    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBE", 0.1, 5)
       .name("Torus Knot Tube")
       .onChange((value) => {
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE = value;
-        const newGeometry = new THREE.TorusKnotGeometry(
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
-          value,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
-        );
-        this.centerObj.geometry.dispose();
-        this.centerObj.geometry = newGeometry;
+        updateGeometry({ tube: value });
       });
 
-    objectsFolder
-      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBULAR_SEGMENTS", 3, 500, 1)
+    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBULAR_SEGMENTS", 3, 500, 1)
       .name("Tubular Segments")
       .onChange((value) => {
         value = Math.floor(value);
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS = value;
-
-        const newGeometry = new THREE.TorusKnotGeometry(
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
-          value,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
-        );
-
-        this.centerObj.geometry.dispose();
-        this.centerObj.geometry = newGeometry;
+        updateGeometry({ tubularSegments: value });
       });
 
-    objectsFolder
-      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "RADIAL_SEGMENTS", 3, 50, 1)
+    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "RADIAL_SEGMENTS", 3, 50, 1)
       .name("Radial Segments")
       .onChange((value) => {
         value = Math.floor(value);
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS = value;
-
-        const newGeometry = new THREE.TorusKnotGeometry(
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
-          value,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
-        );
-
-        this.centerObj.geometry.dispose();
-        this.centerObj.geometry = newGeometry;
+        updateGeometry({ radialSegments: value });
       });
 
-    objectsFolder
-      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "P", 1, 10, 1)
+    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "P", 1, 10, 1)
       .name("P (Twist)")
       .onChange((value) => {
         value = Math.floor(value);
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P = value;
-
-        const newGeometry = new THREE.TorusKnotGeometry(
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
-          value,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q
-        );
-
-        this.centerObj.geometry.dispose();
-        this.centerObj.geometry = newGeometry;
+        updateGeometry({ p: value });
       });
 
-    objectsFolder
-      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "Q", 1, 10, 1)
+    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "Q", 1, 10, 1)
       .name("Q (Twist)")
       .onChange((value) => {
         value = Math.floor(value);
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.Q = value;
-
-        const newGeometry = new THREE.TorusKnotGeometry(
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIUS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBULAR_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.RADIAL_SEGMENTS,
-          ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.P,
-          value
-        );
-
-        this.centerObj.geometry.dispose();
-        this.centerObj.geometry = newGeometry;
+        updateGeometry({ q: value });
       });
 
-    // Meditation Folder and Sub-folders
-    const meditationFolder = gui.addFolder("Meditation Effects");
+    return folder;
+  }
 
-    // Sky effects
-    const skyFolder = meditationFolder.addFolder("Sky Effects");
+  initSkyFolder(parentFolder) {
+    const folder = parentFolder.addFolder("Sky Effects");
+    
+    folder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1)
+      .name("Sun Size");
 
-    // Enhanced Sky controls - add these to skyFolder
-    skyFolder
-      .add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1)
-      .name("Sun Size")
-      .onChange((value) => {
-        this.skyUniforms["mieCoefficient"].value = value;
-      });
+    folder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1)
+      .name("Sun Sharpness");
 
-    skyFolder
-      .add(this.skyUniforms["mieDirectionalG"], "value", 0, 1)
-      .name("Sun Sharpness")
-      .onChange((value) => {
-        this.skyUniforms["mieDirectionalG"].value = value;
-      });
-
-    // Create sky controls object
-    const skyControls = {
-      preset: "Default",
-    };
-
-    // Add all sky controls in the correct order
-    skyFolder
-      .add(
-        skyControls,
-        "preset",
-        Object.keys(SKY_PRESETS).map((key) => SKY_PRESETS[key].name)
-      )
+    folder.add({ preset: "Default" }, "preset", 
+      Object.values(this.SKY_PRESETS).map(preset => preset.name))
       .name("Sky Presets")
       .onChange((presetName) => {
-        const preset = Object.values(SKY_PRESETS).find((p) => p.name === presetName);
-        if (!preset) return;
-
-        // Update all sky uniforms
-        this.skyUniforms["turbidity"].value = preset.turbidity;
-        this.skyUniforms["rayleigh"].value = preset.rayleigh;
-        this.skyUniforms["mieCoefficient"].value = preset.mieCoefficient;
-        this.skyUniforms["mieDirectionalG"].value = preset.mieDirectionalG;
-        this.parameters.azimuth = preset.azimuth;
-
-        this.parameters.inclination = preset.inclination;
-
-        // Update the Sun
-        this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
-
-        // Update GUI controllers
-        Object.values(skyFolder.__controllers).forEach((controller) => {
-          if (controller.property === "value") {
-            if (controller.object === this.skyUniforms["turbidity"]) {
-              controller.setValue(preset.turbidity);
-            } else if (controller.object === this.skyUniforms["rayleigh"]) {
-              controller.setValue(preset.rayleigh);
-            } else if (controller.object === this.skyUniforms["mieCoefficient"]) {
-              controller.setValue(preset.mieCoefficient);
-            } else if (controller.object === this.skyUniforms["mieDirectionalG"]) {
-              controller.setValue(preset.mieDirectionalG);
-            }
-          }
-          if (controller.property === "inclination") {
-            controller.setValue(preset.inclination);
-          }
-        });
+        const preset = Object.values(this.SKY_PRESETS).find(p => p.name === presetName);
+        if (preset) {
+          this.applySkyPreset(preset, folder);
+        }
       });
 
-    // Add individual sky parameter controls
-    skyFolder.add(this.skyUniforms["rayleigh"], "value", 0, 10).name("Rayleigh");
-    skyFolder.add(this.skyUniforms["turbidity"], "value", 0, 20).name("Turbidity");
-    skyFolder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1).name("Mie Coefficient");
-    skyFolder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Mie Directional G");
-    skyFolder
-      .add(this.parameters, "azimuth", 0, 1)
+    folder.add(this.skyUniforms["rayleigh"], "value", 0, 10).name("Rayleigh");
+    folder.add(this.skyUniforms["turbidity"], "value", 0, 20).name("Turbidity");
+    folder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1).name("Mie Coefficient");
+    folder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Mie Directional G");
+    
+    folder.add(this.parameters, "azimuth", 0, 1)
+      .name("Azimuth (Sun Position)")
       .onChange(() => {
         this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
-      })
-      .name("Azimuth (Sun Position)");
-    skyFolder
-      .add(this.parameters, "inclination", -0.5, 0.5)
-      .onChange(() => {
-        this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
-      })
-      .name("Inclination (Day/Night)");
-
-//       skyFolder.add(this.skyUniforms["sunPosition"], "value").name("Sun Position Vector");
-// skyFolder.add(this.skyUniforms["up"], "value").name("Sky Up Vector");
-    // Water effects
-    const waterFolder = meditationFolder.addFolder("Water Effects");
-    waterFolder.add(this.water.material.uniforms.distortionScale, "value", 0, 10).name("Wave Distortion");
-
-    waterFolder.add(this.water.material, "transparent").name("Enable Transparency");
-waterFolder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Transparency");
-
-    const waterControls = {
-      preset: "Default",
-    };
-
-    waterFolder
-      .add(
-        waterControls,
-        "preset",
-        Object.keys(WATER_PRESETS).map((key) => WATER_PRESETS[key].name)
-      )
-      .name("Water Presets");
-
-    // Water parameters
-    waterFolder
-      .add(this.water.material.uniforms.distortionScale, "value", 0, 10)
-      .name("Wave Distortion")
-      .onChange((value) => {
-        this.water.material.uniforms.distortionScale.value = value;
       });
 
-    waterFolder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Water Transparency");
+    folder.add(this.parameters, "inclination", -0.5, 0.5)
+      .name("Inclination (Day/Night)")
+      .onChange(() => {
+        this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+      });
 
-    waterFolder
-      .addColor(
-        {
-          waterColor: this.water.material.uniforms.waterColor.value.getHex(),
-        },
-        "waterColor"
-      )
+    return folder;
+  }
+
+  applySkyPreset(preset, folder) {
+    this.skyUniforms["turbidity"].value = preset.turbidity;
+    this.skyUniforms["rayleigh"].value = preset.rayleigh;
+    this.skyUniforms["mieCoefficient"].value = preset.mieCoefficient;
+    this.skyUniforms["mieDirectionalG"].value = preset.mieDirectionalG;
+    this.parameters.azimuth = preset.azimuth;
+    this.parameters.inclination = preset.inclination;
+
+    this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
+
+    folder.__controllers.forEach(controller => {
+      controller.updateDisplay();
+    });
+  }
+
+  initWaterFolder(parentFolder) {
+    const folder = parentFolder.addFolder("Water Effects");
+    
+    folder.add(this.water.material.uniforms.distortionScale, "value", 0, 10)
+      .name("Wave Distortion");
+
+    folder.add(this.water.material.uniforms.alpha, "value", 0, 1)
+      .name("Transparency");
+
+    const waveControls = folder.addFolder("Wave Settings");
+    waveControls.add({ speed: 1.0 }, "speed", 0.1, 2.0)
+      .name("Wave Speed")
+      .onChange(value => {
+        this.water.userData.waveSpeed = value;
+      });
+
+    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "x", 0.1, 5)
+      .name("Normal Scale X");
+    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0.1, 5)
+      .name("Normal Scale Y");
+
+    const colorControls = folder.addFolder("Color Settings");
+    this.addWaterColorControls(colorControls);
+
+    folder.add({ preset: "Default" }, "preset",
+      Object.values(this.WATER_PRESETS).map(preset => preset.name))
+      .name("Water Presets")
+      .onChange(presetName => {
+        const preset = Object.values(this.WATER_PRESETS).find(p => p.name === presetName);
+        if (preset) {
+          this.applyWaterPreset(preset);
+        }
+      });
+
+    return folder;
+  }
+
+  addWaterColorControls(folder) {
+    folder.addColor(
+      { waterColor: this.water.material.uniforms.waterColor.value.getHex() },
+      "waterColor"
+    )
       .name("Water Color")
-      .onChange((value) => {
+      .onChange(value => {
         this.water.material.uniforms.waterColor.value.setHex(value);
       });
 
-    waterFolder
-      .addColor(
-        {
-          sunColor: this.water.material.uniforms.sunColor.value.getHex(),
-        },
-        "sunColor"
-      )
+    folder.addColor(
+      { sunColor: this.water.material.uniforms.sunColor.value.getHex() },
+      "sunColor"
+    )
       .name("Sun Reflection Color")
-      .onChange((value) => {
+      .onChange(value => {
         this.water.material.uniforms.sunColor.value.setHex(value);
       });
+  }
 
-      // Wave speed
-waterFolder.add(this.water.material.uniforms.time, "value", 0, 10).name("Wave Speed");
+  applyWaterPreset(preset) {
+    this.water.material.uniforms.distortionScale.value = preset.distortion;
+    this.water.material.uniforms.alpha.value = preset.alpha;
+    this.water.userData.waveSpeed = preset.waveSpeed;
+    this.water.material.uniforms.normalSampler.value.repeat.set(
+      preset.normalScale.x,
+      preset.normalScale.y
+    );
+    this.water.material.uniforms.waterColor.value.setHex(preset.waterColor);
+    this.water.material.uniforms.sunColor.value.setHex(preset.sunColor);
 
-// Normal map scale
-waterFolder.add(this.water.material.uniforms.normalSampler.value.repeat, "x", 0, 10).name("Wave Pattern X");
-waterFolder.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0, 10).name("Wave Pattern Y");
+    // Update all GUI controllers
+    if (this.gui) {
+      const waterFolder = this.gui.folders.find(folder => folder.name === "Water Effects");
+      if (waterFolder) {
+        Object.values(waterFolder.__controllers).forEach(controller => {
+          controller.updateDisplay();
+        });
+      }
+    }
+  }
 
-    // Environment/Fog
-    const envFolder = meditationFolder.addFolder("Environment");
-    envFolder.add(this.scene.fog, "density", 0, 0.01).name("Fog Density");
-    envFolder
-      .addColor(
-        {
-          color: this.scene.fog.color.getHex(),
-        },
-        "color"
-      )
+  initFogFolder(parentFolder) {
+    const folder = parentFolder.addFolder("Fog Settings");
+    
+    folder.add(this.scene.fog, "density", 0, 0.001, 0.00001)
+      .name("Fog Density");
+
+    folder.addColor(
+      { fogColor: this.scene.fog.color.getHex() },
+      "fogColor"
+    )
+      .name("Fog Color")
       .onChange((value) => {
         this.scene.fog.color.setHex(value);
         this.renderer.setClearColor(this.scene.fog.color);
-      })
-      .name("Fog Color");
+      });
 
-    // Lighting
-    const lightFolder = meditationFolder.addFolder("Lighting");
+    return folder;
+  }
+
+  initLightingFolder(parentFolder) {
+    const folder = parentFolder.addFolder("Lighting");
+    
     const directionalLight1 = this.scene.children.find((child) => child.type === "DirectionalLight");
     if (directionalLight1) {
-      lightFolder.add(directionalLight1, "intensity", 0, 2).name("Sun Light Intensity");
-      lightFolder
-        .addColor(
-          {
-            color: directionalLight1.color.getHex(),
-          },
-          "color"
-        )
+      folder.add(directionalLight1, "intensity", 0, 2)
+        .name("Sun Light Intensity");
+        
+      folder.addColor(
+        { color: directionalLight1.color.getHex() },
+        "color"
+      )
+        .name("Sun Light Color")
         .onChange((value) => {
           directionalLight1.color.setHex(value);
-        })
-        .name("Sun Light Color");
+        });
     }
 
-    // Camera movement
-    const cameraFolder = meditationFolder.addFolder("Camera Movement");
-    // (No direct cameraParams here without changing code, so it's left empty or commented)
+    return folder;
+  }
 
-    // Testing Controls
-    const testingFolder = meditationFolder.addFolder("Testing Controls");
+  initTestingFolder(parentFolder) {
+    const folder = parentFolder.addFolder("Testing Controls");
+    
     const testingParams = { timingMode: "Normal" };
-    testingFolder
-      .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
+    folder.add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
       .name("Timing Mode")
       .onChange((value) => {
-        // Assuming meditationParams exist in this.app, if not this part should be adjusted
-        // This code references meditationParams which we don't see in the snippet.
-        // The user requested no logic changes, so we assume meditationParams is accessible.
         switch (value) {
           case "Normal":
             this.app.meditationParams.stillnessThresholds = {
@@ -2218,14 +2388,18 @@ waterFolder.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0,
         }
       });
 
-    testingFolder.open();
-    audioFolder.open();
-    objectsFolder.open();
-    meditationFolder.open();
-    skyFolder.open();
-    waterFolder.open();
+    return folder;
+  }
+
+  openFolders(...folders) {
+    folders.forEach(folder => folder?.open());
   }
 }
+
+
+
+
+
 
 class AudioManager {
   constructor() {
