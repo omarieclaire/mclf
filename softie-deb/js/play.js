@@ -34,16 +34,14 @@ class CameraProcessor {
       throw new Error("Video element 'videoInput' not found");
     }
 
-    // Make video visible during testing
-    if (this.debugMode) {
-      this.video.style.display = "block";
-      this.video.style.position = "fixed";
-      this.video.style.top = "10px";
-      this.video.style.left = "10px";
-      this.video.style.width = "320px";
-      this.video.style.height = "240px";
-      this.video.style.zIndex = "1000";
-    }
+    // Hide video by default
+    this.video.style.display = "none";
+    this.video.style.position = "fixed";
+    this.video.style.top = "10px";
+    this.video.style.left = "10px";
+    this.video.style.width = "320px";
+    this.video.style.height = "240px";
+    this.video.style.zIndex = "1000";
 
     return navigator.mediaDevices
       .getUserMedia({ video: true, audio: false })
@@ -75,6 +73,15 @@ class CameraProcessor {
     if (!canvasOutput) {
       throw new Error("Canvas element 'canvasOutput' not found");
     }
+
+    canvasOutput.style.display = "none";
+    canvasOutput.style.position = "fixed";
+    canvasOutput.style.top = "260px";
+    canvasOutput.style.left = "10px";
+    canvasOutput.style.width = "320px";
+    canvasOutput.style.height = "240px";
+    canvasOutput.style.zIndex = "1000";
+
     console.log("OpenCV is loaded, starting video processing");
 
     if (this.debugMode) {
@@ -404,7 +411,7 @@ export class ThreeJSApp {
       .play()
       .then(() => console.log("Sea sound started"))
       .catch((err) => console.error("Sea sound failed to start:", err));
-    this.debugMode = true;
+    // this.debugMode = true;
 
     this.centerObj = null; // Explicitly initialize
     this.meditationManager = new UnifiedMeditationManager(this);
@@ -414,7 +421,66 @@ export class ThreeJSApp {
     window.addEventListener("resize", this.onWindowResize.bind(this));
     document.addEventListener("mousemove", this.onDocumentMouseMove.bind(this));
     window.addEventListener("load", this.onWindowLoad.bind(this));
+
+    this.debugMode = false; // Change default to false
+    this.guiVisible = false;
+    
+    // Add key listener for debug toggle
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'd') {
+        this.debugMode = !this.debugMode;
+        this.toggleDebugElements();
+      }
+    });
   }
+
+
+
+
+
+  toggleDebugElements() {
+    // Toggle GUI
+    if (this.guiManager && this.guiManager.gui) {
+      const guiElement = document.querySelector('.dg.ac');
+      if (guiElement) {
+          guiElement.style.display = this.debugMode ? 'block' : 'none';
+      }
+  }
+
+    // Toggle debug info
+    const debugInfo = document.getElementById('debugInfo');
+    if (debugInfo) {
+      debugInfo.style.display = this.debugMode ? 'block' : 'none';
+    }
+
+    // Toggle video elements
+    const videoInput = document.getElementById('videoInput');
+    if (videoInput) {
+      videoInput.style.display = this.debugMode ? 'block' : 'none';
+    }
+
+    const canvasOutput = document.getElementById('canvasOutput');
+    if (canvasOutput) {
+      canvasOutput.style.display = this.debugMode ? 'block' : 'none';
+    }
+  }
+
+  initDebugUI() {
+    const debugContainer = document.createElement("div");
+    debugContainer.style.position = "fixed";
+    debugContainer.style.bottom = "10px";
+    debugContainer.style.left = "10px";
+    debugContainer.style.backgroundColor = "rgba(0,0,0,0.7)";
+    debugContainer.style.color = "white";
+    debugContainer.style.padding = "10px";
+    debugContainer.style.fontFamily = "monospace";
+    debugContainer.style.zIndex = "1000";
+    debugContainer.id = "debugInfo";
+    debugContainer.style.display = "none"; // Hide by default
+    document.body.appendChild(debugContainer);
+  }
+
+
 
   onWindowLoad() {
     document.body.classList.remove("preload");
@@ -489,24 +555,8 @@ export class ThreeJSApp {
       this.centerObj
     );
     this.guiManager.initGUI();
+    this.initDebugUI();  
 
-    if (this.debugMode) {
-      this.initDebugUI();
-    }
-  }
-
-  initDebugUI() {
-    const debugContainer = document.createElement("div");
-    debugContainer.style.position = "fixed";
-    debugContainer.style.bottom = "10px";
-    debugContainer.style.left = "10px";
-    debugContainer.style.backgroundColor = "rgba(0,0,0,0.7)";
-    debugContainer.style.color = "white";
-    debugContainer.style.padding = "10px";
-    debugContainer.style.fontFamily = "monospace";
-    debugContainer.style.zIndex = "1000";
-    debugContainer.id = "debugInfo";
-    document.body.appendChild(debugContainer);
   }
 
   initOpenCV() {
@@ -941,6 +991,11 @@ export class ThreeJSApp {
   }
 
   render() {
+    //this was here to make there be no edge of the world
+  //     const cameraPosition = this.camera.position;
+  // this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
+  // this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
+
     
     // Update shader time for all meshes
     this.scene.traverse((child) => {
@@ -2077,7 +2132,6 @@ class GUIManager {
 
   initGUI() {
     this.gui = new GUI({ autoPlace: true, load: false });
-
     const audioFolder = this.initAudioFolder();
     const objectsFolder = this.initObjectsFolder();
     const meditationFolder = this.gui.addFolder("Meditation Effects");
@@ -2089,7 +2143,13 @@ class GUIManager {
     const testingFolder = this.initTestingFolder(meditationFolder);
 
     this.openFolders(audioFolder, objectsFolder, meditationFolder, skyFolder, waterFolder, fogFolder);
-  }
+
+    // Hide GUI after it's fully created
+    const guiElement = document.querySelector('.dg.ac');
+    if (guiElement) {
+      guiElement.style.display = 'none';
+    }
+}
 
   initAudioFolder() {
     const folder = this.gui.addFolder("Audio");
