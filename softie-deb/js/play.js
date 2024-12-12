@@ -206,6 +206,75 @@ class CameraProcessor {
   }
 }
 
+class FriendScalingManager {
+  constructor() {
+    // Scaling configuration
+    this.SCALE_CONFIG = {
+      MIN: 0.01,          // Minimum scale (almost invisible)
+      MAX: 1.0,           // Maximum scale (full size)
+      TRANSITION_SPEED: { 
+        APPEAR: 0.02,     // Speed when growing
+        DISAPPEAR: 0.01   // Slower speed when shrinking
+      }
+    };
+
+    // Current state
+    this.friendTargetScale = this.SCALE_CONFIG.MIN;
+    this.friendCurrentScale = this.SCALE_CONFIG.MIN;
+    this.originalFriendScales = new Map();
+  }
+
+  // Store the original scale when a friend is created
+  registerFriend(friend) {
+    // Extract the base scale from the friend object
+    const baseScale = friend.scale.x;  // Assuming uniform scale
+    this.originalFriendScales.set(friend.uuid, baseScale);
+    // Start at minimum scale
+    friend.scale.setScalar(baseScale * this.SCALE_CONFIG.MIN);
+  }
+
+  // Update scaling based on meditation state
+  updateScaling(isInMeditativeState) {
+    // Set target based on state
+    this.friendTargetScale = isInMeditativeState ? 
+      this.SCALE_CONFIG.MAX : 
+      this.SCALE_CONFIG.MIN;
+
+    // Choose transition speed based on direction
+    const transitionSpeed = isInMeditativeState ?
+      this.SCALE_CONFIG.TRANSITION_SPEED.APPEAR :
+      this.SCALE_CONFIG.TRANSITION_SPEED.DISAPPEAR;
+
+    // Smooth transition
+    this.friendCurrentScale = THREE.MathUtils.lerp(
+      this.friendCurrentScale,
+      this.friendTargetScale,
+      transitionSpeed
+    );
+
+    return this.friendCurrentScale;
+  }
+
+  // Apply current scale to a friend
+  applyScale(friend) {
+    const originalScale = this.originalFriendScales.get(friend.uuid);
+    if (originalScale) {
+      const newScale = originalScale * this.friendCurrentScale;
+      friend.scale.setScalar(newScale);
+    }
+  }
+
+  // Check if friends are visible enough for interaction
+  areInteractable() {
+    return this.friendCurrentScale > 0.1;
+  }
+
+  // Check if friends are visible enough for animation
+  areAnimatable() {
+    return this.friendCurrentScale > 0.05;
+  }
+}
+
 export class ThreeJSApp {
   static CONFIG = {
     COUNTS: {
@@ -369,7 +438,8 @@ export class ThreeJSApp {
     POSITIONING: {
       RANDOM: {
         X: { MIN: -500, MAX: 400 }, // -500 to (900-500=400)
-        Y: { MIN: -5, MAX: 145 }, // -5 to (150-5=145)
+        Y: { MIN: -150, MAX: -5 }, // Initial positions underwater
+        // Y: { MIN: -5, MAX: 145 }, // -5 to (150-5=145)
         Z: { MIN: -600, MAX: 300 }, // -600 to (900-600=300)
       },
     },
@@ -385,6 +455,12 @@ export class ThreeJSApp {
 
     this.fadeAmount = 1 / this.numberOfFriends;
     this.initialFriendYPositions = Array.from({ length: this.numberOfFriends * 10 }, () => Math.random());
+    // Add scale transition properties for friends
+    this.targetScale = 1.0;
+    this.currentScale = 0.01; // Start very small
+    this.scaleTransitionSpeed = 0.02; // Adjust this to control transition speed
+    this.initialObjectScales = new Map(); // Store original scales for each object
+
     this.boxSpeeds = [];
     this.centerObjects = [];
     this.jellyfish = [];
@@ -424,44 +500,40 @@ export class ThreeJSApp {
 
     this.debugMode = false; // Change default to false
     this.guiVisible = false;
-    
+
     // Add key listener for debug toggle
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'd') {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "d") {
         this.debugMode = !this.debugMode;
         this.toggleDebugElements();
       }
     });
   }
 
-
-
-
-
   toggleDebugElements() {
     // Toggle GUI
     if (this.guiManager && this.guiManager.gui) {
-      const guiElement = document.querySelector('.dg.ac');
+      const guiElement = document.querySelector(".dg.ac");
       if (guiElement) {
-          guiElement.style.display = this.debugMode ? 'block' : 'none';
+        guiElement.style.display = this.debugMode ? "block" : "none";
       }
-  }
+    }
 
     // Toggle debug info
-    const debugInfo = document.getElementById('debugInfo');
+    const debugInfo = document.getElementById("debugInfo");
     if (debugInfo) {
-      debugInfo.style.display = this.debugMode ? 'block' : 'none';
+      debugInfo.style.display = this.debugMode ? "block" : "none";
     }
 
     // Toggle video elements
-    const videoInput = document.getElementById('videoInput');
+    const videoInput = document.getElementById("videoInput");
     if (videoInput) {
-      videoInput.style.display = this.debugMode ? 'block' : 'none';
+      videoInput.style.display = this.debugMode ? "block" : "none";
     }
 
-    const canvasOutput = document.getElementById('canvasOutput');
+    const canvasOutput = document.getElementById("canvasOutput");
     if (canvasOutput) {
-      canvasOutput.style.display = this.debugMode ? 'block' : 'none';
+      canvasOutput.style.display = this.debugMode ? "block" : "none";
     }
   }
 
@@ -480,12 +552,24 @@ export class ThreeJSApp {
     document.body.appendChild(debugContainer);
   }
 
-
-
   onWindowLoad() {
     document.body.classList.remove("preload");
     this.loadModels();
   }
+
+  // mkGoodPosition() {
+  //   return {
+  //     x:
+  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN) +
+  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN,
+  //     y:
+  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN) +
+  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN,
+  //     z:
+  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN) +
+  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN,
+  //   };
+  // }
 
   mkGoodPosition() {
     return {
@@ -494,7 +578,7 @@ export class ThreeJSApp {
         ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN,
       y:
         Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN) +
-        ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN,
+        ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN, // This gives underwater initial positions
       z:
         Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN) +
         ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN,
@@ -540,6 +624,8 @@ export class ThreeJSApp {
     this.initCenterObjects();
     this.raycaster = new THREE.Raycaster();
     this.boxGroup = new THREE.Group();
+    this.boxGroup.visible = false; // Start with friends hidden
+
     this.scene.add(this.boxGroup);
     this.initModals();
 
@@ -555,8 +641,7 @@ export class ThreeJSApp {
       this.centerObj
     );
     this.guiManager.initGUI();
-    this.initDebugUI();  
-
+    this.initDebugUI();
   }
 
   initOpenCV() {
@@ -577,17 +662,14 @@ export class ThreeJSApp {
   }
 
   initWater() {
-    const waterGeometry = new THREE.PlaneGeometry(
-      ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE, 
-      ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE
-    );
-  
+    const waterGeometry = new THREE.PlaneGeometry(ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE, ThreeJSApp.CONFIG.WATER.STARTING_GEOMETRY_SIZE);
+
     // Create water normal map texture with proper settings
     const waterNormals = new THREE.TextureLoader().load("./img/waternormals.jpeg", function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(1, 1); // Default scale for normal map
     });
-  
+
     this.water = new Water(waterGeometry, {
       textureWidth: ThreeJSApp.CONFIG.WATER.STARTING_TEXTURE_SIZE,
       textureHeight: ThreeJSApp.CONFIG.WATER.STARTING_TEXTURE_SIZE,
@@ -597,14 +679,14 @@ export class ThreeJSApp {
       waterColor: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
       distortionScale: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
       fog: true, // Enable fog interaction
-      alpha: 1.0 // Start fully opaque
+      alpha: 1.0, // Start fully opaque
     });
-  
+
     // Additional uniform initialization
     this.water.material.uniforms.time = { value: 0 };
     this.water.material.uniforms.normalSampler.value = waterNormals;
     this.water.material.transparent = true;
-    
+
     this.water.rotation.x = -Math.PI / 2;
     this.scene.add(this.water);
   }
@@ -670,12 +752,9 @@ export class ThreeJSApp {
     this.scene.add(directionalLight3);
 
     const normalState = MEDITATION_CONFIG.STATES.NORMAL.effects;
-  this.scene.fog = new THREE.FogExp2(
-    normalState.fog.color,
-    normalState.fog.density
-  );
-  this.renderer.setClearColor(this.scene.fog.color);
-}
+    this.scene.fog = new THREE.FogExp2(normalState.fog.color, normalState.fog.density);
+    this.renderer.setClearColor(this.scene.fog.color);
+  }
 
   initControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -954,7 +1033,9 @@ export class ThreeJSApp {
   }
 
   setupObject(obj, id, group, speeds, posX, posY, posZ, rotX, rotY, rotZ, scale) {
-    obj.scale.multiplyScalar(scale);
+    this.initialObjectScales.set(obj.uuid, scale);
+
+    obj.scale.multiplyScalar(0.01);
     obj.traverse((o) => {
       if (o.isMesh) {
         o.friendID = id;
@@ -992,11 +1073,10 @@ export class ThreeJSApp {
 
   render() {
     //this was here to make there be no edge of the world
-  //     const cameraPosition = this.camera.position;
-  // this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
-  // this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
+    //     const cameraPosition = this.camera.position;
+    // this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
+    // this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
 
-    
     // Update shader time for all meshes
     this.scene.traverse((child) => {
       if (child.isMesh) {
@@ -1006,78 +1086,113 @@ export class ThreeJSApp {
         }
       }
     });
-  
+
+    const meditationState = this.meditationManager.currentState;
+    const isDeepEnough = ["GENTLE", "MODERATE", "DEEP", "PROFOUND"].includes(meditationState);
+
+    // Set target scale based on state
+    this.targetScale = isDeepEnough ? 1.0 : 0.01;
+      // Smoothly transition current scale
+      this.currentScale = THREE.MathUtils.lerp(
+        this.currentScale,
+        this.targetScale,
+        this.scaleTransitionSpeed
+      );
+
+      // Update all objects' scales
+    this.boxGroup.children.forEach(child => {
+      const originalScale = this.initialObjectScales.get(child.uuid);
+      if (originalScale) {
+        const targetObjectScale = originalScale * this.currentScale;
+        child.scale.setScalar(targetObjectScale);
+      }
+    });
+
+    this.boxGroup.visible = isDeepEnough;
+    this.jellyfishOnScreen.forEach((creature) => {
+      if (creature.parent) creature.visible = isDeepEnough;
+    });
+
+    this.flyingCrullersOnScreen.forEach((creature) => {
+      if (creature.parent) creature.visible = isDeepEnough;
+    });
+
+    this.flyingSpheresOnScreen.forEach((creature) => {
+      if (creature.parent) creature.visible = isDeepEnough;
+    });
+
     // Update meditation effects
     this.meditationManager.sparkleManager.updateSparkles();
     this.meditationManager.update();
-  
+
     const time = performance.now() * 0.0001;
-  
-    // Update center object
-    this.centerObj.position.y = Math.sin(time) * 20 + 5;
-    this.centerObj.rotation.x = time * 0.5;
-    this.centerObj.rotation.z = time * 0.51;
-  
-    // Update box group children
-    for (let i = 0; i < this.boxGroup.children.length; i++) {
-      const offset = this.initialFriendYPositions[i] * 15;
-      this.boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
-      this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
-      this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
+
+    if (isDeepEnough) {
+      // Update center object
+      this.centerObj.position.y = Math.sin(time) * 20 + 5;
+      this.centerObj.rotation.x = time * 0.5;
+      this.centerObj.rotation.z = time * 0.51;
+
+      // Update box group children
+      for (let i = 0; i < this.boxGroup.children.length; i++) {
+        const offset = this.initialFriendYPositions[i] * 15;
+        this.boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+        this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
+        this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
+      }
+
+      // Update center objects rotation
+      this.centerObjects.forEach((obj) => {
+        obj.rotation.y = time;
+      });
     }
-  
-    // Update center objects rotation
-    this.centerObjects.forEach((obj) => {
-      obj.rotation.y = time;
-    });
-  
+
     // Update water animation
     if (this.water && this.water.material.uniforms.time) {
       const waveSpeed = this.water.userData.waveSpeed || 1.0;
       this.water.material.uniforms.time.value += waveSpeed / 60.0;
     }
-  
-    // Update raycasting for interaction
-    this.camera.updateMatrixWorld();
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const hoverableObjects = this.boxGroup.children.concat(this.centerObjects);
-    const intersects = this.raycaster.intersectObjects(hoverableObjects, true);
-  
-    // Handle hover effects
-    if (intersects.length > 0) {
-      if (this.INTERSECTED !== intersects[0].object) {
+
+    // Update raycasting only if shapes are visible
+    if (isDeepEnough) {
+      this.camera.updateMatrixWorld();
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const hoverableObjects = this.boxGroup.children.concat(this.centerObjects);
+      const intersects = this.raycaster.intersectObjects(hoverableObjects, true);
+
+      // Handle hover effects
+      if (intersects.length > 0) {
+        if (this.INTERSECTED !== intersects[0].object) {
+          if (this.INTERSECTED) {
+            this.INTERSECTED.traverse((o) => {
+              if (o.isMesh && o.material && o.material.emissive && o.currentHex !== undefined) {
+                o.material.emissive.setHex(o.currentHex);
+              }
+            });
+          }
+
+          this.INTERSECTED = intersects[0].object;
+          this.INTERSECTED.traverse((o) => {
+            if (o.isMesh && o.material && o.material.emissive) {
+              if (o.currentHex === undefined) {
+                o.currentHex = o.material.emissive.getHex();
+              }
+              o.material.emissive.setHex(0xff0000);
+            }
+          });
+        }
+      } else {
         if (this.INTERSECTED) {
           this.INTERSECTED.traverse((o) => {
-            // Only try to set emissive if the material supports it
             if (o.isMesh && o.material && o.material.emissive && o.currentHex !== undefined) {
               o.material.emissive.setHex(o.currentHex);
             }
           });
         }
-        
-        this.INTERSECTED = intersects[0].object;
-        this.INTERSECTED.traverse((o) => {
-          // Only store and set emissive if the material supports it
-          if (o.isMesh && o.material && o.material.emissive) {
-            // Store the current emissive color if we haven't already
-            if (o.currentHex === undefined) {
-              o.currentHex = o.material.emissive.getHex();
-            }
-            o.material.emissive.setHex(0xff0000);
-          }
-        });
+        this.INTERSECTED = null;
       }
-    } else {
-      if (this.INTERSECTED) {
-        this.INTERSECTED.traverse((o) => {
-          if (o.isMesh && o.material && o.material.emissive && o.currentHex !== undefined) {
-            o.material.emissive.setHex(o.currentHex);
-          }
-        });
-      }
-      this.INTERSECTED = null;
     }
-  
+
     // Render the scene
     this.renderer.render(this.scene, this.camera);
   }
@@ -1099,6 +1214,10 @@ export class ThreeJSApp {
   }
 
   handleInteraction(event) {
+    // Only process interactions if in appropriate meditation state
+    const isDeepEnough = ["GENTLE", "MODERATE", "DEEP", "PROFOUND"].includes(this.meditationManager.currentState);
+    if (!isDeepEnough) return;
+
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.closeAllModals(event);
 
@@ -1234,32 +1353,45 @@ export class ThreeJSApp {
   }
 }
 
+const VIBRANT_COLORS = [
+  "#FF1493", // Deep Pink
+  "#00FFFF", // Cyan
+  "#FF4500", // Orange Red
+  "#32CD32", // Lime Green
+  "#FF69B4", // Hot Pink
+  "#4169E1", // Royal Blue
+  "#FFD700", // Gold
+  "#9400D3", // Violet
+  "#00CED1", // Dark Turquoise
+  "#FF6347", // Tomato
+];
+
 const MEDITATION_CONFIG = {
   STATES: {
     ACTIVE_EVEN_LONGER: {
       type: "movement",
-      duration: 9000,
+      duration: 90000000,
       level: 3,
       effects: {
-        water: { 
-          color: "#00aacc", 
+        water: {
+          color: "#00aacc",
           distortion: 4.5,
           alpha: 1.0,
           sunColor: 0xffffff,
           waveSpeed: 1.0,
-          normalMapScale: { x: 4, y: 4 }
+          normalMapScale: { x: 4, y: 4 },
         },
-        sky: { 
-          turbidity: 8, 
-          rayleigh: 4, 
+        sky: {
+          turbidity: 8,
+          rayleigh: 4,
           inclination: 0.49,
           azimuth: 0.25,
           mieCoefficient: 0.005,
-          mieDirectionalG: 0.7
+          mieDirectionalG: 0.7,
         },
         fog: {
           density: 0.0002,
-          color: 0xeeeeff
+          color: 0xeeeeff,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1267,28 +1399,28 @@ const MEDITATION_CONFIG = {
     },
     ACTIVE_LONGER: {
       type: "movement",
-      duration: 6000,
+      duration: 600000,
       level: 2,
       effects: {
-        water: { 
-          color: "#0088aa", 
+        water: {
+          color: "#0088aa",
           distortion: 3.5,
           alpha: 1.0,
           sunColor: 0xffffff,
           waveSpeed: 0.8,
-          normalMapScale: { x: 3, y: 3 }
+          normalMapScale: { x: 3, y: 3 },
         },
-        sky: { 
-          turbidity: 7, 
-          rayleigh: 3.5, 
+        sky: {
+          turbidity: 7,
+          rayleigh: 3.5,
           inclination: 0.49,
           azimuth: 0.25,
           mieCoefficient: 0.005,
-          mieDirectionalG: 0.7
+          mieDirectionalG: 0.7,
         },
         fog: {
           density: 0.00015,
-          color: 0xeeeeff
+          color: 0xeeeeff,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1299,25 +1431,25 @@ const MEDITATION_CONFIG = {
       duration: 3000,
       level: 1,
       effects: {
-        water: { 
-          color: "#004488", 
+        water: {
+          color: "#004488",
           distortion: 2.5,
           alpha: 1.0,
           sunColor: 0xffffff,
           waveSpeed: 0.7,
-          normalMapScale: { x: 2.5, y: 2.5 }
+          normalMapScale: { x: 2.5, y: 2.5 },
         },
-        sky: { 
-          turbidity: 6, 
-          rayleigh: 3, 
+        sky: {
+          turbidity: 6,
+          rayleigh: 3,
           inclination: 0.49,
           azimuth: 0.25,
           mieCoefficient: 0.005,
-          mieDirectionalG: 0.7
+          mieDirectionalG: 0.7,
         },
         fog: {
           density: 0.0001,
-          color: 0xeeeeff
+          color: 0xeeeeff,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1334,7 +1466,7 @@ const MEDITATION_CONFIG = {
           alpha: 1.0,
           sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
           waveSpeed: 1.0,
-          normalMapScale: { x: 1, y: 1 }
+          normalMapScale: { x: 1, y: 1 },
         },
         sky: {
           turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
@@ -1342,11 +1474,11 @@ const MEDITATION_CONFIG = {
           inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION,
           azimuth: ThreeJSApp.CONFIG.SKY.STARTING_AZIMUTH,
           mieCoefficient: ThreeJSApp.CONFIG.SKY.STARTING_MIE_COEFFICIENT,
-          mieDirectionalG: ThreeJSApp.CONFIG.SKY.STARTING_MIE_DIRECTIONAL_G
+          mieDirectionalG: ThreeJSApp.CONFIG.SKY.STARTING_MIE_DIRECTIONAL_G,
         },
         fog: {
           density: ThreeJSApp.CONFIG.LIGHTS.FOG.DENSITY,
-          color: ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR
+          color: ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1363,7 +1495,7 @@ const MEDITATION_CONFIG = {
           alpha: 0.95,
           sunColor: 0xffffee,
           waveSpeed: 0.6,
-          normalMapScale: { x: 1.5, y: 1.5 }
+          normalMapScale: { x: 1.5, y: 1.5 },
         },
         sky: {
           turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.01,
@@ -1371,11 +1503,11 @@ const MEDITATION_CONFIG = {
           inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.01,
           azimuth: 0.25,
           mieCoefficient: 0.004,
-          mieDirectionalG: 0.75
+          mieDirectionalG: 0.75,
         },
         fog: {
           density: 0.00012,
-          color: 0xeeeeff
+          color: 0xeeeeff,
         },
         sparkles: true,
         cameraMovement: false,
@@ -1392,7 +1524,7 @@ const MEDITATION_CONFIG = {
           alpha: 0.9,
           sunColor: 0xddddff,
           waveSpeed: 0.4,
-          normalMapScale: { x: 1.2, y: 1.2 }
+          normalMapScale: { x: 1.2, y: 1.2 },
         },
         sky: {
           turbidity: 8.9,
@@ -1400,11 +1532,11 @@ const MEDITATION_CONFIG = {
           inclination: 0.49,
           azimuth: 0.25,
           mieCoefficient: 0.004,
-          mieDirectionalG: 0.8
+          mieDirectionalG: 0.8,
         },
         fog: {
           density: 0.00008,
-          color: 0xddddff
+          color: 0xddddff,
         },
         sparkles: true,
         cameraMovement: false,
@@ -1415,25 +1547,25 @@ const MEDITATION_CONFIG = {
       duration: 9000,
       level: 3,
       effects: {
-        water: { 
-          color: "#001133", 
+        water: {
+          color: "#001133",
           distortion: 0.5,
           alpha: 0.7,
           sunColor: 0x8888ff,
           waveSpeed: 0.2,
-          normalMapScale: { x: 1, y: 1 }
+          normalMapScale: { x: 1, y: 1 },
         },
-        sky: { 
-          turbidity: 9.2, 
-          rayleigh: 4.2, 
-          inclination: 0.2,
+        sky: {
+          turbidity: 8.9,
+          rayleigh: 4.5,
+          inclination: 0.49,
           azimuth: 0.25,
-          mieCoefficient: 0.003,
-          mieDirectionalG: 0.9
+          mieCoefficient: 0.004,
+          mieDirectionalG: 0.8,
         },
         fog: {
           density: 0.00005,
-          color: 0xaaaaff
+          color: 0xaaaaff,
         },
         sparkles: true,
         cameraMovement: true,
@@ -1444,25 +1576,25 @@ const MEDITATION_CONFIG = {
       duration: 12000,
       level: 4,
       effects: {
-        water: { 
-          color: "#000022", 
+        water: {
+          color: "#000022",
           distortion: 0.3,
           alpha: 0.6,
           sunColor: 0x4444ff,
           waveSpeed: 0.1,
-          normalMapScale: { x: 0.5, y: 0.5 }
+          normalMapScale: { x: 0.5, y: 0.5 },
         },
-        sky: { 
-          turbidity: 4.0, 
-          rayleigh: 4.0, 
+        sky: {
+          turbidity: 4.0,
+          rayleigh: 4.0,
           inclination: 0.15,
-          azimuth: 0.25,
+          azimuth: 0.85,
           mieCoefficient: 0.002,
-          mieDirectionalG: 0.95
+          mieDirectionalG: 0.95,
         },
         fog: {
           density: 0.00003,
-          color: 0x8888ff
+          color: 0x8888ff,
         },
         sparkles: true,
         cameraMovement: true,
@@ -1478,21 +1610,21 @@ const MEDITATION_CONFIG = {
     ORBIT: {
       RADIUS: 30,
       SPEED: 0.3,
-      VERTICAL_RANGE: 20
-    }
+      VERTICAL_RANGE: 20,
+    },
   },
   TRANSITION_SPEEDS: {
     water: 0.1,
     sky: 0.02,
     camera: 0.05,
     fog: 0.03,
-    sparkles: 0.08
+    sparkles: 0.08,
   },
   CAMERA_MOVEMENT: {
     VERTICAL_OFFSET: 20,
     ZOOM_OFFSET: 10,
-    ROTATION_SPEED: 0.0005
-  }
+    ROTATION_SPEED: 0.0005,
+  },
 };
 
 class SparkleManager {
@@ -1697,6 +1829,51 @@ class SparkleManager {
 }
 
 class UnifiedMeditationManager {
+  static dynamicStates = {
+    ACTIVE: {
+      water: () => {
+        const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
+        console.log("Generated new dynamic water color:", color);
+        return {
+          color: color,
+          distortion: 2.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 0.7,
+          normalMapScale: { x: 2.5, y: 2.5 },
+        };
+      },
+    },
+    ACTIVE_LONGER: {
+      water: () => {
+        const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
+        console.log("Generated new dynamic water color:", color);
+        return {
+          color: color,
+          distortion: 3.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 0.8,
+          normalMapScale: { x: 3, y: 3 },
+        };
+      },
+    },
+    ACTIVE_EVEN_LONGER: {
+      water: () => {
+        const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
+        console.log("Generated new dynamic water color:", color);
+        return {
+          color: color,
+          distortion: 4.5,
+          alpha: 1.0,
+          sunColor: 0xffffff,
+          waveSpeed: 1.0,
+          normalMapScale: { x: 4, y: 4 },
+        };
+      },
+    },
+  };
+
   constructor(app) {
     this.app = app;
     this.currentState = "NORMAL";
@@ -1709,6 +1886,10 @@ class UnifiedMeditationManager {
     this.lastStateChange = Date.now();
 
     this.sparkleManager = new SparkleManager(this.scene);
+
+    this.lastWaterColor = null; // Track the last color
+    this.nextColorChangeTime = 0; // Track when to next change color
+    this.colorChangeInterval = 2000; // Change color every 2 seconds
 
     // Store initial camera position
     this.originalCameraPosition = null;
@@ -1823,8 +2004,28 @@ class UnifiedMeditationManager {
   }
 
   applyStateEffects() {
-    const targetEffects = MEDITATION_CONFIG.STATES[this.currentState].effects;
-  
+    const now = Date.now();
+    const targetEffects = { ...MEDITATION_CONFIG.STATES[this.currentState].effects };
+
+    // Handle dynamic water effects for active states
+    if (UnifiedMeditationManager.dynamicStates[this.currentState]) {
+      if (now >= this.nextColorChangeTime) {
+        const dynamicEffects = UnifiedMeditationManager.dynamicStates[this.currentState];
+        const newWaterEffect = dynamicEffects.water();
+        targetEffects.water = newWaterEffect;
+
+        // Schedule next color change
+        this.nextColorChangeTime = now + this.colorChangeInterval;
+        console.log("Applied new water color:", newWaterEffect.color);
+      } else if (this.lastWaterColor) {
+        // Keep the last dynamic color until next change
+        targetEffects.water.color = this.lastWaterColor;
+      }
+    }
+
+    // Store the current color
+    this.lastWaterColor = targetEffects.water.color;
+
     // Update all effects
     this.updateWater(targetEffects.water);
     this.updateSky(targetEffects.sky);
@@ -1835,98 +2036,91 @@ class UnifiedMeditationManager {
 
   updateWater(targetWater) {
     if (!this.app.water) return;
-  
-    // Update color
+
+    console.log("Updating water color to:", targetWater.color);
+
+    // Convert target color to THREE.Color
     const targetColor = new THREE.Color(targetWater.color);
-    this.app.water.material.uniforms.waterColor.value.lerp(
-      targetColor, 
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.water
-    );
-  
-    // Update distortion
+    const currentColor = this.app.water.material.uniforms.waterColor.value;
+
+    console.log("Current color:", currentColor.getHexString());
+    console.log("Target color:", targetColor.getHexString());
+
+    const transitionSpeed = this.currentState.includes("ACTIVE")
+      ? MEDITATION_CONFIG.TRANSITION_SPEEDS.water * 0.5
+      : MEDITATION_CONFIG.TRANSITION_SPEEDS.water;
+
+    // Apply the color transition
+    this.app.water.material.uniforms.waterColor.value.lerp(targetColor, transitionSpeed);
+
+    console.log("New color after lerp:", this.app.water.material.uniforms.waterColor.value.getHexString());
+
+    // Update other water properties
     this.app.water.material.uniforms["distortionScale"].value = THREE.MathUtils.lerp(
       this.app.water.material.uniforms["distortionScale"].value,
       targetWater.distortion,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.water
     );
-  
-    // Update transparency
+
     this.app.water.material.uniforms.alpha.value = THREE.MathUtils.lerp(
       this.app.water.material.uniforms.alpha.value,
       targetWater.alpha,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.water
     );
-  
-    // Update sun color
+
     const targetSunColor = new THREE.Color(targetWater.sunColor);
-    this.app.water.material.uniforms.sunColor.value.lerp(
-      targetSunColor,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.water
-    );
-  
-    // Update wave speed
+    this.app.water.material.uniforms.sunColor.value.lerp(targetSunColor, MEDITATION_CONFIG.TRANSITION_SPEEDS.water);
+
     this.app.water.material.uniforms.time.value += targetWater.waveSpeed / 60.0;
-  
-    // Update normal map scale
-    this.app.water.material.uniforms.normalSampler.value.repeat.set(
-      targetWater.normalMapScale.x,
-      targetWater.normalMapScale.y
-    );
+
+    this.app.water.material.uniforms.normalSampler.value.repeat.set(targetWater.normalMapScale.x, targetWater.normalMapScale.y);
   }
-  
+
   updateSky(targetSky) {
     if (!this.app.skyUniforms) return;
-  
+
     // Update all sky parameters
     this.app.skyUniforms["turbidity"].value = THREE.MathUtils.lerp(
       this.app.skyUniforms["turbidity"].value,
       targetSky.turbidity,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
     );
-  
+
     this.app.skyUniforms["rayleigh"].value = THREE.MathUtils.lerp(
       this.app.skyUniforms["rayleigh"].value,
       targetSky.rayleigh,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
     );
-  
+
     this.app.skyUniforms["mieCoefficient"].value = THREE.MathUtils.lerp(
       this.app.skyUniforms["mieCoefficient"].value,
       targetSky.mieCoefficient,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
     );
-  
+
     this.app.skyUniforms["mieDirectionalG"].value = THREE.MathUtils.lerp(
       this.app.skyUniforms["mieDirectionalG"].value,
       targetSky.mieDirectionalG,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
     );
-  
+
     this.app.parameters.inclination = THREE.MathUtils.lerp(
       this.app.parameters.inclination,
       targetSky.inclination,
       MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
     );
-  
-    this.app.parameters.azimuth = THREE.MathUtils.lerp(
-      this.app.parameters.azimuth,
-      targetSky.azimuth,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.sky
-    );
-  
+
+    this.app.parameters.azimuth = THREE.MathUtils.lerp(this.app.parameters.azimuth, targetSky.azimuth, MEDITATION_CONFIG.TRANSITION_SPEEDS.sky);
+
     this.app.updateSun(this.app.parameters, new THREE.PMREMGenerator(this.app.renderer));
   }
-  
+
   updateFog(targetFog) {
     if (!this.app.scene.fog) return;
-  
+
     // Update fog density
-    this.app.scene.fog.density = THREE.MathUtils.lerp(
-      this.app.scene.fog.density,
-      targetFog.density,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.fog
-    );
-  
+    this.app.scene.fog.density = THREE.MathUtils.lerp(this.app.scene.fog.density, targetFog.density, MEDITATION_CONFIG.TRANSITION_SPEEDS.fog);
+
     // Update fog color
     const targetColor = new THREE.Color(targetFog.color);
     this.app.scene.fog.color.lerp(targetColor, MEDITATION_CONFIG.TRANSITION_SPEEDS.fog);
@@ -1947,7 +2141,6 @@ class UnifiedMeditationManager {
       this.currentEffects.sparkles = false;
     }
   }
-
 
   updateCamera(shouldMove) {
     if (!shouldMove) {
@@ -1995,6 +2188,7 @@ class UnifiedMeditationManager {
   getDebugInfo() {
     const now = Date.now();
     const stateConfig = MEDITATION_CONFIG.STATES[this.currentState];
+    const currentWaterColor = this.app.water?.material.uniforms.waterColor.value.getHexString();
 
     return {
       meditationState: this.currentState,
@@ -2002,7 +2196,9 @@ class UnifiedMeditationManager {
       isMoving: this.isMoving,
       movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) : "0.0",
       effects: {
-        waterColor: stateConfig.effects.water.color,
+        waterColor: `#${currentWaterColor}`, // Show actual current color
+        targetColor: this.lastWaterColor, // Show target color
+        nextColorChange: Math.max(0, (this.nextColorChangeTime - now) / 1000).toFixed(1) + "s",
         waveStrength: `${stateConfig.effects.water.distortion}`,
         sparkles: stateConfig.effects.sparkles,
         skyChanges: true,
@@ -2023,7 +2219,7 @@ class GUIManager {
     this.skyUniforms = skyUniforms;
     this.parameters = parameters;
     this.centerObj = centerObj;
-    
+
     this.SKY_PRESETS = {
       DEFAULT: {
         name: "Default",
@@ -2126,7 +2322,7 @@ class GUIManager {
         normalScale: { x: 0.5, y: 0.5 },
         waterColor: 0x000022,
         sunColor: 0x4444ff,
-      }
+      },
     };
   }
 
@@ -2135,7 +2331,7 @@ class GUIManager {
     const audioFolder = this.initAudioFolder();
     const objectsFolder = this.initObjectsFolder();
     const meditationFolder = this.gui.addFolder("Meditation Effects");
-    
+
     const skyFolder = this.initSkyFolder(meditationFolder);
     const waterFolder = this.initWaterFolder(meditationFolder);
     const fogFolder = this.initFogFolder(meditationFolder);
@@ -2145,35 +2341,44 @@ class GUIManager {
     this.openFolders(audioFolder, objectsFolder, meditationFolder, skyFolder, waterFolder, fogFolder);
 
     // Hide GUI after it's fully created
-    const guiElement = document.querySelector('.dg.ac');
+    const guiElement = document.querySelector(".dg.ac");
     if (guiElement) {
-      guiElement.style.display = 'none';
+      guiElement.style.display = "none";
     }
-}
+  }
 
   initAudioFolder() {
     const folder = this.gui.addFolder("Audio");
-    
-    folder.add({
-      startAudio: () => {
-        this.audioManager.seaSounds[0].loop = true;
-        this.audioManager.seaSounds[0]
-          .play()
-          .then(() => console.log("Sea sound started"))
-          .catch((err) => console.error("Sea sound failed to start:", err));
-      }
-    }, "startAudio")
-    .name("Start Sea Sound");
 
-    folder.add({
-      toggleMute: () => {
-        const seaSound = this.audioManager.seaSounds[0];
-        seaSound.volume = seaSound.volume > 0 ? 0 : 0.09;
-      }
-    }, "toggleMute")
-    .name("Toggle Mute");
+    folder
+      .add(
+        {
+          startAudio: () => {
+            this.audioManager.seaSounds[0].loop = true;
+            this.audioManager.seaSounds[0]
+              .play()
+              .then(() => console.log("Sea sound started"))
+              .catch((err) => console.error("Sea sound failed to start:", err));
+          },
+        },
+        "startAudio"
+      )
+      .name("Start Sea Sound");
 
-    folder.add({ volume: 0.09 }, "volume", 0, 1)
+    folder
+      .add(
+        {
+          toggleMute: () => {
+            const seaSound = this.audioManager.seaSounds[0];
+            seaSound.volume = seaSound.volume > 0 ? 0 : 0.09;
+          },
+        },
+        "toggleMute"
+      )
+      .name("Toggle Mute");
+
+    folder
+      .add({ volume: 0.09 }, "volume", 0, 1)
       .name("Sea Volume")
       .onChange((value) => {
         this.audioManager.seaSounds[0].volume = value;
@@ -2184,8 +2389,9 @@ class GUIManager {
 
   initObjectsFolder() {
     const folder = this.gui.addFolder("Objects");
-    
-    folder.add({ scale: ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE }, "scale", 0.1, 5)
+
+    folder
+      .add({ scale: ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.SCALE }, "scale", 0.1, 5)
       .name("Center Object Scale")
       .onChange((value) => {
         this.centerObj.scale.set(value, value, value);
@@ -2205,14 +2411,16 @@ class GUIManager {
       this.centerObj.geometry = newGeometry;
     };
 
-    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBE", 0.1, 5)
+    folder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBE", 0.1, 5)
       .name("Torus Knot Tube")
       .onChange((value) => {
         ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT.TUBE = value;
         updateGeometry({ tube: value });
       });
 
-    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBULAR_SEGMENTS", 3, 500, 1)
+    folder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "TUBULAR_SEGMENTS", 3, 500, 1)
       .name("Tubular Segments")
       .onChange((value) => {
         value = Math.floor(value);
@@ -2220,7 +2428,8 @@ class GUIManager {
         updateGeometry({ tubularSegments: value });
       });
 
-    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "RADIAL_SEGMENTS", 3, 50, 1)
+    folder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "RADIAL_SEGMENTS", 3, 50, 1)
       .name("Radial Segments")
       .onChange((value) => {
         value = Math.floor(value);
@@ -2228,7 +2437,8 @@ class GUIManager {
         updateGeometry({ radialSegments: value });
       });
 
-    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "P", 1, 10, 1)
+    folder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "P", 1, 10, 1)
       .name("P (Twist)")
       .onChange((value) => {
         value = Math.floor(value);
@@ -2236,7 +2446,8 @@ class GUIManager {
         updateGeometry({ p: value });
       });
 
-    folder.add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "Q", 1, 10, 1)
+    folder
+      .add(ThreeJSApp.CONFIG.OBJECTS.CENTER.TORUS_KNOT, "Q", 1, 10, 1)
       .name("Q (Twist)")
       .onChange((value) => {
         value = Math.floor(value);
@@ -2249,18 +2460,20 @@ class GUIManager {
 
   initSkyFolder(parentFolder) {
     const folder = parentFolder.addFolder("Sky Effects");
-    
-    folder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1)
-      .name("Sun Size");
 
-    folder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1)
-      .name("Sun Sharpness");
+    folder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1).name("Sun Size");
 
-    folder.add({ preset: "Default" }, "preset", 
-      Object.values(this.SKY_PRESETS).map(preset => preset.name))
+    folder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Sun Sharpness");
+
+    folder
+      .add(
+        { preset: "Default" },
+        "preset",
+        Object.values(this.SKY_PRESETS).map((preset) => preset.name)
+      )
       .name("Sky Presets")
       .onChange((presetName) => {
-        const preset = Object.values(this.SKY_PRESETS).find(p => p.name === presetName);
+        const preset = Object.values(this.SKY_PRESETS).find((p) => p.name === presetName);
         if (preset) {
           this.applySkyPreset(preset, folder);
         }
@@ -2270,14 +2483,16 @@ class GUIManager {
     folder.add(this.skyUniforms["turbidity"], "value", 0, 20).name("Turbidity");
     folder.add(this.skyUniforms["mieCoefficient"], "value", 0, 0.1).name("Mie Coefficient");
     folder.add(this.skyUniforms["mieDirectionalG"], "value", 0, 1).name("Mie Directional G");
-    
-    folder.add(this.parameters, "azimuth", 0, 1)
+
+    folder
+      .add(this.parameters, "azimuth", 0, 1)
       .name("Azimuth (Sun Position)")
       .onChange(() => {
         this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
       });
 
-    folder.add(this.parameters, "inclination", -0.5, 0.5)
+    folder
+      .add(this.parameters, "inclination", -0.5, 0.5)
       .name("Inclination (Day/Night)")
       .onChange(() => {
         this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
@@ -2296,40 +2511,41 @@ class GUIManager {
 
     this.app.updateSun(this.parameters, new THREE.PMREMGenerator(this.renderer));
 
-    folder.__controllers.forEach(controller => {
+    folder.__controllers.forEach((controller) => {
       controller.updateDisplay();
     });
   }
 
   initWaterFolder(parentFolder) {
     const folder = parentFolder.addFolder("Water Effects");
-    
-    folder.add(this.water.material.uniforms.distortionScale, "value", 0, 10)
-      .name("Wave Distortion");
 
-    folder.add(this.water.material.uniforms.alpha, "value", 0, 1)
-      .name("Transparency");
+    folder.add(this.water.material.uniforms.distortionScale, "value", 0, 10).name("Wave Distortion");
+
+    folder.add(this.water.material.uniforms.alpha, "value", 0, 1).name("Transparency");
 
     const waveControls = folder.addFolder("Wave Settings");
-    waveControls.add({ speed: 1.0 }, "speed", 0.1, 2.0)
+    waveControls
+      .add({ speed: 1.0 }, "speed", 0.1, 2.0)
       .name("Wave Speed")
-      .onChange(value => {
+      .onChange((value) => {
         this.water.userData.waveSpeed = value;
       });
 
-    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "x", 0.1, 5)
-      .name("Normal Scale X");
-    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0.1, 5)
-      .name("Normal Scale Y");
+    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "x", 0.1, 5).name("Normal Scale X");
+    waveControls.add(this.water.material.uniforms.normalSampler.value.repeat, "y", 0.1, 5).name("Normal Scale Y");
 
     const colorControls = folder.addFolder("Color Settings");
     this.addWaterColorControls(colorControls);
 
-    folder.add({ preset: "Default" }, "preset",
-      Object.values(this.WATER_PRESETS).map(preset => preset.name))
+    folder
+      .add(
+        { preset: "Default" },
+        "preset",
+        Object.values(this.WATER_PRESETS).map((preset) => preset.name)
+      )
       .name("Water Presets")
-      .onChange(presetName => {
-        const preset = Object.values(this.WATER_PRESETS).find(p => p.name === presetName);
+      .onChange((presetName) => {
+        const preset = Object.values(this.WATER_PRESETS).find((p) => p.name === presetName);
         if (preset) {
           this.applyWaterPreset(preset);
         }
@@ -2339,21 +2555,17 @@ class GUIManager {
   }
 
   addWaterColorControls(folder) {
-    folder.addColor(
-      { waterColor: this.water.material.uniforms.waterColor.value.getHex() },
-      "waterColor"
-    )
+    folder
+      .addColor({ waterColor: this.water.material.uniforms.waterColor.value.getHex() }, "waterColor")
       .name("Water Color")
-      .onChange(value => {
+      .onChange((value) => {
         this.water.material.uniforms.waterColor.value.setHex(value);
       });
 
-    folder.addColor(
-      { sunColor: this.water.material.uniforms.sunColor.value.getHex() },
-      "sunColor"
-    )
+    folder
+      .addColor({ sunColor: this.water.material.uniforms.sunColor.value.getHex() }, "sunColor")
       .name("Sun Reflection Color")
-      .onChange(value => {
+      .onChange((value) => {
         this.water.material.uniforms.sunColor.value.setHex(value);
       });
   }
@@ -2362,18 +2574,15 @@ class GUIManager {
     this.water.material.uniforms.distortionScale.value = preset.distortion;
     this.water.material.uniforms.alpha.value = preset.alpha;
     this.water.userData.waveSpeed = preset.waveSpeed;
-    this.water.material.uniforms.normalSampler.value.repeat.set(
-      preset.normalScale.x,
-      preset.normalScale.y
-    );
+    this.water.material.uniforms.normalSampler.value.repeat.set(preset.normalScale.x, preset.normalScale.y);
     this.water.material.uniforms.waterColor.value.setHex(preset.waterColor);
     this.water.material.uniforms.sunColor.value.setHex(preset.sunColor);
 
     // Update all GUI controllers
     if (this.gui) {
-      const waterFolder = this.gui.folders.find(folder => folder.name === "Water Effects");
+      const waterFolder = this.gui.folders.find((folder) => folder.name === "Water Effects");
       if (waterFolder) {
-        Object.values(waterFolder.__controllers).forEach(controller => {
+        Object.values(waterFolder.__controllers).forEach((controller) => {
           controller.updateDisplay();
         });
       }
@@ -2382,14 +2591,11 @@ class GUIManager {
 
   initFogFolder(parentFolder) {
     const folder = parentFolder.addFolder("Fog Settings");
-    
-    folder.add(this.scene.fog, "density", 0, 0.001, 0.00001)
-      .name("Fog Density");
 
-    folder.addColor(
-      { fogColor: this.scene.fog.color.getHex() },
-      "fogColor"
-    )
+    folder.add(this.scene.fog, "density", 0, 0.001, 0.00001).name("Fog Density");
+
+    folder
+      .addColor({ fogColor: this.scene.fog.color.getHex() }, "fogColor")
       .name("Fog Color")
       .onChange((value) => {
         this.scene.fog.color.setHex(value);
@@ -2401,16 +2607,13 @@ class GUIManager {
 
   initLightingFolder(parentFolder) {
     const folder = parentFolder.addFolder("Lighting");
-    
+
     const directionalLight1 = this.scene.children.find((child) => child.type === "DirectionalLight");
     if (directionalLight1) {
-      folder.add(directionalLight1, "intensity", 0, 2)
-        .name("Sun Light Intensity");
-        
-      folder.addColor(
-        { color: directionalLight1.color.getHex() },
-        "color"
-      )
+      folder.add(directionalLight1, "intensity", 0, 2).name("Sun Light Intensity");
+
+      folder
+        .addColor({ color: directionalLight1.color.getHex() }, "color")
         .name("Sun Light Color")
         .onChange((value) => {
           directionalLight1.color.setHex(value);
@@ -2422,9 +2625,10 @@ class GUIManager {
 
   initTestingFolder(parentFolder) {
     const folder = parentFolder.addFolder("Testing Controls");
-    
+
     const testingParams = { timingMode: "Normal" };
-    folder.add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
+    folder
+      .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
       .name("Timing Mode")
       .onChange((value) => {
         switch (value) {
@@ -2459,14 +2663,9 @@ class GUIManager {
   }
 
   openFolders(...folders) {
-    folders.forEach(folder => folder?.open());
+    folders.forEach((folder) => folder?.open());
   }
 }
-
-
-
-
-
 
 class AudioManager {
   constructor() {
