@@ -1004,9 +1004,9 @@ export class ThreeJSApp {
 
   render() {
     //this was here to make there be no edge of the world
-    //     const cameraPosition = this.camera.position;
-    // this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
-    // this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
+        const cameraPosition = this.camera.position;
+    this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
+    this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
 
     // Update shader time for all meshes
     this.scene.traverse((child) => {
@@ -1019,7 +1019,7 @@ export class ThreeJSApp {
     });
 
     const meditationState = this.meditationManager.currentState;
-    const isDeepEnough = ["GENTLE", "MODERATE", "DEEP", "PROFOUND"].includes(meditationState);
+    const isDeepEnough = this.meditationManager.isDeepEnough();
 
     // Set target scale based on state
     this.targetScale = isDeepEnough ? 1.0 : 0.01;
@@ -1027,7 +1027,7 @@ export class ThreeJSApp {
     this.currentScale = THREE.MathUtils.lerp(
       this.currentScale,
       this.targetScale,
-      isDeepEnough ? 0.01 : 0.005 // Faster appear, slower disappear
+      isDeepEnough ? 0.01 : 0.005
     );
 
     // Update all objects' scales
@@ -1042,7 +1042,6 @@ export class ThreeJSApp {
     if (isDeepEnough) {
       this.boxGroup.visible = true;
     } else if (this.currentScale <= 0.02) {
-      // Only hide when nearly scaled down
       this.boxGroup.visible = false;
     }
 
@@ -1152,7 +1151,7 @@ export class ThreeJSApp {
 
   handleInteraction(event) {
     // Only process interactions if in appropriate meditation state
-    const isDeepEnough = ["GENTLE", "MODERATE", "DEEP", "PROFOUND"].includes(this.meditationManager.currentState);
+    const isDeepEnough = this.meditationManager.isDeepEnough();
     if (!isDeepEnough) return;
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -1309,6 +1308,7 @@ const MEDITATION_CONFIG = {
       type: "movement",
       duration: 90000000,
       level: 3,
+      isDeepEnough: false,
       effects: {
         water: {
           color: "#00aacc",
@@ -1338,6 +1338,7 @@ const MEDITATION_CONFIG = {
       type: "movement",
       duration: 600000,
       level: 2,
+      isDeepEnough: false,
       effects: {
         water: {
           color: "#0088aa",
@@ -1367,6 +1368,7 @@ const MEDITATION_CONFIG = {
       type: "movement",
       duration: 3000,
       level: 1,
+      isDeepEnough: false,
       effects: {
         water: {
           color: "#004488",
@@ -1394,28 +1396,29 @@ const MEDITATION_CONFIG = {
     },
     NORMAL: {
       type: "neutral",
-      duration: 0,
+      duration: 100,
       level: 0,
+      isDeepEnough: false,
       effects: {
         water: {
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
+          color: "#001e0f",
+          distortion: 3.7,
           alpha: 1.0,
-          sunColor: ThreeJSApp.CONFIG.WATER.STARTING_SUN_COLOR,
+          sunColor: 0xffffff,
           waveSpeed: 1.0,
           normalMapScale: { x: 1, y: 1 },
         },
         sky: {
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY,
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH,
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION,
-          azimuth: ThreeJSApp.CONFIG.SKY.STARTING_AZIMUTH,
-          mieCoefficient: ThreeJSApp.CONFIG.SKY.STARTING_MIE_COEFFICIENT,
-          mieDirectionalG: ThreeJSApp.CONFIG.SKY.STARTING_MIE_DIRECTIONAL_G,
+          turbidity: 6,
+          rayleigh: 3,
+          inclination: 0.49,
+          azimuth: 0.25,
+          mieCoefficient: 0.005,
+          mieDirectionalG: 0.7,
         },
         fog: {
-          density: ThreeJSApp.CONFIG.LIGHTS.FOG.DENSITY,
-          color: ThreeJSApp.CONFIG.LIGHTS.FOG.COLOR,
+          density: 0.0002,
+          color: 0xeeeeff,
         },
         sparkles: false,
         cameraMovement: false,
@@ -1425,19 +1428,20 @@ const MEDITATION_CONFIG = {
       type: "stillness",
       duration: 3000,
       level: 1,
+      isDeepEnough: true,
       effects: {
         water: {
-          color: ThreeJSApp.CONFIG.WATER.STARTING_DEFAULT_COLOR,
-          distortion: ThreeJSApp.CONFIG.WATER.STARTING_DISTORTION_SCALE,
+          color: "#001e0f",
+          distortion: 3.7,
           alpha: 0.95,
           sunColor: 0xffffee,
           waveSpeed: 0.6,
           normalMapScale: { x: 1.5, y: 1.5 },
         },
         sky: {
-          turbidity: ThreeJSApp.CONFIG.SKY.STARTING_TURBIDITY - 0.01,
-          rayleigh: ThreeJSApp.CONFIG.SKY.STARTING_RAYLEIGH - 0.01,
-          inclination: ThreeJSApp.CONFIG.SKY.STARTING_INCLINATION - 0.01,
+          turbidity: 5.99,
+          rayleigh: 2.99,
+          inclination: 0.48,
           azimuth: 0.25,
           mieCoefficient: 0.004,
           mieDirectionalG: 0.75,
@@ -1454,6 +1458,7 @@ const MEDITATION_CONFIG = {
       type: "stillness",
       duration: 6000,
       level: 2,
+      isDeepEnough: true,
       effects: {
         water: {
           color: "#001e0f",
@@ -1481,8 +1486,9 @@ const MEDITATION_CONFIG = {
     },
     DEEP: {
       type: "stillness",
-      duration: 9000,
+      duration: 90000,
       level: 3,
+      isDeepEnough: true,
       effects: {
         water: {
           color: "#001133",
@@ -1512,6 +1518,7 @@ const MEDITATION_CONFIG = {
       type: "stillness",
       duration: 12000,
       level: 4,
+      isDeepEnough: true,
       effects: {
         water: {
           color: "#000022",
@@ -1765,6 +1772,182 @@ class SparkleManager {
   }
 }
 
+class CameraSequenceManager {
+  constructor(app) {
+    this.app = app;
+    this.cameraSequenceActive = false;
+    this.visitedFriends = new Set();
+    this.currentSequenceTimeout = null;
+    this.maxFriendsToVisit = 3;
+    this.originalControlsState = {
+      enabled: true,
+      autoRotate: false
+    };
+  }
+
+  startSequence() {
+    if (this.cameraSequenceActive) return;
+    
+    // Store and disable controls
+    this.originalControlsState = {
+      enabled: this.app.controls.enabled,
+      autoRotate: this.app.controls.autoRotate
+    };
+    this.app.controls.enabled = false;
+    
+    this.cameraSequenceActive = true;
+    this.visitedFriends.clear();
+    this.moveToNextFriend();
+  }
+
+  stopSequence() {
+    this.cameraSequenceActive = false;
+    if (this.currentSequenceTimeout) {
+      clearTimeout(this.currentSequenceTimeout);
+      this.currentSequenceTimeout = null;
+    }
+    
+    // Restore controls
+    this.app.controls.enabled = this.originalControlsState.enabled;
+    this.app.controls.autoRotate = this.originalControlsState.autoRotate;
+    
+    this.visitedFriends.clear();
+    this.resetCamera();
+  }
+
+  moveToNextFriend() {
+    if (!this.cameraSequenceActive || this.visitedFriends.size >= this.maxFriendsToVisit) {
+      this.stopSequence();
+      return;
+    }
+
+    const allFriends = this.app.boxGroup.children;
+    const unvisitedFriends = allFriends.filter(friend => !this.visitedFriends.has(friend.uuid));
+    
+    if (unvisitedFriends.length === 0) {
+      this.stopSequence();
+      return;
+    }
+
+    const randomFriend = unvisitedFriends[Math.floor(Math.random() * unvisitedFriends.length)];
+    this.visitedFriends.add(randomFriend.uuid);
+
+    const friendPos = new THREE.Vector3();
+    randomFriend.getWorldPosition(friendPos);
+    
+    // Gentler camera positioning - moved slightly further back
+    const cameraOffset = new THREE.Vector3(40, 20, 40);
+    const targetPos = friendPos.clone().add(cameraOffset);
+
+    // Slower, gentler camera movement
+    this.animateCameraToPosition(targetPos, friendPos, () => {
+      this.simulateClickOnFriend(randomFriend);
+      
+      // Leave modal open longer (8 seconds instead of 3)
+      this.currentSequenceTimeout = setTimeout(() => {
+        this.closeCurrentModal();
+        
+        // Longer pause between friends (15 seconds instead of 5)
+        if (this.visitedFriends.size < this.maxFriendsToVisit) {
+          this.currentSequenceTimeout = setTimeout(() => {
+            this.moveToNextFriend();
+          }, 15000); // More time to contemplate between visits
+        } else {
+          this.stopSequence();
+        }
+      }, 8000);
+    });
+  }
+
+  animateCameraToPosition(targetPos, lookAtPos, onComplete) {
+    const camera = this.app.camera;
+    const startPos = camera.position.clone();
+    const startLookAt = this.app.controls.target.clone();
+    const duration = 6000; // Much slower movement (6 seconds instead of 2)
+    const startTime = performance.now();
+
+    const animate = (currentTime) => {
+      if (!this.cameraSequenceActive) return;
+
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Even smoother easing for gentler movement
+      const eased = this.smootherstep(progress);
+
+      // Update camera position
+      camera.position.lerpVectors(startPos, targetPos, eased);
+      
+      // Update look-at target
+      const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
+      this.app.controls.target.copy(newLookAt);
+      
+      this.app.controls.update();
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        onComplete();
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  // Smoother easing function for more gentle movement
+  smootherstep(x) {
+    // Enhanced smoothstep with more gradual acceleration and deceleration
+    return x * x * x * (x * (x * 6 - 15) + 10);
+  }
+
+  simulateClickOnFriend(friend) {
+    const currFriendID = friend.friendID;
+    const currModalID = `friendModalDivID${currFriendID}`;
+    const currFriendModalDiv = document.getElementById(currModalID);
+    if (currFriendModalDiv) {
+      currFriendModalDiv.classList.add("openFriendModalDiv");
+      
+      // Play friend sound
+      try {
+        this.app.audioManager.playFriendSound();
+      } catch (error) {
+        console.error("Error playing friend sound:", error);
+      }
+    }
+
+    friend.traverse((o) => {
+      if (o.isMesh) {
+        o.material.emissive.setHex(3135135);
+        o.material.opacity = 0.2;
+      }
+    });
+  }
+
+  closeCurrentModal() {
+    const modals = document.querySelectorAll(".friendModalDiv");
+    modals.forEach(modal => {
+      if (modal.classList.contains("openFriendModalDiv")) {
+        modal.classList.remove("openFriendModalDiv");
+      }
+    });
+  }
+
+  resetCamera() {
+    const originalPosition = new THREE.Vector3(
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
+    );
+    
+    const originalLookAt = new THREE.Vector3(0, 10, 0);
+    
+    this.animateCameraToPosition(originalPosition, originalLookAt, () => {
+      this.app.controls.target.copy(originalLookAt);
+      this.app.controls.update();
+    });
+  }
+}
+
 class UnifiedMeditationManager {
   static dynamicStates = {
     ACTIVE: {
@@ -1831,6 +2014,9 @@ class UnifiedMeditationManager {
     // Store initial camera position
     this.originalCameraPosition = null;
 
+    this.cameraSequenceManager = new CameraSequenceManager(app);
+
+
     // Initialize effects state
     this.currentEffects = {
       water: { color: new THREE.Color(MEDITATION_CONFIG.STATES.NORMAL.effects.water.color) },
@@ -1838,6 +2024,10 @@ class UnifiedMeditationManager {
       sparkles: false,
       cameraMovement: false,
     };
+  }
+
+  isDeepEnough() {
+    return MEDITATION_CONFIG.STATES[this.currentState].isDeepEnough;
   }
 
   onMotionDetected() {
@@ -1907,29 +2097,29 @@ class UnifiedMeditationManager {
   }
   updateState() {
     const now = Date.now();
-    let newState = "NORMAL";
-
+    let newState = 'NORMAL';
+    
     if (this.isMoving && this.movementStartTime) {
       const movementDuration = now - this.movementStartTime;
-
+      
       if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
-        newState = "ACTIVE_EVEN_LONGER";
+        newState = 'ACTIVE_EVEN_LONGER';
       } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration) {
-        newState = "ACTIVE_LONGER";
+        newState = 'ACTIVE_LONGER';
       } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE.duration) {
-        newState = "ACTIVE";
+        newState = 'ACTIVE';
       }
     } else if (this.stillnessStartTime) {
       const stillnessDuration = now - this.stillnessStartTime;
-
+      
       if (stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration) {
-        newState = "PROFOUND";
+        newState = 'PROFOUND';
       } else if (stillnessDuration > MEDITATION_CONFIG.STATES.DEEP.duration) {
-        newState = "DEEP";
+        newState = 'DEEP';
       } else if (stillnessDuration > MEDITATION_CONFIG.STATES.MODERATE.duration) {
-        newState = "MODERATE";
+        newState = 'MODERATE';
       } else if (stillnessDuration > MEDITATION_CONFIG.STATES.GENTLE.duration) {
-        newState = "GENTLE";
+        newState = 'GENTLE';
       }
     }
 
@@ -2080,22 +2270,30 @@ class UnifiedMeditationManager {
   }
 
   updateCamera(shouldMove) {
-    if (!shouldMove) {
-      this.resetCamera();
-      return;
+    if (shouldMove) {
+      this.cameraSequenceManager.startSequence();
+    } else {
+      this.cameraSequenceManager.stopSequence();
     }
-
-    if (!this.originalCameraPosition) {
-      this.originalCameraPosition = this.app.camera.position.clone();
-    }
-
-    const targetY = this.originalCameraPosition.y + 20;
-    const targetZ = this.originalCameraPosition.z + 10;
-
-    this.app.camera.position.y = THREE.MathUtils.lerp(this.app.camera.position.y, targetY, MEDITATION_CONFIG.TRANSITION_SPEEDS.camera);
-
-    this.app.camera.position.z = THREE.MathUtils.lerp(this.app.camera.position.z, targetZ, MEDITATION_CONFIG.TRANSITION_SPEEDS.camera);
   }
+
+  // updateCamera(shouldMove) {
+  //   if (!shouldMove) {
+  //     this.resetCamera();
+  //     return;
+  //   }
+
+  //   if (!this.originalCameraPosition) {
+  //     this.originalCameraPosition = this.app.camera.position.clone();
+  //   }
+
+  //   const targetY = this.originalCameraPosition.y + 20;
+  //   const targetZ = this.originalCameraPosition.z + 10;
+
+  //   this.app.camera.position.y = THREE.MathUtils.lerp(this.app.camera.position.y, targetY, MEDITATION_CONFIG.TRANSITION_SPEEDS.camera);
+
+  //   this.app.camera.position.z = THREE.MathUtils.lerp(this.app.camera.position.z, targetZ, MEDITATION_CONFIG.TRANSITION_SPEEDS.camera);
+  // }
 
   resetCamera() {
     if (!this.originalCameraPosition) return;
