@@ -409,6 +409,58 @@ export class ThreeJSApp {
       "What did the air forget to tell you today?",
       "Where does the shadow go when you close your eyes?",
       "What memory hides in the cracks of your voice?",
+      "Who stitched the threads of quiet joy in your heart?",
+      "When did the clock last refuse to move?",
+      "Do you collect the echoes of things unsaid?",
+      "Can a question exist without wanting an answer?",
+      "What sharp corner of the world is touching you?",
+      "Have you ever been carried by something weightless?",
+      "Who knows your name?",
+      "What is in your hidden pocket?",
+      "What is your earliest memory of play?",
+      "Which sound would you wear like a second skin?",
+      "What shape is the air inside your ribs?",
+      "What do the stones beneath your feet dream about?",
+      "What hides in the pause before you speak?",
+      "Where does a thought go after you release it?",
+      "What do you owe to the spaces between moments?",
+      "Where does the horizon stop?",
+      "What part of you belongs to no one, not even yourself?",
+      "What is the quietest thing you’ve ever broken?",
+      "Who weaves the edges of your dreams together?",
+      "How many doors are hidden in this exact moment?",
+      "Where can light go to hide?",
+      "What was taken from you before you knew to miss it?",
+      "Can water be still?",
+      "How does gravity hold you?",
+      "What song can only be sung in silence?",
+      "How does your flesh remember its shape?",
+      "When does forgetting become a form of remembering?",
+      "What do you hold that can't be held?",
+      "What do your hands know that your mind doesn't?",
+      "What has built a home in you?",
+      "What is just beyond the edge?",
+      "What shape do you take when no one is looking?",
+      "What smell hides in the folds of your memory?",
+      "What do you hear when you press your ear to the void?",
+      "What is between your skin and the air?",
+      "What marks the place where your past ends?",
+      "What shape do you leave behind in the places you’ve been?",
+      "What language do your bones speak?",
+      "What does the light joyfully bury in your shadow?",
+      "Where do the roots of forgotten thoughts stretch?",
+      "Who lives in the spaces your breath refuses to fill?",
+      "What shape does forgetting carve into your mind?",
+      "What do the spaces between your fingers know about longing?",
+      "How does the air tremble when it slips through your teeth?",
+      "What lies in the pause between reaching and being reached?",
+      "What lives in the hollow between wanting and having?",
+      "How does the earth remember your weight when you leave it?",
+      "What do your bones hum when no one is listening?",
+      "How does the fabric of yesterday fold around your chest?",
+      "Who knots the gravity of your dreams to the edge of the world?",
+      "What shape does the hunger of an unspoken truth wear?",
+      "How does the fabric of light fray at its edges?"
     ];
 
     this.audioManager = new AudioManager();
@@ -1787,34 +1839,51 @@ class CameraSequenceManager {
 
   startSequence() {
     if (this.cameraSequenceActive) return;
-    
-    // Store and disable controls
+
+    // Store original controls state including current target
     this.originalControlsState = {
       enabled: this.app.controls.enabled,
-      autoRotate: this.app.controls.autoRotate
+      autoRotate: this.app.controls.autoRotate,
+      enablePan: this.app.controls.enablePan,
+      enableZoom: this.app.controls.enableZoom,
+      enableRotate: this.app.controls.enableRotate,
+      target: this.app.controls.target.clone()
     };
+
+    // Disable controls during sequence
     this.app.controls.enabled = false;
+    this.app.controls.enablePan = false;
+    this.app.controls.enableZoom = false;
+    this.app.controls.enableRotate = false;
     
     this.cameraSequenceActive = true;
     this.visitedFriends.clear();
     this.moveToNextFriend();
-  }
+}
 
-  stopSequence() {
-    this.cameraSequenceActive = false;
-    if (this.currentSequenceTimeout) {
-      clearTimeout(this.currentSequenceTimeout);
-      this.currentSequenceTimeout = null;
-    }
-    
-    // Restore controls
+stopSequence() {
+  this.cameraSequenceActive = false;
+  if (this.currentSequenceTimeout) {
+    clearTimeout(this.currentSequenceTimeout);
+    this.currentSequenceTimeout = null;
+  }
+  
+  if (this.originalControlsState) {
+    // Restore all controls
     this.app.controls.enabled = this.originalControlsState.enabled;
     this.app.controls.autoRotate = this.originalControlsState.autoRotate;
-    
-    this.visitedFriends.clear();
-    this.resetCamera();
+    this.app.controls.enablePan = this.originalControlsState.enablePan;
+    this.app.controls.enableZoom = this.originalControlsState.enableZoom;
+    this.app.controls.enableRotate = this.originalControlsState.enableRotate;
+    if (this.originalControlsState.target) {
+      this.app.controls.target.copy(this.originalControlsState.target);
+    }
+    this.app.controls.update();
   }
-
+  
+  this.visitedFriends.clear();
+  this.resetCamera();
+}
   moveToNextFriend() {
     if (!this.cameraSequenceActive || this.visitedFriends.size >= this.maxFriendsToVisit) {
       this.stopSequence();
@@ -1835,70 +1904,73 @@ class CameraSequenceManager {
     const friendPos = new THREE.Vector3();
     randomFriend.getWorldPosition(friendPos);
     
-    // Gentler camera positioning - moved slightly further back
-    const cameraOffset = new THREE.Vector3(40, 20, 40);
+    // Move camera further back for better view
+    const cameraOffset = new THREE.Vector3(50, 25, 50);
     const targetPos = friendPos.clone().add(cameraOffset);
 
-    // Slower, gentler camera movement
     this.animateCameraToPosition(targetPos, friendPos, () => {
       this.simulateClickOnFriend(randomFriend);
       
-      // Leave modal open longer (8 seconds instead of 3)
+      // Show modal for 3 seconds
       this.currentSequenceTimeout = setTimeout(() => {
         this.closeCurrentModal();
         
-        // Longer pause between friends (15 seconds instead of 5)
+        // Wait 20 seconds before moving to next friend
         if (this.visitedFriends.size < this.maxFriendsToVisit) {
           this.currentSequenceTimeout = setTimeout(() => {
             this.moveToNextFriend();
-          }, 15000); // More time to contemplate between visits
+          }, 20000);
         } else {
           this.stopSequence();
         }
-      }, 8000);
+      }, 3000);
     });
-  }
+}
 
-  animateCameraToPosition(targetPos, lookAtPos, onComplete) {
-    const camera = this.app.camera;
-    const startPos = camera.position.clone();
-    const startLookAt = this.app.controls.target.clone();
-    const duration = 6000; // Much slower movement (6 seconds instead of 2)
-    const startTime = performance.now();
+animateCameraToPosition(targetPos, lookAtPos, onComplete) {
+  const camera = this.app.camera;
+  const startPos = camera.position.clone();
+  const startLookAt = this.app.controls.target.clone();
+  const duration = 25000; // 25 seconds for very slow movement
+  const startTime = performance.now();
 
-    const animate = (currentTime) => {
-      if (!this.cameraSequenceActive) return;
+  const animate = (currentTime) => {
+    if (!this.cameraSequenceActive) return;
 
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      // Even smoother easing for gentler movement
-      const eased = this.smootherstep(progress);
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Even gentler easing
+    const eased = this.gentleEasing(progress);
 
-      // Update camera position
-      camera.position.lerpVectors(startPos, targetPos, eased);
-      
-      // Update look-at target
-      const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
-      this.app.controls.target.copy(newLookAt);
-      
-      this.app.controls.update();
+    camera.position.lerpVectors(startPos, targetPos, eased);
+    
+    const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
+    this.app.controls.target.copy(newLookAt);
+    
+    this.app.controls.update();
 
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        onComplete();
-      }
-    };
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      onComplete();
+    }
+  };
 
-    requestAnimationFrame(animate);
-  }
+  requestAnimationFrame(animate);
+}
 
   // Smoother easing function for more gentle movement
   smootherstep(x) {
     // Enhanced smoothstep with more gradual acceleration and deceleration
     return x * x * x * (x * (x * 6 - 15) + 10);
   }
+
+  gentleEasing(x) {
+    return x < 0.5 ? 
+      8 * x * x * x * x : 
+      1 - Math.pow(-2 * x + 2, 4) / 2;
+}
 
   simulateClickOnFriend(friend) {
     const currFriendID = friend.friendID;
