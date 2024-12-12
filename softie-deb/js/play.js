@@ -206,75 +206,6 @@ class CameraProcessor {
   }
 }
 
-class FriendScalingManager {
-  constructor() {
-    // Scaling configuration
-    this.SCALE_CONFIG = {
-      MIN: 0.01,          // Minimum scale (almost invisible)
-      MAX: 1.0,           // Maximum scale (full size)
-      TRANSITION_SPEED: { 
-        APPEAR: 0.02,     // Speed when growing
-        DISAPPEAR: 0.01   // Slower speed when shrinking
-      }
-    };
-
-    // Current state
-    this.friendTargetScale = this.SCALE_CONFIG.MIN;
-    this.friendCurrentScale = this.SCALE_CONFIG.MIN;
-    this.originalFriendScales = new Map();
-  }
-
-  // Store the original scale when a friend is created
-  registerFriend(friend) {
-    // Extract the base scale from the friend object
-    const baseScale = friend.scale.x;  // Assuming uniform scale
-    this.originalFriendScales.set(friend.uuid, baseScale);
-    // Start at minimum scale
-    friend.scale.setScalar(baseScale * this.SCALE_CONFIG.MIN);
-  }
-
-  // Update scaling based on meditation state
-  updateScaling(isInMeditativeState) {
-    // Set target based on state
-    this.friendTargetScale = isInMeditativeState ? 
-      this.SCALE_CONFIG.MAX : 
-      this.SCALE_CONFIG.MIN;
-
-    // Choose transition speed based on direction
-    const transitionSpeed = isInMeditativeState ?
-      this.SCALE_CONFIG.TRANSITION_SPEED.APPEAR :
-      this.SCALE_CONFIG.TRANSITION_SPEED.DISAPPEAR;
-
-    // Smooth transition
-    this.friendCurrentScale = THREE.MathUtils.lerp(
-      this.friendCurrentScale,
-      this.friendTargetScale,
-      transitionSpeed
-    );
-
-    return this.friendCurrentScale;
-  }
-
-  // Apply current scale to a friend
-  applyScale(friend) {
-    const originalScale = this.originalFriendScales.get(friend.uuid);
-    if (originalScale) {
-      const newScale = originalScale * this.friendCurrentScale;
-      friend.scale.setScalar(newScale);
-    }
-  }
-
-  // Check if friends are visible enough for interaction
-  areInteractable() {
-    return this.friendCurrentScale > 0.1;
-  }
-
-  // Check if friends are visible enough for animation
-  areAnimatable() {
-    return this.friendCurrentScale > 0.05;
-  }
-}
-
 export class ThreeJSApp {
   static CONFIG = {
     COUNTS: {
@@ -1092,15 +1023,15 @@ export class ThreeJSApp {
 
     // Set target scale based on state
     this.targetScale = isDeepEnough ? 1.0 : 0.01;
-      // Smoothly transition current scale
-      this.currentScale = THREE.MathUtils.lerp(
-        this.currentScale,
-        this.targetScale,
-        this.scaleTransitionSpeed
-      );
+    // Smoothly transition current scale
+    this.currentScale = THREE.MathUtils.lerp(
+      this.currentScale,
+      this.targetScale,
+      isDeepEnough ? 0.01 : 0.005 // Faster appear, slower disappear
+    );
 
-      // Update all objects' scales
-    this.boxGroup.children.forEach(child => {
+    // Update all objects' scales
+    this.boxGroup.children.forEach((child) => {
       const originalScale = this.initialObjectScales.get(child.uuid);
       if (originalScale) {
         const targetObjectScale = originalScale * this.currentScale;
@@ -1108,7 +1039,13 @@ export class ThreeJSApp {
       }
     });
 
-    this.boxGroup.visible = isDeepEnough;
+    if (isDeepEnough) {
+      this.boxGroup.visible = true;
+    } else if (this.currentScale <= 0.02) {
+      // Only hide when nearly scaled down
+      this.boxGroup.visible = false;
+    }
+
     this.jellyfishOnScreen.forEach((creature) => {
       if (creature.parent) creature.visible = isDeepEnough;
     });
@@ -1127,7 +1064,7 @@ export class ThreeJSApp {
 
     const time = performance.now() * 0.0001;
 
-    if (isDeepEnough) {
+    // if (isDeepEnough) {
       // Update center object
       this.centerObj.position.y = Math.sin(time) * 20 + 5;
       this.centerObj.rotation.x = time * 0.5;
@@ -1140,12 +1077,12 @@ export class ThreeJSApp {
         this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
         this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
       }
-
+// 
       // Update center objects rotation
       this.centerObjects.forEach((obj) => {
         obj.rotation.y = time;
       });
-    }
+    // }
 
     // Update water animation
     if (this.water && this.water.material.uniforms.time) {
@@ -2037,14 +1974,14 @@ class UnifiedMeditationManager {
   updateWater(targetWater) {
     if (!this.app.water) return;
 
-    console.log("Updating water color to:", targetWater.color);
+    // console.log("Updating water color to:", targetWater.color);
 
     // Convert target color to THREE.Color
     const targetColor = new THREE.Color(targetWater.color);
     const currentColor = this.app.water.material.uniforms.waterColor.value;
 
-    console.log("Current color:", currentColor.getHexString());
-    console.log("Target color:", targetColor.getHexString());
+    // console.log("Current color:", currentColor.getHexString());
+    // console.log("Target color:", targetColor.getHexString());
 
     const transitionSpeed = this.currentState.includes("ACTIVE")
       ? MEDITATION_CONFIG.TRANSITION_SPEEDS.water * 0.5
@@ -2053,7 +1990,7 @@ class UnifiedMeditationManager {
     // Apply the color transition
     this.app.water.material.uniforms.waterColor.value.lerp(targetColor, transitionSpeed);
 
-    console.log("New color after lerp:", this.app.water.material.uniforms.waterColor.value.getHexString());
+    // console.log("New color after lerp:", this.app.water.material.uniforms.waterColor.value.getHexString());
 
     // Update other water properties
     this.app.water.material.uniforms["distortionScale"].value = THREE.MathUtils.lerp(
