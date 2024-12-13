@@ -35,8 +35,10 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font: inherit;
   vertical-align: baseline;
   scroll-behavior: smooth;
-  font-family: 'marie', sans-serif;
+  font-family: 'helvetica', sans-serif;
 }
+
+
 
 input, select, textarea, button {font-family: inherit;}
 
@@ -422,6 +424,7 @@ margin: 2rem auto 2rem auto;
 }
 
 .friendModalDiv {
+  font-family: 'marie', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -445,6 +448,7 @@ margin: 2rem auto 2rem auto;
 
 }
 .mediModalDiv {
+  font-family: 'marie', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
