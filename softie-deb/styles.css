@@ -1,3 +1,35 @@
+@font-face {
+  font-family: 'marie';
+  src: url('/fonts/marie.woff2') format('woff2'),
+       url('/fonts/marie.woff') format('woff'),
+       url('/fonts/marie.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Marie2';
+  src: url('Marie2-Regular.woff2') format('woff2'),
+      url('Marie2-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mariefont';
+  src: url('Mariefont-Regular.woff2') format('woff2'),
+      url('Mariefont-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
   padding: 0;
@@ -6,6 +38,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font: inherit;
   vertical-align: baseline;
   scroll-behavior: smooth;
+  /* font-family: 'marie', sans-serif;  */
+
 
 }
 
@@ -477,6 +511,27 @@ width: 2rem; */
   transform: rotate(-45deg);
 }
 
+.openFriendModalDiv, .openMediModalDiv {
+  visibility: visible !important;
+  opacity: 1;
+}
+
+.fadeOutModal {
+  animation: fadeOut 3s ease-out forwards;
+  visibility: visible !important;
+}
+
+@keyframes fadeOut {
+  from { 
+      opacity: 1;
+      visibility: visible;
+  }
+  to { 
+      opacity: 0;
+      visibility: hidden;
+  }
+}
+
 .innerFriendWrapper {
   width: 100vw;
     height: 80vh;
@@ -513,6 +568,7 @@ width: 2rem; */
 }
 
 .friendModalDiv > p {
+  font-family: 'marie', sans-serif; /* Fallback to a generic font */
 	background-color:#eee;
 	/* border-bottom:1px solid #bfbfbf; */
 	font-size:24px;
@@ -545,7 +601,9 @@ width: 2rem; */
 }
 
 .infoTextDiv{
-  font-size: 1.3rem;
+  font-family: 'marie', sans-serif; /* Fallback to a generic font */
+
+  font-size: 3.3rem;
   letter-spacing: 3px;
   color: rgba(255, 127, 80, .9);
   font-weight: 500;
@@ -554,7 +612,7 @@ width: 2rem; */
   margin: 1rem 0 0 0;
   margin: 1rem 0 0 0;
   max-width: 90vw;
-  line-height: 2rem;
+  line-height: 2.2drem;
 }
 
 .hr {
@@ -745,7 +803,7 @@ input {
   }
 
   #wrapperToggleDiv{
-    margin: 3rem 0 0 3srem;
+    margin: 3rem 0 0 3rem;
   }
 
   #settingsDropdown {

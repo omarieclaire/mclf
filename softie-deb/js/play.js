@@ -28,7 +28,7 @@ class CameraProcessor {
   }
 
   setupCamera() {
-    console.log("Setting up camera...");
+    // console.log("Setting up camera...");
     this.video = document.getElementById("videoInput");
     if (!this.video) {
       throw new Error("Video element 'videoInput' not found");
@@ -406,61 +406,9 @@ export class ThreeJSApp {
       "Soften",
     ];
     this.friendQuestions = [
-      "What did the air forget to tell you today?",
+      "What does the air say to your skin?",
       "Where does the shadow go when you close your eyes?",
       "What memory hides in the cracks of your voice?",
-      "Who stitched the threads of quiet joy in your heart?",
-      "When did the clock last refuse to move?",
-      "Do you collect the echoes of things unsaid?",
-      "Can a question exist without wanting an answer?",
-      "What sharp corner of the world is touching you?",
-      "Have you ever been carried by something weightless?",
-      "Who knows your name?",
-      "What is in your hidden pocket?",
-      "What is your earliest memory of play?",
-      "Which sound would you wear like a second skin?",
-      "What shape is the air inside your ribs?",
-      "What do the stones beneath your feet dream about?",
-      "What hides in the pause before you speak?",
-      "Where does a thought go after you release it?",
-      "What do you owe to the spaces between moments?",
-      "Where does the horizon stop?",
-      "What part of you belongs to no one, not even yourself?",
-      "What is the quietest thing you’ve ever broken?",
-      "Who weaves the edges of your dreams together?",
-      "How many doors are hidden in this exact moment?",
-      "Where can light go to hide?",
-      "What was taken from you before you knew to miss it?",
-      "Can water be still?",
-      "How does gravity hold you?",
-      "What song can only be sung in silence?",
-      "How does your flesh remember its shape?",
-      "When does forgetting become a form of remembering?",
-      "What do you hold that can't be held?",
-      "What do your hands know that your mind doesn't?",
-      "What has built a home in you?",
-      "What is just beyond the edge?",
-      "What shape do you take when no one is looking?",
-      "What smell hides in the folds of your memory?",
-      "What do you hear when you press your ear to the void?",
-      "What is between your skin and the air?",
-      "What marks the place where your past ends?",
-      "What shape do you leave behind in the places you’ve been?",
-      "What language do your bones speak?",
-      "What does the light joyfully bury in your shadow?",
-      "Where do the roots of forgotten thoughts stretch?",
-      "Who lives in the spaces your breath refuses to fill?",
-      "What shape does forgetting carve into your mind?",
-      "What do the spaces between your fingers know about longing?",
-      "How does the air tremble when it slips through your teeth?",
-      "What lies in the pause between reaching and being reached?",
-      "What lives in the hollow between wanting and having?",
-      "How does the earth remember your weight when you leave it?",
-      "What do your bones hum when no one is listening?",
-      "How does the fabric of yesterday fold around your chest?",
-      "Who knots the gravity of your dreams to the edge of the world?",
-      "What shape does the hunger of an unspoken truth wear?",
-      "How does the fabric of light fray at its edges?"
     ];
 
     this.audioManager = new AudioManager();
@@ -1056,7 +1004,7 @@ export class ThreeJSApp {
 
   render() {
     //this was here to make there be no edge of the world
-        const cameraPosition = this.camera.position;
+    const cameraPosition = this.camera.position;
     this.water.position.x = Math.floor(cameraPosition.x / 1000) * 1000;
     this.water.position.z = Math.floor(cameraPosition.z / 1000) * 1000;
 
@@ -1076,11 +1024,7 @@ export class ThreeJSApp {
     // Set target scale based on state
     this.targetScale = isDeepEnough ? 1.0 : 0.01;
     // Smoothly transition current scale
-    this.currentScale = THREE.MathUtils.lerp(
-      this.currentScale,
-      this.targetScale,
-      isDeepEnough ? 0.01 : 0.005
-    );
+    this.currentScale = THREE.MathUtils.lerp(this.currentScale, this.targetScale, isDeepEnough ? 0.01 : 0.005);
 
     // Update all objects' scales
     this.boxGroup.children.forEach((child) => {
@@ -1116,23 +1060,23 @@ export class ThreeJSApp {
     const time = performance.now() * 0.0001;
 
     // if (isDeepEnough) {
-      // Update center object
-      this.centerObj.position.y = Math.sin(time) * 20 + 5;
-      this.centerObj.rotation.x = time * 0.5;
-      this.centerObj.rotation.z = time * 0.51;
+    // Update center object
+    this.centerObj.position.y = Math.sin(time) * 20 + 5;
+    this.centerObj.rotation.x = time * 0.5;
+    this.centerObj.rotation.z = time * 0.51;
 
-      // Update box group children
-      for (let i = 0; i < this.boxGroup.children.length; i++) {
-        const offset = this.initialFriendYPositions[i] * 15;
-        this.boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
-        this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
-        this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
-      }
-// 
-      // Update center objects rotation
-      this.centerObjects.forEach((obj) => {
-        obj.rotation.y = time;
-      });
+    // Update box group children
+    for (let i = 0; i < this.boxGroup.children.length; i++) {
+      const offset = this.initialFriendYPositions[i] * 15;
+      this.boxGroup.children[i].position.y = Math.sin(time) * 40 + 35;
+      this.boxGroup.children[i].rotation.x = Math.sin(time) * 2 + 1;
+      this.boxGroup.children[i].rotation.z = Math.sin(time) * 5 + 1;
+    }
+    //
+    // Update center objects rotation
+    this.centerObjects.forEach((obj) => {
+      obj.rotation.y = time;
+    });
     // }
 
     // Update water animation
@@ -1250,6 +1194,19 @@ export class ThreeJSApp {
       const currFriendID = intersectsFriend[0].object.friendID;
       const currModalID = `friendModalDivID${currFriendID}`;
       const currFriendModalDiv = document.getElementById(currModalID);
+
+      console.log("Current friend ID:", currFriendID);
+      console.log("Current modal ID:", currModalID);
+      console.log("Modal element found:", !!currFriendModalDiv);
+
+      if (currFriendModalDiv) {
+        currFriendModalDiv.classList.add("openFriendModalDiv");
+        // console.log("About to register modal visit");
+
+        // Register the modal visit
+        this.meditationManager.registerModalVisit();
+      }
+
       currFriendModalDiv.classList.add("openFriendModalDiv");
 
       intersectsFriend.forEach((intersect) => {
@@ -1276,7 +1233,10 @@ export class ThreeJSApp {
     const modals = document.querySelectorAll(".friendModalDiv, .mediModalDiv");
     modals.forEach((modal) => {
       if (!modal.contains(event.target)) {
-        modal.classList.remove("openFriendModalDiv", "openMediModalDiv");
+        modal.classList.add("fadeOutModal");
+        setTimeout(() => {
+          modal.classList.remove("openFriendModalDiv", "openMediModalDiv", "fadeOutModal");
+        }, 3000);
       }
     });
   }
@@ -1596,6 +1556,36 @@ const MEDITATION_CONFIG = {
         cameraMovement: true,
       },
     },
+    VOID: {
+      type: "stillness",
+      duration: 0, // No duration since it's the final state
+      level: 5,
+      isDeepEnough: true,
+      effects: {
+        water: {
+          color: "#000000",
+          distortion: 0.1,
+          alpha: 0.4,
+          sunColor: 0x000000,
+          waveSpeed: 0.05,
+          normalMapScale: { x: 0.2, y: 0.2 },
+        },
+        sky: {
+          turbidity: 2.0,
+          rayleigh: 2.0,
+          inclination: 0.1,
+          azimuth: 0.95,
+          mieCoefficient: 0.001,
+          mieDirectionalG: 1,
+        },
+        fog: {
+          density: 0.00001,
+          color: 0x000000,
+        },
+        sparkles: false,
+        cameraMovement: false,
+      },
+    },
   },
   SPARKLES: {
     SPREAD: 800,
@@ -1641,7 +1631,7 @@ class SparkleManager {
       ORBIT_SPEED: 0.3, // Slower for better visibility
     };
 
-    console.log("[SparkleManager] Created, waiting for scene initialization");
+    // console.log("[SparkleManager] Created, waiting for scene initialization");
   }
 
   initialize(scene) {
@@ -1650,7 +1640,7 @@ class SparkleManager {
     this.scene = scene;
     this.centerContainer = this.createCenterContainer();
     this.initialized = true;
-    console.log("[SparkleManager] Initialized with scene");
+    // console.log("[SparkleManager] Initialized with scene");
   }
 
   createCenterContainer() {
@@ -1833,7 +1823,7 @@ class CameraSequenceManager {
     this.maxFriendsToVisit = 3;
     this.originalControlsState = {
       enabled: true,
-      autoRotate: false
+      autoRotate: false,
     };
   }
 
@@ -1847,7 +1837,7 @@ class CameraSequenceManager {
       enablePan: this.app.controls.enablePan,
       enableZoom: this.app.controls.enableZoom,
       enableRotate: this.app.controls.enableRotate,
-      target: this.app.controls.target.clone()
+      target: this.app.controls.target.clone(),
     };
 
     // Disable controls during sequence
@@ -1855,44 +1845,51 @@ class CameraSequenceManager {
     this.app.controls.enablePan = false;
     this.app.controls.enableZoom = false;
     this.app.controls.enableRotate = false;
-    
+
     this.cameraSequenceActive = true;
     this.visitedFriends.clear();
     this.moveToNextFriend();
-}
+  }
 
-stopSequence() {
-  this.cameraSequenceActive = false;
-  if (this.currentSequenceTimeout) {
-    clearTimeout(this.currentSequenceTimeout);
-    this.currentSequenceTimeout = null;
-  }
-  
-  if (this.originalControlsState) {
-    // Restore all controls
-    this.app.controls.enabled = this.originalControlsState.enabled;
-    this.app.controls.autoRotate = this.originalControlsState.autoRotate;
-    this.app.controls.enablePan = this.originalControlsState.enablePan;
-    this.app.controls.enableZoom = this.originalControlsState.enableZoom;
-    this.app.controls.enableRotate = this.originalControlsState.enableRotate;
-    if (this.originalControlsState.target) {
-      this.app.controls.target.copy(this.originalControlsState.target);
+  stopSequence() {
+    this.cameraSequenceActive = false;
+    if (this.currentSequenceTimeout) {
+      clearTimeout(this.currentSequenceTimeout);
+      this.currentSequenceTimeout = null;
     }
-    this.app.controls.update();
+
+    if (this.originalControlsState) {
+      // Restore all controls
+      this.app.controls.enabled = this.originalControlsState.enabled;
+      this.app.controls.autoRotate = this.originalControlsState.autoRotate;
+      this.app.controls.enablePan = this.originalControlsState.enablePan;
+      this.app.controls.enableZoom = this.originalControlsState.enableZoom;
+      this.app.controls.enableRotate = this.originalControlsState.enableRotate;
+      if (this.originalControlsState.target) {
+        this.app.controls.target.copy(this.originalControlsState.target);
+      }
+      this.app.controls.update();
+    }
+
+    this.visitedFriends.clear();
+    this.resetCamera();
   }
-  
-  this.visitedFriends.clear();
-  this.resetCamera();
-}
   moveToNextFriend() {
     if (!this.cameraSequenceActive || this.visitedFriends.size >= this.maxFriendsToVisit) {
       this.stopSequence();
       return;
     }
 
-    const allFriends = this.app.boxGroup.children;
-    const unvisitedFriends = allFriends.filter(friend => !this.visitedFriends.has(friend.uuid));
-    
+    // Check if boxGroup exists and has children
+    const allFriends = this.app.boxGroup?.children || [];
+    if (allFriends.length === 0) {
+      console.warn("No friends available in boxGroup");
+      this.stopSequence();
+      return;
+    }
+
+    const unvisitedFriends = allFriends.filter((friend) => !this.visitedFriends.has(friend.uuid));
+
     if (unvisitedFriends.length === 0) {
       this.stopSequence();
       return;
@@ -1903,18 +1900,24 @@ stopSequence() {
 
     const friendPos = new THREE.Vector3();
     randomFriend.getWorldPosition(friendPos);
-    
-    // Move camera further back for better view
-    const cameraOffset = new THREE.Vector3(50, 25, 50);
-    const targetPos = friendPos.clone().add(cameraOffset);
+
+    // Calculate camera position relative to friend
+    const distance = 80; // Increased distance
+    const angle = Math.random() * Math.PI * 2; // Random angle around friend
+
+    const targetPos = new THREE.Vector3(
+      friendPos.x + Math.cos(angle) * distance,
+      friendPos.y + 20, // Fixed height above friend
+      friendPos.z + Math.sin(angle) * distance
+    );
 
     this.animateCameraToPosition(targetPos, friendPos, () => {
       this.simulateClickOnFriend(randomFriend);
-      
+
       // Show modal for 3 seconds
       this.currentSequenceTimeout = setTimeout(() => {
         this.closeCurrentModal();
-        
+
         // Wait 20 seconds before moving to next friend
         if (this.visitedFriends.size < this.maxFriendsToVisit) {
           this.currentSequenceTimeout = setTimeout(() => {
@@ -1925,40 +1928,40 @@ stopSequence() {
         }
       }, 3000);
     });
-}
+  }
 
-animateCameraToPosition(targetPos, lookAtPos, onComplete) {
-  const camera = this.app.camera;
-  const startPos = camera.position.clone();
-  const startLookAt = this.app.controls.target.clone();
-  const duration = 25000; // 25 seconds for very slow movement
-  const startTime = performance.now();
+  animateCameraToPosition(targetPos, lookAtPos, onComplete) {
+    const camera = this.app.camera;
+    const startPos = camera.position.clone();
+    const startLookAt = this.app.controls.target.clone();
+    const duration = 25000; // 25 seconds for very slow movement
+    const startTime = performance.now();
 
-  const animate = (currentTime) => {
-    if (!this.cameraSequenceActive) return;
+    const animate = (currentTime) => {
+      if (!this.cameraSequenceActive) return;
 
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    
-    // Even gentler easing
-    const eased = this.gentleEasing(progress);
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
 
-    camera.position.lerpVectors(startPos, targetPos, eased);
-    
-    const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
-    this.app.controls.target.copy(newLookAt);
-    
-    this.app.controls.update();
+      // Even gentler easing
+      const eased = this.gentleEasing(progress);
 
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      onComplete();
-    }
-  };
+      camera.position.lerpVectors(startPos, targetPos, eased);
 
-  requestAnimationFrame(animate);
-}
+      const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
+      this.app.controls.target.copy(newLookAt);
+
+      this.app.controls.update();
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        onComplete();
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
 
   // Smoother easing function for more gentle movement
   smootherstep(x) {
@@ -1967,18 +1970,22 @@ animateCameraToPosition(targetPos, lookAtPos, onComplete) {
   }
 
   gentleEasing(x) {
-    return x < 0.5 ? 
-      8 * x * x * x * x : 
-      1 - Math.pow(-2 * x + 2, 4) / 2;
-}
+    return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
+  }
 
   simulateClickOnFriend(friend) {
     const currFriendID = friend.friendID;
     const currModalID = `friendModalDivID${currFriendID}`;
     const currFriendModalDiv = document.getElementById(currModalID);
+
     if (currFriendModalDiv) {
       currFriendModalDiv.classList.add("openFriendModalDiv");
-      
+
+      // Use the proper registration method instead of direct increment
+      if (this.app.meditationManager) {
+        this.app.meditationManager.registerModalVisit();
+      }
+
       // Play friend sound
       try {
         this.app.audioManager.playFriendSound();
@@ -1997,25 +2004,48 @@ animateCameraToPosition(targetPos, lookAtPos, onComplete) {
 
   closeCurrentModal() {
     const modals = document.querySelectorAll(".friendModalDiv");
-    modals.forEach(modal => {
+    modals.forEach((modal) => {
       if (modal.classList.contains("openFriendModalDiv")) {
-        modal.classList.remove("openFriendModalDiv");
+        this.debugModalTransition(modal, "starting close");
+
+        // Add opacity transition
+        modal.style.transition = "opacity 3s ease-out";
+        modal.style.opacity = "0";
+
+        // Wait for transition to complete before removing classes
+        setTimeout(() => {
+          this.debugModalTransition(modal, "transition complete");
+          modal.classList.remove("openFriendModalDiv", "fadeOutModal");
+          // Reset opacity for next time
+          modal.style.opacity = "1";
+        }, 3000);
       }
     });
   }
 
   resetCamera() {
+    // Remove the Promise wrapper since we're not using it
     const originalPosition = new THREE.Vector3(
       ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
       ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
       ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
     );
-    
-    const originalLookAt = new THREE.Vector3(0, 10, 0);
-    
-    this.animateCameraToPosition(originalPosition, originalLookAt, () => {
-      this.app.controls.target.copy(originalLookAt);
+    const originalTarget = new THREE.Vector3(0, 10, 0);
+
+    // Use the existing animation system for smooth transition
+    this.animateCameraToPosition(originalPosition, originalTarget, () => {
+      this.app.controls.target.copy(originalTarget);
       this.app.controls.update();
+    });
+  }
+
+  debugModalTransition(modal, action) {
+    console.log(`Modal transition - Action: ${action}`, {
+      modal: modal.id,
+      classes: modal.classList.toString(),
+      opacity: window.getComputedStyle(modal).opacity,
+      transition: window.getComputedStyle(modal).transition,
+      display: window.getComputedStyle(modal).display,
     });
   }
 }
@@ -2025,7 +2055,7 @@ class UnifiedMeditationManager {
     ACTIVE: {
       water: () => {
         const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
-        console.log("Generated new dynamic water color:", color);
+        // console.log("Generated new dynamic water color:", color);
         return {
           color: color,
           distortion: 2.5,
@@ -2039,7 +2069,7 @@ class UnifiedMeditationManager {
     ACTIVE_LONGER: {
       water: () => {
         const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
-        console.log("Generated new dynamic water color:", color);
+        // console.log("Generated new dynamic water color:", color);
         return {
           color: color,
           distortion: 3.5,
@@ -2053,7 +2083,7 @@ class UnifiedMeditationManager {
     ACTIVE_EVEN_LONGER: {
       water: () => {
         const color = VIBRANT_COLORS[Math.floor(Math.random() * VIBRANT_COLORS.length)];
-        console.log("Generated new dynamic water color:", color);
+        // console.log("Generated new dynamic water color:", color);
         return {
           color: color,
           distortion: 4.5,
@@ -2077,6 +2107,8 @@ class UnifiedMeditationManager {
     this.stillnessStartTime = null;
     this.lastStateChange = Date.now();
 
+    this.debugTiming = true;
+
     this.sparkleManager = new SparkleManager(this.scene);
 
     this.lastWaterColor = null; // Track the last color
@@ -2088,7 +2120,6 @@ class UnifiedMeditationManager {
 
     this.cameraSequenceManager = new CameraSequenceManager(app);
 
-
     // Initialize effects state
     this.currentEffects = {
       water: { color: new THREE.Color(MEDITATION_CONFIG.STATES.NORMAL.effects.water.color) },
@@ -2096,6 +2127,268 @@ class UnifiedMeditationManager {
       sparkles: false,
       cameraMovement: false,
     };
+
+    this.visitedModalsCount = 0;
+    // console.log('Constructor: initialized visitedModalsCount to 0');
+
+    this.timingConfig = {
+      veryQuick: {
+        NORMAL: { duration: 500 }, // 0.5 seconds
+        ACTIVE: { duration: 500 }, // 
+        ACTIVE_LONGER: { duration: 60000 }, // 1 minute
+        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
+        GENTLE: { duration: 300 }, // 0.3 seconds
+        MODERATE: { duration: 600 }, // 0.6 seconds
+        DEEP: { duration: 9000 }, // 9 seconds
+        PROFOUND: { duration: 1200 }, // 1.2 seconds
+      },
+      quick: {
+        NORMAL: { duration: 500 }, // 0.5 seconds
+        ACTIVE: { duration: 1000 }, // 1 second
+        ACTIVE_LONGER: { duration: 200000 }, // 3.3 minutes
+        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
+        GENTLE: { duration: 1000 }, // 1 second
+        MODERATE: { duration: 2000 }, // 2 seconds
+        DEEP: { duration: 30000 }, // 30 seconds
+        PROFOUND: { duration: 4000 }, // 4 seconds
+      },
+      normal: {
+        NORMAL: { duration: 1000 }, // 1 second
+        ACTIVE: { duration: 3000 }, // 3 seconds
+        ACTIVE_LONGER: { duration: 600000 }, // 10 minutes
+        ACTIVE_EVEN_LONGER: { duration: 90000000 }, // 25 hours
+        GENTLE: { duration: 3000 }, // 3 seconds
+        MODERATE: { duration: 6000 }, // 6 seconds
+        DEEP: { duration: 90000 }, // 1.5 minutes
+        PROFOUND: { duration: 12000 }, // 12 seconds
+      },
+      long: {
+        NORMAL: { duration: 5000 }, // 5 seconds
+        ACTIVE: { duration: 10000 }, // 10 seconds
+        ACTIVE_LONGER: { duration: 300000 }, // 5 mins
+        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
+        GENTLE: { duration: 10000 }, // 10 seconds
+        MODERATE: { duration: 30000 }, // 30 seconds
+        DEEP: { duration: 300000 }, // 5 minutes
+        PROFOUND: { duration: 60000 }, // 1 minute
+      },
+      extraLong: {
+        NORMAL: { duration: 15000 }, // 15 seconds
+        ACTIVE: { duration: 30000 }, // 30 seconds
+        ACTIVE_LONGER: { duration: 300000 }, // 5 mins
+        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
+        GENTLE: { duration: 30000 }, // 30 seconds
+        MODERATE: { duration: 120000 }, // 2 minutes
+        DEEP: { duration: 600000 }, // 10 minutes
+        PROFOUND: { duration: 300000 }, // 5 minutes
+      },
+    };
+
+    this.currentTiming = "normal";
+  }
+
+  debugStateTransition(stillnessDuration) {
+    console.log("--- State Transition Debug ---");
+    console.log("Current timing mode:", this.currentTiming);
+    console.log("Current state:", this.currentState);
+    console.log("Stillness duration:", stillnessDuration);
+
+    // Show the current mode's durations
+    console.log(`${this.currentTiming.toUpperCase()} mode durations:`, {
+      GENTLE: MEDITATION_CONFIG.STATES.GENTLE.duration,
+      MODERATE: MEDITATION_CONFIG.STATES.MODERATE.duration,
+      DEEP: MEDITATION_CONFIG.STATES.DEEP.duration,
+      PROFOUND: MEDITATION_CONFIG.STATES.PROFOUND.duration,
+    });
+
+    // Show timing config values
+    console.log("Configured durations:", {
+      GENTLE: this.timingConfig[this.currentTiming].GENTLE.duration,
+      MODERATE: this.timingConfig[this.currentTiming].MODERATE.duration,
+      DEEP: this.timingConfig[this.currentTiming].DEEP.duration,
+      PROFOUND: this.timingConfig[this.currentTiming].PROFOUND.duration,
+    });
+
+    console.log("Comparison results:", {
+      shouldBeGentle: stillnessDuration > MEDITATION_CONFIG.STATES.GENTLE.duration,
+      shouldBeModerate: stillnessDuration > MEDITATION_CONFIG.STATES.MODERATE.duration,
+      shouldBeDeep: stillnessDuration > MEDITATION_CONFIG.STATES.DEEP.duration,
+      shouldBeProfound: stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration,
+    });
+  }
+
+  getDurationForState(stateName) {
+    if (this.timingConfig[this.currentTiming] && this.timingConfig[this.currentTiming][stateName]) {
+      return this.timingConfig[this.currentTiming][stateName].duration;
+    }
+    return MEDITATION_CONFIG.STATES[stateName].duration;
+  }
+
+  updateTimingMode(mode) {
+    console.log("Updating timing mode to:", mode);
+    const previousTiming = this.currentTiming;
+
+    switch (mode) {
+        case "Normal":
+            this.currentTiming = "normal";
+            break;
+        case "Quick Test":
+            this.currentTiming = "quick";
+            break;
+        case "Very Quick Test":
+            this.currentTiming = "veryQuick";
+            break;
+        case "Long":
+            this.currentTiming = "long";
+            break;
+        case "Extra Long":
+            this.currentTiming = "extraLong";
+            break;
+    }
+
+    if (this.debugTiming) {
+        console.log("Previous timing mode:", previousTiming);
+        console.log("New timing mode:", this.currentTiming);
+        console.log("Current state:", this.currentState);
+    }
+
+    // Sync timing values to MEDITATION_CONFIG
+    Object.keys(this.timingConfig[this.currentTiming]).forEach(state => {
+        if (MEDITATION_CONFIG.STATES[state]) {
+            const newDuration = this.timingConfig[this.currentTiming][state].duration;
+            MEDITATION_CONFIG.STATES[state].duration = newDuration;
+            
+            if (this.debugTiming) {
+                console.log(`Updated ${state} duration to:`, newDuration);
+            }
+        }
+    });
+
+    if (this.debugTiming) {
+        console.log("Verified MEDITATION_CONFIG durations after update:", {
+            GENTLE: MEDITATION_CONFIG.STATES.GENTLE.duration,
+            MODERATE: MEDITATION_CONFIG.STATES.MODERATE.duration,
+            DEEP: MEDITATION_CONFIG.STATES.DEEP.duration,
+            PROFOUND: MEDITATION_CONFIG.STATES.PROFOUND.duration
+        });
+    }
+
+    // Force a state update to apply new timing
+    this.updateState(true);
+}
+
+  updateState(forceUpdate = false) {
+    const now = Date.now();
+    let newState = "NORMAL";
+
+    if (this.debugTiming) {
+      console.log("Updating state with timing mode:", this.currentTiming);
+    }
+
+    if (this.isMoving && this.movementStartTime) {
+      const movementDuration = now - this.movementStartTime;
+
+      if (this.debugTiming) {
+        console.log("Movement duration:", movementDuration);
+        console.log("Movement thresholds:", {
+          ACTIVE: MEDITATION_CONFIG.STATES.ACTIVE.duration,
+          ACTIVE_LONGER: MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration,
+          ACTIVE_EVEN_LONGER: MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration,
+        });
+      }
+
+      if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
+        newState = "ACTIVE_EVEN_LONGER";
+      } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration) {
+        newState = "ACTIVE_LONGER";
+      } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE.duration) {
+        newState = "ACTIVE";
+      }
+
+      if (this.visitedModalsCount > 0) {
+        this.visitedModalsCount = 0;
+      }
+    } else if (this.stillnessStartTime) {
+      const stillnessDuration = now - this.stillnessStartTime;
+
+      // Add our new debug call here
+      if (this.debugTiming) {
+        this.debugStateTransition(stillnessDuration);
+      }
+
+      if (this.debugTiming) {
+        console.log("Stillness duration:", stillnessDuration);
+        console.log("Current thresholds:", {
+          profound: this.getDurationForState("PROFOUND"),
+          deep: this.getDurationForState("DEEP"),
+          moderate: this.getDurationForState("MODERATE"),
+          gentle: this.getDurationForState("GENTLE"),
+        });
+      }
+
+      if (this.debugTiming && newState !== this.currentState) {
+        console.log(`State transition triggered to: ${newState}`);
+      }
+
+      // First check for VOID/PROFOUND state
+      if (stillnessDuration > this.getDurationForState("PROFOUND")) {
+        newState = this.visitedModalsCount >= 3 ? "VOID" : "PROFOUND";
+      }
+      // Then check other stillness states
+      else if (stillnessDuration > this.getDurationForState("DEEP")) {
+        newState = "DEEP";
+      } else if (stillnessDuration > this.getDurationForState("MODERATE")) {
+        newState = "MODERATE";
+      } else if (stillnessDuration > this.getDurationForState("GENTLE")) {
+        newState = "GENTLE";
+      }
+
+      // Only reset modal count if actually transitioning to a less deep state
+      const stateDepths = {
+        VOID: 5,
+        PROFOUND: 4,
+        DEEP: 3,
+        MODERATE: 2,
+        GENTLE: 1,
+        NORMAL: 0,
+      };
+
+      if (this.currentState === "PROFOUND" && newState !== "VOID" && newState !== "PROFOUND" && stateDepths[newState] < stateDepths["PROFOUND"]) {
+        console.log(`Resetting modal count - transitioning from PROFOUND to ${newState}`);
+        this.visitedModalsCount = 0;
+      }
+    }
+
+    if (newState !== this.currentState || forceUpdate) {
+      if (this.debugTiming) {
+        console.log(`State changing from ${this.currentState} to ${newState}`);
+        console.log("Current timing config:", this.timingConfig[this.currentTiming]);
+      }
+
+      // If transitioning to void, ensure all modals are closed first
+      if (newState === "VOID") {
+        // this.cameraSequenceManager.closeAllModalsSlowly(() => {
+        //     this.currentState = newState;
+        //     this.lastStateChange = now;
+        //     this.applyStateEffects();
+        // });
+      } else {
+        this.currentState = newState;
+        this.lastStateChange = now;
+        this.applyStateEffects();
+      }
+    }
+  }
+
+  registerModalVisit() {
+    console.log("--- Modal Visit Registration ---");
+    // console.log('Before increment:', this.visitedModalsCount);
+    this.visitedModalsCount++;
+    // console.log('After increment:', this.visitedModalsCount);
+  }
+
+  isInVoidState() {
+    return this.currentState === "VOID" && this.visitedModalsCount >= 3;
   }
 
   isDeepEnough() {
@@ -2103,6 +2396,8 @@ class UnifiedMeditationManager {
   }
 
   onMotionDetected() {
+    // console.log('--- Motion Detected ---');
+    // console.log('Modal count before motion:', this.visitedModalsCount);
     const now = Date.now();
     this.motionSamples.push(true);
     if (this.motionSamples.length > this.sampleSize) {
@@ -2122,6 +2417,8 @@ class UnifiedMeditationManager {
   }
 
   onNoMotionDetected() {
+    // console.log('--- No Motion Detected ---');
+    // console.log('Modal count during stillness:', this.visitedModalsCount);
     const now = Date.now();
     this.motionSamples.push(false);
     if (this.motionSamples.length > this.sampleSize) {
@@ -2154,53 +2451,101 @@ class UnifiedMeditationManager {
       if (debugContainer) {
         debugContainer.innerHTML = `
                 Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
-                Time Since Motion: ${debugInfo.timeSinceMotion}s<br>
-                ${debugInfo.isMoving ? `Movement Duration: ${debugInfo.movementDuration}s<br>` : ""}
+            Time in Current State: ${debugInfo.timeInCurrentState}<br>
+                Time Since Motion: ${debugInfo.timeSinceMotion}<br>
+                Movement Duration: ${debugInfo.movementDuration}<br>
+                Modals Visited: ${debugInfo.modalsVisited}<br>
                 <br>
                 Visual Effects:<br>
                 ▸ Ocean Color: ${debugInfo.effects.waterColor}<br>
                 ▸ Wave Strength: ${debugInfo.effects.waveStrength}<br>
-                ▸ Sparkles: ${debugInfo.effects.sparkles ? "Active" : "Inactive"}<br>
+                ▸ Sparkles: ${debugInfo.effects.sparkles}<br>
                 ▸ Sky Changes: ${debugInfo.effects.skyChanges ? "Active" : "Inactive"}<br>
-                ▸ Camera Movement: ${debugInfo.effects.cameraMovement ? "Active" : "Inactive"}<br>
+                ▸ Camera Movement: ${debugInfo.effects.cameraMovement}<br>
             `;
       }
     }
   }
-  updateState() {
-    const now = Date.now();
-    let newState = 'NORMAL';
-    
-    if (this.isMoving && this.movementStartTime) {
-      const movementDuration = now - this.movementStartTime;
-      
-      if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
-        newState = 'ACTIVE_EVEN_LONGER';
-      } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration) {
-        newState = 'ACTIVE_LONGER';
-      } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE.duration) {
-        newState = 'ACTIVE';
-      }
-    } else if (this.stillnessStartTime) {
-      const stillnessDuration = now - this.stillnessStartTime;
-      
-      if (stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration) {
-        newState = 'PROFOUND';
-      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.DEEP.duration) {
-        newState = 'DEEP';
-      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.MODERATE.duration) {
-        newState = 'MODERATE';
-      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.GENTLE.duration) {
-        newState = 'GENTLE';
-      }
-    }
 
-    if (newState !== this.currentState) {
-      this.currentState = newState;
-      this.lastStateChange = now;
-      this.applyStateEffects();
-    }
-  }
+  //   updateState() {
+  //     const now = Date.now();
+  //     let newState = "NORMAL";
+
+  //     // console.log('--- State Update ---');
+  //     // console.log('Current state:', this.currentState);
+  //     // console.log('Current modal count:', this.visitedModalsCount);
+  //     // console.log('Is moving:', this.isMoving);
+
+  //     if (this.isMoving && this.movementStartTime) {
+  //         // console.log("Movement detected, resetting modal count from:", this.visitedModalsCount);
+  //         const movementDuration = now - this.movementStartTime;
+
+  //         if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
+  //             newState = "ACTIVE_EVEN_LONGER";
+  //         } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration) {
+  //             newState = "ACTIVE_LONGER";
+  //         } else if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE.duration) {
+  //             newState = "ACTIVE";
+  //         }
+
+  //         if (this.visitedModalsCount > 0) {
+  //             // console.log('Resetting modal count due to movement');
+  //             this.visitedModalsCount = 0;
+  //         }
+  //     } else if (this.stillnessStartTime) {
+  //         const stillnessDuration = now - this.stillnessStartTime;
+  //         // console.log('Stillness duration:', stillnessDuration);
+
+  //         // First check for VOID/PROFOUND state
+  //         if (stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration) {
+  //             // console.log('In profound state check. Modal count:', this.visitedModalsCount);
+  //             // Must visit 3 modals before entering VOID
+  //             newState = this.visitedModalsCount >= 3 ? "VOID" : "PROFOUND";
+  //         }
+  //         // Then check other stillness states
+  //         else if (stillnessDuration > MEDITATION_CONFIG.STATES.DEEP.duration) {
+  //             newState = "DEEP";
+  //         } else if (stillnessDuration > MEDITATION_CONFIG.STATES.MODERATE.duration) {
+  //             newState = "MODERATE";
+  //         } else if (stillnessDuration > MEDITATION_CONFIG.STATES.GENTLE.duration) {
+  //             newState = "GENTLE";
+  //         }
+
+  //         // Only reset modal count if actually transitioning to a less deep state
+  //         const stateDepths = {
+  //             'VOID': 5,
+  //             'PROFOUND': 4,
+  //             'DEEP': 3,
+  //             'MODERATE': 2,
+  //             'GENTLE': 1,
+  //             'NORMAL': 0
+  //         };
+
+  //         if (this.currentState === "PROFOUND" &&
+  //             newState !== "VOID" &&
+  //             newState !== "PROFOUND" &&
+  //             stateDepths[newState] < stateDepths['PROFOUND']) {
+  //             console.log(`Resetting modal count - transitioning from PROFOUND to ${newState}`);
+  //             this.visitedModalsCount = 0;
+  //         }
+  //     }
+
+  //     if (newState !== this.currentState) {
+  //         // console.log(`State changing from ${this.currentState} to ${newState}`);
+  //         // If transitioning to void, ensure all modals are closed first
+  //         if (newState === "VOID") {
+  //             // this.cameraSequenceManager.closeAllModalsSlowly(() => {
+  //             //     this.currentState = newState;
+  //             //     this.lastStateChange = now;
+  //             //     this.applyStateEffects();
+  //             // });
+  //         } else {
+  //             this.currentState = newState;
+  //             this.lastStateChange = now;
+  //             this.applyStateEffects();
+  //         }
+  //     }
+  // }
 
   applyStateEffects() {
     const now = Date.now();
@@ -2215,7 +2560,7 @@ class UnifiedMeditationManager {
 
         // Schedule next color change
         this.nextColorChangeTime = now + this.colorChangeInterval;
-        console.log("Applied new water color:", newWaterEffect.color);
+        // console.log("Applied new water color:", newWaterEffect.color);
       } else if (this.lastWaterColor) {
         // Keep the last dynamic color until next change
         targetEffects.water.color = this.lastWaterColor;
@@ -2368,51 +2713,53 @@ class UnifiedMeditationManager {
   // }
 
   resetCamera() {
-    if (!this.originalCameraPosition) return;
-
-    const hasReachedOriginal =
-      Math.abs(this.app.camera.position.y - this.originalCameraPosition.y) < 0.01 &&
-      Math.abs(this.app.camera.position.z - this.originalCameraPosition.z) < 0.01;
-
-    if (hasReachedOriginal) {
-      this.originalCameraPosition = null;
-      return;
-    }
-
-    this.app.camera.position.y = THREE.MathUtils.lerp(
-      this.app.camera.position.y,
-      this.originalCameraPosition.y,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.camera
+    const originalPosition = new THREE.Vector3(
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
+      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
     );
+    const originalTarget = new THREE.Vector3(0, 10, 0);
 
-    this.app.camera.position.z = THREE.MathUtils.lerp(
-      this.app.camera.position.z,
-      this.originalCameraPosition.z,
-      MEDITATION_CONFIG.TRANSITION_SPEEDS.camera
-    );
+    return new Promise((resolve) => {
+      this.animateCameraToPosition(originalPosition, originalTarget, () => {
+        this.app.controls.target.copy(originalTarget);
+        this.app.controls.update();
+        resolve();
+      });
+    });
   }
 
   getDebugInfo() {
     const now = Date.now();
     const stateConfig = MEDITATION_CONFIG.STATES[this.currentState];
-    const currentWaterColor = this.app.water?.material.uniforms.waterColor.value.getHexString();
+    const elapsedTime = (now - this.lastStateChange) / 1000; // Time in seconds
+
+    // Add debug logging to see what we're getting
+    console.log('State duration debug:', {
+        state: this.currentState,
+        configDuration: stateConfig.duration,
+        timingMode: this.currentTiming,
+        timingConfigDuration: this.timingConfig[this.currentTiming][this.currentState]?.duration
+    });
+
+    // Get duration from the active timing config instead of state config
+    const totalDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration / 1000;
 
     return {
-      meditationState: this.currentState,
-      timeSinceMotion: ((now - (this.lastStateChange || now)) / 1000).toFixed(1),
-      isMoving: this.isMoving,
-      movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) : "0.0",
-      effects: {
-        waterColor: `#${currentWaterColor}`, // Show actual current color
-        targetColor: this.lastWaterColor, // Show target color
-        nextColorChange: Math.max(0, (this.nextColorChangeTime - now) / 1000).toFixed(1) + "s",
-        waveStrength: `${stateConfig.effects.water.distortion}`,
-        sparkles: stateConfig.effects.sparkles,
-        skyChanges: true,
-        cameraMovement: stateConfig.effects.cameraMovement,
-      },
+        meditationState: this.currentState,
+        timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
+        timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
+        movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
+        modalsVisited: this.visitedModalsCount,
+        effects: {
+            waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
+            waveStrength: stateConfig.effects.water.distortion,
+            sparkles: stateConfig.effects.sparkles ? "Active" : "Inactive",
+            skyChanges: true,
+            cameraMovement: stateConfig.effects.cameraMovement ? "Active" : "Inactive",
+        },
     };
-  }
+}
 }
 
 class GUIManager {
@@ -2835,35 +3182,11 @@ class GUIManager {
 
     const testingParams = { timingMode: "Normal" };
     folder
-      .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test"])
+      .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test", "Long", "Extra Long"])
       .name("Timing Mode")
       .onChange((value) => {
-        switch (value) {
-          case "Normal":
-            this.app.meditationParams.stillnessThresholds = {
-              gentle: 30000,
-              moderate: 60000,
-              deep: 90000,
-              profound: 120000,
-            };
-            break;
-          case "Quick Test":
-            this.app.meditationParams.stillnessThresholds = {
-              gentle: 10000,
-              moderate: 20000,
-              deep: 30000,
-              profound: 40000,
-            };
-            break;
-          case "Very Quick Test":
-            this.app.meditationParams.stillnessThresholds = {
-              gentle: 3000,
-              moderate: 6000,
-              deep: 9000,
-              profound: 12000,
-            };
-            break;
-        }
+        console.log("Timing mode changed to:", value);
+        this.app.meditationManager.updateTimingMode(value);
       });
 
     return folder;
