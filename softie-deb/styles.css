@@ -1,8 +1,8 @@
 @font-face {
   font-family: 'marie';
-  src: url('/fonts/marie.woff2') format('woff2'),
-       url('/fonts/marie.woff') format('woff'),
-       url('/fonts/marie.ttf') format('truetype');
+  src: url('fonts/marie.woff2') format('woff2'),
+       url('fonts/marie.woff') format('woff'),
+       url('fonts/marie.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -10,8 +10,8 @@
 
 @font-face {
   font-family: 'Marie2';
-  src: url('Marie2-Regular.woff2') format('woff2'),
-      url('Marie2-Regular.woff') format('woff');
+  src: url('fonts/Marie2-Regular.woff2') format('woff2'),
+      url('fonts/Marie2-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -19,8 +19,8 @@
 
 @font-face {
   font-family: 'Mariefont';
-  src: url('Mariefont-Regular.woff2') format('woff2'),
-      url('Mariefont-Regular.woff') format('woff');
+  src: url('fonts/Mariefont-Regular.woff2') format('woff2'),
+      url('fonts/Mariefont-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

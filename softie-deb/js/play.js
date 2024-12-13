@@ -157,14 +157,25 @@ class CameraProcessor {
   }
 
   cleanup() {
-    // Current Implementation
+    this.isProcessing = false;
+    if (this.motionDetectionId) {
+      cancelAnimationFrame(this.motionDetectionId);
+    }
+
+    // Clean up OpenCV resources
     if (this.frame1) this.frame1.delete();
     if (this.frame2) this.frame2.delete();
     if (this.gray1) this.gray1.delete();
     if (this.gray2) this.gray2.delete();
     if (this.diff) this.diff.delete();
 
-    // Should also clean up:
+    // Stop video stream
+    if (this.video && this.video.srcObject) {
+      const tracks = this.video.srcObject.getTracks();
+      tracks.forEach((track) => track.stop());
+      this.video.srcObject = null;
+    }
+
     if (this.cap) this.cap.delete();
   }
 
@@ -176,20 +187,26 @@ class CameraProcessor {
       for (let x = 0; x < frame1.cols; x += regionSize) {
         const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
         const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-        const diff = new cv.Mat();
 
+        const diff = new cv.Mat();
         try {
           cv.absdiff(roi1, roi2, diff);
+
           const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+
           regions.push({ x, y, motion: motionAmount });
         } finally {
           // Ensure cleanup happens even if error occurs
+
           diff.delete();
+
           roi1.delete();
+
           roi2.delete();
         }
       }
     }
+
     return regions;
   }
 }
@@ -1273,11 +1290,12 @@ export class ThreeJSApp {
 
     setTimeout(() => this.fadeRotatingCreatures(creaturesOnScreen), 350);
   }
-
   cleanup() {
     // Add proper cleanup for Three.js resources
+
     this.scene.traverse((object) => {
       if (object.geometry) object.geometry.dispose();
+
       if (object.material) {
         if (Array.isArray(object.material)) {
           object.material.forEach((material) => material.dispose());
@@ -1285,15 +1303,20 @@ export class ThreeJSApp {
           object.material.dispose();
         }
       }
+
       if (object.texture) object.texture.dispose();
     });
 
     this.renderer.dispose();
+
     if (this.renderTarget) this.renderTarget.dispose();
 
     // Clean up event listeners
+
     window.removeEventListener("resize", this.onWindowResize);
+
     document.removeEventListener("mousemove", this.onDocumentMouseMove);
+
     window.removeEventListener("load", this.onWindowLoad);
   }
 }
@@ -2095,6 +2118,7 @@ class UnifiedMeditationManager {
 
   constructor(app) {
     this.app = app;
+    this.currentTiming = "normal";
     this.currentState = "NORMAL";
     this.motionSamples = [];
     this.sampleSize = 5;
@@ -2130,14 +2154,21 @@ class UnifiedMeditationManager {
 
     this.timingConfig = {
       veryQuick: {
-        NORMAL: { duration: 500 }, // 0.5 seconds
-        ACTIVE: { duration: 500 }, //
-        ACTIVE_LONGER: { duration: 60000 }, // 1 minute
-        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
-        GENTLE: { duration: 300 }, // 0.3 seconds
-        MODERATE: { duration: 600 }, // 0.6 seconds
-        DEEP: { duration: 9000 }, // 9 seconds
-        PROFOUND: { duration: 1200 }, // 1.2 seconds
+        NORMAL: { duration: 10000 }, //
+
+        ACTIVE: { duration: 20000 }, //
+
+        ACTIVE_LONGER: { duration: 300000 }, //
+
+        ACTIVE_EVEN_LONGER: { duration: 300000 },
+
+        GENTLE: { duration: 30000 }, // Updated to 30 seconds
+
+        MODERATE: { duration: 60000 }, // 1 minute
+
+        DEEP: { duration: 180000 }, // 3 minutes
+
+        PROFOUND: { duration: 240000 }, // 4 minutes
       },
       quick: {
         NORMAL: { duration: 500 }, // 0.5 seconds
@@ -2160,29 +2191,44 @@ class UnifiedMeditationManager {
         PROFOUND: { duration: 12000 }, // 12 seconds
       },
       long: {
-        NORMAL: { duration: 10000 }, //
-        ACTIVE: { duration: 20000 }, //
-        ACTIVE_LONGER: { duration: 300000 }, //
-        ACTIVE_EVEN_LONGER: { duration: 300000 },
-        GENTLE: { duration: 10000 }, //
-        MODERATE: { duration: 30000 }, //
-        DEEP: { duration: 180000 }, //
-        PROFOUND: { duration: 240000 },
-      },
-      extraLong: {
-        NORMAL: { duration: 15000 }, // 15 seconds
-        ACTIVE: { duration: 30000 }, // 30 seconds
+        NORMAL: { duration: 5000 }, // 5 seconds
+        ACTIVE: { duration: 10000 }, // 10 seconds
         ACTIVE_LONGER: { duration: 300000 }, // 5 mins
         ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
-        GENTLE: { duration: 30000 }, // 30 seconds
-        MODERATE: { duration: 120000 }, // 2 minutes
+        GENTLE: { duration: 10000 }, // 10 seconds
+        MODERATE: { duration: 30000 }, // 30 seconds
+        DEEP: { duration: 300000 }, // 5 minutes
+        PROFOUND: { duration: 60000 }, // 1 minute
+      },
+      extraLong: {
+        NORMAL: { duration: 150000 }, // 150 seconds
+        ACTIVE: { duration: 300000 }, // 300 seconds
+        ACTIVE_LONGER: { duration: 300000 }, // 5 mins
+        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
+        GENTLE: { duration: 300000 }, // 300 seconds
+        MODERATE: { duration: 1200000 }, // 1200 seconds
         DEEP: { duration: 600000 }, // 10 minutes
         PROFOUND: { duration: 300000 }, // 5 minutes
       },
     };
 
-    this.currentTiming = "long";
+    console.log("Initialized with timing mode:", this.currentTiming);
+
+    this.logTimingConfiguration();
+
     this.getCurrentTimingMode = () => this.currentTiming;
+  }
+
+  logTimingConfiguration() {
+    console.log("Current Timing Configuration:", {
+      mode: this.currentTiming,
+
+      config: this.timingConfig[this.currentTiming],
+
+      currentState: this.currentState,
+
+      stateDuration: this.timingConfig[this.currentTiming][this.currentState]?.duration,
+    });
   }
 
   debugStateTransition(stillnessDuration) {
@@ -2250,6 +2296,14 @@ class UnifiedMeditationManager {
       console.log("Current state:", this.currentState);
     }
 
+    // Verify and log the current configuration
+
+    console.log("Current Timing Configuration:", {
+      mode: this.currentTiming,
+
+      config: this.timingConfig[this.currentTiming],
+    });
+
     // Sync timing values to MEDITATION_CONFIG
     Object.keys(this.timingConfig[this.currentTiming]).forEach((state) => {
       if (MEDITATION_CONFIG.STATES[state]) {
@@ -2262,10 +2316,20 @@ class UnifiedMeditationManager {
       }
     });
 
-    // Force state update and notify GUI
+    if (this.debugTiming) {
+      console.log("Verified MEDITATION_CONFIG durations after update:", {
+        GENTLE: MEDITATION_CONFIG.STATES.GENTLE.duration,
+        MODERATE: MEDITATION_CONFIG.STATES.MODERATE.duration,
+        DEEP: MEDITATION_CONFIG.STATES.DEEP.duration,
+        PROFOUND: MEDITATION_CONFIG.STATES.PROFOUND.duration,
+      });
+    }
+
+    // Force a state update to apply new timing
     this.updateState(true);
     if (this.app.guiManager) {
-      this.app.guiManager.updateTimingModeDisplay(this.currentTiming);
+      // findmes
+      // this.app.guiManager.updateTimingModeDisplay(this.currentTiming);
     }
   }
 
@@ -2275,6 +2339,18 @@ class UnifiedMeditationManager {
 
     if (this.debugTiming) {
       console.log("Updating state with timing mode:", this.currentTiming);
+
+      console.log("State Update Check:", {
+        currentState: this.currentState,
+
+        timingMode: this.currentTiming,
+
+        isMoving: this.isMoving,
+
+        stillnessDuration: this.stillnessStartTime ? now - this.stillnessStartTime : 0,
+
+        stateDuration: this.timingConfig[this.currentTiming][this.currentState]?.duration,
+      });
     }
 
     if (this.isMoving && this.movementStartTime) {
@@ -2352,6 +2428,7 @@ class UnifiedMeditationManager {
     }
 
     if (newState !== this.currentState || forceUpdate) {
+      
       if (this.debugTiming) {
         console.log(`State changing from ${this.currentState} to ${newState}`);
         console.log("Current timing config:", this.timingConfig[this.currentTiming]);
@@ -2438,27 +2515,41 @@ class UnifiedMeditationManager {
     this.applyStateEffects();
 
     if (this.app.debugMode) {
-      const debugInfo = this.getDebugInfo();
-      const debugContainer = document.getElementById("debugInfo");
-      if (debugContainer) {
-          debugContainer.innerHTML = `
-              Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
-              Timing Mode: <span style="color: #00ff00">${debugInfo.timingMode}</span><br>
-              Time in Current State: ${debugInfo.timeInCurrentState}<br>
-              Time Since Motion: ${debugInfo.timeSinceMotion}<br>
-              Movement Duration: ${debugInfo.movementDuration}<br>
-              Modals Visited: ${debugInfo.modalsVisited}<br>
-              <br>
-              Visual Effects:<br>
-              ▸ Ocean Color: ${debugInfo.effects.waterColor}<br>
-              ▸ Wave Strength: ${debugInfo.effects.waveStrength}<br>
-              ▸ Sparkles: ${debugInfo.effects.sparkles}<br>
-              ▸ Sky Changes: ${debugInfo.effects.skyChanges ? "Active" : "Inactive"}<br>
-              ▸ Camera Movement: ${debugInfo.effects.cameraMovement}<br>
-          `;
-      }
-  }
-  }
+        const debugInfo = this.getDebugInfo();
+        const debugContainer = document.getElementById("debugInfo");
+        if (debugContainer) {
+            debugContainer.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <strong>Stillness Status</strong><br>
+                    • Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
+                    • Timing Mode: <span style="color: #00ff00">${debugInfo.currentTiming}</span><br>
+                    • Time in Current State: ${debugInfo.timeInCurrentState}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>Motion Tracking</strong><br>
+                    • Since Last Motion: ${debugInfo.timeSinceMotion}<br>
+                    • Movement Duration: ${debugInfo.movementDuration}<br>
+                    • Modals Visited: ${debugInfo.modalsVisited}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>State Durations (${debugInfo.currentTiming} mode)</strong><br>
+                    <pre style="margin: 5px 0 0 8px; font-family: monospace;">${debugInfo.timingDetails}</pre>
+                </div>
+
+                <div>
+                    <strong>Visual Effects</strong><br>
+                    • Water: ${debugInfo.effects.waterColor} (${debugInfo.effects.waveStrength} wave strength)<br>
+                    • Sparkles: ${debugInfo.effects.sparkles}<br>
+                    • Sky Changes: ${debugInfo.effects.skyChanges ? "Active" : "Inactive"}<br>
+                    • Camera Movement: ${debugInfo.effects.cameraMovement}
+                </div>
+            `;
+        }
+    }
+}
+
 
   //   updateState() {
   //     const now = Date.now();
@@ -2724,28 +2815,39 @@ class UnifiedMeditationManager {
 
   getDebugInfo() {
     const now = Date.now();
-    const elapsedTime = (now - this.lastStateChange) / 1000; // Time in seconds
-
-    // Always use timing config for duration
-    const stateDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration || 0;
-    const totalDuration = stateDuration / 1000; // Convert to seconds
+    const stateConfig = MEDITATION_CONFIG.STATES[this.currentState];
+    const elapsedTime = (now - this.lastStateChange) / 1000;
+    
+    const totalDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration / 1000;
+    
+    // Create timing mode details with line breaks
+    const timingDetails = Object.keys(MEDITATION_CONFIG.STATES)
+        .map(state => {
+            const duration = this.timingConfig[this.currentTiming][state]?.duration / 1000;
+            const achieved = this.currentState === state;
+            // Using Unicode for checkmark and bullet
+            const marker = achieved ? '✓' : '•';
+            return `${marker} ${state}\n  ${duration.toFixed(1)}s`;
+        })
+        .join('\n');
 
     return {
-      meditationState: this.currentState,
-      timingMode: this.currentTiming,
-      timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
-      timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
-      movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
-      modalsVisited: this.visitedModalsCount,
-      effects: {
-        waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
-        waveStrength: MEDITATION_CONFIG.STATES[this.currentState].effects.water.distortion,
-        sparkles: MEDITATION_CONFIG.STATES[this.currentState].effects.sparkles ? "Active" : "Inactive",
-        skyChanges: true,
-        cameraMovement: MEDITATION_CONFIG.STATES[this.currentState].effects.cameraMovement ? "Active" : "Inactive",
-      },
+        meditationState: this.currentState,
+        currentTiming: this.currentTiming,
+        timingDetails: timingDetails,
+        timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
+        timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
+        movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
+        modalsVisited: this.visitedModalsCount,
+        effects: {
+            waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
+            waveStrength: stateConfig.effects.water.distortion.toFixed(2),
+            sparkles: stateConfig.effects.sparkles ? "Active" : "Inactive",
+            skyChanges: true,
+            cameraMovement: stateConfig.effects.cameraMovement ? "Active" : "Inactive",
+        },
     };
-  }
+}
 }
 
 class GUIManager {
@@ -3166,11 +3268,7 @@ class GUIManager {
   initTestingFolder(parentFolder) {
     const folder = parentFolder.addFolder("Testing Controls");
 
-    // Use the actual current timing mode
-    const testingParams = {
-      timingMode: this.capitalizeFirstLetter(this.app.meditationManager.getCurrentTimingMode()),
-    };
-
+    const testingParams = { timingMode: "Normal" };
     folder
       .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test", "Long", "Extra Long"])
       .name("Timing Mode")
@@ -3180,39 +3278,6 @@ class GUIManager {
       });
 
     return folder;
-  }
-
-  // Add new methods
-  capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  updateTimingModeDisplay(timingMode) {
-    const folder = this.gui.folders.find((f) => f.name === "Testing Controls");
-    if (folder) {
-      const controller = folder.__controllers.find((c) => c.property === "timingMode");
-      if (controller) {
-        controller.setValue(this.formatTimingModeForDisplay(timingMode));
-        controller.updateDisplay();
-      }
-    }
-  }
-
-  formatTimingModeForDisplay(mode) {
-    switch (mode) {
-      case "normal":
-        return "Normal";
-      case "quick":
-        return "Quick Test";
-      case "veryQuick":
-        return "Very Quick Test";
-      case "long":
-        return "Long";
-      case "extraLong":
-        return "Extra Long";
-      default:
-        return "Normal";
-    }
   }
 
   openFolders(...folders) {
