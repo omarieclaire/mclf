@@ -157,24 +157,15 @@ class CameraProcessor {
   }
 
   cleanup() {
-    this.isProcessing = false;
-    if (this.motionDetectionId) {
-      cancelAnimationFrame(this.motionDetectionId);
-    }
-
-    // Clean up OpenCV resources
+    // Current Implementation
     if (this.frame1) this.frame1.delete();
     if (this.frame2) this.frame2.delete();
     if (this.gray1) this.gray1.delete();
     if (this.gray2) this.gray2.delete();
     if (this.diff) this.diff.delete();
 
-    // Stop video stream
-    if (this.video && this.video.srcObject) {
-      const tracks = this.video.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
-      this.video.srcObject = null;
-    }
+    // Should also clean up:
+    if (this.cap) this.cap.delete();
   }
 
   detectRegionalMotion(frame1, frame2) {
@@ -185,23 +176,20 @@ class CameraProcessor {
       for (let x = 0; x < frame1.cols; x += regionSize) {
         const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
         const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-
         const diff = new cv.Mat();
-        cv.absdiff(roi1, roi2, diff);
 
-        const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
-        regions.push({
-          x: x,
-          y: y,
-          motion: motionAmount,
-        });
-
-        diff.delete();
-        roi1.delete();
-        roi2.delete();
+        try {
+          cv.absdiff(roi1, roi2, diff);
+          const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+          regions.push({ x, y, motion: motionAmount });
+        } finally {
+          // Ensure cleanup happens even if error occurs
+          diff.delete();
+          roi1.delete();
+          roi2.delete();
+        }
       }
     }
-
     return regions;
   }
 }
@@ -487,20 +475,6 @@ export class ThreeJSApp {
     document.body.classList.remove("preload");
     this.loadModels();
   }
-
-  // mkGoodPosition() {
-  //   return {
-  //     x:
-  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN) +
-  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.X.MIN,
-  //     y:
-  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN) +
-  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.Y.MIN,
-  //     z:
-  //       Math.random() * (ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MAX - ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN) +
-  //       ThreeJSApp.CONFIG.POSITIONING.RANDOM.Z.MIN,
-  //   };
-  // }
 
   mkGoodPosition() {
     return {
@@ -1298,6 +1272,29 @@ export class ThreeJSApp {
     }
 
     setTimeout(() => this.fadeRotatingCreatures(creaturesOnScreen), 350);
+  }
+
+  cleanup() {
+    // Add proper cleanup for Three.js resources
+    this.scene.traverse((object) => {
+      if (object.geometry) object.geometry.dispose();
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach((material) => material.dispose());
+        } else {
+          object.material.dispose();
+        }
+      }
+      if (object.texture) object.texture.dispose();
+    });
+
+    this.renderer.dispose();
+    if (this.renderTarget) this.renderTarget.dispose();
+
+    // Clean up event listeners
+    window.removeEventListener("resize", this.onWindowResize);
+    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+    window.removeEventListener("load", this.onWindowLoad);
   }
 }
 
@@ -2134,7 +2131,7 @@ class UnifiedMeditationManager {
     this.timingConfig = {
       veryQuick: {
         NORMAL: { duration: 500 }, // 0.5 seconds
-        ACTIVE: { duration: 500 }, // 
+        ACTIVE: { duration: 500 }, //
         ACTIVE_LONGER: { duration: 60000 }, // 1 minute
         ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
         GENTLE: { duration: 300 }, // 0.3 seconds
@@ -2163,14 +2160,14 @@ class UnifiedMeditationManager {
         PROFOUND: { duration: 12000 }, // 12 seconds
       },
       long: {
-        NORMAL: { duration: 5000 }, // 5 seconds
-        ACTIVE: { duration: 10000 }, // 10 seconds
-        ACTIVE_LONGER: { duration: 300000 }, // 5 mins
-        ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
-        GENTLE: { duration: 10000 }, // 10 seconds
-        MODERATE: { duration: 30000 }, // 30 seconds
-        DEEP: { duration: 300000 }, // 5 minutes
-        PROFOUND: { duration: 60000 }, // 1 minute
+        NORMAL: { duration: 10000 }, //
+        ACTIVE: { duration: 20000 }, //
+        ACTIVE_LONGER: { duration: 300000 }, //
+        ACTIVE_EVEN_LONGER: { duration: 300000 },
+        GENTLE: { duration: 10000 }, //
+        MODERATE: { duration: 30000 }, //
+        DEEP: { duration: 180000 }, //
+        PROFOUND: { duration: 240000 },
       },
       extraLong: {
         NORMAL: { duration: 15000 }, // 15 seconds
@@ -2184,7 +2181,8 @@ class UnifiedMeditationManager {
       },
     };
 
-    this.currentTiming = "normal";
+    this.currentTiming = "long";
+    this.getCurrentTimingMode = () => this.currentTiming;
   }
 
   debugStateTransition(stillnessDuration) {
@@ -2229,53 +2227,47 @@ class UnifiedMeditationManager {
     const previousTiming = this.currentTiming;
 
     switch (mode) {
-        case "Normal":
-            this.currentTiming = "normal";
-            break;
-        case "Quick Test":
-            this.currentTiming = "quick";
-            break;
-        case "Very Quick Test":
-            this.currentTiming = "veryQuick";
-            break;
-        case "Long":
-            this.currentTiming = "long";
-            break;
-        case "Extra Long":
-            this.currentTiming = "extraLong";
-            break;
+      case "Normal":
+        this.currentTiming = "normal";
+        break;
+      case "Quick Test":
+        this.currentTiming = "quick";
+        break;
+      case "Very Quick Test":
+        this.currentTiming = "veryQuick";
+        break;
+      case "Long":
+        this.currentTiming = "long";
+        break;
+      case "Extra Long":
+        this.currentTiming = "extraLong";
+        break;
     }
 
     if (this.debugTiming) {
-        console.log("Previous timing mode:", previousTiming);
-        console.log("New timing mode:", this.currentTiming);
-        console.log("Current state:", this.currentState);
+      console.log("Previous timing mode:", previousTiming);
+      console.log("New timing mode:", this.currentTiming);
+      console.log("Current state:", this.currentState);
     }
 
     // Sync timing values to MEDITATION_CONFIG
-    Object.keys(this.timingConfig[this.currentTiming]).forEach(state => {
-        if (MEDITATION_CONFIG.STATES[state]) {
-            const newDuration = this.timingConfig[this.currentTiming][state].duration;
-            MEDITATION_CONFIG.STATES[state].duration = newDuration;
-            
-            if (this.debugTiming) {
-                console.log(`Updated ${state} duration to:`, newDuration);
-            }
+    Object.keys(this.timingConfig[this.currentTiming]).forEach((state) => {
+      if (MEDITATION_CONFIG.STATES[state]) {
+        const newDuration = this.timingConfig[this.currentTiming][state].duration;
+        MEDITATION_CONFIG.STATES[state].duration = newDuration;
+
+        if (this.debugTiming) {
+          console.log(`Updated ${state} duration to:`, newDuration);
         }
+      }
     });
 
-    if (this.debugTiming) {
-        console.log("Verified MEDITATION_CONFIG durations after update:", {
-            GENTLE: MEDITATION_CONFIG.STATES.GENTLE.duration,
-            MODERATE: MEDITATION_CONFIG.STATES.MODERATE.duration,
-            DEEP: MEDITATION_CONFIG.STATES.DEEP.duration,
-            PROFOUND: MEDITATION_CONFIG.STATES.PROFOUND.duration
-        });
-    }
-
-    // Force a state update to apply new timing
+    // Force state update and notify GUI
     this.updateState(true);
-}
+    if (this.app.guiManager) {
+      this.app.guiManager.updateTimingModeDisplay(this.currentTiming);
+    }
+  }
 
   updateState(forceUpdate = false) {
     const now = Date.now();
@@ -2449,22 +2441,23 @@ class UnifiedMeditationManager {
       const debugInfo = this.getDebugInfo();
       const debugContainer = document.getElementById("debugInfo");
       if (debugContainer) {
-        debugContainer.innerHTML = `
-                Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
-            Time in Current State: ${debugInfo.timeInCurrentState}<br>
-                Time Since Motion: ${debugInfo.timeSinceMotion}<br>
-                Movement Duration: ${debugInfo.movementDuration}<br>
-                Modals Visited: ${debugInfo.modalsVisited}<br>
-                <br>
-                Visual Effects:<br>
-                ▸ Ocean Color: ${debugInfo.effects.waterColor}<br>
-                ▸ Wave Strength: ${debugInfo.effects.waveStrength}<br>
-                ▸ Sparkles: ${debugInfo.effects.sparkles}<br>
-                ▸ Sky Changes: ${debugInfo.effects.skyChanges ? "Active" : "Inactive"}<br>
-                ▸ Camera Movement: ${debugInfo.effects.cameraMovement}<br>
-            `;
+          debugContainer.innerHTML = `
+              Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
+              Timing Mode: <span style="color: #00ff00">${debugInfo.timingMode}</span><br>
+              Time in Current State: ${debugInfo.timeInCurrentState}<br>
+              Time Since Motion: ${debugInfo.timeSinceMotion}<br>
+              Movement Duration: ${debugInfo.movementDuration}<br>
+              Modals Visited: ${debugInfo.modalsVisited}<br>
+              <br>
+              Visual Effects:<br>
+              ▸ Ocean Color: ${debugInfo.effects.waterColor}<br>
+              ▸ Wave Strength: ${debugInfo.effects.waveStrength}<br>
+              ▸ Sparkles: ${debugInfo.effects.sparkles}<br>
+              ▸ Sky Changes: ${debugInfo.effects.skyChanges ? "Active" : "Inactive"}<br>
+              ▸ Camera Movement: ${debugInfo.effects.cameraMovement}<br>
+          `;
       }
-    }
+  }
   }
 
   //   updateState() {
@@ -2731,35 +2724,28 @@ class UnifiedMeditationManager {
 
   getDebugInfo() {
     const now = Date.now();
-    const stateConfig = MEDITATION_CONFIG.STATES[this.currentState];
     const elapsedTime = (now - this.lastStateChange) / 1000; // Time in seconds
 
-    // Add debug logging to see what we're getting
-    console.log('State duration debug:', {
-        state: this.currentState,
-        configDuration: stateConfig.duration,
-        timingMode: this.currentTiming,
-        timingConfigDuration: this.timingConfig[this.currentTiming][this.currentState]?.duration
-    });
-
-    // Get duration from the active timing config instead of state config
-    const totalDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration / 1000;
+    // Always use timing config for duration
+    const stateDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration || 0;
+    const totalDuration = stateDuration / 1000; // Convert to seconds
 
     return {
-        meditationState: this.currentState,
-        timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
-        timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
-        movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
-        modalsVisited: this.visitedModalsCount,
-        effects: {
-            waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
-            waveStrength: stateConfig.effects.water.distortion,
-            sparkles: stateConfig.effects.sparkles ? "Active" : "Inactive",
-            skyChanges: true,
-            cameraMovement: stateConfig.effects.cameraMovement ? "Active" : "Inactive",
-        },
+      meditationState: this.currentState,
+      timingMode: this.currentTiming,
+      timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
+      timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
+      movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
+      modalsVisited: this.visitedModalsCount,
+      effects: {
+        waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
+        waveStrength: MEDITATION_CONFIG.STATES[this.currentState].effects.water.distortion,
+        sparkles: MEDITATION_CONFIG.STATES[this.currentState].effects.sparkles ? "Active" : "Inactive",
+        skyChanges: true,
+        cameraMovement: MEDITATION_CONFIG.STATES[this.currentState].effects.cameraMovement ? "Active" : "Inactive",
+      },
     };
-}
+  }
 }
 
 class GUIManager {
@@ -3180,7 +3166,11 @@ class GUIManager {
   initTestingFolder(parentFolder) {
     const folder = parentFolder.addFolder("Testing Controls");
 
-    const testingParams = { timingMode: "Normal" };
+    // Use the actual current timing mode
+    const testingParams = {
+      timingMode: this.capitalizeFirstLetter(this.app.meditationManager.getCurrentTimingMode()),
+    };
+
     folder
       .add(testingParams, "timingMode", ["Normal", "Quick Test", "Very Quick Test", "Long", "Extra Long"])
       .name("Timing Mode")
@@ -3190,6 +3180,39 @@ class GUIManager {
       });
 
     return folder;
+  }
+
+  // Add new methods
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  updateTimingModeDisplay(timingMode) {
+    const folder = this.gui.folders.find((f) => f.name === "Testing Controls");
+    if (folder) {
+      const controller = folder.__controllers.find((c) => c.property === "timingMode");
+      if (controller) {
+        controller.setValue(this.formatTimingModeForDisplay(timingMode));
+        controller.updateDisplay();
+      }
+    }
+  }
+
+  formatTimingModeForDisplay(mode) {
+    switch (mode) {
+      case "normal":
+        return "Normal";
+      case "quick":
+        return "Quick Test";
+      case "veryQuick":
+        return "Very Quick Test";
+      case "long":
+        return "Long";
+      case "extraLong":
+        return "Extra Long";
+      default:
+        return "Normal";
+    }
   }
 
   openFolders(...folders) {
