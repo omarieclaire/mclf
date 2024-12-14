@@ -460,6 +460,7 @@ export class ThreeJSApp {
       "What lies between reaching and being reached?",
       "What lives in the softness between wanting and having?",
       "Will the soil remember your weight when you leave it?",
+      "Delay, deny, decolonize?",
       "What do your bones hum when no one is listening?",
       "How does the fabric of yesterday fold around your heart?",
       "Who knots the gravity of your dreams to the edge of the world?",
