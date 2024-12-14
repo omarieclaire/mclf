@@ -8,65 +8,23 @@ import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
 THREE.ImageUtils.crossOrigin = "";
 
-
 class CameraProcessor {
   static CONFIG = {
     MOTION: {
       THRESHOLD: 0.5, // percentage of pixels that need to change
       REGION_SIZE: 32, // size of regions to check for motion
-      MIN_MOTION_AREA: 100, // minimum area of motion to trigger detection
-      NOISE_REDUCTION: 3, // Gaussian blur kernel size for noise reduction
-    }
+    },
   };
-
   constructor(stateManager, debugMode = false) {
     this.stateManager = stateManager;
     this.debugMode = debugMode;
     this.motionDetectionId = null;
     this.isProcessing = true;
 
-    // Motion detection parameters
     this.meditationParams = {
       motionThreshold: CameraProcessor.CONFIG.MOTION.THRESHOLD,
       regionSize: CameraProcessor.CONFIG.MOTION.REGION_SIZE,
-      minMotionArea: CameraProcessor.CONFIG.MOTION.MIN_MOTION_AREA,
-      noiseReduction: CameraProcessor.CONFIG.MOTION.NOISE_REDUCTION
     };
-
-    // Add to GUI if debug mode is enabled
-    if (this.debugMode && stateManager.app.guiManager) {
-      this.addDebugControls(stateManager.app.guiManager);
-    }
-  }
-
-  addDebugControls(guiManager) {
-    const motionFolder = guiManager.gui.addFolder('Motion Detection');
-    
-    motionFolder.add(this.meditationParams, 'motionThreshold', 0.1, 2.0)
-      .name('Motion Sensitivity')
-      .onChange(value => {
-        this.meditationParams.motionThreshold = value;
-      });
-
-    motionFolder.add(this.meditationParams, 'regionSize', 8, 64)
-      .name('Region Size')
-      .onChange(value => {
-        this.meditationParams.regionSize = Math.floor(value);
-      });
-
-    motionFolder.add(this.meditationParams, 'minMotionArea', 10, 500)
-      .name('Min Motion Area')
-      .onChange(value => {
-        this.meditationParams.minMotionArea = value;
-      });
-
-    motionFolder.add(this.meditationParams, 'noiseReduction', 1, 9, 2)
-      .name('Noise Reduction')
-      .onChange(value => {
-        this.meditationParams.noiseReduction = Math.floor(value);
-      });
-
-    motionFolder.open();
   }
 
   setupCamera() {
@@ -127,8 +85,13 @@ class CameraProcessor {
     console.log("OpenCV is loaded, starting video processing");
 
     if (this.debugMode) {
-      this.video.style.display = "block";
       canvasOutput.style.display = "block";
+      canvasOutput.style.position = "fixed";
+      canvasOutput.style.top = "260px";
+      canvasOutput.style.left = "10px";
+      canvasOutput.style.width = "320px";
+      canvasOutput.style.height = "240px";
+      canvasOutput.style.zIndex = "1000";
     }
 
     try {
@@ -162,20 +125,7 @@ class CameraProcessor {
       }
 
       if (this.cap !== null) {
-        // Read current frame
         this.cap.read(this.frame2);
-        
-        // Apply Gaussian blur for noise reduction
-        cv.GaussianBlur(
-          this.frame2, 
-          this.frame2,
-          new cv.Size(this.meditationParams.noiseReduction, this.meditationParams.noiseReduction),
-          0, 
-          0, 
-          cv.BORDER_DEFAULT
-        );
-
-        // Convert to grayscale
         cv.cvtColor(this.frame2, this.gray2, cv.COLOR_RGBA2GRAY);
 
         if (this.firstFrame) {
@@ -183,27 +133,14 @@ class CameraProcessor {
           this.firstFrame = false;
         }
 
-        // Calculate absolute difference
         cv.absdiff(this.gray1, this.gray2, this.diff);
-        
-        // Apply threshold
         cv.threshold(this.diff, this.diff, 25, 255, cv.THRESH_BINARY);
+        cv.imshow("canvasOutput", this.diff);
 
-        // Analyze motion by regions
-        const regions = this.detectRegionalMotion(this.gray1, this.gray2);
-        
-        // Calculate total motion area
-        const motionArea = regions.reduce((sum, region) => 
-          sum + (region.motion > this.meditationParams.motionThreshold ? 1 : 0), 0
-        ) * (this.meditationParams.regionSize * this.meditationParams.regionSize);
+        const nonZero = cv.countNonZero(this.diff);
+        const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
 
-        // Show motion detection visualization in debug mode
-        if (this.debugMode) {
-          this.visualizeMotionRegions(regions);
-        }
-
-        // Trigger motion detection if area exceeds minimum
-        if (motionArea > this.meditationParams.minMotionArea) {
+        if (motionPercentage > this.meditationParams.motionThreshold) {
           this.stateManager.onMotionDetected();
         } else {
           this.stateManager.onNoMotionDetected();
@@ -217,46 +154,6 @@ class CameraProcessor {
       console.error("Video processing error:", err);
       this.cleanup();
     }
-  }
-
-  detectRegionalMotion(frame1, frame2) {
-    const regions = [];
-    const regionSize = this.meditationParams.regionSize;
-
-    for (let y = 0; y < frame1.rows; y += regionSize) {
-      for (let x = 0; x < frame1.cols; x += regionSize) {
-        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
-        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-
-        const diff = new cv.Mat();
-        try {
-          cv.absdiff(roi1, roi2, diff);
-
-          const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
-
-          regions.push({ x, y, motion: motionAmount });
-        } finally {
-          diff.delete();
-          roi1.delete();
-          roi2.delete();
-        }
-      }
-    }
-
-    return regions;
-  }
-
-  visualizeMotionRegions(regions) {
-    const canvas = document.getElementById('canvasOutput');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    regions.forEach(region => {
-      if (region.motion > this.meditationParams.motionThreshold) {
-        ctx.fillStyle = `rgba(255, 0, 0, ${region.motion})`;
-        ctx.fillRect(region.x, region.y, this.meditationParams.regionSize, this.meditationParams.regionSize);
-      }
-    });
   }
 
   cleanup() {
@@ -281,210 +178,38 @@ class CameraProcessor {
 
     if (this.cap) this.cap.delete();
   }
+
+  detectRegionalMotion(frame1, frame2) {
+    const regions = [];
+    const regionSize = this.meditationParams.regionSize;
+
+    for (let y = 0; y < frame1.rows; y += regionSize) {
+      for (let x = 0; x < frame1.cols; x += regionSize) {
+        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
+        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
+
+        const diff = new cv.Mat();
+        try {
+          cv.absdiff(roi1, roi2, diff);
+
+          const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+
+          regions.push({ x, y, motion: motionAmount });
+        } finally {
+          // Ensure cleanup happens even if error occurs
+
+          diff.delete();
+
+          roi1.delete();
+
+          roi2.delete();
+        }
+      }
+    }
+
+    return regions;
+  }
 }
-
-// class CameraProcessor {
-//   static CONFIG = {
-//     MOTION: {
-//       THRESHOLD: 0.5, // percentage of pixels that need to change
-//       REGION_SIZE: 32, // size of regions to check for motion
-//     },
-//   };
-//   constructor(stateManager, debugMode = false) {
-//     this.stateManager = stateManager;
-//     this.debugMode = debugMode;
-//     this.motionDetectionId = null;
-//     this.isProcessing = true;
-
-//     this.meditationParams = {
-//       motionThreshold: CameraProcessor.CONFIG.MOTION.THRESHOLD,
-//       regionSize: CameraProcessor.CONFIG.MOTION.REGION_SIZE,
-//     };
-//   }
-
-//   setupCamera() {
-//     // console.log("Setting up camera...");
-//     this.video = document.getElementById("videoInput");
-//     if (!this.video) {
-//       throw new Error("Video element 'videoInput' not found");
-//     }
-
-//     // Hide video by default
-//     this.video.style.display = "none";
-//     this.video.style.position = "fixed";
-//     this.video.style.top = "10px";
-//     this.video.style.left = "10px";
-//     this.video.style.width = "320px";
-//     this.video.style.height = "240px";
-//     this.video.style.zIndex = "1000";
-
-//     return navigator.mediaDevices
-//       .getUserMedia({ video: true, audio: false })
-//       .then((stream) => {
-//         console.log("Camera access granted");
-//         this.video.srcObject = stream;
-//         return new Promise((resolve) => {
-//           this.video.onloadedmetadata = () => {
-//             console.log("Video metadata loaded");
-//             this.video.play();
-//             console.log("Video playing");
-//             resolve();
-//           };
-//         });
-//       })
-//       .catch((err) => {
-//         console.error("Error accessing the camera:", err.name, err.message);
-//         throw err;
-//       });
-//   }
-
-//   startVideoProcessing() {
-//     if (typeof cv === "undefined") {
-//       console.error("OpenCV is not loaded!");
-//       return;
-//     }
-
-//     const canvasOutput = document.getElementById("canvasOutput");
-//     if (!canvasOutput) {
-//       throw new Error("Canvas element 'canvasOutput' not found");
-//     }
-
-//     canvasOutput.style.display = "none";
-//     canvasOutput.style.position = "fixed";
-//     canvasOutput.style.top = "260px";
-//     canvasOutput.style.left = "10px";
-//     canvasOutput.style.width = "320px";
-//     canvasOutput.style.height = "240px";
-//     canvasOutput.style.zIndex = "1000";
-
-//     console.log("OpenCV is loaded, starting video processing");
-
-//     if (this.debugMode) {
-//       canvasOutput.style.display = "block";
-//       canvasOutput.style.position = "fixed";
-//       canvasOutput.style.top = "260px";
-//       canvasOutput.style.left = "10px";
-//       canvasOutput.style.width = "320px";
-//       canvasOutput.style.height = "240px";
-//       canvasOutput.style.zIndex = "1000";
-//     }
-
-//     try {
-//       this.setupProcessing();
-//       this.processVideo();
-
-//       // Add cleanup on page unload
-//       window.addEventListener("beforeunload", () => this.cleanup());
-//     } catch (err) {
-//       console.error("Error in startVideoProcessing:", err);
-//       this.cleanup();
-//     }
-//   }
-
-//   setupProcessing() {
-//     this.cap = new cv.VideoCapture(this.video);
-//     this.frame1 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
-//     this.frame2 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
-//     this.gray1 = new cv.Mat();
-//     this.gray2 = new cv.Mat();
-//     this.diff = new cv.Mat();
-//     this.firstFrame = true;
-//     this.frameCount = 0;
-//   }
-
-//   processVideo() {
-//     try {
-//       if (!this.isProcessing || this.video.paused || this.video.ended) {
-//         this.cleanup();
-//         return;
-//       }
-
-//       if (this.cap !== null) {
-//         this.cap.read(this.frame2);
-//         cv.cvtColor(this.frame2, this.gray2, cv.COLOR_RGBA2GRAY);
-
-//         if (this.firstFrame) {
-//           this.gray2.copyTo(this.gray1);
-//           this.firstFrame = false;
-//         }
-
-//         cv.absdiff(this.gray1, this.gray2, this.diff);
-//         cv.threshold(this.diff, this.diff, 25, 255, cv.THRESH_BINARY);
-//         cv.imshow("canvasOutput", this.diff);
-
-//         const nonZero = cv.countNonZero(this.diff);
-//         const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
-
-//         if (motionPercentage > this.meditationParams.motionThreshold) {
-//           this.stateManager.onMotionDetected();
-//         } else {
-//           this.stateManager.onNoMotionDetected();
-//         }
-
-//         this.gray2.copyTo(this.gray1);
-//       }
-
-//       this.motionDetectionId = requestAnimationFrame(() => this.processVideo());
-//     } catch (err) {
-//       console.error("Video processing error:", err);
-//       this.cleanup();
-//     }
-//   }
-
-//   cleanup() {
-//     this.isProcessing = false;
-//     if (this.motionDetectionId) {
-//       cancelAnimationFrame(this.motionDetectionId);
-//     }
-
-//     // Clean up OpenCV resources
-//     if (this.frame1) this.frame1.delete();
-//     if (this.frame2) this.frame2.delete();
-//     if (this.gray1) this.gray1.delete();
-//     if (this.gray2) this.gray2.delete();
-//     if (this.diff) this.diff.delete();
-
-//     // Stop video stream
-//     if (this.video && this.video.srcObject) {
-//       const tracks = this.video.srcObject.getTracks();
-//       tracks.forEach((track) => track.stop());
-//       this.video.srcObject = null;
-//     }
-
-//     if (this.cap) this.cap.delete();
-//   }
-
-//   detectRegionalMotion(frame1, frame2) {
-//     const regions = [];
-//     const regionSize = this.meditationParams.regionSize;
-
-//     for (let y = 0; y < frame1.rows; y += regionSize) {
-//       for (let x = 0; x < frame1.cols; x += regionSize) {
-//         const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
-//         const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-
-//         const diff = new cv.Mat();
-//         try {
-//           cv.absdiff(roi1, roi2, diff);
-
-//           const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
-
-//           regions.push({ x, y, motion: motionAmount });
-//         } finally {
-//           // Ensure cleanup happens even if error occurs
-
-//           diff.delete();
-
-//           roi1.delete();
-
-//           roi2.delete();
-//         }
-//       }
-//     }
-
-//     return regions;
-//   }
-// }
 
 export class ThreeJSApp {
   static CONFIG = {
@@ -1837,21 +1562,21 @@ const MEDITATION_CONFIG = {
         },
         sky: {
           // Reduced turbidity for clearer, darker sky
-          turbidity: 8.0,
+          turbidity: 4.0,
           // Lower rayleigh for less light scattering
-          rayleigh: 1.0,
+          rayleigh: 4.0,
           // Lower inclination for darker sky
           inclination: 0.15,
           // Moderate azimuth to avoid flash
-          azimuth: 0.45,
+          azimuth: 0.75,
           // Very low mie coefficient for minimal sun effect
-          mieCoefficient: 0.001,
+          mieCoefficient: 0.035,
           // High directional G for tight sun scattering
           mieDirectionalG: 0.999,
         },
         fog: {
           density: 0.00005,
-          color: 0x000066,  // Darker blue fog
+          color: 0x000066, // Darker blue fog
         },
         sparkles: true,
         cameraMovement: true,
@@ -1872,12 +1597,18 @@ const MEDITATION_CONFIG = {
           normalMapScale: { x: 0.2, y: 0.2 },
         },
         sky: {
-          turbidity: 2.0,
-          rayleigh: 2.0,
-          inclination: 0.1,
-          azimuth: 9.95,
-          mieCoefficient: 0.001,
-          mieDirectionalG: 1,
+          // Reduced turbidity for clearer, darker sky
+          turbidity: 4.0,
+          // Lower rayleigh for less light scattering
+          rayleigh: 4.0,
+          // Lower inclination for darker sky
+          inclination: 0.15,
+          // Moderate azimuth to avoid flash
+          azimuth: 0.75,
+          // Very low mie coefficient for minimal sun effect
+          mieCoefficient: 0.035,
+          // High directional G for tight sun scattering
+          mieDirectionalG: 0.999,
         },
         fog: {
           density: 0.00001,
@@ -2117,83 +1848,80 @@ class SparkleManager {
 
 class CameraSequenceManager {
   constructor(app) {
-    this.app = app;
-    this.cameraSequenceActive = false;
-    this.visitedFriends = new Set();
-    this.currentSequenceTimeout = null;
-    this.maxFriendsToVisit = 3;
-    this.originalControlsState = {
-      enabled: true,
-      autoRotate: false,
-    };
+      this.app = app;
+      this.cameraSequenceActive = false;
+      this.visitedFriends = new Set();
+      this.currentSequenceTimeout = null;
+      this.maxFriendsToVisit = 3;
+      this.originalControlsState = {
+          enabled: true,
+          autoRotate: false
+      };
   }
 
   startSequence() {
-    if (this.cameraSequenceActive) return;
+      if (this.cameraSequenceActive) return;
 
-    // Store original controls state including current target
-    this.originalControlsState = {
-      enabled: this.app.controls.enabled,
-      autoRotate: this.app.controls.autoRotate,
-      enablePan: this.app.controls.enablePan,
-      enableZoom: this.app.controls.enableZoom,
-      enableRotate: this.app.controls.enableRotate,
-      target: this.app.controls.target.clone(),
-    };
+      this.originalControlsState = {
+        enabled: this.app.controls.enabled,
+        autoRotate: this.app.controls.autoRotate,
+        enablePan: this.app.controls.enablePan,
+        enableZoom: this.app.controls.enableZoom,
+        enableRotate: this.app.controls.enableRotate,
+        target: this.app.controls.target.clone(),
+      };
 
-    // Disable controls during sequence
-    this.app.controls.enabled = false;
-    this.app.controls.enablePan = false;
-    this.app.controls.enableZoom = false;
-    this.app.controls.enableRotate = false;
-
-    this.cameraSequenceActive = true;
-    this.visitedFriends.clear();
-    this.moveToNextFriend();
+      this.app.controls.enabled = false;
+      this.app.controls.enablePan = false;
+      this.app.controls.enableZoom = false;
+      this.app.controls.enableRotate = false;
+      
+      this.cameraSequenceActive = true;
+      this.visitedFriends.clear();
+      this.moveToNextFriend();
   }
 
   stopSequence() {
-    this.cameraSequenceActive = false;
-    if (this.currentSequenceTimeout) {
-      clearTimeout(this.currentSequenceTimeout);
-      this.currentSequenceTimeout = null;
-    }
-
-    if (this.originalControlsState) {
-      // Restore all controls
-      this.app.controls.enabled = this.originalControlsState.enabled;
-      this.app.controls.autoRotate = this.originalControlsState.autoRotate;
-      this.app.controls.enablePan = this.originalControlsState.enablePan;
-      this.app.controls.enableZoom = this.originalControlsState.enableZoom;
-      this.app.controls.enableRotate = this.originalControlsState.enableRotate;
-      if (this.originalControlsState.target) {
-        this.app.controls.target.copy(this.originalControlsState.target);
+      this.cameraSequenceActive = false;
+      if (this.currentSequenceTimeout) {
+          clearTimeout(this.currentSequenceTimeout);
+          this.currentSequenceTimeout = null;
       }
-      this.app.controls.update();
-    }
-
-    this.visitedFriends.clear();
-    this.resetCamera();
+      
+      if (this.originalControlsState) {
+          this.app.controls.enabled = this.originalControlsState.enabled;
+          this.app.controls.autoRotate = this.originalControlsState.autoRotate;
+          this.app.controls.enablePan = this.originalControlsState.enablePan;
+          this.app.controls.enableZoom = this.originalControlsState.enableZoom;
+          this.app.controls.enableRotate = this.originalControlsState.enableRotate;
+          if (this.originalControlsState.target) {
+              this.app.controls.target.copy(this.originalControlsState.target);
+          }
+          this.app.controls.update();
+      }
+      
+      this.visitedFriends.clear();
+      this.resetCamera();
   }
+
+  
   moveToNextFriend() {
     if (!this.cameraSequenceActive || this.visitedFriends.size >= this.maxFriendsToVisit) {
-      this.stopSequence();
-      return;
+        this.stopSequence();
+        return;
     }
 
-    // Check if boxGroup exists and has children
     const allFriends = this.app.boxGroup?.children || [];
     if (allFriends.length === 0) {
-      console.warn("No friends available in boxGroup");
-      this.stopSequence();
-      return;
+        console.warn("No friends available in boxGroup");
+        this.stopSequence();
+        return;
     }
 
-    const unvisitedFriends = allFriends.filter((friend) => !this.visitedFriends.has(friend.uuid));
-
+    const unvisitedFriends = allFriends.filter(friend => !this.visitedFriends.has(friend.uuid));
     if (unvisitedFriends.length === 0) {
-      this.stopSequence();
-      return;
+        this.stopSequence();
+        return;
     }
 
     const randomFriend = unvisitedFriends[Math.floor(Math.random() * unvisitedFriends.length)];
@@ -2201,222 +1929,128 @@ class CameraSequenceManager {
 
     const friendPos = new THREE.Vector3();
     randomFriend.getWorldPosition(friendPos);
+    
+    const cameraOffset = new THREE.Vector3(50, 25, 50);
+    const targetPos = friendPos.clone().add(cameraOffset);
 
-    // Calculate camera position relative to friend
-    const distance = 80; // Increased distance
-    const angle = Math.random() * Math.PI * 2; // Random angle around friend
-
-    const targetPos = new THREE.Vector3(
-      friendPos.x + Math.cos(angle) * distance,
-      friendPos.y + 20, // Fixed height above friend
-      friendPos.z + Math.sin(angle) * distance
-    );
-
+    // Start camera movement
     this.animateCameraToPosition(targetPos, friendPos, () => {
-      this.simulateClickOnFriend(randomFriend);
+        // Only after camera movement is complete...
+        setTimeout(() => {
+            // Open modal
+            this.simulateClickOnFriend(randomFriend);
 
-      // Show modal for 3 seconds
-      this.currentSequenceTimeout = setTimeout(() => {
-        this.closeCurrentModal();
-
-        // Wait 20 seconds before moving to next friend
-        if (this.visitedFriends.size < this.maxFriendsToVisit) {
-          this.currentSequenceTimeout = setTimeout(() => {
-            this.moveToNextFriend();
-          }, 10000);
-        } else {
-          this.stopSequence();
-        }
-      }, 3000);
+            // Schedule modal closing
+            this.currentSequenceTimeout = setTimeout(() => {
+                this.closeCurrentModal();
+            }, 8000); // Give more time to view modal
+        }, 1000); // Small pause after camera stops
     });
-  }
+}
 
   animateCameraToPosition(targetPos, lookAtPos, onComplete) {
-    const camera = this.app.camera;
-    const startPos = camera.position.clone();
-    const startLookAt = this.app.controls.target.clone();
-    const duration = 25000; // 25 seconds for very slow movement
-    const startTime = performance.now();
+      const camera = this.app.camera;
+      const startPos = camera.position.clone();
+      const startLookAt = this.app.controls.target.clone();
+      const duration = 25000;
+      const startTime = performance.now();
 
-    const animate = (currentTime) => {
-      if (!this.cameraSequenceActive) return;
+      const animate = (currentTime) => {
+          if (!this.cameraSequenceActive) return;
 
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = this.gentleEasing(progress);
 
-      // Even gentler easing
-      const eased = this.gentleEasing(progress);
+          camera.position.lerpVectors(startPos, targetPos, eased);
+          const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
+          this.app.controls.target.copy(newLookAt);
+          
+          this.app.controls.update();
 
-      camera.position.lerpVectors(startPos, targetPos, eased);
+          if (progress < 1) {
+              requestAnimationFrame(animate);
+          } else {
+              onComplete();
+          }
+      };
 
-      const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, lookAtPos, eased);
-      this.app.controls.target.copy(newLookAt);
-
-      this.app.controls.update();
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        onComplete();
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-  // Smoother easing function for more gentle movement
-  smootherstep(x) {
-    // Enhanced smoothstep with more gradual acceleration and deceleration
-    return x * x * x * (x * (x * 6 - 15) + 10);
+      requestAnimationFrame(animate);
   }
 
   gentleEasing(x) {
-    return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
+      return x < 0.5 ? 
+          8 * x * x * x * x : 
+          1 - Math.pow(-2 * x + 2, 4) / 2;
   }
 
   simulateClickOnFriend(friend) {
-    const currFriendID = friend.friendID;
-    const currModalID = `friendModalDivID${currFriendID}`;
-    const currFriendModalDiv = document.getElementById(currModalID);
+      const currFriendID = friend.friendID;
+      const currModalID = `friendModalDivID${currFriendID}`;
+      const currFriendModalDiv = document.getElementById(currModalID);
 
-    if (currFriendModalDiv) {
-      currFriendModalDiv.classList.add("openFriendModalDiv");
+      if (currFriendModalDiv) {
+          currFriendModalDiv.classList.add("openFriendModalDiv");
+          
+          if (this.app.meditationManager) {
+              this.app.meditationManager.registerModalVisit();
+          }
 
-      // Use the proper registration method instead of direct increment
-      if (this.app.meditationManager) {
-        this.app.meditationManager.registerModalVisit();
+          try {
+              this.app.audioManager.playFriendSound();
+          } catch (error) {
+              console.error("Error playing friend sound:", error);
+          }
       }
 
-      // Play friend sound
-      try {
-        this.app.audioManager.playFriendSound();
-      } catch (error) {
-        console.error("Error playing friend sound:", error);
-      }
-    }
-
-    friend.traverse((o) => {
-      if (o.isMesh) {
-        o.material.emissive.setHex(3135135);
-        o.material.opacity = 0.2;
-      }
-    });
+      friend.traverse((o) => {
+          if (o.isMesh) {
+              o.material.emissive.setHex(3135135);
+              o.material.opacity = 0.2;
+          }
+      });
   }
 
   closeCurrentModal() {
     const modals = document.querySelectorAll(".friendModalDiv");
     modals.forEach((modal) => {
-      if (modal.classList.contains("openFriendModalDiv")) {
-        this.debugModalTransition(modal, "starting close");
+        if (modal.classList.contains("openFriendModalDiv")) {
+            modal.style.transition = "opacity 3s ease-out";
+            modal.style.opacity = "0";
 
-        // Add opacity transition
-        modal.style.transition = "opacity 3s ease-out";
-        modal.style.opacity = "0";
-
-        // Wait for transition to complete before removing classes
-        setTimeout(() => {
-          this.debugModalTransition(modal, "transition complete");
-          modal.classList.remove("openFriendModalDiv", "fadeOutModal");
-          // Reset opacity for next time
-          modal.style.opacity = "1";
-        }, 3000);
-      }
+            setTimeout(() => {
+                modal.classList.remove("openFriendModalDiv", "fadeOutModal");
+                modal.style.opacity = "1";
+                modal.style.transition = "";
+            }, 3000);
+        }
     });
-  }
 
-  resetCamera() {
-    // Store original values from config
-    const originalPosition = new THREE.Vector3(
-        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
-        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
-        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
-    );
-    const originalTarget = new THREE.Vector3(0, 10, 0);
-
-    // Force immediate position reset if final precision is important
-    const PRECISION_THRESHOLD = 0.001;
-    
-    const animate = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Use a gentler easing function for smoother movement
-        const eased = this.superSmoothEasing(progress);
-
-        // Position interpolation
-        this.app.camera.position.lerpVectors(startPos, originalPosition, eased);
-        
-        // Target interpolation
-        const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, originalTarget, eased);
-        this.app.controls.target.copy(newLookAt);
-
-        // Reset controls parameters
-        this.app.controls.minDistance = ThreeJSApp.CONFIG.CAMERA.MIN_DISTANCE;
-        this.app.controls.maxDistance = ThreeJSApp.CONFIG.CAMERA.MAX_DISTANCE;
-        this.app.controls.maxPolarAngle = ThreeJSApp.CONFIG.CAMERA.MAX_POLAR_ANGLE;
-        
-        this.app.controls.update();
-
-        // Force exact values when very close to target
-        if (progress > 0.99) {
-            const positionDiff = this.app.camera.position.distanceTo(originalPosition);
-            const targetDiff = this.app.controls.target.distanceTo(originalTarget);
-            
-            if (positionDiff < PRECISION_THRESHOLD && targetDiff < PRECISION_THRESHOLD) {
-                this.app.camera.position.copy(originalPosition);
-                this.app.controls.target.copy(originalTarget);
-                this.app.controls.update();
-                return;
-            }
-        }
-
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
-    };
-
-    const startPos = this.app.camera.position.clone();
-    const startLookAt = this.app.controls.target.clone();
-    const duration = 8000; // Increased to 8 seconds for slower movement
-    const startTime = performance.now();
-
-    // Add super smooth easing function for gentler movement
-    this.superSmoothEasing = (x) => {
-        // Custom easing function that starts and ends very gently
-        if (x === 0) return 0;
-        if (x === 1) return 1;
-        
-        // Creates an S-curve with very gentle acceleration and deceleration
-        return x < 0.5 
-            ? 16 * x * x * x * x * x
-            : 1 - Math.pow(-2 * x + 2, 5) / 2;
-    };
-
-    // Start animation
-    requestAnimationFrame(animate);
-
-    // Reset all orbital controls to default state with lower damping for smoother movement
-    this.app.controls.enableDamping = true;
-    this.app.controls.dampingFactor = ThreeJSApp.CONFIG.CAMERA.DAMPING_FACTOR * 0.5; // Reduced damping factor
-    this.app.controls.screenSpacePanning = false;
-    this.app.controls.autoRotate = false;
-    this.app.controls.enabled = true;
-    this.app.controls.enablePan = true;
-    this.app.controls.enableZoom = true;
-    this.app.controls.enableRotate = true;
-    
-    // Ensure complete update
-    this.app.controls.update();
+    // Wait for modal to fully close before moving to next friend
+    if (this.visitedFriends.size < this.maxFriendsToVisit) {
+        this.currentSequenceTimeout = setTimeout(() => {
+            this.moveToNextFriend();
+        }, 20000); // Longer pause between friends
+    } else {
+        setTimeout(() => {
+            this.stopSequence();
+        }, 3000);
+    }
 }
 
-  debugModalTransition(modal, action) {
-    console.log(`Modal transition - Action: ${action}`, {
-      modal: modal.id,
-      classes: modal.classList.toString(),
-      opacity: window.getComputedStyle(modal).opacity,
-      transition: window.getComputedStyle(modal).transition,
-      display: window.getComputedStyle(modal).display,
-    });
+  resetCamera() {
+      const originalPosition = new THREE.Vector3(
+          ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
+          ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
+          ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
+      );
+      
+      const originalTarget = new THREE.Vector3(0, 10, 0);
+      
+      this.animateCameraToPosition(originalPosition, originalTarget, () => {
+          this.app.controls.target.copy(originalTarget);
+          this.app.controls.update();
+      });
   }
 }
 
@@ -2522,8 +2156,7 @@ class UnifiedMeditationManager {
         MODERATE: { duration: 2000 }, // 2 seconds
         DEEP: { duration: 3000 }, // 30 seconds
         PROFOUND: { duration: 4000 }, // 4 seconds
-        VOID: { duration: 5000 }, 
-
+        VOID: { duration: 5000 },
       },
       normal: {
         NORMAL: { duration: 1000 }, // 1 second
@@ -2534,8 +2167,7 @@ class UnifiedMeditationManager {
         MODERATE: { duration: 6000 }, // 6 seconds
         DEEP: { duration: 9000 }, // 1.5 minutes
         PROFOUND: { duration: 12000 }, // 12 seconds
-        VOID: { duration: 13000 }, 
-
+        VOID: { duration: 13000 },
       },
       long: {
         NORMAL: { duration: 5000 }, // 5 seconds
@@ -2546,8 +2178,7 @@ class UnifiedMeditationManager {
         MODERATE: { duration: 30000 }, // 30 seconds
         DEEP: { duration: 60000 }, // 5 minutes
         PROFOUND: { duration: 90000 }, // 1 minute
-        VOID: { duration: 91000 }, 
-
+        VOID: { duration: 91000 },
       },
       extraLong: {
         NORMAL: { duration: 150000 }, // 150 seconds
@@ -2558,8 +2189,7 @@ class UnifiedMeditationManager {
         MODERATE: { duration: 900000 }, // 1200 seconds
         DEEP: { duration: 1200000 }, // 10 minutes
         PROFOUND: { duration: 2200000 }, // 5 minutes
-        VOID: { duration: 2300000 }, 
-
+        VOID: { duration: 2300000 },
       },
     };
 
@@ -2688,33 +2318,8 @@ class UnifiedMeditationManager {
     const now = Date.now();
     let newState = "NORMAL";
 
-    if (this.debugTiming) {
-      console.log("Updating state with timing mode:", this.currentTiming);
-
-      console.log("State Update Check:", {
-        currentState: this.currentState,
-
-        timingMode: this.currentTiming,
-
-        isMoving: this.isMoving,
-
-        stillnessDuration: this.stillnessStartTime ? now - this.stillnessStartTime : 0,
-
-        stateDuration: this.timingConfig[this.currentTiming][this.currentState]?.duration,
-      });
-    }
-
     if (this.isMoving && this.movementStartTime) {
       const movementDuration = now - this.movementStartTime;
-
-      if (this.debugTiming) {
-        console.log("Movement duration:", movementDuration);
-        console.log("Movement thresholds:", {
-          ACTIVE: MEDITATION_CONFIG.STATES.ACTIVE.duration,
-          ACTIVE_LONGER: MEDITATION_CONFIG.STATES.ACTIVE_LONGER.duration,
-          ACTIVE_EVEN_LONGER: MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration,
-        });
-      }
 
       if (movementDuration > MEDITATION_CONFIG.STATES.ACTIVE_EVEN_LONGER.duration) {
         newState = "ACTIVE_EVEN_LONGER";
@@ -2725,91 +2330,122 @@ class UnifiedMeditationManager {
       }
 
       if (this.visitedModalsCount > 0) {
+        console.log("Movement detected - resetting modal count from:", this.visitedModalsCount);
         this.visitedModalsCount = 0;
       }
     } else if (this.stillnessStartTime) {
       const stillnessDuration = now - this.stillnessStartTime;
 
-
-
-      // Add our new debug call here
-      if (this.debugTiming) {
-        this.debugStateTransition(stillnessDuration);
-      }
-
-      if (this.debugTiming) {
-        console.log("Stillness duration:", stillnessDuration);
-        console.log("Current thresholds:", {
-          profound: this.getDurationForState("PROFOUND"),
-          deep: this.getDurationForState("DEEP"),
-          moderate: this.getDurationForState("MODERATE"),
-          gentle: this.getDurationForState("GENTLE"),
+      // Check for VOID conditions
+    if (stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration && this.visitedModalsCount >= 3) {
+      // Only initiate VOID transition if we're not already in VOID or transitioning to it
+      if (this.currentState !== "VOID" && !this.isTransitioningToVoid) {
+        this.isTransitioningToVoid = true; // Add flag to prevent multiple transitions
+        
+        // Let the last modal fade complete before state transition
+        this.closeAllModalsWithFade(() => {
+          console.log("Final modal fade complete, transitioning to VOID state");
+          this.isTransitioningToVoid = false;
+          this.currentState = "VOID";
+          this.lastStateChange = Date.now();
+          this.applyStateEffects();
         });
+        return; // Exit and wait for callback
       }
-
-      if (this.debugTiming && newState !== this.currentState) {
-        console.log(`State transition triggered to: ${newState}`);
-      }
-
-      // First check for VOID/PROFOUND state
-      if (stillnessDuration > this.getDurationForState("PROFOUND")) {
-        newState = this.visitedModalsCount >= 3 ? "VOID" : "PROFOUND";
-      }
-      
-      // Then check other stillness states
-      else if (stillnessDuration > this.getDurationForState("DEEP")) {
+      newState = "VOID";
+    }
+      // Check other stillness states
+      else if (stillnessDuration > MEDITATION_CONFIG.STATES.PROFOUND.duration) {
+        newState = "PROFOUND";
+      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.DEEP.duration) {
         newState = "DEEP";
-      } else if (stillnessDuration > this.getDurationForState("MODERATE")) {
+      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.MODERATE.duration) {
         newState = "MODERATE";
-      } else if (stillnessDuration > this.getDurationForState("GENTLE")) {
+      } else if (stillnessDuration > MEDITATION_CONFIG.STATES.GENTLE.duration) {
         newState = "GENTLE";
       }
 
-      // Only reset modal count if actually transitioning to a less deep state
-      const stateDepths = {
-        VOID: 5,
-        PROFOUND: 4,
-        DEEP: 3,
-        MODERATE: 2,
-        GENTLE: 1,
-        NORMAL: 0,
-      };
-
-      if (this.currentState === "PROFOUND" && newState !== "VOID" && newState !== "PROFOUND" && stateDepths[newState] < stateDepths["PROFOUND"]) {
-        console.log(`Resetting modal count - transitioning from PROFOUND to ${newState}`);
+      // Reset modal count if dropping from PROFOUND to less deep state
+      if (this.currentState === "PROFOUND" && newState !== "VOID" && newState !== "PROFOUND" && this.visitedModalsCount > 0) {
+        console.log("Dropping from PROFOUND - resetting modal count");
         this.visitedModalsCount = 0;
       }
     }
 
     if (newState !== this.currentState || forceUpdate) {
-      
-      if (this.debugTiming) {
-        console.log(`State changing from ${this.currentState} to ${newState}`);
-        console.log("Current timing config:", this.timingConfig[this.currentTiming]);
-      }
+      console.log("State transition:", {
+        from: this.currentState,
+        to: newState,
+        modalCount: this.visitedModalsCount,
+        forcedUpdate: forceUpdate,
+      });
 
-      // If transitioning to void, ensure all modals are closed first
-      if (newState === "VOID") {
-        // this.cameraSequenceManager.closeAllModalsSlowly(() => {
-        //     this.currentState = newState;
-        //     this.lastStateChange = now;
-        //     this.applyStateEffects();
-        // });
-      } else {
-        this.currentState = newState;
-        this.lastStateChange = now;
-        this.applyStateEffects();
-      }
+      this.currentState = newState;
+      this.lastStateChange = now;
+      this.applyStateEffects();
     }
   }
 
-  registerModalVisit() {
-    console.log("--- Modal Visit Registration ---");
-    // console.log('Before increment:', this.visitedModalsCount);
-    this.visitedModalsCount++;
-    // console.log('After increment:', this.visitedModalsCount);
+  closeAllModalsWithFade(callback) {
+    console.log("close all modals with fade");
+
+    const modals = document.querySelectorAll(".friendModalDiv, .mediModalDiv");
+    let activeModals = 0;
+    let completedFades = 0;
+
+    // First count active modals
+    modals.forEach((modal) => {
+      if (modal.classList.contains("openFriendModalDiv") || modal.classList.contains("openMediModalDiv")) {
+        activeModals++;
+      }
+    });
+
+    // If no active modals, call callback immediately
+    if (activeModals === 0) {
+      console.log("no active modals");
+
+      callback();
+      return;
+    }
+
+    // Handle active modals
+    modals.forEach((modal) => {
+      if (modal.classList.contains("openFriendModalDiv") || modal.classList.contains("openMediModalDiv")) {
+        // Setup fade out transition
+        modal.style.transition = "opacity 3s ease-out";
+        modal.style.opacity = "0";
+
+        // Wait for fade to complete
+        setTimeout(() => {
+          // Clean up modal
+          modal.classList.remove("openFriendModalDiv", "openMediModalDiv", "fadeOutModal");
+          modal.style.opacity = "1"; // Reset opacity for future use
+          modal.style.transition = ""; // Reset transition
+
+          // Track completion
+          completedFades++;
+
+          // If all modals have completed fading, proceed with callback
+          if (completedFades === activeModals) {
+            callback();
+          }
+        }, 3000); // Match the transition duration
+      }
+    });
   }
 
+  registerModalVisit() {
+    this.visitedModalsCount++;
+    console.log(`Modal visited. Total visits: ${this.visitedModalsCount}`);
+
+    // Force state check when we hit the threshold
+    if (this.visitedModalsCount >= 3) {
+      console.log("at 3 modals forcing update");
+
+      console.log("Modal threshold reached - forcing state update");
+      this.updateState(true);
+    }
+  }
   isInVoidState() {
     return this.currentState === "VOID" && this.visitedModalsCount >= 3;
   }
@@ -2869,10 +2505,10 @@ class UnifiedMeditationManager {
     this.applyStateEffects();
 
     if (this.app.debugMode) {
-        const debugInfo = this.getDebugInfo();
-        const debugContainer = document.getElementById("debugInfo");
-        if (debugContainer) {
-            debugContainer.innerHTML = `
+      const debugInfo = this.getDebugInfo();
+      const debugContainer = document.getElementById("debugInfo");
+      if (debugContainer) {
+        debugContainer.innerHTML = `
                 <div style="margin-bottom: 15px;">
                     <strong>Stillness Status</strong><br>
                     • Current State: <span style="color: #00ff00">${debugInfo.meditationState}</span><br>
@@ -2900,10 +2536,9 @@ class UnifiedMeditationManager {
                     • Camera Movement: ${debugInfo.effects.cameraMovement}
                 </div>
             `;
-        }
+      }
     }
-}
-
+  }
 
   //   updateState() {
   //     const now = Date.now();
@@ -3171,37 +2806,37 @@ class UnifiedMeditationManager {
     const now = Date.now();
     const stateConfig = MEDITATION_CONFIG.STATES[this.currentState];
     const elapsedTime = (now - this.lastStateChange) / 1000;
-    
+
     const totalDuration = this.timingConfig[this.currentTiming][this.currentState]?.duration / 1000;
-    
+
     // Create timing mode details with line breaks
     const timingDetails = Object.keys(MEDITATION_CONFIG.STATES)
-        .map(state => {
-            const duration = this.timingConfig[this.currentTiming][state]?.duration / 1000;
-            const achieved = this.currentState === state;
-            // Using Unicode for checkmark and bullet
-            const marker = achieved ? '✓' : '•';
-            return `${marker} ${state}\n  ${duration.toFixed(1)}s`;
-        })
-        .join('\n');
+      .map((state) => {
+        const duration = this.timingConfig[this.currentTiming][state]?.duration / 1000;
+        const achieved = this.currentState === state;
+        // Using Unicode for checkmark and bullet
+        const marker = achieved ? "✓" : "•";
+        return `${marker} ${state}\n  ${duration.toFixed(1)}s`;
+      })
+      .join("\n");
 
     return {
-        meditationState: this.currentState,
-        currentTiming: this.currentTiming,
-        timingDetails: timingDetails,
-        timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
-        timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
-        movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
-        modalsVisited: this.visitedModalsCount,
-        effects: {
-            waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
-            waveStrength: stateConfig.effects.water.distortion.toFixed(2),
-            sparkles: stateConfig.effects.sparkles ? "Active" : "Inactive",
-            skyChanges: true,
-            cameraMovement: stateConfig.effects.cameraMovement ? "Active" : "Inactive",
-        },
+      meditationState: this.currentState,
+      currentTiming: this.currentTiming,
+      timingDetails: timingDetails,
+      timeInCurrentState: `${elapsedTime.toFixed(1)}s of ${totalDuration.toFixed(1)}s`,
+      timeSinceMotion: this.stillnessStartTime ? ((now - this.stillnessStartTime) / 1000).toFixed(1) + "s" : "0s",
+      movementDuration: this.movementStartTime ? ((now - this.movementStartTime) / 1000).toFixed(1) + "s" : "0s",
+      modalsVisited: this.visitedModalsCount,
+      effects: {
+        waterColor: `#${this.app.water?.material.uniforms.waterColor.value.getHexString()}`,
+        waveStrength: stateConfig.effects.water.distortion.toFixed(2),
+        sparkles: stateConfig.effects.sparkles ? "Active" : "Inactive",
+        skyChanges: true,
+        cameraMovement: stateConfig.effects.cameraMovement ? "Active" : "Inactive",
+      },
     };
-}
+  }
 }
 
 class GUIManager {
