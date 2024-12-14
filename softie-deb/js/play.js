@@ -8,23 +8,65 @@ import { GUI } from "./node_modules/three/examples/jsm/libs/dat.gui.module.js";
 
 THREE.ImageUtils.crossOrigin = "";
 
+
 class CameraProcessor {
   static CONFIG = {
     MOTION: {
       THRESHOLD: 0.5, // percentage of pixels that need to change
       REGION_SIZE: 32, // size of regions to check for motion
-    },
+      MIN_MOTION_AREA: 100, // minimum area of motion to trigger detection
+      NOISE_REDUCTION: 3, // Gaussian blur kernel size for noise reduction
+    }
   };
+
   constructor(stateManager, debugMode = false) {
     this.stateManager = stateManager;
     this.debugMode = debugMode;
     this.motionDetectionId = null;
     this.isProcessing = true;
 
+    // Motion detection parameters
     this.meditationParams = {
       motionThreshold: CameraProcessor.CONFIG.MOTION.THRESHOLD,
       regionSize: CameraProcessor.CONFIG.MOTION.REGION_SIZE,
+      minMotionArea: CameraProcessor.CONFIG.MOTION.MIN_MOTION_AREA,
+      noiseReduction: CameraProcessor.CONFIG.MOTION.NOISE_REDUCTION
     };
+
+    // Add to GUI if debug mode is enabled
+    if (this.debugMode && stateManager.app.guiManager) {
+      this.addDebugControls(stateManager.app.guiManager);
+    }
+  }
+
+  addDebugControls(guiManager) {
+    const motionFolder = guiManager.gui.addFolder('Motion Detection');
+    
+    motionFolder.add(this.meditationParams, 'motionThreshold', 0.1, 2.0)
+      .name('Motion Sensitivity')
+      .onChange(value => {
+        this.meditationParams.motionThreshold = value;
+      });
+
+    motionFolder.add(this.meditationParams, 'regionSize', 8, 64)
+      .name('Region Size')
+      .onChange(value => {
+        this.meditationParams.regionSize = Math.floor(value);
+      });
+
+    motionFolder.add(this.meditationParams, 'minMotionArea', 10, 500)
+      .name('Min Motion Area')
+      .onChange(value => {
+        this.meditationParams.minMotionArea = value;
+      });
+
+    motionFolder.add(this.meditationParams, 'noiseReduction', 1, 9, 2)
+      .name('Noise Reduction')
+      .onChange(value => {
+        this.meditationParams.noiseReduction = Math.floor(value);
+      });
+
+    motionFolder.open();
   }
 
   setupCamera() {
@@ -85,13 +127,8 @@ class CameraProcessor {
     console.log("OpenCV is loaded, starting video processing");
 
     if (this.debugMode) {
+      this.video.style.display = "block";
       canvasOutput.style.display = "block";
-      canvasOutput.style.position = "fixed";
-      canvasOutput.style.top = "260px";
-      canvasOutput.style.left = "10px";
-      canvasOutput.style.width = "320px";
-      canvasOutput.style.height = "240px";
-      canvasOutput.style.zIndex = "1000";
     }
 
     try {
@@ -125,7 +162,20 @@ class CameraProcessor {
       }
 
       if (this.cap !== null) {
+        // Read current frame
         this.cap.read(this.frame2);
+        
+        // Apply Gaussian blur for noise reduction
+        cv.GaussianBlur(
+          this.frame2, 
+          this.frame2,
+          new cv.Size(this.meditationParams.noiseReduction, this.meditationParams.noiseReduction),
+          0, 
+          0, 
+          cv.BORDER_DEFAULT
+        );
+
+        // Convert to grayscale
         cv.cvtColor(this.frame2, this.gray2, cv.COLOR_RGBA2GRAY);
 
         if (this.firstFrame) {
@@ -133,14 +183,27 @@ class CameraProcessor {
           this.firstFrame = false;
         }
 
+        // Calculate absolute difference
         cv.absdiff(this.gray1, this.gray2, this.diff);
+        
+        // Apply threshold
         cv.threshold(this.diff, this.diff, 25, 255, cv.THRESH_BINARY);
-        cv.imshow("canvasOutput", this.diff);
 
-        const nonZero = cv.countNonZero(this.diff);
-        const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
+        // Analyze motion by regions
+        const regions = this.detectRegionalMotion(this.gray1, this.gray2);
+        
+        // Calculate total motion area
+        const motionArea = regions.reduce((sum, region) => 
+          sum + (region.motion > this.meditationParams.motionThreshold ? 1 : 0), 0
+        ) * (this.meditationParams.regionSize * this.meditationParams.regionSize);
 
-        if (motionPercentage > this.meditationParams.motionThreshold) {
+        // Show motion detection visualization in debug mode
+        if (this.debugMode) {
+          this.visualizeMotionRegions(regions);
+        }
+
+        // Trigger motion detection if area exceeds minimum
+        if (motionArea > this.meditationParams.minMotionArea) {
           this.stateManager.onMotionDetected();
         } else {
           this.stateManager.onNoMotionDetected();
@@ -154,6 +217,46 @@ class CameraProcessor {
       console.error("Video processing error:", err);
       this.cleanup();
     }
+  }
+
+  detectRegionalMotion(frame1, frame2) {
+    const regions = [];
+    const regionSize = this.meditationParams.regionSize;
+
+    for (let y = 0; y < frame1.rows; y += regionSize) {
+      for (let x = 0; x < frame1.cols; x += regionSize) {
+        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
+        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
+
+        const diff = new cv.Mat();
+        try {
+          cv.absdiff(roi1, roi2, diff);
+
+          const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+
+          regions.push({ x, y, motion: motionAmount });
+        } finally {
+          diff.delete();
+          roi1.delete();
+          roi2.delete();
+        }
+      }
+    }
+
+    return regions;
+  }
+
+  visualizeMotionRegions(regions) {
+    const canvas = document.getElementById('canvasOutput');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    regions.forEach(region => {
+      if (region.motion > this.meditationParams.motionThreshold) {
+        ctx.fillStyle = `rgba(255, 0, 0, ${region.motion})`;
+        ctx.fillRect(region.x, region.y, this.meditationParams.regionSize, this.meditationParams.regionSize);
+      }
+    });
   }
 
   cleanup() {
@@ -178,38 +281,210 @@ class CameraProcessor {
 
     if (this.cap) this.cap.delete();
   }
-
-  detectRegionalMotion(frame1, frame2) {
-    const regions = [];
-    const regionSize = this.meditationParams.regionSize;
-
-    for (let y = 0; y < frame1.rows; y += regionSize) {
-      for (let x = 0; x < frame1.cols; x += regionSize) {
-        const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
-        const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
-
-        const diff = new cv.Mat();
-        try {
-          cv.absdiff(roi1, roi2, diff);
-
-          const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
-
-          regions.push({ x, y, motion: motionAmount });
-        } finally {
-          // Ensure cleanup happens even if error occurs
-
-          diff.delete();
-
-          roi1.delete();
-
-          roi2.delete();
-        }
-      }
-    }
-
-    return regions;
-  }
 }
+
+// class CameraProcessor {
+//   static CONFIG = {
+//     MOTION: {
+//       THRESHOLD: 0.5, // percentage of pixels that need to change
+//       REGION_SIZE: 32, // size of regions to check for motion
+//     },
+//   };
+//   constructor(stateManager, debugMode = false) {
+//     this.stateManager = stateManager;
+//     this.debugMode = debugMode;
+//     this.motionDetectionId = null;
+//     this.isProcessing = true;
+
+//     this.meditationParams = {
+//       motionThreshold: CameraProcessor.CONFIG.MOTION.THRESHOLD,
+//       regionSize: CameraProcessor.CONFIG.MOTION.REGION_SIZE,
+//     };
+//   }
+
+//   setupCamera() {
+//     // console.log("Setting up camera...");
+//     this.video = document.getElementById("videoInput");
+//     if (!this.video) {
+//       throw new Error("Video element 'videoInput' not found");
+//     }
+
+//     // Hide video by default
+//     this.video.style.display = "none";
+//     this.video.style.position = "fixed";
+//     this.video.style.top = "10px";
+//     this.video.style.left = "10px";
+//     this.video.style.width = "320px";
+//     this.video.style.height = "240px";
+//     this.video.style.zIndex = "1000";
+
+//     return navigator.mediaDevices
+//       .getUserMedia({ video: true, audio: false })
+//       .then((stream) => {
+//         console.log("Camera access granted");
+//         this.video.srcObject = stream;
+//         return new Promise((resolve) => {
+//           this.video.onloadedmetadata = () => {
+//             console.log("Video metadata loaded");
+//             this.video.play();
+//             console.log("Video playing");
+//             resolve();
+//           };
+//         });
+//       })
+//       .catch((err) => {
+//         console.error("Error accessing the camera:", err.name, err.message);
+//         throw err;
+//       });
+//   }
+
+//   startVideoProcessing() {
+//     if (typeof cv === "undefined") {
+//       console.error("OpenCV is not loaded!");
+//       return;
+//     }
+
+//     const canvasOutput = document.getElementById("canvasOutput");
+//     if (!canvasOutput) {
+//       throw new Error("Canvas element 'canvasOutput' not found");
+//     }
+
+//     canvasOutput.style.display = "none";
+//     canvasOutput.style.position = "fixed";
+//     canvasOutput.style.top = "260px";
+//     canvasOutput.style.left = "10px";
+//     canvasOutput.style.width = "320px";
+//     canvasOutput.style.height = "240px";
+//     canvasOutput.style.zIndex = "1000";
+
+//     console.log("OpenCV is loaded, starting video processing");
+
+//     if (this.debugMode) {
+//       canvasOutput.style.display = "block";
+//       canvasOutput.style.position = "fixed";
+//       canvasOutput.style.top = "260px";
+//       canvasOutput.style.left = "10px";
+//       canvasOutput.style.width = "320px";
+//       canvasOutput.style.height = "240px";
+//       canvasOutput.style.zIndex = "1000";
+//     }
+
+//     try {
+//       this.setupProcessing();
+//       this.processVideo();
+
+//       // Add cleanup on page unload
+//       window.addEventListener("beforeunload", () => this.cleanup());
+//     } catch (err) {
+//       console.error("Error in startVideoProcessing:", err);
+//       this.cleanup();
+//     }
+//   }
+
+//   setupProcessing() {
+//     this.cap = new cv.VideoCapture(this.video);
+//     this.frame1 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
+//     this.frame2 = new cv.Mat(this.video.height, this.video.width, cv.CV_8UC4);
+//     this.gray1 = new cv.Mat();
+//     this.gray2 = new cv.Mat();
+//     this.diff = new cv.Mat();
+//     this.firstFrame = true;
+//     this.frameCount = 0;
+//   }
+
+//   processVideo() {
+//     try {
+//       if (!this.isProcessing || this.video.paused || this.video.ended) {
+//         this.cleanup();
+//         return;
+//       }
+
+//       if (this.cap !== null) {
+//         this.cap.read(this.frame2);
+//         cv.cvtColor(this.frame2, this.gray2, cv.COLOR_RGBA2GRAY);
+
+//         if (this.firstFrame) {
+//           this.gray2.copyTo(this.gray1);
+//           this.firstFrame = false;
+//         }
+
+//         cv.absdiff(this.gray1, this.gray2, this.diff);
+//         cv.threshold(this.diff, this.diff, 25, 255, cv.THRESH_BINARY);
+//         cv.imshow("canvasOutput", this.diff);
+
+//         const nonZero = cv.countNonZero(this.diff);
+//         const motionPercentage = (nonZero / (this.diff.rows * this.diff.cols)) * 100;
+
+//         if (motionPercentage > this.meditationParams.motionThreshold) {
+//           this.stateManager.onMotionDetected();
+//         } else {
+//           this.stateManager.onNoMotionDetected();
+//         }
+
+//         this.gray2.copyTo(this.gray1);
+//       }
+
+//       this.motionDetectionId = requestAnimationFrame(() => this.processVideo());
+//     } catch (err) {
+//       console.error("Video processing error:", err);
+//       this.cleanup();
+//     }
+//   }
+
+//   cleanup() {
+//     this.isProcessing = false;
+//     if (this.motionDetectionId) {
+//       cancelAnimationFrame(this.motionDetectionId);
+//     }
+
+//     // Clean up OpenCV resources
+//     if (this.frame1) this.frame1.delete();
+//     if (this.frame2) this.frame2.delete();
+//     if (this.gray1) this.gray1.delete();
+//     if (this.gray2) this.gray2.delete();
+//     if (this.diff) this.diff.delete();
+
+//     // Stop video stream
+//     if (this.video && this.video.srcObject) {
+//       const tracks = this.video.srcObject.getTracks();
+//       tracks.forEach((track) => track.stop());
+//       this.video.srcObject = null;
+//     }
+
+//     if (this.cap) this.cap.delete();
+//   }
+
+//   detectRegionalMotion(frame1, frame2) {
+//     const regions = [];
+//     const regionSize = this.meditationParams.regionSize;
+
+//     for (let y = 0; y < frame1.rows; y += regionSize) {
+//       for (let x = 0; x < frame1.cols; x += regionSize) {
+//         const roi1 = frame1.roi(new cv.Rect(x, y, regionSize, regionSize));
+//         const roi2 = frame2.roi(new cv.Rect(x, y, regionSize, regionSize));
+
+//         const diff = new cv.Mat();
+//         try {
+//           cv.absdiff(roi1, roi2, diff);
+
+//           const motionAmount = cv.countNonZero(diff) / (regionSize * regionSize);
+
+//           regions.push({ x, y, motion: motionAmount });
+//         } finally {
+//           // Ensure cleanup happens even if error occurs
+
+//           diff.delete();
+
+//           roi1.delete();
+
+//           roi2.delete();
+//         }
+//       }
+//     }
+
+//     return regions;
+//   }
+// }
 
 export class ThreeJSApp {
   static CONFIG = {
@@ -1523,12 +1798,12 @@ const MEDITATION_CONFIG = {
       isDeepEnough: true,
       effects: {
         water: {
-          color: "#001133",
-          distortion: 0.5,
-          alpha: 0.7,
-          sunColor: 0x8888ff,
-          waveSpeed: 0.2,
-          normalMapScale: { x: 1, y: 1 },
+          color: "#001e0f",
+          distortion: 1.5,
+          alpha: 0.9,
+          sunColor: 0xddddff,
+          waveSpeed: 0.4,
+          normalMapScale: { x: 1.2, y: 1.2 },
         },
         sky: {
           turbidity: 8.9,
@@ -1553,24 +1828,30 @@ const MEDITATION_CONFIG = {
       isDeepEnough: true,
       effects: {
         water: {
-          color: "#000022",
-          distortion: 0.3,
-          alpha: 0.6,
-          sunColor: 0x4444ff,
-          waveSpeed: 0.1,
-          normalMapScale: { x: 0.5, y: 0.5 },
+          color: "#001e0f",
+          distortion: 1.5,
+          alpha: 0.9,
+          sunColor: 0xddddff,
+          waveSpeed: 0.4,
+          normalMapScale: { x: 1.2, y: 1.2 },
         },
         sky: {
-          turbidity: 4.0,
-          rayleigh: 4.0,
+          // Reduced turbidity for clearer, darker sky
+          turbidity: 8.0,
+          // Lower rayleigh for less light scattering
+          rayleigh: 1.0,
+          // Lower inclination for darker sky
           inclination: 0.15,
-          azimuth: 0.85,
-          mieCoefficient: 0.002,
-          mieDirectionalG: 0.95,
+          // Moderate azimuth to avoid flash
+          azimuth: 0.45,
+          // Very low mie coefficient for minimal sun effect
+          mieCoefficient: 0.001,
+          // High directional G for tight sun scattering
+          mieDirectionalG: 0.999,
         },
         fog: {
-          density: 0.00003,
-          color: 0x8888ff,
+          density: 0.00005,
+          color: 0x000066,  // Darker blue fog
         },
         sparkles: true,
         cameraMovement: true,
@@ -1594,7 +1875,7 @@ const MEDITATION_CONFIG = {
           turbidity: 2.0,
           rayleigh: 2.0,
           inclination: 0.1,
-          azimuth: 0.95,
+          azimuth: 9.95,
           mieCoefficient: 0.001,
           mieDirectionalG: 1,
         },
@@ -1942,7 +2223,7 @@ class CameraSequenceManager {
         if (this.visitedFriends.size < this.maxFriendsToVisit) {
           this.currentSequenceTimeout = setTimeout(() => {
             this.moveToNextFriend();
-          }, 20000);
+          }, 10000);
         } else {
           this.stopSequence();
         }
@@ -2044,20 +2325,89 @@ class CameraSequenceManager {
   }
 
   resetCamera() {
-    // Remove the Promise wrapper since we're not using it
+    // Store original values from config
     const originalPosition = new THREE.Vector3(
-      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
-      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
-      ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
+        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.x,
+        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.y,
+        ThreeJSApp.CONFIG.CAMERA.INITIAL_POSITION.z
     );
     const originalTarget = new THREE.Vector3(0, 10, 0);
 
-    // Use the existing animation system for smooth transition
-    this.animateCameraToPosition(originalPosition, originalTarget, () => {
-      this.app.controls.target.copy(originalTarget);
-      this.app.controls.update();
-    });
-  }
+    // Force immediate position reset if final precision is important
+    const PRECISION_THRESHOLD = 0.001;
+    
+    const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Use a gentler easing function for smoother movement
+        const eased = this.superSmoothEasing(progress);
+
+        // Position interpolation
+        this.app.camera.position.lerpVectors(startPos, originalPosition, eased);
+        
+        // Target interpolation
+        const newLookAt = new THREE.Vector3().lerpVectors(startLookAt, originalTarget, eased);
+        this.app.controls.target.copy(newLookAt);
+
+        // Reset controls parameters
+        this.app.controls.minDistance = ThreeJSApp.CONFIG.CAMERA.MIN_DISTANCE;
+        this.app.controls.maxDistance = ThreeJSApp.CONFIG.CAMERA.MAX_DISTANCE;
+        this.app.controls.maxPolarAngle = ThreeJSApp.CONFIG.CAMERA.MAX_POLAR_ANGLE;
+        
+        this.app.controls.update();
+
+        // Force exact values when very close to target
+        if (progress > 0.99) {
+            const positionDiff = this.app.camera.position.distanceTo(originalPosition);
+            const targetDiff = this.app.controls.target.distanceTo(originalTarget);
+            
+            if (positionDiff < PRECISION_THRESHOLD && targetDiff < PRECISION_THRESHOLD) {
+                this.app.camera.position.copy(originalPosition);
+                this.app.controls.target.copy(originalTarget);
+                this.app.controls.update();
+                return;
+            }
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    };
+
+    const startPos = this.app.camera.position.clone();
+    const startLookAt = this.app.controls.target.clone();
+    const duration = 8000; // Increased to 8 seconds for slower movement
+    const startTime = performance.now();
+
+    // Add super smooth easing function for gentler movement
+    this.superSmoothEasing = (x) => {
+        // Custom easing function that starts and ends very gently
+        if (x === 0) return 0;
+        if (x === 1) return 1;
+        
+        // Creates an S-curve with very gentle acceleration and deceleration
+        return x < 0.5 
+            ? 16 * x * x * x * x * x
+            : 1 - Math.pow(-2 * x + 2, 5) / 2;
+    };
+
+    // Start animation
+    requestAnimationFrame(animate);
+
+    // Reset all orbital controls to default state with lower damping for smoother movement
+    this.app.controls.enableDamping = true;
+    this.app.controls.dampingFactor = ThreeJSApp.CONFIG.CAMERA.DAMPING_FACTOR * 0.5; // Reduced damping factor
+    this.app.controls.screenSpacePanning = false;
+    this.app.controls.autoRotate = false;
+    this.app.controls.enabled = true;
+    this.app.controls.enablePan = true;
+    this.app.controls.enableZoom = true;
+    this.app.controls.enableRotate = true;
+    
+    // Ensure complete update
+    this.app.controls.update();
+}
 
   debugModalTransition(modal, action) {
     console.log(`Modal transition - Action: ${action}`, {
@@ -2154,21 +2504,14 @@ class UnifiedMeditationManager {
 
     this.timingConfig = {
       veryQuick: {
-        NORMAL: { duration: 10000 }, //
-
-        ACTIVE: { duration: 20000 }, //
-
-        ACTIVE_LONGER: { duration: 300000 }, //
-
-        ACTIVE_EVEN_LONGER: { duration: 300000 },
-
-        GENTLE: { duration: 30000 }, // Updated to 30 seconds
-
-        MODERATE: { duration: 60000 }, // 1 minute
-
-        DEEP: { duration: 180000 }, // 3 minutes
-
-        PROFOUND: { duration: 240000 }, // 4 minutes
+        NORMAL: { duration: 10 }, //
+        ACTIVE: { duration: 200 }, //
+        ACTIVE_LONGER: { duration: 300 }, //
+        ACTIVE_EVEN_LONGER: { duration: 3000 },
+        GENTLE: { duration: 300 }, // Updated to 30 seconds
+        MODERATE: { duration: 600 }, // 1 minute
+        DEEP: { duration: 1800 }, // 3 minutes
+        PROFOUND: { duration: 2000 }, // 4 minutes
       },
       quick: {
         NORMAL: { duration: 500 }, // 0.5 seconds
@@ -2177,8 +2520,10 @@ class UnifiedMeditationManager {
         ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
         GENTLE: { duration: 1000 }, // 1 second
         MODERATE: { duration: 2000 }, // 2 seconds
-        DEEP: { duration: 30000 }, // 30 seconds
+        DEEP: { duration: 3000 }, // 30 seconds
         PROFOUND: { duration: 4000 }, // 4 seconds
+        VOID: { duration: 5000 }, 
+
       },
       normal: {
         NORMAL: { duration: 1000 }, // 1 second
@@ -2187,8 +2532,10 @@ class UnifiedMeditationManager {
         ACTIVE_EVEN_LONGER: { duration: 90000000 }, // 25 hours
         GENTLE: { duration: 3000 }, // 3 seconds
         MODERATE: { duration: 6000 }, // 6 seconds
-        DEEP: { duration: 90000 }, // 1.5 minutes
+        DEEP: { duration: 9000 }, // 1.5 minutes
         PROFOUND: { duration: 12000 }, // 12 seconds
+        VOID: { duration: 13000 }, 
+
       },
       long: {
         NORMAL: { duration: 5000 }, // 5 seconds
@@ -2197,18 +2544,22 @@ class UnifiedMeditationManager {
         ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
         GENTLE: { duration: 10000 }, // 10 seconds
         MODERATE: { duration: 30000 }, // 30 seconds
-        DEEP: { duration: 300000 }, // 5 minutes
-        PROFOUND: { duration: 60000 }, // 1 minute
+        DEEP: { duration: 60000 }, // 5 minutes
+        PROFOUND: { duration: 90000 }, // 1 minute
+        VOID: { duration: 91000 }, 
+
       },
       extraLong: {
         NORMAL: { duration: 150000 }, // 150 seconds
         ACTIVE: { duration: 300000 }, // 300 seconds
         ACTIVE_LONGER: { duration: 300000 }, // 5 mins
         ACTIVE_EVEN_LONGER: { duration: 300000 }, // 5 mins
-        GENTLE: { duration: 300000 }, // 300 seconds
-        MODERATE: { duration: 1200000 }, // 1200 seconds
-        DEEP: { duration: 600000 }, // 10 minutes
-        PROFOUND: { duration: 300000 }, // 5 minutes
+        GENTLE: { duration: 600000 }, // 300 seconds
+        MODERATE: { duration: 900000 }, // 1200 seconds
+        DEEP: { duration: 1200000 }, // 10 minutes
+        PROFOUND: { duration: 2200000 }, // 5 minutes
+        VOID: { duration: 2300000 }, 
+
       },
     };
 
@@ -2379,6 +2730,8 @@ class UnifiedMeditationManager {
     } else if (this.stillnessStartTime) {
       const stillnessDuration = now - this.stillnessStartTime;
 
+
+
       // Add our new debug call here
       if (this.debugTiming) {
         this.debugStateTransition(stillnessDuration);
@@ -2402,6 +2755,7 @@ class UnifiedMeditationManager {
       if (stillnessDuration > this.getDurationForState("PROFOUND")) {
         newState = this.visitedModalsCount >= 3 ? "VOID" : "PROFOUND";
       }
+      
       // Then check other stillness states
       else if (stillnessDuration > this.getDurationForState("DEEP")) {
         newState = "DEEP";
@@ -2534,7 +2888,7 @@ class UnifiedMeditationManager {
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <strong>State Durations (${debugInfo.currentTiming} mode)</strong><br>
+                    <strong>State Durations (${debugInfo.currentTiming} mode)</strong>
                     <pre style="margin: 5px 0 0 8px; font-family: monospace;">${debugInfo.timingDetails}</pre>
                 </div>
 
