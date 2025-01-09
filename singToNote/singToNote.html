@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container { 
+            /* display: flex; */
+            /* flex-direction: column; */
+            text-align: center; 
+            padding: 20px; 
+            font-family: system-ui;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .keyboard {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            margin: 20px auto;
+            width: 1000px;
+        }
+        .white-key {
+            width: 45px;
+            height: 180px;
+            background: white;
+            border: 1px solid #ccc;
+            position: absolute;
+            z-index: 1;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .black-key {
+            width: 30px;
+            height: 110px;
+            background: black;
+            position: absolute;
+            z-index: 2;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .key-label {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        .black-key .key-label {
+            color: white;
+            bottom: 5px;
+        }
+        .pitch-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70%;
+            background: linear-gradient(to right, transparent 50%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .flat .pitch-indicator {
+            opacity: 1;
+            background: linear-gradient(to right, #ff595e 50%, transparent 50%);
+        }
+        .sharp .pitch-indicator {
+            opacity: 1;
+            background: linear-gradient(to left, #ff595e 50%, transparent 50%);
+        }
+        .in-tune .pitch-indicator {
+            opacity: 1;
+            background: #4CAF50;
+        }
+        .volume-container {
+            width: 300px;
+            margin: 20px auto;
+            text-align: left;
+        }
+        .volume-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .volume-meter {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .volume-indicator {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.1s;
+            border-radius: 4px;
+        }
+        .history { 
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: left;
+            border-radius: 4px;
+            position: absolute;
+            top: 30vh;
+        }
+        .history-note { 
+            display: inline-flex;
+            align-items: center;
+            height: 30px;
+            padding: 0 10px;
+            margin: 5px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            min-width: 30px;
+            justify-content: center;
+            transition: width 0.3s;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #388E3C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="startButton">Start</button>
+        <button id="clearButton">Clear History</button>
+        <div class="volume-container">
+            <div class="volume-label">Input Level</div>
+            <div class="volume-meter"><div class="volume-indicator" id="volumeIndicator"></div></div>
+        </div>
+        <div class="keyboard" id="keyboard"></div>
+        <div class="history"><div id="history"></div></div>
+    </div>
+
+    <script>
+        let audioContext, analyser, oscillator;
+        const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const noteHistory = [];
+        let lastNote = null;
+        let noteStartTime = 0;
+        const MIN_NOTE_DURATION = 50;
+        const MIN_VOLUME = 25;
+        const MIN_OCTAVE = 3;
+        const MAX_OCTAVE = 5;
+        let noteBuffer = [];
+        const BUFFER_SIZE = 2;
+        
+        const playContext = new AudioContext();
+        
+        function noteToFrequency(note, octave) {
+            const noteIndex = NOTES.indexOf(note);
+            const n = noteIndex + (octave + 1) * 12;
+            return 440 * Math.pow(2, (n - 69) / 12);
+        }
+
+        function playNote(noteStr) {
+            const note = noteStr.slice(0, -1);
+            const octave = parseInt(noteStr.slice(-1));
+            const freq = noteToFrequency(note, octave);
+            
+            if (oscillator) {
+                oscillator.stop();
+                oscillator.disconnect();
+            }
+            
+            oscillator = playContext.createOscillator();
+            const gainNode = playContext.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(freq, playContext.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(playContext.destination);
+            
+            gainNode.gain.setValueAtTime(0.8, playContext.currentTime);
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.01, playContext.currentTime + 0.5);
+            setTimeout(() => {
+                oscillator.stop();
+                oscillator.disconnect();
+            }, 500);
+        }
+
+        function createKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            let whiteKeyIndex = 0;
+            
+            for (let octave = MIN_OCTAVE; octave <= MAX_OCTAVE; octave++) {
+                NOTES.forEach((note, index) => {
+                    const isBlack = note.includes('#');
+                    const key = document.createElement('div');
+                    const label = document.createElement('div');
+                    const pitchIndicator = document.createElement('div');
+                    const fullNote = note + octave;
+                    
+                    label.className = 'key-label';
+                    label.textContent = note;
+                    pitchIndicator.className = 'pitch-indicator';
+                    
+                    key.appendChild(pitchIndicator);
+                    key.appendChild(label);
+                    key.dataset.note = fullNote;
+                    
+                    if (isBlack) {
+                        key.className = 'black-key';
+                        key.style.left = `${whiteKeyIndex * 45 - 15}px`;
+                    } else {
+                        key.className = 'white-key';
+                        key.style.left = `${whiteKeyIndex * 45}px`;
+                        whiteKeyIndex++;
+                    }
+                    
+                    key.addEventListener('mousedown', () => playNote(fullNote));
+                    keyboard.appendChild(key);
+                });
+            }
+        }
+
+        function findPitch(buffer, sampleRate) {
+            const correlations = new Float32Array(buffer.length);
+            
+            for (let lag = 0; lag < buffer.length; lag++) {
+                let sum = 0;
+                let norm = 0;
+                for (let i = 0; i < buffer.length - lag; i++) {
+                    sum += buffer[i] * buffer[i + lag];
+                    norm += buffer[i] * buffer[i] + buffer[i + lag] * buffer[i + lag];
+                }
+                correlations[lag] = 2 * sum / norm;
+            }
+            
+            let maxCorrelation = -1;
+            let maxLag = -1;
+            for (let lag = Math.floor(sampleRate/1100); lag < Math.floor(sampleRate/80); lag++) {
+                if (correlations[lag] > maxCorrelation) {
+                    maxCorrelation = correlations[lag];
+                    maxLag = lag;
+                }
+            }
+            
+            return maxCorrelation > 0.5 ? sampleRate / maxLag : null;
+        }
+
+        function getNoteData(freq) {
+            const noteNum = 12 * Math.log2(freq / 440) + 69;
+            const note = Math.round(noteNum);
+            const octave = Math.floor(note/12 - 1);
+            
+            if (octave < MIN_OCTAVE || octave > MAX_OCTAVE) return null;
+            
+            return {
+                note: NOTES[note % 12] + octave,
+                cents: Math.round((noteNum - note) * 100)
+            };
+        }
+
+        function isStableNote(noteData) {
+            if (!noteData) return false;
+            noteBuffer.push(noteData);
+            if (noteBuffer.length > BUFFER_SIZE) noteBuffer.shift();
+            return noteBuffer.length === BUFFER_SIZE && 
+                   noteBuffer.every(n => n.note === noteBuffer[0].note);
+        }
+
+        function highlightKey(noteStr, cents) {
+            document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                key.classList.remove('in-tune', 'flat', 'sharp');
+            });
+            
+            if (noteStr !== '-') {
+                const key = document.querySelector(`[data-note="${noteStr}"]`);
+                if (key) {
+                    if (Math.abs(cents) < 10) {
+                        key.classList.add('in-tune');
+                    } else if (cents < 0) {
+                        key.classList.add('flat');
+                    } else {
+                        key.classList.add('sharp');
+                    }
+                }
+            }
+        }
+
+        function updateHistory(note, duration) {
+            const now = Date.now();
+            const timeSinceLastNote = now - noteStartTime;
+            if (note !== lastNote && timeSinceLastNote > 300) {
+                const baseNote = note.slice(0, -1);
+                const noteSpan = document.createElement('span');
+                noteSpan.className = 'history-note';
+                noteSpan.textContent = baseNote;
+                
+                // Scale width based on duration, with min and max limits
+                const width = Math.min(Math.max(30, duration / 20), 100);
+                noteSpan.style.width = width + 'px';
+                
+                document.getElementById('history').appendChild(noteSpan);
+                lastNote = note;
+                noteStartTime = now;
+            }
+        }
+
+        async function startTuner() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new AudioContext();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 4096;
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                document.getElementById('startButton').textContent = 'Stop';
+                update();
+            } catch (err) {
+                console.error('Setup error:', err);
+            }
+        }
+
+        function update() {
+            const buffer = new Float32Array(analyser.fftSize);
+            analyser.getFloatTimeDomainData(buffer);
+            
+            const volume = Math.round(buffer.reduce((a,b) => a + Math.abs(b), 0) / buffer.length * 1000);
+            
+            document.getElementById('volumeIndicator').style.width = `${Math.min(volume * 2, 100)}%`;
+            
+            if (volume > MIN_VOLUME) {
+                const freq = findPitch(buffer, audioContext.sampleRate);
+                if (freq >= 80 && freq <= 1100) {
+                    const noteData = getNoteData(freq);
+                    if (isStableNote(noteData)) {
+                        highlightKey(noteData.note, noteData.cents);
+                        updateHistory(noteData.note, Date.now() - noteStartTime);
+                    }
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        createKeyboard();
+
+        document.getElementById('startButton').addEventListener('click', () => {
+            if (!audioContext) {
+                startTuner();
+            } else {
+                audioContext.close();
+                audioContext = null;
+                document.getElementById('startButton').textContent = 'Start';
+                highlightKey('-', 0);
+                document.getElementById('volumeIndicator').style.width = '0%';
+                noteBuffer = [];
+            }
+        });
+
+        document.getElementById('clearButton').addEventListener('click', () => {
+            document.getElementById('history').innerHTML = '';
+            noteHistory.length = 0;
+            lastNote = null;
+        });
+
+        const keyMap = {
+            'a': ['C', 4], 'w': ['C#', 4], 's': ['D', 4], 'e': ['D#', 4], 
+            'd': ['E', 4], 'f': ['F', 4], 't': ['F#', 4], 'g': ['G', 4], 
+            'y': ['G#', 4], 'h': ['A', 4], 'u': ['A#', 4], 'j': ['B', 4]
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (!e.repeat && keyMap[e.key]) {
+                const [note, octave] = keyMap[e.key];
+                const fullNote = note + octave;
+                playNote(fullNote);
+                highlightKey(fullNote, 0);
+            }
+        });
+    </script>
+</body>
+</html>
