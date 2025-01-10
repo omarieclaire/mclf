@@ -1,260 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
             margin: 0;
             font-family: system-ui;
             background: #111;
             color: #fff;
+            touch-action: manipulation;
         }
+        
         .container { 
             text-align: center; 
-            padding: 20px; 
+            padding: 10px; 
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
+        
         .controls {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 16px;
             background: #1a1a1a;
-            padding: 16px;
+            padding: 12px;
             border-radius: 0;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
             border: 2px solid #333;
-            position: relative;
-        }
-        .keyboard-wrapper {
-            position: relative;
-            min-height: 240px;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 0;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
-            border: 2px solid #333;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 1000px;
-        }
-        .volume-container {
-            position: absolute;
-            right: 16px;
-            height: 100px;
-            width: 8px;
-            background: #333;
-            border-radius: 0;
-        }
-        .volume-meter {
-            height: 100%;
-            background: #333;
-            border-radius: 0;
-            overflow: hidden;
-        }
-        .volume-indicator {
-            /* position: absolute; */
-            bottom: 0;
-            width: 100%;
-            background: #4CAF50;
-            transition: height 0.1s;
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 10px 16px;
             border: 2px solid;
             border-radius: 0;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            gap: 6px;
+            min-width: 120px;
+            justify-content: center;
         }
-        .btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
+        
         .btn-primary {
             background: #4CAF50;
             border-color: #4CAF50;
             color: white;
         }
+
         .btn-primary:hover {
             background: #388E3C;
         }
+
         .btn-secondary {
             background: transparent;
             border-color: #666;
             color: #666;
         }
+
         .btn-secondary:hover {
             background: rgba(255,255,255,0.1);
         }
         
-        .status {
-            padding: 8px 16px;
-            border-radius: 0;
-            background: #333;
-            color: #fff;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 14px;
-        }
-        .status.recording {
-            background: #ff3b30;
-        }
-        
-        .history { 
-            margin: 30px auto;
-            padding: 20px;
-            background: #1a1a1a;
-            border-radius: 0;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
-            border: 2px solid #333;
-            min-height: 100px;
-            width: 100%;
-            max-width: 1000px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        
-        .white-key {
-            border-radius: 0;
-            border-color: #333;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-        }
-        
-        .black-key {
-            border-radius: 0;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        }
-        
-        .history-note {
-            border-radius: 0;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        }
-        .container { 
-            text-align: center; 
-            padding: 20px; 
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 100vh;
-        }
-        .controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            background: white;
-            padding: 16px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        
-        .recording-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ccc;
-            margin-left: 8px;
-            transition: all 0.2s;
-        }
-        .recording-dot.active {
-            background: #ff595e;
-            box-shadow: 0 0 0 4px rgba(255, 89, 94, 0.2);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 89, 94, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(255, 89, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 89, 94, 0); }
-        }
-        
-        .volume-container {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 100px;
-            width: 24px;
-            background: #f5f5f5;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .volume-indicator {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: #4CAF50;
-            transition: height 0.1s;
-            border-radius: 12px;
-        }
-        
-        .history-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        
-        .btn-record {
-            background: white;
-            border: 2px solid #ff595e;
-            color: #ff595e;
-            transition: all 0.2s;
-        }
-        .btn-record:hover {
-            background: #fff5f5;
-        }
-        .btn-record.recording {
-            background: #ff595e;
-            color: white;
-        }
-        .btn-record.recording:hover {
-            background: #ff4449;
-        }
         .keyboard-wrapper {
             position: relative;
-            min-height: 240px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 180px;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 0;
+            border: 2px solid #333;
             margin: 0 auto;
             width: 100%;
-            max-width: 1000px;
+            box-sizing: border-box;
         }
+        
         .keyboard {
             display: flex;
             justify-content: center;
             position: relative;
             margin: 0 auto;
             width: 100%;
-            max-width: 1000px;
-            height: 200px;
+            height: 160px;
         }
+        
         .white-key {
-            width: 45px;
-            height: 180px;
+            width: calc(100% / 8);
+            height: 150px;
+            min-width: 35px;
+            max-width: 45px;
             background: white;
             border: 1px solid #ddd;
             position: absolute;
@@ -263,12 +102,16 @@
             cursor: pointer;
             border-radius: 0 0 4px 4px;
         }
+
         .white-key:active {
             background: #f0f0f0;
         }
+        
         .black-key {
-            width: 30px;
-            height: 110px;
+            width: calc((100% / 8) * 0.65);
+            height: 90px;
+            min-width: 25px;
+            max-width: 30px;
             background: #333;
             position: absolute;
             z-index: 2;
@@ -276,9 +119,70 @@
             cursor: pointer;
             border-radius: 0 0 4px 4px;
         }
+
         .black-key:active {
             background: #555;
         }
+        
+        .history {
+            margin: 20px auto;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 0;
+            border: 2px solid #333;
+            min-height: 60px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .history-note {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            margin: 4px;
+            min-width: 32px;
+            font-size: 14px;
+            background: #e0e0e0;
+            border-radius: 16px;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .history-note.in-tune {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .history-note.off-pitch {
+            background: #ff595e;
+            color: white;
+        }
+        
+        .volume-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        
+        .volume-meter {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .volume-indicator {
+            height: 100%;
+            width: 0;
+            background: #4CAF50;
+            transition: width 0.1s;
+        }
+
         .key-label {
             position: absolute;
             bottom: 10px;
@@ -288,10 +192,11 @@
             font-size: 12px;
             font-weight: 500;
         }
+
         .black-key .key-label {
             color: white;
-            bottom: 5px;
         }
+
         .pitch-indicator {
             position: absolute;
             top: 0;
@@ -302,128 +207,67 @@
             transition: opacity 0.2s;
             border-radius: 4px 4px 0 0;
         }
-        .flat .pitch-indicator {
-            opacity: 1;
-            background: #ff595e;
-        }
-        .sharp .pitch-indicator {
-            opacity: 1;
-            background: #ff595e;
-        }
-        .in-tune .pitch-indicator {
-            opacity: 1;
-            background: #4CAF50;
-        }
-        .volume-container {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin: 20px auto;
-            width: 300px;
-        }
-        .volume-label {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        .volume-meter {
-            height: 12px;
-            background: #eee;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .volume-indicator {
-            height: 100%;
-            width: 0%;
-            background: #4CAF50;
-            transition: width 0.1s;
-            border-radius: 6px;
-        }
-        .history { 
-            margin: 30px auto;
-            padding: 20px;
-            background: white;
-            text-align: left;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            min-height: 100px;
-            width: 100%;
-            max-width: 1000px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .history-note { 
-            display: inline-flex;
-            align-items: center;
-            height: 36px;
-            padding: 0 16px;
-            margin: 5px;
-            background: #e0e0e0;
-            border-radius: 18px;
-            min-width: 36px;
-            justify-content: center;
-            transition: all 0.3s;
-            font-weight: 500;
-            font-size: 16px;
-            user-select: none;
-        }
-        .history-note.in-tune {
-            background: #4CAF50;
-            color: white;
-        }
-        .history-note.off-pitch {
-            background: #ff595e;
-            color: white;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary {
-            background: #4CAF50;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #388E3C;
-        }
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-        .btn-icon {
-            width: 20px;
-            height: 20px;
-        }
-        .status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: #e0e0e0;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-        .status.recording {
-            background: #ff595e;
-            color: white;
-        }
+
         .keyboard-controls {
             margin-top: 8px;
             font-size: 14px;
             color: #666;
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 0;
+            background: #333;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .status.recording {
+            background: #ff595e;
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .keyboard {
+                height: 140px;
+            }
+            
+            .white-key {
+                height: 130px;
+            }
+            
+            .black-key {
+                height: 80px;
+            }
+            
+            .key-label {
+                font-size: 10px;
+            }
+        }
+        
+        @media (min-width: 481px) and (max-width: 768px) {
+            .keyboard {
+                height: 150px;
+            }
+            
+            .white-key {
+                height: 140px;
+            }
+            
+            .black-key {
+                height: 85px;
+            }
         }
     </style>
 </head>
@@ -447,8 +291,9 @@
         </div>
 
         <div class="volume-container">
-            <div class="volume-label">Input Level</div>
-            <div class="volume-meter"><div class="volume-indicator" id="volumeIndicator"></div></div>
+            <div class="volume-meter">
+                <div class="volume-indicator" id="volumeIndicator"></div>
+            </div>
         </div>
 
         <div class="keyboard-wrapper">
@@ -464,350 +309,342 @@
     </div>
 
     <script>
-        let audioContext, analyser;
-        const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const noteHistory = [];
-        let lastNote = null;
-        let noteStartTime = 0;
-        const MIN_NOTE_DURATION = 50;
-        const MIN_VOLUME = 25;
-        const MIN_OCTAVE = 3;
-        const MAX_OCTAVE = 5;
-        let noteBuffer = [];
-        const BUFFER_SIZE = 3;
-        
-        // Single audio context for keyboard playback
-        const keyboardContext = new AudioContext();
-        const masterGain = keyboardContext.createGain();
-        masterGain.connect(keyboardContext.destination);
-        masterGain.gain.value = 0.5;
-        
-        // Active notes tracking
-        const activeNotes = new Map();
-        
-        function noteToFrequency(note, octave) {
-            const noteIndex = NOTES.indexOf(note);
-            const n = noteIndex + (octave + 1) * 12;
-            return 440 * Math.pow(2, (n - 69) / 12);
-        }
-
-        function playNote(noteStr, key) {
-            // If note is already playing, don't start it again
-            if (activeNotes.has(noteStr)) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            let audioContext, analyser;
+            const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const noteHistory = [];
+            let lastNote = null;
+            let noteStartTime = 0;
+            const MIN_NOTE_DURATION = 50;
+            const MIN_VOLUME = 25;
+            const MIN_OCTAVE = 3;
+            const MAX_OCTAVE = 5;
+            let noteBuffer = [];
+            const BUFFER_SIZE = 3;
             
-            const note = noteStr.slice(0, -1);
-            const octave = parseInt(noteStr.slice(-1));
-            const freq = noteToFrequency(note, octave);
+            const keyboardContext = new AudioContext();
+            const masterGain = keyboardContext.createGain();
+            masterGain.connect(keyboardContext.destination);
+            masterGain.gain.value = 0.5;
             
-            const osc = keyboardContext.createOscillator();
-            const gain = keyboardContext.createGain();
+            const activeNotes = new Map();
             
-            osc.connect(gain);
-            gain.connect(masterGain);
-            
-            osc.frequency.setValueAtTime(freq, keyboardContext.currentTime);
-            gain.gain.setValueAtTime(0, keyboardContext.currentTime);
-            gain.gain.linearRampToValueAtTime(0.5, keyboardContext.currentTime + 0.01);
-            
-            osc.start();
-            
-            // Store the note info
-            activeNotes.set(noteStr, { oscillator: osc, gain: gain, key: key });
-            
-            // Add visual feedback
-            if (key) {
-                key.classList.add('active');
-                key.classList.add('in-tune'); // Always show as in-tune for played notes
+            function noteToFrequency(note, octave) {
+                const noteIndex = NOTES.indexOf(note);
+                const n = noteIndex + (octave + 1) * 12;
+                return 440 * Math.pow(2, (n - 69) / 12);
             }
-        }
-        
-        function stopNote(noteStr) {
-            const noteInfo = activeNotes.get(noteStr);
-            if (noteInfo) {
-                const { oscillator, gain, key } = noteInfo;
+
+            function playNote(noteStr, key) {
+                if (activeNotes.has(noteStr)) return;
                 
-                // Fade out the note
-                gain.gain.linearRampToValueAtTime(0, keyboardContext.currentTime + 0.05);
+                const note = noteStr.slice(0, -1);
+                const octave = parseInt(noteStr.slice(-1));
+                const freq = noteToFrequency(note, octave);
                 
-                // Remove visual feedback
+                const osc = keyboardContext.createOscillator();
+                const gain = keyboardContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(masterGain);
+                
+                osc.frequency.setValueAtTime(freq, keyboardContext.currentTime);
+                gain.gain.setValueAtTime(0, keyboardContext.currentTime);
+                gain.gain.linearRampToValueAtTime(0.5, keyboardContext.currentTime + 0.01);
+                
+                osc.start();
+                
+                activeNotes.set(noteStr, { oscillator: osc, gain: gain, key: key });
+                
                 if (key) {
-                    key.classList.remove('active');
-                    key.classList.remove('in-tune');
+                    key.classList.add('active');
+                    key.classList.add('in-tune');
                 }
-                
-                // Clean up after fade out
-                setTimeout(() => {
-                    oscillator.stop();
-                    oscillator.disconnect();
-                    gain.disconnect();
-                }, 100);
-                
-                activeNotes.delete(noteStr);
             }
-        }
-
-        function createKeyboard() {
-            const keyboard = document.getElementById('keyboard');
-            let whiteKeyIndex = 0;
             
-            for (let octave = MIN_OCTAVE; octave <= MAX_OCTAVE; octave++) {
-                NOTES.forEach((note, index) => {
-                    const isBlack = note.includes('#');
-                    const key = document.createElement('div');
-                    const label = document.createElement('div');
-                    const pitchIndicator = document.createElement('div');
-                    const fullNote = note + octave;
+            function stopNote(noteStr) {
+                const noteInfo = activeNotes.get(noteStr);
+                if (noteInfo) {
+                    const { oscillator, gain, key } = noteInfo;
                     
-                    label.className = 'key-label';
-                    label.textContent = `${note}${octave}`;
-                    pitchIndicator.className = 'pitch-indicator';
+                    gain.gain.linearRampToValueAtTime(0, keyboardContext.currentTime + 0.05);
                     
-                    key.appendChild(pitchIndicator);
-                    key.appendChild(label);
-                    key.dataset.note = fullNote;
-                    
-                    if (isBlack) {
-                        key.className = 'black-key';
-                        key.style.left = `${whiteKeyIndex * 45 - 15}px`;
-                    } else {
-                        key.className = 'white-key';
-                        key.style.left = `${whiteKeyIndex * 45}px`;
-                        whiteKeyIndex++;
+                    if (key) {
+                        key.classList.remove('active');
+                        key.classList.remove('in-tune');
                     }
                     
-                    // Mouse events
-                    key.addEventListener('mousedown', () => playNote(fullNote, key));
-                    key.addEventListener('mouseup', () => stopNote(fullNote));
-                    key.addEventListener('mouseleave', () => stopNote(fullNote));
+                    setTimeout(() => {
+                        oscillator.stop();
+                        oscillator.disconnect();
+                        gain.disconnect();
+                    }, 100);
                     
-                    // Touch events
-                    key.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        playNote(fullNote, key);
+                    activeNotes.delete(noteStr);
+                }
+            }
+
+            function createKeyboard() {
+                const keyboard = document.getElementById('keyboard');
+                let whiteKeyIndex = 0;
+                const containerWidth = keyboard.offsetWidth;
+                const whiteKeyWidth = Math.min(Math.max(35, containerWidth / (7 * 3)), 45);
+                
+                for (let octave = MIN_OCTAVE; octave <= MAX_OCTAVE; octave++) {
+                    NOTES.forEach((note, index) => {
+                        const isBlack = note.includes('#');
+                        const key = document.createElement('div');
+                        const label = document.createElement('div');
+                        const pitchIndicator = document.createElement('div');
+                        const fullNote = note + octave;
+                        
+                        label.className = 'key-label';
+                        label.textContent = `${note}${octave}`;
+                        pitchIndicator.className = 'pitch-indicator';
+                        
+                        key.appendChild(pitchIndicator);
+                        key.appendChild(label);
+                        key.dataset.note = fullNote;
+                        
+                        if (isBlack) {
+                            key.className = 'black-key';
+                            key.style.left = `${whiteKeyIndex * whiteKeyWidth - (whiteKeyWidth * 0.3)}px`;
+                        } else {
+                            key.className = 'white-key';
+                            key.style.left = `${whiteKeyIndex * whiteKeyWidth}px`;
+                            whiteKeyIndex++;
+                        }
+                        
+                        key.addEventListener('mousedown', () => playNote(fullNote, key));
+                        key.addEventListener('mouseup', () => stopNote(fullNote));
+                        key.addEventListener('mouseleave', () => stopNote(fullNote));
+                        
+                        key.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            playNote(fullNote, key);
+                        }, { passive: false });
+                        
+                        key.addEventListener('touchend', (e) => {
+                            e.preventDefault();
+                            stopNote(fullNote);
+                        }, { passive: false });
+                        
+                        keyboard.appendChild(key);
                     });
-                    key.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        stopNote(fullNote);
-                    });
-                    
-                    keyboard.appendChild(key);
+                }
+            }
+
+            function findPitch(buffer, sampleRate) {
+                const correlations = new Float32Array(buffer.length);
+                
+                for (let lag = 0; lag < buffer.length; lag++) {
+                    let sum = 0;
+                    let norm = 0;
+                    for (let i = 0; i < buffer.length - lag; i++) {
+                        sum += buffer[i] * buffer[i + lag];
+                        norm += buffer[i] * buffer[i] + buffer[i + lag] * buffer[i + lag];
+                    }
+                    correlations[lag] = 2 * sum / norm;
+                }
+                
+                let maxCorrelation = -1;
+                let maxLag = -1;
+                for (let lag = Math.floor(sampleRate/1100); lag < Math.floor(sampleRate/80); lag++) {
+                    if (correlations[lag] > maxCorrelation) {
+                        maxCorrelation = correlations[lag];
+                        maxLag = lag;
+                    }
+                }
+                
+                return maxCorrelation > 0.5 ? sampleRate / maxLag : null;
+            }
+
+            function getNoteData(freq) {
+                const noteNum = 12 * Math.log2(freq / 440) + 69;
+                const note = Math.round(noteNum);
+                const octave = Math.floor(note/12 - 1);
+                
+                if (octave < MIN_OCTAVE || octave > MAX_OCTAVE) return null;
+                
+                return {
+                    note: NOTES[note % 12] + octave,
+                    cents: Math.round((noteNum - note) * 100)
+                };
+            }
+
+            function isStableNote(noteData) {
+                if (!noteData) return false;
+                noteBuffer.push(noteData);
+                if (noteBuffer.length > BUFFER_SIZE) noteBuffer.shift();
+                return noteBuffer.length === BUFFER_SIZE && 
+                       noteBuffer.every(n => n.note === noteBuffer[0].note);
+            }
+
+            function highlightKey(noteStr, cents) {
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    key.classList.remove('in-tune', 'flat', 'sharp');
                 });
-            }
-        }
-
-        function findPitch(buffer, sampleRate) {
-            const correlations = new Float32Array(buffer.length);
-            
-            for (let lag = 0; lag < buffer.length; lag++) {
-                let sum = 0;
-                let norm = 0;
-                for (let i = 0; i < buffer.length - lag; i++) {
-                    sum += buffer[i] * buffer[i + lag];
-                    norm += buffer[i] * buffer[i] + buffer[i + lag] * buffer[i + lag];
-                }
-                correlations[lag] = 2 * sum / norm;
-            }
-            
-            let maxCorrelation = -1;
-            let maxLag = -1;
-            for (let lag = Math.floor(sampleRate/1100); lag < Math.floor(sampleRate/80); lag++) {
-                if (correlations[lag] > maxCorrelation) {
-                    maxCorrelation = correlations[lag];
-                    maxLag = lag;
+                
+                if (noteStr !== '-') {
+                    const key = document.querySelector(`[data-note="${noteStr}"]`);
+                    if (key) {
+                        if (Math.abs(cents) < 15) {
+                            key.classList.add('in-tune');
+                        } else if (cents < 0) {
+                            key.classList.add('flat');
+                        } else {
+                            key.classList.add('sharp');
+                        }
+                    }
                 }
             }
-            
-            return maxCorrelation > 0.5 ? sampleRate / maxLag : null;
-        }
 
-        function getNoteData(freq) {
-            const noteNum = 12 * Math.log2(freq / 440) + 69;
-            const note = Math.round(noteNum);
-            const octave = Math.floor(note/12 - 1);
-            
-            if (octave < MIN_OCTAVE || octave > MAX_OCTAVE) return null;
-            
-            return {
-                note: NOTES[note % 12] + octave,
-                cents: Math.round((noteNum - note) * 100)
+            function updateHistory(note, cents) {
+                const now = Date.now();
+                const timeSinceLastNote = now - noteStartTime;
+                
+                if (note !== lastNote || timeSinceLastNote > 1000) {
+                    const baseNote = note.slice(0, -1);
+                    const noteSpan = document.createElement('span');
+                    noteSpan.className = 'history-note';
+                    noteSpan.textContent = baseNote;
+                    
+                    if (Math.abs(cents) < 15) {
+                        noteSpan.classList.add('in-tune');
+                    } else {
+                        noteSpan.classList.add('off-pitch');
+                    }
+                    
+                    const width = Math.min(Math.max(36, timeSinceLastNote / 20), 120);
+                    noteSpan.style.width = width + 'px';
+                    
+                    const history = document.getElementById('history');
+                    history.appendChild(noteSpan);
+                    
+                    while (history.children.length > 50) {
+                        history.removeChild(history.firstChild);
+                    }
+                    
+                    history.scrollLeft = history.scrollWidth;
+                    
+                    lastNote = note;
+                    noteStartTime = now;
+                }
+            }
+
+            async function startTuner() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioContext = new AudioContext();
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 4096;
+                    const source = audioContext.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    
+                    const startButton = document.getElementById('startButton');
+                    startButton.innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 6h12v12H6z"/>
+                        </svg>
+                        Stop Recording
+                    `;
+                    document.getElementById('status').textContent = 'Recording...';
+                    document.getElementById('status').classList.add('recording');
+                    
+                    update();
+                } catch (err) {
+                    console.error('Setup error:', err);
+                    alert('Unable to access microphone. Please check your permissions and try again.');
+                }
+            }
+
+            function update() {
+                const buffer = new Float32Array(analyser.fftSize);
+                analyser.getFloatTimeDomainData(buffer);
+                
+                const volume = Math.round(buffer.reduce((a,b) => a + Math.abs(b), 0) / buffer.length * 1000);
+                
+                document.getElementById('volumeIndicator').style.width = `${Math.min(volume * 2, 100)}%`;
+                
+                if (volume > MIN_VOLUME) {
+                    const freq = findPitch(buffer, audioContext.sampleRate);
+                    if (freq >= 80 && freq <= 1100) {
+                        const noteData = getNoteData(freq);
+                        if (isStableNote(noteData)) {
+                            highlightKey(noteData.note, noteData.cents);
+                            updateHistory(noteData.note, noteData.cents);
+                        }
+                    }
+                }
+                
+                if (audioContext && audioContext.state === 'running') {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            createKeyboard();
+
+            document.addEventListener('click', function initAudio() {
+                keyboardContext.resume();
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
+
+            document.getElementById('startButton').addEventListener('click', () => {
+                if (!audioContext || audioContext.state !== 'running') {
+                    startTuner();
+                } else {
+                    audioContext.close();
+                    audioContext = null;
+                    document.getElementById('startButton').innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 8v8M8 12h8"/>
+                        </svg>
+                        Start Recording
+                    `;
+                    document.getElementById('status').textContent = 'Ready to record';
+                    document.getElementById('status').classList.remove('recording');
+                    document.getElementById('volumeIndicator').style.width = '0%';
+                    noteBuffer = [];
+                }
+            });
+
+            document.getElementById('clearButton').addEventListener('click', () => {
+                document.getElementById('history').innerHTML = '';
+                noteHistory.length = 0;
+                lastNote = null;
+                noteStartTime = 0;
+            });
+
+            const keyMap = {
+                'a': ['C', 4], 'w': ['C#', 4], 's': ['D', 4], 'e': ['D#', 4], 
+                'd': ['E', 4], 'f': ['F', 4], 't': ['F#', 4], 'g': ['G', 4], 
+                'y': ['G#', 4], 'h': ['A', 4], 'u': ['A#', 4], 'j': ['B', 4],
+                'k': ['C', 5]
             };
-        }
 
-        function isStableNote(noteData) {
-            if (!noteData) return false;
-            noteBuffer.push(noteData);
-            if (noteBuffer.length > BUFFER_SIZE) noteBuffer.shift();
-            return noteBuffer.length === BUFFER_SIZE && 
-                   noteBuffer.every(n => n.note === noteBuffer[0].note);
-        }
-
-        function highlightKey(noteStr, cents) {
-            document.querySelectorAll('.white-key, .black-key').forEach(key => {
-                key.classList.remove('in-tune', 'flat', 'sharp');
+            document.addEventListener('keydown', (e) => {
+                if (!e.repeat && keyMap[e.key.toLowerCase()]) {
+                    const [note, octave] = keyMap[e.key.toLowerCase()];
+                    const fullNote = note + octave;
+                    const key = document.querySelector(`[data-note="${fullNote}"]`);
+                    playNote(fullNote, key);
+                }
             });
             
-            if (noteStr !== '-') {
-                const key = document.querySelector(`[data-note="${noteStr}"]`);
-                if (key) {
-                    if (Math.abs(cents) < 15) {
-                        key.classList.add('in-tune');
-                    } else if (cents < 0) {
-                        key.classList.add('flat');
-                    } else {
-                        key.classList.add('sharp');
-                    }
+            document.addEventListener('keyup', (e) => {
+                if (keyMap[e.key.toLowerCase()]) {
+                    const [note, octave] = keyMap[e.key.toLowerCase()];
+                    const fullNote = note + octave;
+                    stopNote(fullNote);
                 }
-            }
-        }
+            });
 
-        function updateHistory(note, cents) {
-            const now = Date.now();
-            const timeSinceLastNote = now - noteStartTime;
-            
-            // Only update if it's a different note or significant time has passed
-            if (note !== lastNote || timeSinceLastNote > 1000) {
-                const baseNote = note.slice(0, -1);
-                const noteSpan = document.createElement('span');
-                noteSpan.className = 'history-note';
-                noteSpan.textContent = baseNote;
-                
-                // Add pitch class based on cents
-                if (Math.abs(cents) < 15) {
-                    noteSpan.classList.add('in-tune');
-                } else {
-                    noteSpan.classList.add('off-pitch');
-                }
-                
-                // Scale width based on duration, with min and max limits
-                const width = Math.min(Math.max(36, timeSinceLastNote / 20), 120);
-                noteSpan.style.width = width + 'px';
-                
-                const history = document.getElementById('history');
-                history.appendChild(noteSpan);
-                
-                // Keep only the last 50 notes to prevent performance issues
-                while (history.children.length > 50) {
-                    history.removeChild(history.firstChild);
-                }
-                
-                // Scroll to the latest note
-                history.scrollLeft = history.scrollWidth;
-                
-                lastNote = note;
-                noteStartTime = now;
-            }
-        }
-
-        async function startTuner() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioContext = new AudioContext();
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 4096;
-                const source = audioContext.createMediaStreamSource(stream);
-                source.connect(analyser);
-                
-                // Update UI
-                const startButton = document.getElementById('startButton');
-                startButton.innerHTML = `
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 6h12v12H6z"/>
-                    </svg>
-                    Stop Recording
-                `;
-                document.getElementById('status').textContent = 'Recording...';
-                document.getElementById('status').classList.add('recording');
-                
-                update();
-            } catch (err) {
-                console.error('Setup error:', err);
-                alert('Unable to access microphone. Please check your permissions and try again.');
-            }
-        }
-
-        function update() {
-            const buffer = new Float32Array(analyser.fftSize);
-            analyser.getFloatTimeDomainData(buffer);
-            
-            const volume = Math.round(buffer.reduce((a,b) => a + Math.abs(b), 0) / buffer.length * 1000);
-            
-            document.getElementById('volumeIndicator').style.width = `${Math.min(volume * 2, 100)}%`;
-            
-            if (volume > MIN_VOLUME) {
-                const freq = findPitch(buffer, audioContext.sampleRate);
-                if (freq >= 80 && freq <= 1100) {
-                    const noteData = getNoteData(freq);
-                    if (isStableNote(noteData)) {
-                        highlightKey(noteData.note, noteData.cents);
-                        updateHistory(noteData.note, noteData.cents);
-                    }
-                }
-            }
-            
-            if (audioContext && audioContext.state === 'running') {
-                requestAnimationFrame(update);
-            }
-        }
-
-        createKeyboard();
-
-        // Resume keyboard audio context on first user interaction
-        document.addEventListener('click', function initAudio() {
-            keyboardContext.resume();
-            document.removeEventListener('click', initAudio);
-        }, { once: true });
-
-        document.getElementById('startButton').addEventListener('click', () => {
-            if (!audioContext || audioContext.state !== 'running') {
-                startTuner();
-            } else {
-                audioContext.close();
-                audioContext = null;
-                document.getElementById('startButton').innerHTML = `
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 8v8M8 12h8"/>
-                    </svg>
-                    Start Recording
-                `;
-                document.getElementById('status').textContent = 'Ready to record';
-                document.getElementById('status').classList.remove('recording');
-                highlightKey('-', 0);
-                document.getElementById('volumeIndicator').style.width = '0%';
-                noteBuffer = [];
-            }
-        });
-
-        document.getElementById('clearButton').addEventListener('click', () => {
-            document.getElementById('history').innerHTML = '';
-            noteHistory.length = 0;
-            lastNote = null;
-            noteStartTime = 0;
-        });
-
-        // Enhanced keyboard controls with better support for black keys
-        const keyMap = {
-            'a': ['C', 4], 'w': ['C#', 4], 's': ['D', 4], 'e': ['D#', 4], 
-            'd': ['E', 4], 'f': ['F', 4], 't': ['F#', 4], 'g': ['G', 4], 
-            'y': ['G#', 4], 'h': ['A', 4], 'u': ['A#', 4], 'j': ['B', 4],
-            'k': ['C', 5]
-        };
-
-        document.addEventListener('keydown', (e) => {
-            if (!e.repeat && keyMap[e.key.toLowerCase()]) {
-                const [note, octave] = keyMap[e.key.toLowerCase()];
-                const fullNote = note + octave;
-                const key = document.querySelector(`[data-note="${fullNote}"]`);
-                playNote(fullNote, key);
-            }
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            if (keyMap[e.key.toLowerCase()]) {
-                const [note, octave] = keyMap[e.key.toLowerCase()];
-                const fullNote = note + octave;
-                stopNote(fullNote);
-            }
+            window.addEventListener('resize', () => {
+                const keyboard = document.getElementById('keyboard');
+                keyboard.innerHTML = '';
+                createKeyboard();
+            });
         });
     </script>
 </body>
