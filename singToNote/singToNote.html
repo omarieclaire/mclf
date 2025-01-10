@@ -5,7 +5,147 @@
         body {
             margin: 0;
             font-family: system-ui;
-            background: #f5f5f5;
+            background: #111;
+            color: #fff;
+        }
+        .container { 
+            text-align: center; 
+            padding: 20px; 
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            background: #1a1a1a;
+            padding: 16px;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            border: 2px solid #333;
+            position: relative;
+        }
+        .keyboard-wrapper {
+            position: relative;
+            min-height: 240px;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            border: 2px solid #333;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .volume-container {
+            position: absolute;
+            right: 16px;
+            height: 100px;
+            width: 8px;
+            background: #333;
+            border-radius: 0;
+        }
+        .volume-meter {
+            height: 100%;
+            background: #333;
+            border-radius: 0;
+            overflow: hidden;
+        }
+        .volume-indicator {
+            /* position: absolute; */
+            bottom: 0;
+            width: 100%;
+            background: #4CAF50;
+            transition: height 0.1s;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid;
+            border-radius: 0;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #388E3C;
+        }
+        .btn-secondary {
+            background: transparent;
+            border-color: #666;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .status {
+            padding: 8px 16px;
+            border-radius: 0;
+            background: #333;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+        .status.recording {
+            background: #ff3b30;
+        }
+        
+        .history { 
+            margin: 30px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            border: 2px solid #333;
+            min-height: 100px;
+            width: 100%;
+            max-width: 1000px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .white-key {
+            border-radius: 0;
+            border-color: #333;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .black-key {
+            border-radius: 0;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+        
+        .history-note {
+            border-radius: 0;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
         }
         .container { 
             text-align: center; 
@@ -290,17 +430,25 @@
 <body>
     <div class="container">
         <div class="controls">
-            <button id="startButton" class="btn btn-record">
+            <button id="startButton" class="btn btn-primary">
                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                    <path d="M12 8v8M8 12h8"/>
                 </svg>
-                Record
+                Start Recording
             </button>
-            <div class="recording-dot" id="recordingDot"></div>
-            <div class="volume-container">
-                <div class="volume-indicator" id="volumeIndicator"></div>
-            </div>
+            <div id="status" class="status">Ready to record</div>
+            <button id="clearButton" class="btn btn-secondary">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 6H5m14 0l-2 13a2 2 0 01-2 2H7a2 2 0 01-2-2L3 6m16 0V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+                </svg>
+                Clear History
+            </button>
+        </div>
+
+        <div class="volume-container">
+            <div class="volume-label">Input Level</div>
+            <div class="volume-meter"><div class="volume-indicator" id="volumeIndicator"></div></div>
         </div>
 
         <div class="keyboard-wrapper">
@@ -311,14 +459,6 @@
         </div>
 
         <div class="history">
-            <div class="history-controls">
-                <button id="clearButton" class="btn btn-secondary">
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 6H5m14 0l-2 13a2 2 0 01-2 2H7a2 2 0 01-2-2L3 6m16 0V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
-                    </svg>
-                    Clear History
-                </button>
-            </div>
             <div id="history"></div>
         </div>
     </div>
@@ -591,7 +731,7 @@
             
             const volume = Math.round(buffer.reduce((a,b) => a + Math.abs(b), 0) / buffer.length * 1000);
             
-            document.getElementById('volumeIndicator').style.height = `${Math.min(volume * 2, 100)}%`;
+            document.getElementById('volumeIndicator').style.width = `${Math.min(volume * 2, 100)}%`;
             
             if (volume > MIN_VOLUME) {
                 const freq = findPitch(buffer, audioContext.sampleRate);
@@ -617,36 +757,23 @@
             document.removeEventListener('click', initAudio);
         }, { once: true });
 
-        document.getElementById('startButton').addEventListener('click', async () => {
-            const button = document.getElementById('startButton');
-            const recordingDot = document.getElementById('recordingDot');
-            
+        document.getElementById('startButton').addEventListener('click', () => {
             if (!audioContext || audioContext.state !== 'running') {
-                // Start recording
-                await startTuner();
-                button.classList.add('recording');
-                button.innerHTML = `
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="6" y="6" width="12" height="12"/>
-                    </svg>
-                    Stop
-                `;
-                recordingDot.classList.add('active');
+                startTuner();
             } else {
-                // Stop recording
                 audioContext.close();
                 audioContext = null;
-                button.classList.remove('recording');
-                button.innerHTML = `
+                document.getElementById('startButton').innerHTML = `
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
-                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                        <path d="M12 8v8M8 12h8"/>
                     </svg>
-                    Record
+                    Start Recording
                 `;
-                recordingDot.classList.remove('active');
+                document.getElementById('status').textContent = 'Ready to record';
+                document.getElementById('status').classList.remove('recording');
                 highlightKey('-', 0);
-                document.getElementById('volumeIndicator').style.height = '0%';
+                document.getElementById('volumeIndicator').style.width = '0%';
                 noteBuffer = [];
             }
         });
