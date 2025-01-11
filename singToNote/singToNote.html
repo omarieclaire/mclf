@@ -170,6 +170,47 @@
         box-sizing: border-box;
       }
 
+      .volume-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .volume-slider {
+        flex: 1;
+        -webkit-appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #333;
+        outline: none;
+      }
+
+      .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #4caf50;
+        cursor: pointer;
+      }
+
+      .volume-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #4caf50;
+        cursor: pointer;
+      }
+
+      .volume-label {
+        min-width: 60px;
+        text-align: right;
+        color: #fff;
+      }
+
       .volume-meter {
         height: 8px;
         background: #333;
@@ -275,6 +316,10 @@
       </div>
 
       <div class="volume-container">
+        <div class="volume-controls">
+          <input type="range" min="0" max="100" value="75" class="volume-slider" id="volumeControl">
+          <div class="volume-label" id="volumeLabel">75%</div>
+        </div>
         <div class="volume-meter">
           <div class="volume-indicator" id="volumeIndicator"></div>
         </div>
@@ -298,7 +343,7 @@
         let lastNote = null;
         let noteStartTime = 0;
         const MIN_NOTE_DURATION = 50;
-        const MIN_VOLUME = 25;
+        const MIN_VOLUME = 10;  // Lowered from 25
         const MIN_OCTAVE = 3;
         const MAX_OCTAVE = 5;
         let noteBuffer = [];
@@ -307,7 +352,7 @@
         const keyboardContext = new (window.AudioContext || window.webkitAudioContext)();
         const masterGain = keyboardContext.createGain();
         masterGain.connect(keyboardContext.destination);
-        masterGain.gain.value = 0.5;
+        masterGain.gain.value = 0.75;  // Increased default volume
 
         const activeNotes = new Map();
 
@@ -318,6 +363,7 @@
         }
 
         function playNote(noteStr, key) {
+          console.log('Playing note:', noteStr);
           if (activeNotes.has(noteStr)) return;
 
           const note = noteStr.slice(0, -1);
@@ -330,14 +376,16 @@
           osc.connect(gain);
           gain.connect(masterGain);
 
-          // Set initial gain to 0
-          gain.gain.setValueAtTime(0, keyboardContext.currentTime);
+          const currentTime = keyboardContext.currentTime;
           
-          // Smooth attack
-          gain.gain.linearRampToValueAtTime(0.5, keyboardContext.currentTime + 0.02);
+          // Start with silence
+          gain.gain.setValueAtTime(0.001, currentTime);  // Small initial value for exponential ramp
           
-          osc.frequency.setValueAtTime(freq, keyboardContext.currentTime);
-          osc.start(keyboardContext.currentTime);
+          // Smooth attack using exponential ramp
+          gain.gain.exponentialRampToValueAtTime(0.8, currentTime + 0.02);  // Increased note volume
+          
+          osc.frequency.setValueAtTime(freq, currentTime);
+          osc.start(currentTime);
 
           activeNotes.set(noteStr, { oscillator: osc, gain: gain, key: key });
 
@@ -348,14 +396,19 @@
         }
 
         function stopNote(noteStr) {
+          console.log('Stopping note:', noteStr);
           const noteInfo = activeNotes.get(noteStr);
           if (noteInfo) {
             const { oscillator, gain, key } = noteInfo;
 
-            // Smooth release
-            const releaseTime = keyboardContext.currentTime + 0.05;
-            gain.gain.linearRampToValueAtTime(0, releaseTime);
-
+            const currentTime = keyboardContext.currentTime;
+            const releaseTime = currentTime + 0.1;
+            
+            // Start release from current value
+            gain.gain.setValueAtTime(gain.gain.value, currentTime);
+            // Exponential ramp down
+            gain.gain.exponentialRampToValueAtTime(0.001, releaseTime);
+            
             if (key) {
               key.classList.remove("active");
               key.classList.remove("in-tune");
@@ -363,10 +416,14 @@
 
             // Schedule cleanup after release
             setTimeout(() => {
-              oscillator.stop(releaseTime);
-              oscillator.disconnect();
-              gain.disconnect();
-            }, 100);
+              try {
+                oscillator.stop();
+                oscillator.disconnect();
+                gain.disconnect();
+              } catch (e) {
+                // Ignore cleanup errors
+              }
+            }, 150);
 
             activeNotes.delete(noteStr);
           }
@@ -617,14 +674,23 @@
           analyser.getFloatTimeDomainData(buffer);
 
           const volume = Math.round((buffer.reduce((a, b) => a + Math.abs(b), 0) / buffer.length) * 1000);
+          
+          // Debug logging
+          if (volume > 0) {
+            console.log('Current volume:', volume);
+          }
 
           document.getElementById("volumeIndicator").style.width = `${Math.min(volume * 2, 100)}%`;
 
           if (volume > MIN_VOLUME) {
             const freq = findPitch(buffer, audioContext.sampleRate);
+            if (freq) {
+              console.log('Detected frequency:', freq);
+            }
             if (freq >= 80 && freq <= 1100) {
               const noteData = getNoteData(freq);
               if (isStableNote(noteData)) {
+                console.log('Detected note:', noteData);
                 highlightKey(noteData.note, noteData.cents);
                 updateHistory(noteData.note, noteData.cents);
               }
@@ -693,6 +759,13 @@
             const fullNote = note + octave;
             stopNote(fullNote);
           }
+        });
+
+        // Add volume control handler
+        document.getElementById("volumeControl").addEventListener("input", (e) => {
+          const volume = e.target.value / 100;
+          masterGain.gain.setValueAtTime(volume, keyboardContext.currentTime);
+          document.getElementById("volumeLabel").textContent = `${e.target.value}%`;
         });
 
         window.addEventListener("resize", () => {
