@@ -3,15 +3,13 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <style>
-        
       body {
         margin: 0;
         font-family: system-ui;
         background: #111;
         color: #fff;
         touch-action: manipulation;
-        touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent; /* Prevent touch highlight */
+        -webkit-tap-highlight-color: transparent;
       }
 
       .container {
@@ -54,8 +52,6 @@
       .btn-primary {
         background: #4caf50;
         border-color: #4caf50;
-        background: blue;
-        border-color: blue;
         color: white;
       }
 
@@ -202,23 +198,6 @@
         color: white;
       }
 
-      .pitch-indicator {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 70%;
-        opacity: 0;
-        transition: opacity 0.2s;
-        border-radius: 4px 4px 0 0;
-      }
-
-      .keyboard-controls {
-        margin-top: 8px;
-        font-size: 14px;
-        color: #666;
-      }
-
       .status {
         padding: 8px 16px;
         border-radius: 0;
@@ -313,7 +292,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        let audioContext, analyser;
+        let audioContext, analyser, currentStream;
         const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         const noteHistory = [];
         let lastNote = null;
@@ -326,7 +305,6 @@
         const BUFFER_SIZE = 3;
 
         const keyboardContext = new (window.AudioContext || window.webkitAudioContext)();
-
         const masterGain = keyboardContext.createGain();
         masterGain.connect(keyboardContext.destination);
         masterGain.gain.value = 0.5;
@@ -352,11 +330,14 @@
           osc.connect(gain);
           gain.connect(masterGain);
 
-          osc.frequency.setValueAtTime(freq, keyboardContext.currentTime);
+          // Set initial gain to 0
           gain.gain.setValueAtTime(0, keyboardContext.currentTime);
-          gain.gain.linearRampToValueAtTime(0.5, keyboardContext.currentTime + 0.01);
-
-          osc.start();
+          
+          // Smooth attack
+          gain.gain.linearRampToValueAtTime(0.5, keyboardContext.currentTime + 0.02);
+          
+          osc.frequency.setValueAtTime(freq, keyboardContext.currentTime);
+          osc.start(keyboardContext.currentTime);
 
           activeNotes.set(noteStr, { oscillator: osc, gain: gain, key: key });
 
@@ -371,15 +352,18 @@
           if (noteInfo) {
             const { oscillator, gain, key } = noteInfo;
 
-            gain.gain.linearRampToValueAtTime(0, keyboardContext.currentTime + 0.05);
+            // Smooth release
+            const releaseTime = keyboardContext.currentTime + 0.05;
+            gain.gain.linearRampToValueAtTime(0, releaseTime);
 
             if (key) {
               key.classList.remove("active");
               key.classList.remove("in-tune");
             }
 
+            // Schedule cleanup after release
             setTimeout(() => {
-              oscillator.stop();
+              oscillator.stop(releaseTime);
               oscillator.disconnect();
               gain.disconnect();
             }, 100);
@@ -389,10 +373,10 @@
         }
 
         function initializeAudio() {
-    if (keyboardContext.state === 'suspended') {
-        keyboardContext.resume();
-    }
-}
+          if (keyboardContext.state === 'suspended') {
+            keyboardContext.resume();
+          }
+        }
 
         function createKeyboard() {
           const keyboard = document.getElementById("keyboard");
@@ -552,28 +536,80 @@
 
         async function startTuner() {
           try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioContext = new AudioContext();
+            // Add audio constraints specifically for mobile
+            const constraints = {
+              audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+              }
+            };
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            // Make sure we create a new context only if needed
+            if (!audioContext) {
+              audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Ensure old analyzer is disconnected
+            if (analyser) {
+              analyser.disconnect();
+            }
+            
             analyser = audioContext.createAnalyser();
             analyser.fftSize = 4096;
+            
             const source = audioContext.createMediaStreamSource(stream);
             source.connect(analyser);
 
+            // Store stream reference for cleanup
+            currentStream = stream;
+
             const startButton = document.getElementById("startButton");
             startButton.innerHTML = `
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 6h12v12H6z"/>
-                        </svg>
-                        Stop Recording
-                    `;
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 6h12v12H6z"/>
+              </svg>
+              Stop Recording
+            `;
             document.getElementById("status").textContent = "Recording...";
             document.getElementById("status").classList.add("recording");
+
+            // Resume context if suspended
+            if (audioContext.state === 'suspended') {
+              await audioContext.resume();
+            }
 
             update();
           } catch (err) {
             console.error("Setup error:", err);
             alert("Unable to access microphone. Please check your permissions and try again.");
           }
+        }
+
+        function stopTuner() {
+          if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+          }
+          
+          if (audioContext) {
+            audioContext.close();
+            audioContext = null;
+          }
+
+          document.getElementById("startButton").innerHTML = `
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v8M8 12h8"/>
+            </svg>
+            Start Recording
+          `;
+          document.getElementById("status").textContent = "Ready to record";
+          document.getElementById("status").classList.remove("recording");
+          document.getElementById("volumeIndicator").style.width = "0%";
+          noteBuffer = [];
         }
 
         function update() {
@@ -615,19 +651,7 @@
           if (!audioContext || audioContext.state !== "running") {
             startTuner();
           } else {
-            audioContext.close();
-            audioContext = null;
-            document.getElementById("startButton").innerHTML = `
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 8v8M8 12h8"/>
-                        </svg>
-                        Start Recording
-                    `;
-            document.getElementById("status").textContent = "Ready to record";
-            document.getElementById("status").classList.remove("recording");
-            document.getElementById("volumeIndicator").style.width = "0%";
-            noteBuffer = [];
+            stopTuner();
           }
         });
 
