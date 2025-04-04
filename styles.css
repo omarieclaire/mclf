@@ -710,6 +710,8 @@ nav a:hover {
     display: none;
   }
 
+
+
   header {
     /* box-sizing: border-box; */
     width: 100vw;
@@ -872,6 +874,7 @@ nav a:hover {
   nav ul {
     display: flex;
     font-size: .5rem;
+    padding: 26px;
   }
 
   nav li {
