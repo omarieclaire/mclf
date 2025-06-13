@@ -3938,6 +3938,8 @@ class LoserLane {
     this.initializeSystems();
     this.initializeTimers();
     this.initializeSounds();
+        this.initializeArduino();
+
     this.initializeGameComponents();
   }
 
@@ -3969,6 +3971,32 @@ class LoserLane {
     this.initialLastMove = performance.now();
     this.lastFrameTime = performance.now();
   }
+
+  initializeArduino() {
+  // Initialize serial connection
+  this.serial = new p5.SerialPort();
+  this.serial.open("/dev/cu.usbmodem1411"); // Replace with your Arduino's port FIND ME
+
+  // Handle incoming Arduino data
+  this.serial.on('data', () => {
+    const buttonData = this.serial.readLine().trim();
+    
+    if (buttonData === "LEFT") {
+      this.movePlayer("left", performance.now());
+    } else if (buttonData === "RIGHT") {
+      this.movePlayer("right", performance.now());
+    }
+  });
+
+  // Optional: Handle connection events
+  this.serial.on('open', () => {
+    console.log('Arduino connected!');
+  });
+
+  this.serial.on('error', (err) => {
+    console.log('Arduino connection error:', err);
+  });
+}
 
   initializeSounds() {
     this.soundManager.setupMuteButton();
