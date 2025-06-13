@@ -4014,20 +4014,45 @@ initializeArduino() {
     });
 
     // Set up connect button
-    const connectButton = document.getElementById('connect-arduino');
-    if (connectButton) {
-      connectButton.addEventListener('click', async () => {
-        if (this.arduino.isConnected) {
-          await this.arduino.disconnect();
-        } else {
-          await this.arduino.connect();
+   const connectButton = document.getElementById('connect-arduino');
+if (connectButton) {
+  connectButton.addEventListener('click', async () => {
+    // Add visual feedback immediately
+    connectButton.textContent = 'Connecting...';
+    connectButton.disabled = true;
+    
+    try {
+      if (this.arduino.isConnected) {
+        await this.arduino.disconnect();
+        connectButton.textContent = 'Connect Arduino';
+      } else {
+        // Check if Web Serial is supported
+        if (!this.arduino.isSupported()) {
+          alert('Web Serial API not supported. Please use Chrome or Edge browser.');
+          connectButton.textContent = 'Connect Arduino';
+          connectButton.disabled = false;
+          return;
         }
-      });
+        
+        const success = await this.arduino.connect();
+        if (success) {
+          connectButton.textContent = 'Disconnect Arduino';
+        } else {
+          connectButton.textContent = 'Connect Arduino';
+        }
+      }
+    } catch (error) {
+      console.error('Connection error:', error);
+      alert(`Connection failed: ${error.message}`);
+      connectButton.textContent = 'Connect Arduino';
     }
     
-  } catch (error) {
-    console.log('Failed to initialize Arduino connection:', error);
-  }
+    connectButton.disabled = false;
+  });
+}
+
+} catch (error) {
+  console.log('Failed to initialize Arduino connection:', error);
 }
 
   initializeSounds() {
