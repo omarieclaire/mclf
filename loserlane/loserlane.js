@@ -3938,8 +3938,11 @@ class LoserLane {
     this.initializeSystems();
     this.initializeTimers();
     this.initializeSounds();
-        this.initializeArduino();
-
+  try {
+    this.initializeArduino();
+  } catch (error) {
+    console.log('Arduino not available, continuing without it');
+  }
     this.initializeGameComponents();
   }
 
@@ -3972,30 +3975,59 @@ class LoserLane {
     this.lastFrameTime = performance.now();
   }
 
-  initializeArduino() {
-  // Initialize serial connection
-  this.serial = new p5.SerialPort();
-  this.serial.open("/dev/cu.usbmodem1411"); // Replace with your Arduino's port FIND ME
-
-  // Handle incoming Arduino data
-  this.serial.on('data', () => {
-    const buttonData = this.serial.readLine().trim();
-    
-    if (buttonData === "LEFT") {
-      this.movePlayer("left", performance.now());
-    } else if (buttonData === "RIGHT") {
-      this.movePlayer("right", performance.now());
+initializeArduino() {
+  try {
+    // Only initialize if Web Serial is supported
+    if (!('serial' in navigator)) {
+      console.log('Web Serial API not supported in this browser');
+      return;
     }
-  });
 
-  // Optional: Handle connection events
-  this.serial.on('open', () => {
-    console.log('Arduino connected!');
-  });
+    this.arduino = new ArduinoWebSerial();
+    
+    // Handle incoming lines from Arduino
+    this.arduino.on('line', (line) => {
+      console.log('Arduino data received:', line);
+      
+      if (line === "LEFT") {
+        this.movePlayer("left", performance.now());
+      } else if (line === "RIGHT") {
+        this.movePlayer("right", performance.now());
+      }
+    });
 
-  this.serial.on('error', (err) => {
-    console.log('Arduino connection error:', err);
-  });
+    this.arduino.on('connected', () => {
+      console.log('Arduino connected!');
+      // Update button text
+      const button = document.getElementById('connect-arduino');
+      if (button) button.textContent = 'Disconnect Arduino';
+    });
+
+    this.arduino.on('disconnected', () => {
+      console.log('Arduino disconnected');
+      const button = document.getElementById('connect-arduino');
+      if (button) button.textContent = 'Connect Arduino';
+    });
+
+    this.arduino.on('error', (error) => {
+      console.log('Arduino error:', error);
+    });
+
+    // Set up connect button
+    const connectButton = document.getElementById('connect-arduino');
+    if (connectButton) {
+      connectButton.addEventListener('click', async () => {
+        if (this.arduino.isConnected) {
+          await this.arduino.disconnect();
+        } else {
+          await this.arduino.connect();
+        }
+      });
+    }
+    
+  } catch (error) {
+    console.log('Failed to initialize Arduino connection:', error);
+  }
 }
 
   initializeSounds() {

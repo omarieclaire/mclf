@@ -1,0 +1,121 @@
+class ArduinoWebSerial {
+  constructor() {
+    this.port = null;
+    this.reader = null;
+    this.callbacks = {};
+    this.isConnected = false;
+    this.lineBuffer = '';
+  }
+
+  // Check if Web Serial API is supported
+  isSupported() {
+    return 'serial' in navigator;
+  }
+
+  // Connect to Arduino with user selection
+  async connect() {
+    if (!this.isSupported()) {
+      throw new Error('Web Serial API not supported in this browser');
+    }
+
+    try {
+      // Request a port and open a connection
+      this.port = await navigator.serial.requestPort();
+      await this.port.open({ baudRate: 9600 });
+      
+      this.isConnected = true;
+      console.log('Arduino connected successfully!');
+      
+      // Start reading data
+      this.startReading();
+      
+      if (this.callbacks.connected) {
+        this.callbacks.connected();
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to connect to Arduino:', error);
+      if (this.callbacks.error) {
+        this.callbacks.error(error.message);
+      }
+      return false;
+    }
+  }
+
+  // Start reading data from Arduino
+  async startReading() {
+    if (!this.port || !this.port.readable) return;
+
+    try {
+      this.reader = this.port.readable.getReader();
+      
+      while (this.isConnected) {
+        const { value, done } = await this.reader.read();
+        if (done) break;
+        
+        // Convert bytes to string
+        const text = new TextDecoder().decode(value);
+        this.processData(text);
+      }
+    } catch (error) {
+      console.error('Error reading from Arduino:', error);
+      if (this.callbacks.error) {
+        this.callbacks.error(error.message);
+      }
+    }
+  }
+
+  // Process incoming data and handle line buffering
+  processData(text) {
+    for (const char of text) {
+      if (char === '\n' || char === '\r') {
+        if (this.lineBuffer.length > 0) {
+          const line = this.lineBuffer.trim();
+          if (this.callbacks.line) {
+            this.callbacks.line(line);
+          }
+          this.lineBuffer = '';
+        }
+      } else {
+        this.lineBuffer += char;
+      }
+    }
+  }
+
+  // Set up event callbacks
+  on(event, callback) {
+    this.callbacks[event] = callback;
+  }
+
+  // Disconnect from Arduino
+  async disconnect() {
+    this.isConnected = false;
+    
+    if (this.reader) {
+      await this.reader.cancel();
+      this.reader = null;
+    }
+    
+    if (this.port) {
+      await this.port.close();
+      this.port = null;
+    }
+    
+    if (this.callbacks.disconnected) {
+      this.callbacks.disconnected();
+    }
+  }
+
+  // Write data to Arduino (if needed)
+  async write(data) {
+    if (!this.port || !this.port.writable) {
+      throw new Error('Port not connected or not writable');
+    }
+
+    const writer = this.port.writable.getWriter();
+    const encoder = new TextEncoder();
+    await writer.write(encoder.encode(data));
+    writer.releaseLock();
+  }
+}
