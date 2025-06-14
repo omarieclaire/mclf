@@ -1,0 +1,246 @@
+.doug {
+  color: var(--green);
+  font-weight: strong;
+  font-size: 1.2rem;
+  letter-spacing: 7px;
+  /* font-weight: bold; */
+  padding: 0 5px;
+  border-top: 2px solid var(--dark-yellow);
+  border-bottom: 2px solid var(--dark-yellow);
+  margin: 1rem 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Soft black background with 50% opacity */
+  border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
+}
+
+.sharebox-content-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center; /* Centers the items vertically */
+  align-items: center; /* Centers the items horizontally */
+  height: 100%; /* Ensure the container has a height for centering */
+  margin: 10px;
+}
+
+/* Social Deathmachined Overlay */
+.screenshot-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--overlay-background);
+  z-index: 1000;
+}
+
+.social-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 95vw; /* Restrict max width */
+  /* width: 300px; Adjust the size of the card */
+  border: 1px dashed var(--green);
+  outline: 1px solid var(--black);
+  background-color: var(--dark-grey);
+  padding: 15px;
+  font-family: var(--font-main);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  z-index: 10000;
+}
+
+.social-card * {
+}
+
+@media (min-width: 600px) {
+  .social-card {
+    max-width: 500px; /* Restrict max width */
+    width: auto; /* Adjust the size of the card */
+  }
+}
+
+.social-card-image {
+  /* width: 80vw;
+  max-width: 500px;
+  border: 3px dashed var(--green); */
+  margin-bottom: 1rem;
+}
+
+/* Text Styles */
+.game-over-title {
+  color: var(--colour-game-over);
+  font: var(--font-game-over);
+}
+.ascii-art {
+  padding: 15px 0;
+  /* rotate: 0deg; */
+  font-size: 1rem;
+}
+.ascii-art,
+.message-reason,
+.message-text,
+.score-text {
+  color: var(--light-purp);
+  /* font: var(--font-main); */
+}
+.message-reason {
+  color: var(--hot-pink);
+  font: var(--font-reason);
+}
+.message-text {
+  color: var(--light-purp);
+  /* font: var(--font-message); */
+  /* font-size: 1rem; */
+  text-transform: uppercase;
+  /* margin-top: 2rem; */
+  font-size: clamp(1rem, 1.2rem, 5rem);
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 600px) {
+  .message-text {
+    /* font-size: 1.3rem; */
+    text-transform: uppercase;
+  }
+}
+.cute-death-face {
+  color: var(--light-purp);
+  /* color: var(--med-purp); */
+  font: var(--font-face);
+  font-size: 1.1rem;
+}
+
+.score-text {
+  /* color: var(--dark-yellow); */
+  font: var(--font-score);
+  font: var(--font-reason);
+  color: var(--hot-pink);
+  background-color: rgba(0, 0, 0, 0.7); /* Soft black background with 50% opacity */
+  border-radius: 3px; /* Optional: Rounds the background edges for a softer look */
+  font-size: clamp(1rem, 2rem, 5rem);
+
+  /* font-size: 1.1rem; */
+  /* letter-spacing: 2px; */
+}
+
+@media (min-width: 600px) {
+  .score-text {
+    font-size: 2rem;
+    text-transform: uppercase;
+  }
+}
+
+.message-reason {
+  font-size: 1.9rem;
+}
+
+.social-card h2,
+.social-card pre,
+.social-card p {
+  text-align: center;
+  margin: 5px 0;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+#CTO {
+  text-align: center;
+  /* max-width: 90%; */
+  margin: 0 auto;
+  color: var(--light-purp);
+  /* letter-spacing: 0.3rem; */
+  /* border-bottom: 1px solid var(--hot-pink); */
+
+  /* color: var(--hot-pink);
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-transform: capitalize;
+  letter-spacing: 0.5rem; */
+}
+
+#CTO a {
+  text-align: center;
+  font-size: 1.2rem;
+  /* margin: 0 auto; */
+  color: var(--light-purp);
+}
+
+@media (min-width: 600px) {
+  #CTO {
+    max-width: 80%;
+  }
+}
+
+.button-container {
+  background-color: transparent;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.all-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  /* justify-content: center; */
+
+  margin: 5rem auto 1rem auto;
+  max-width: 95vw; /* Restrict max width */
+}
+
+@media (min-width: 600px) {
+  .all-buttons-container {
+    width: 500px;
+    max-width: 500px; /* Restrict max width */
+  }
+}
+
+.share-btn {
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: ${isLarge ? '12rem' : '2.5rem'}; */
+  /* height: ${isLarge ? '2.5rem' : '2.5rem'}; */
+  transition: opacity 0.2s;
+  /* color: white; */
+  font-weight: bold;
+  /* font-size: ${isLarge ? '1.3rem' : '1.3rem'}; */
+}
+
+.thanks-doug {
+  color: var(--green);
+  /* color: var(--med-purp); */
+  font: var(--font-face);
+  font-size: clamp(1rem, 1.6rem, 3rem);
+  padding: 0;
+  margin: 0 auto;
+}
+
+.never-had-a-chance {
+  margin: 0 auto;
+  color: var(--light-purp);
+}
