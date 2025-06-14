@@ -3510,39 +3510,62 @@ class KeyboardControls extends BaseControl {
     this.setupKeyboardControls();
   }
 
-  setupKeyboardControls() {
-    this.addEventListenerWithTracking(document, "keydown", (e) => {
-      if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
-        if (e.key === "ArrowLeft") {
-          this.game.tutorialSystem.handleMove("left");
-          return;
-        }
-        if (e.key === "ArrowRight") {
-          this.game.tutorialSystem.handleMove("right");
-          return;
-        }
-      }
+setupKeyboardControls() {
+  this.addEventListenerWithTracking(document, "keydown", (e) => {
+    const keyStart = performance.now();
+    console.log(`⌨️  KEYBOARD: "${e.key}" at ${keyStart.toFixed(2)}ms`);
 
-      if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
-        if (e.key === " " || e.key === "Spacebar") {
-          this.game.start();
-          document.getElementById("pregame-msg-box").style.display = "none";
-          let gameInfoContainer = document.getElementById("game-info-container");
-          gameInfoContainer.style.opacity = "1";
-          gameInfoContainer.style.visibility = "visible";
-        }
+    if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
+      if (e.key === "ArrowLeft") {
+        console.log("⌨️  KEYBOARD: LEFT tutorial");
+        this.game.tutorialSystem.handleMove("left");
+        const keyTotal = performance.now() - keyStart;
+        console.log(`⌨️  KEYBOARD LEFT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
         return;
       }
-
-      if (e.key === "ArrowLeft") {
-        this.handleInput("left", performance.now());
-      } else if (e.key === "ArrowRight") {
-        this.handleInput("right", performance.now());
-      } else if (e.key === "p" || e.key === "P") {
-        this.game.stateManager.togglePause();
+      if (e.key === "ArrowRight") {
+        console.log("⌨️  KEYBOARD: RIGHT tutorial");
+        this.game.tutorialSystem.handleMove("right");
+        const keyTotal = performance.now() - keyStart;
+        console.log(`⌨️  KEYBOARD RIGHT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
+        return;
       }
-    });
-  }
+    }
+
+    if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
+      if (e.key === " " || e.key === "Spacebar") {
+        console.log("⌨️  KEYBOARD: SPACE starting game");
+        this.game.start();
+        document.getElementById("pregame-msg-box").style.display = "none";
+        let gameInfoContainer = document.getElementById("game-info-container");
+        gameInfoContainer.style.opacity = "1";
+        gameInfoContainer.style.visibility = "visible";
+        const keyTotal = performance.now() - keyStart;
+        console.log(`⌨️  KEYBOARD SPACE: Complete in ${keyTotal.toFixed(2)}ms`);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowLeft") {
+      console.log("⌨️  KEYBOARD: LEFT game input");
+      const inputStart = performance.now();
+      this.handleInput("left", performance.now());
+      const inputTime = performance.now() - inputStart;
+      const keyTotal = performance.now() - keyStart;
+      console.log(`⌨️  KEYBOARD LEFT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
+    } else if (e.key === "ArrowRight") {
+      console.log("⌨️  KEYBOARD: RIGHT game input");
+      const inputStart = performance.now();
+      this.handleInput("right", performance.now());
+      const inputTime = performance.now() - inputStart;
+      const keyTotal = performance.now() - keyStart;
+      console.log(`⌨️  KEYBOARD RIGHT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
+    } else if (e.key === "p" || e.key === "P") {
+      console.log("⌨️  KEYBOARD: PAUSE");
+      this.game.stateManager.togglePause();
+    }
+  });
+}
 }
 
 class TouchControls extends BaseControl {
@@ -3975,47 +3998,71 @@ class LoserLane {
       this.arduino = new ArduinoWebSerial();
 
       // Handle incoming lines from Arduino - use EXACT same path as keyboard
-      this.arduino.on("line", (line) => {
-        console.log("Arduino data received:", line);
+  this.arduino.on("line", (line) => {
+  const eventStart = performance.now();
+  console.log(`🎮 Arduino RAW: "${line}" at ${eventStart.toFixed(2)}ms`);
 
-        if (line === "LEFT") {
-          console.log("Processing LEFT command...");
+  if (line === "LEFT") {
+    console.log("🔄 Processing LEFT command...");
+    
+    const startButton = document.getElementById("start-button");
+    if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+      console.log("🎯 LEFT: Clicking start button");
+      startButton.click();
+      const totalTime = performance.now() - eventStart;
+      console.log(`✅ LEFT: Start button complete in ${totalTime.toFixed(2)}ms`);
+      return;
+    }
 
-          // Check if start button is visible and game isn't playing
-          const startButton = document.getElementById("start-button");
-          if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
-            // Trigger start button click
-            startButton.click();
-            return;
-          }
+    console.log("🎮 LEFT: Creating fake keyboard event");
+    const fakeEventStart = performance.now();
+    const fakeEvent = new KeyboardEvent("keydown", {
+      key: "ArrowLeft",
+      code: "ArrowLeft",
+      bubbles: true,
+    });
+    const fakeEventTime = performance.now() - fakeEventStart;
+    console.log(`⚡ LEFT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
+    
+    const dispatchStart = performance.now();
+    document.dispatchEvent(fakeEvent);
+    const dispatchTime = performance.now() - dispatchStart;
+    console.log(`🚀 LEFT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
+    
+    const totalTime = performance.now() - eventStart;
+    console.log(`✅ LEFT: Total processing time ${totalTime.toFixed(2)}ms`);
+    
+  } else if (line === "RIGHT") {
+    console.log("🔄 Processing RIGHT command...");
+    
+    const startButton = document.getElementById("start-button");
+    if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+      console.log("🎯 RIGHT: Clicking start button");
+      startButton.click();
+      const totalTime = performance.now() - eventStart;
+      console.log(`✅ RIGHT: Start button complete in ${totalTime.toFixed(2)}ms`);
+      return;
+    }
 
-          // Create and dispatch a fake keyboard event - identical to real keyboard
-          const fakeEvent = new KeyboardEvent("keydown", {
-            key: "ArrowLeft",
-            code: "ArrowLeft",
-            bubbles: true,
-          });
-          document.dispatchEvent(fakeEvent);
-        } else if (line === "RIGHT") {
-          console.log("Processing RIGHT command...");
-
-          // Check if start button is visible and game isn't playing
-          const startButton = document.getElementById("start-button");
-          if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
-            // Trigger start button click
-            startButton.click();
-            return;
-          }
-
-          // Create and dispatch a fake keyboard event - identical to real keyboard
-          const fakeEvent = new KeyboardEvent("keydown", {
-            key: "ArrowRight",
-            code: "ArrowRight",
-            bubbles: true,
-          });
-          document.dispatchEvent(fakeEvent);
-        }
-      });
+    console.log("🎮 RIGHT: Creating fake keyboard event");
+    const fakeEventStart = performance.now();
+    const fakeEvent = new KeyboardEvent("keydown", {
+      key: "ArrowRight",
+      code: "ArrowRight",
+      bubbles: true,
+    });
+    const fakeEventTime = performance.now() - fakeEventStart;
+    console.log(`⚡ RIGHT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
+    
+    const dispatchStart = performance.now();
+    document.dispatchEvent(fakeEvent);
+    const dispatchTime = performance.now() - dispatchStart;
+    console.log(`🚀 RIGHT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
+    
+    const totalTime = performance.now() - eventStart;
+    console.log(`✅ RIGHT: Total processing time ${totalTime.toFixed(2)}ms`);
+  }
+});
 
       this.arduino.on("connected", () => {
         console.log("Arduino connected!");

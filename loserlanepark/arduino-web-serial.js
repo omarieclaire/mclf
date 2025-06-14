@@ -86,20 +86,29 @@ class ArduinoWebSerial {
 
   // Process incoming data and handle line buffering
   processData(text) {
-    for (const char of text) {
-      if (char === "\n" || char === "\r") {
-        if (this.lineBuffer.length > 0) {
-          const line = this.lineBuffer.trim();
-          if (this.callbacks.line) {
-            this.callbacks.line(line);
-          }
-          this.lineBuffer = "";
+  const receiveTime = performance.now();
+  console.log(`📡 Arduino raw bytes at ${receiveTime.toFixed(2)}ms:`, JSON.stringify(text));
+  
+  for (const char of text) {
+    if (char === "\n" || char === "\r") {
+      if (this.lineBuffer.length > 0) {
+        const line = this.lineBuffer.trim();
+        const processTime = performance.now();
+        console.log(`📥 Arduino line processed: "${line}" at ${processTime.toFixed(2)}ms`);
+        
+        if (this.callbacks.line) {
+          const callbackStart = performance.now();
+          this.callbacks.line(line);
+          const callbackTime = performance.now() - callbackStart;
+          console.log(`⚡ Arduino callback took ${callbackTime.toFixed(2)}ms`);
         }
-      } else {
-        this.lineBuffer += char;
+        this.lineBuffer = "";
       }
+    } else {
+      this.lineBuffer += char;
     }
   }
+}
 
   // Set up event callbacks
   on(event, callback) {
