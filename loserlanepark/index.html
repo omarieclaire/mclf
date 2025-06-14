@@ -61,11 +61,8 @@
     <link rel="stylesheet" href="tutorial.css" />
     <link rel="stylesheet" href="settings.css" />
 <!-- <script src="p5.serialport.js"></script> -->
-<button id="connect-arduino" style="position: fixed; top: 10px; right: 10px; z-index: 1000; padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer;">
-    Connect Arduino
-</button>
-<script src="arduino-web-serial.js"></script>
 
+<script src="arduino-web-serial.js"></script>
 
     <script src="html2canvas.js"></script>
   </head>
@@ -163,6 +160,18 @@
             <button id="save-preset">Save Current</button>
           </div>
           <button id="close-settings" class="close-button">×</button>
+        </div>
+
+        <!-- Arduino Controls Section -->
+        <div class="settings-section">
+          <h4>Arduino Connection</h4>
+          <div class="setting-group">
+            <div class="setting-row">
+              <button id="connect-arduino" style="padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; width: 100%;">
+                Connect Arduino
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Debug Settings -->
