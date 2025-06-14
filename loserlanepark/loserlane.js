@@ -3966,112 +3966,99 @@ class LoserLane {
     this.lastFrameTime = performance.now();
   }
 
-  initializeArduino() {
-    try {
-      // Only initialize if Web Serial is supported
-      if (!("serial" in navigator)) {
-        console.log("Web Serial API not supported in this browser");
-        return;
-      }
-
-      this.arduino = new ArduinoWebSerial();
-
-      // Handle incoming lines from Arduino
-      this.arduino.on("line", (line) => {
-        console.log("Arduino data received:", line);
-
-        // Debug logging
-        console.log("this.controls exists:", !!this.controls);
-        if (this.controls) {
-          console.log("this.controls.keyboard exists:", !!this.controls.keyboard);
-          if (this.controls.keyboard) {
-            console.log("this.controls.keyboard.handleInput exists:", typeof this.controls.keyboard.handleInput);
-          }
-        }
-
-        console.log("Game state:", {
-          isPlaying: this.stateManager?.isPlaying,
-          tutorialComplete: this.tutorialComplete,
-          isDead: this.stateManager?.isDead,
-        });
-
-        if (line === "LEFT") {
-          console.log("Processing LEFT command...");
-          if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
-            console.log("Calling this.controls.keyboard.handleInput('left')");
-            this.controls.keyboard.handleInput("left", performance.now());
-            console.log("Called handleInput for LEFT");
-          } else {
-            console.log("ERROR: Cannot call handleInput - missing controls");
-          }
-        } else if (line === "RIGHT") {
-          console.log("Processing RIGHT command...");
-          if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
-            console.log("Calling this.controls.keyboard.handleInput('right')");
-            this.controls.keyboard.handleInput("right", performance.now());
-            console.log("Called handleInput for RIGHT");
-          } else {
-            console.log("ERROR: Cannot call handleInput - missing controls");
-          }
-        }
-      });
-      this.arduino.on("connected", () => {
-        console.log("Arduino connected!");
-        // Update button text
-        const button = document.getElementById("connect-arduino");
-        if (button) button.textContent = "Disconnect Arduino";
-      });
-
-      this.arduino.on("disconnected", () => {
-        console.log("Arduino disconnected");
-        const button = document.getElementById("connect-arduino");
-        if (button) button.textContent = "Connect Arduino";
-      });
-
-      this.arduino.on("error", (error) => {
-        console.log("Arduino error:", error);
-      });
-
-      const connectButton = document.getElementById("connect-arduino");
-      if (connectButton) {
-        connectButton.addEventListener("click", async () => {
-          // Add visual feedback immediately
-          connectButton.textContent = "Connecting...";
-          connectButton.disabled = true;
-
-          try {
-            if (this.arduino.isConnected) {
-              await this.arduino.disconnect();
-              connectButton.textContent = "Connect Arduino";
-            } else {
-              // Check if Web Serial is supported
-              if (!this.arduino.isSupported()) {
-                alert("Web Serial API not supported. Please use Chrome or Edge browser.");
-                connectButton.textContent = "Connect Arduino";
-                connectButton.disabled = false;
-                return;
-              }
-
-              const success = await this.arduino.connect();
-              if (success) {
-                connectButton.textContent = "Disconnect Arduino";
-              } else {
-                connectButton.textContent = "Connect Arduino";
-              }
-            }
-          } catch (error) {
-            console.error("Connection error:", error);
-            alert(`Connection failed: ${error.message}`);
-            connectButton.textContent = "Connect Arduino";
-          }
-
-          connectButton.disabled = false;
-        });
-      }
-    } catch (error) {
-      console.log("Failed to initialize Arduino connection:", error);
+initializeArduino() {
+  try {
+    // Only initialize if Web Serial is supported
+    if (!("serial" in navigator)) {
+      console.log("Web Serial API not supported in this browser");
+      return;
     }
+
+    this.arduino = new ArduinoWebSerial();
+
+    // Handle incoming lines from Arduino - use EXACT same path as keyboard
+    this.arduino.on("line", (line) => {
+      console.log("Arduino data received:", line);
+
+      if (line === "LEFT") {
+        console.log("Processing LEFT command...");
+        // Create and dispatch a fake keyboard event - identical to real keyboard
+        const fakeEvent = new KeyboardEvent('keydown', {
+          key: 'ArrowLeft',
+          code: 'ArrowLeft',
+          bubbles: true
+        });
+        document.dispatchEvent(fakeEvent);
+        
+      } else if (line === "RIGHT") {
+        console.log("Processing RIGHT command...");
+        // Create and dispatch a fake keyboard event - identical to real keyboard  
+        const fakeEvent = new KeyboardEvent('keydown', {
+          key: 'ArrowRight', 
+          code: 'ArrowRight',
+          bubbles: true
+        });
+        document.dispatchEvent(fakeEvent);
+      }
+    });
+
+    this.arduino.on("connected", () => {
+      console.log("Arduino connected!");
+      // Update button text
+      const button = document.getElementById("connect-arduino");
+      if (button) button.textContent = "Disconnect Arduino";
+    });
+
+    this.arduino.on("disconnected", () => {
+      console.log("Arduino disconnected");
+      const button = document.getElementById("connect-arduino");
+      if (button) button.textContent = "Connect Arduino";
+    });
+
+    this.arduino.on("error", (error) => {
+      console.log("Arduino error:", error);
+    });
+
+    const connectButton = document.getElementById("connect-arduino");
+    if (connectButton) {
+      connectButton.addEventListener("click", async () => {
+        // Add visual feedback immediately
+        connectButton.textContent = "Connecting...";
+        connectButton.disabled = true;
+
+        try {
+          if (this.arduino.isConnected) {
+            await this.arduino.disconnect();
+            connectButton.textContent = "Connect Arduino";
+          } else {
+            // Check if Web Serial is supported
+            if (!this.arduino.isSupported()) {
+              alert("Web Serial API not supported. Please use Chrome or Edge browser.");
+              connectButton.textContent = "Connect Arduino";
+              connectButton.disabled = false;
+              return;
+            }
+
+            const success = await this.arduino.connect();
+            if (success) {
+              connectButton.textContent = "Disconnect Arduino";
+            } else {
+              connectButton.textContent = "Connect Arduino";
+            }
+          }
+        } catch (error) {
+          console.error("Connection error:", error);
+          alert(`Connection failed: ${error.message}`);
+          connectButton.textContent = "Connect Arduino";
+        }
+
+        connectButton.disabled = false;
+      });
+    }
+  } catch (error) {
+    console.log("Failed to initialize Arduino connection:", error);
   }
+}
 
   initializeSounds() {
     this.soundManager.setupMuteButton();
