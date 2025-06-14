@@ -4168,12 +4168,23 @@ class LoserLane {
     }
   }
 
+  sendArduinoCommand(command) {
+  if (this.arduino && this.arduino.isConnected) {
+    console.log(`Sending to Arduino: ${command}`);
+    this.arduino.write(command + '\n');
+  }
+}
+
+
   // === Game Loop Methods ===
 
   start() {
     if (this.stateManager.start()) {
       this.lastFrameTime = performance.now();
       this.frameId = requestAnimationFrame((t) => this.update(t));
+
+
+          this.sendArduinoCommand('START');
 
       // Start background music when game starts
       //  this.soundManager.play("backgroundMusic", 1.0);
