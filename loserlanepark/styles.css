@@ -127,6 +127,9 @@ a {
   display: inline-block;
   width: calc(100vw / 42); /* 42 is your CONFIG.GAME.WIDTH */
   height: calc(2vh);
+
+  width: 1ch; /* One character width exactly */
+  height: 1.2em; /* Use em for consistent ratio */
   text-align: center;
   box-sizing: border-box;
 }
