@@ -1,7 +1,7 @@
 const CONFIG = {
   GAME: {
     INVINCIBLE: false,
-    WIDTH: 42,
+    WIDTH: 44,
     HEIGHT: Math.floor(window.innerHeight / 20),
     INITIAL_SPEED: 50,
     MIN_SPEED: 300,
