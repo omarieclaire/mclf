@@ -3488,11 +3488,11 @@ class BaseControl {
 
   handleInput(direction, now) {
     if (this.game.arduino && this.game.arduino.isConnected) {
-    // Add a small delay to prevent overwhelming the Arduino
-    setTimeout(() => {
-      this.game.sendArduinoCommand(direction.toUpperCase());
-    }, 10);
-  }
+      // Add a small delay to prevent overwhelming the Arduino
+      setTimeout(() => {
+        this.game.sendArduinoCommand(direction.toUpperCase());
+      }, 10);
+    }
     if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
       this.game.tutorialSystem.handleMove(direction);
       return;
@@ -3920,7 +3920,6 @@ class TutorialSystem {
   }
 }
 
-
 class LoserLane {
   constructor() {
     this.initializeCore();
@@ -3929,8 +3928,7 @@ class LoserLane {
     this.initializeSounds();
     try {
       this.initializeArduino();
-      game.arduino.write('test\n');
-
+      game.arduino.write("test\n");
     } catch (error) {
       console.log("Arduino not available, continuing without it");
     }
@@ -3982,21 +3980,39 @@ initializeArduino() {
 
       if (line === "LEFT") {
         console.log("Processing LEFT command...");
+        
+        // Check if start button is visible and game isn't playing
+        const startButton = document.getElementById("start-button");
+        if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+          // Trigger start button click
+          startButton.click();
+          return;
+        }
+        
         // Create and dispatch a fake keyboard event - identical to real keyboard
-        const fakeEvent = new KeyboardEvent('keydown', {
-          key: 'ArrowLeft',
-          code: 'ArrowLeft',
-          bubbles: true
+        const fakeEvent = new KeyboardEvent("keydown", {
+          key: "ArrowLeft",
+          code: "ArrowLeft",
+          bubbles: true,
         });
         document.dispatchEvent(fakeEvent);
         
       } else if (line === "RIGHT") {
         console.log("Processing RIGHT command...");
-        // Create and dispatch a fake keyboard event - identical to real keyboard  
-        const fakeEvent = new KeyboardEvent('keydown', {
-          key: 'ArrowRight', 
-          code: 'ArrowRight',
-          bubbles: true
+        
+        // Check if start button is visible and game isn't playing
+        const startButton = document.getElementById("start-button");
+        if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+          // Trigger start button click
+          startButton.click();
+          return;
+        }
+        
+        // Create and dispatch a fake keyboard event - identical to real keyboard
+        const fakeEvent = new KeyboardEvent("keydown", {
+          key: "ArrowRight",
+          code: "ArrowRight",
+          bubbles: true,
         });
         document.dispatchEvent(fakeEvent);
       }
@@ -4164,12 +4180,11 @@ initializeArduino() {
   }
 
   sendArduinoCommand(command) {
-  if (this.arduino && this.arduino.isConnected) {
-    console.log(`Sending to Arduino: ${command}`);
-    this.arduino.write(command + '\n');
+    if (this.arduino && this.arduino.isConnected) {
+      console.log(`Sending to Arduino: ${command}`);
+      this.arduino.write(command + "\n");
+    }
   }
-}
-
 
   // === Game Loop Methods ===
 
@@ -4178,8 +4193,7 @@ initializeArduino() {
       this.lastFrameTime = performance.now();
       this.frameId = requestAnimationFrame((t) => this.update(t));
 
-
-          this.sendArduinoCommand('START');
+      this.sendArduinoCommand("START");
 
       // Start background music when game starts
       //  this.soundManager.play("backgroundMusic", 1.0);
@@ -4308,25 +4322,25 @@ initializeArduino() {
 
   // === Game State Methods ===
 
- die(reason) {
-  if (this.stateManager.state.isDead) return;
-  
-  // Send DEATH command to Arduino IMMEDIATELY - before any visual effects
-  this.sendArduinoCommand('DEATH');
-  
-  // Force the command to be sent right now by flushing any buffers
-  if (this.arduino && this.arduino.port && this.arduino.port.writable) {
-    // Give the browser a moment to actually send the data
-    setTimeout(() => {
+  die(reason) {
+    if (this.stateManager.state.isDead) return;
+
+    // Send DEATH command to Arduino IMMEDIATELY - before any visual effects
+    this.sendArduinoCommand("DEATH");
+
+    // Force the command to be sent right now by flushing any buffers
+    if (this.arduino && this.arduino.port && this.arduino.port.writable) {
+      // Give the browser a moment to actually send the data
+      setTimeout(() => {
+        this.setDeathState();
+        this.handleDeathEffects(reason);
+      }, 10); // Very short delay to ensure Arduino command goes out first
+    } else {
+      // If no Arduino, proceed normally
       this.setDeathState();
       this.handleDeathEffects(reason);
-    }, 10); // Very short delay to ensure Arduino command goes out first
-  } else {
-    // If no Arduino, proceed normally
-    this.setDeathState();
-    this.handleDeathEffects(reason);
+    }
   }
-}
 
   setDeathState() {
     // Play death sound and stop background music
@@ -4369,16 +4383,16 @@ initializeArduino() {
   }
 
   restart() {
-  console.log("\n=== Game Restart Initiated ===");
+    console.log("\n=== Game Restart Initiated ===");
 
-  // Send RESTART command to Arduino to turn LED blue (waiting)
-  this.sendArduinoCommand('RESTART');
+    // Send RESTART command to Arduino to turn LED blue (waiting)
+    this.sendArduinoCommand("RESTART");
 
-  // Stop the current game loop first
-  if (this.frameId) {
-    cancelAnimationFrame(this.frameId);
-    this.frameId = null;
-  }
+    // Stop the current game loop first
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
+    }
 
     // 2. Reset audio
     this.soundManager.resetAll();
