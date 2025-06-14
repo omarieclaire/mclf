@@ -13,35 +13,53 @@ class ArduinoWebSerial {
   }
 
   // Connect to Arduino with user selection
-  async connect() {
-    if (!this.isSupported()) {
-      throw new Error('Web Serial API not supported in this browser');
-    }
-
-    try {
-      // Request a port and open a connection
-      this.port = await navigator.serial.requestPort();
-      await this.port.open({ baudRate: 9600 });
-      
-      this.isConnected = true;
-      console.log('Arduino connected successfully!');
-      
-      // Start reading data
-      this.startReading();
-      
-      if (this.callbacks.connected) {
-        this.callbacks.connected();
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to connect to Arduino:', error);
-      if (this.callbacks.error) {
-        this.callbacks.error(error.message);
-      }
-      return false;
-    }
+async connect() {
+  if (!this.isSupported()) {
+    throw new Error('Web Serial API not supported in this browser');
   }
+
+  try {
+    console.log('🔍 Requesting serial port...');
+    
+    // Check what ports are available (this might help debug)
+    try {
+      const ports = await navigator.serial.getPorts();
+      console.log('📋 Previously authorized ports:', ports.length);
+      ports.forEach((port, index) => {
+        console.log(`Port ${index}:`, port);
+      });
+    } catch (e) {
+      console.log('Could not get existing ports:', e);
+    }
+    
+    // Request a port and open a connection
+    console.log('📤 Showing port picker dialog...');
+    this.port = await navigator.serial.requestPort();
+    console.log('✅ Port selected:', this.port);
+    
+    console.log('🔌 Opening port with baudRate 9600...');
+    await this.port.open({ baudRate: 9600 });
+    console.log('✅ Port opened successfully');
+    
+    this.isConnected = true;
+    console.log('Arduino connected successfully!');
+    
+    // Start reading data
+    this.startReading();
+    
+    if (this.callbacks.connected) {
+      this.callbacks.connected();
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Connection failed at step:', error.name, error.message);
+    if (this.callbacks.error) {
+      this.callbacks.error(error.message);
+    }
+    return false;
+  }
+}
 
   // Start reading data from Arduino
   async startReading() {
