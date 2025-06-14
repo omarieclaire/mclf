@@ -3270,7 +3270,6 @@ class GameStateManager {
   }
 
   start() {
-    
     if (this.state.isPlaying) return false;
 
     const messageBox = document.getElementById("pregame-msg-box");
@@ -3915,7 +3914,6 @@ class TutorialSystem {
   }
 }
 
-
 class ArduinoWebSerial extends EventTarget {
   constructor() {
     super();
@@ -3927,12 +3925,12 @@ class ArduinoWebSerial extends EventTarget {
   }
 
   isSupported() {
-    return 'serial' in navigator;
+    return "serial" in navigator;
   }
 
   async connect() {
     if (!this.isSupported()) {
-      throw new Error('Web Serial API not supported');
+      throw new Error("Web Serial API not supported");
     }
 
     try {
@@ -3947,13 +3945,13 @@ class ArduinoWebSerial extends EventTarget {
       this.startReading();
 
       this.isConnected = true;
-      this.dispatchEvent(new CustomEvent('connected'));
-      
-      console.log('Arduino connected successfully');
+      this.dispatchEvent(new CustomEvent("connected"));
+
+      console.log("Arduino connected successfully");
       return true;
     } catch (error) {
-      console.error('Failed to connect to Arduino:', error);
-      this.dispatchEvent(new CustomEvent('error', { detail: error }));
+      console.error("Failed to connect to Arduino:", error);
+      this.dispatchEvent(new CustomEvent("error", { detail: error }));
       return false;
     }
   }
@@ -3961,7 +3959,7 @@ class ArduinoWebSerial extends EventTarget {
   async disconnect() {
     try {
       this.isReading = false;
-      
+
       if (this.reader) {
         await this.reader.cancel();
         await this.reader.releaseLock();
@@ -3979,10 +3977,10 @@ class ArduinoWebSerial extends EventTarget {
       }
 
       this.isConnected = false;
-      this.dispatchEvent(new CustomEvent('disconnected'));
-      console.log('Arduino disconnected');
+      this.dispatchEvent(new CustomEvent("disconnected"));
+      console.log("Arduino disconnected");
     } catch (error) {
-      console.error('Error during disconnect:', error);
+      console.error("Error during disconnect:", error);
     }
   }
 
@@ -3993,33 +3991,33 @@ class ArduinoWebSerial extends EventTarget {
     this.reader = this.port.readable.getReader();
 
     try {
-      let buffer = '';
-      
+      let buffer = "";
+
       while (this.isReading && this.port) {
         const { value, done } = await this.reader.read();
-        
+
         if (done) break;
-        
+
         // Convert received data to string
         const chunk = new TextDecoder().decode(value);
         buffer += chunk;
 
         // Process complete lines
-        let lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+        let lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Keep incomplete line in buffer
 
         for (let line of lines) {
           line = line.trim();
           if (line) {
-            console.log('Arduino received:', line);
-            this.dispatchEvent(new CustomEvent('line', { detail: line }));
+            console.log("Arduino received:", line);
+            this.dispatchEvent(new CustomEvent("line", { detail: line }));
           }
         }
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Error reading from Arduino:', error);
-        this.dispatchEvent(new CustomEvent('error', { detail: error }));
+      if (error.name !== "AbortError") {
+        console.error("Error reading from Arduino:", error);
+        this.dispatchEvent(new CustomEvent("error", { detail: error }));
       }
     } finally {
       if (this.reader) {
@@ -4030,37 +4028,52 @@ class ArduinoWebSerial extends EventTarget {
   }
 
   // Send command to Arduino
-  sendCommand(command) {
-    if (this.isConnected && this.writer) {
-      try {
-        const data = command + '\n';
-        this.writer.write(new TextEncoder().encode(data));
-        console.log(`Sent to Arduino: ${command}`);
-      } catch (error) {
-        console.error('Failed to send command to Arduino:', error);
-      }
-    } else {
-      console.log(`Arduino not connected, would send: ${command}`);
+// Send command to Arduino
+sendCommand(command) {
+  console.log("🚀 ATTEMPTING TO SEND COMMAND:", command);
+  console.log("Arduino state:", {
+    isConnected: this.isConnected,
+    hasWriter: !!this.writer,
+    port: !!this.port
+  });
+
+  if (this.isConnected && this.writer) {
+    try {
+      const data = command + '\n';
+      this.writer.write(new TextEncoder().encode(data));
+      console.log(`✅ Successfully sent to Arduino: ${command}`);
+    } catch (error) {
+      console.error('❌ Failed to send command to Arduino:', error);
     }
+  } else {
+    console.log(`⚠️ Arduino not connected, would send: ${command}`);
+    console.log("Connection details:", {
+      isConnected: this.isConnected,
+      hasWriter: !!this.writer,
+      hasPort: !!this.port
+    });
   }
+}
+// Convenience methods for game events
+onPlayerDeath() {
+  console.log("💀 onPlayerDeath() called - sending DEATH command");
+  this.sendCommand('DEATH');
+}
 
-  // Convenience methods for game events
-  onPlayerDeath() {
-    this.sendCommand('DEATH');
-  }
+onGameStart() {
+  console.log("🎮 onGameStart() called - sending ALIVE command");
+  this.sendCommand('ALIVE');
+}
 
-  onGameStart() {
-    this.sendCommand('ALIVE');
-  }
-
-  onCollision() {
-    this.sendCommand('COLLISION');
-  }
+onCollision() {
+  console.log("💥 onCollision() called - sending COLLISION command");
+  this.sendCommand('COLLISION');
+}
 
   // Event listener helpers (for backwards compatibility with your existing code)
   on(event, callback) {
     this.addEventListener(event, (e) => {
-      if (event === 'line') {
+      if (event === "line") {
         callback(e.detail);
       } else {
         callback(e);
@@ -4326,17 +4339,17 @@ class LoserLane {
 
   start() {
     if (this.stateManager.start()) {
-    // Send alive command to Arduino when game starts
-    if (this.arduino && this.arduino.isConnected) {
-      this.arduino.onGameStart();
-    }
-    
-    this.lastFrameTime = performance.now();
-    this.frameId = requestAnimationFrame((t) => this.update(t));
+      // Send alive command to Arduino when game starts
+      if (this.arduino && this.arduino.isConnected) {
+        this.arduino.onGameStart();
+      }
 
-    // Start background music when game starts
-    //  this.soundManager.play("backgroundMusic", 1.0);
-  }
+      this.lastFrameTime = performance.now();
+      this.frameId = requestAnimationFrame((t) => this.update(t));
+
+      // Start background music when game starts
+      //  this.soundManager.play("backgroundMusic", 1.0);
+    }
   }
 
   update(timestamp) {
@@ -4462,12 +4475,11 @@ class LoserLane {
   // === Game State Methods ===
 
   die(reason) {
-    
     if (this.stateManager.state.isDead) return;
 
     if (this.arduino && this.arduino.isConnected) {
-    this.arduino.onPlayerDeath();
-  }
+      this.arduino.onPlayerDeath();
+    }
 
     this.setDeathState();
     this.handleDeathEffects(reason);
@@ -4549,11 +4561,10 @@ class LoserLane {
       // Initialize new world
       this.initializeGameWorld();
 
-
-// Send alive command to Arduino when restarting
-    if (this.arduino && this.arduino.isConnected) {
-      this.arduino.onGameStart();
-    }
+      // Send alive command to Arduino when restarting
+      if (this.arduino && this.arduino.isConnected) {
+        this.arduino.onGameStart();
+      }
 
       // Wait another brief moment before starting
       setTimeout(() => {
