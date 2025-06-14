@@ -15,8 +15,8 @@
 
   /* Font settings */
   --font-main: "Courier New", monospace;
-  --font-size-base: 1rem;
-  --font-size-large: 1.5rem;
+  --font-size-base: .9rem;
+  --font-size-large: 1.3rem;
 
   /* Social card font styles */
   --font-game-over: bold calc(2 * var(--font-size-base)) var(--font-main);
