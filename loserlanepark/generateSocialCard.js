@@ -351,7 +351,7 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
 
   // Add everything to the overlay in the correct order
   overlay.appendChild(socialCard);
-  overlay.appendChild(allButtonsContainer); // All buttons together
+  // overlay.appendChild(allButtonsContainer); // All buttons together
   overlay.appendChild(messageContainer); // Message appears before buttons
 
 
@@ -361,5 +361,5 @@ function generateSocialCardNoSS(canvas, reason, score, messageString, randomFace
   const autoRestartTimeout = setTimeout(() => {
     gameInstance.restart();
     if (overlay) overlay.remove();
-  }, 6000);
+  }, 3500);
 }

@@ -553,14 +553,14 @@ class GameRenderer {
     const bikeCenterLane = Math.floor(bike.position.x + bike.width / 2);
     const currentBikeLane = Math.floor(bike.position.x);
 
-    console.log("Bike Debug:", {
-      exactX: bike.position.x.toFixed(2),
-      centerX: (bike.position.x + bike.width / 2).toFixed(2),
-      bikeCenterLane,
-      track1: this.config.LANES.TRACKS + 1,
-      track2: this.config.LANES.TRACKS + 5,
-      bankingLeft: bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5,
-    });
+    // console.log("Bike Debug:", {
+    //   exactX: bike.position.x.toFixed(2),
+    //   centerX: (bike.position.x + bike.width / 2).toFixed(2),
+    //   bikeCenterLane,
+    //   track1: this.config.LANES.TRACKS + 1,
+    //   track2: this.config.LANES.TRACKS + 5,
+    //   bankingLeft: bikeCenterLane === this.config.LANES.TRACKS + 1 || bikeCenterLane === this.config.LANES.TRACKS + 5,
+    // });
 
     const bikeY = this.config.GAME.CYCLIST_Y;
 
