@@ -195,7 +195,7 @@ a {
   }
 
   .grid-cell {
-    width: calc(100vw / 42);
+    width: calc(100vw / 44);
     height: 1.5vh;
 
       width: 1ch; /* One character width exactly */
