@@ -3270,6 +3270,7 @@ class GameStateManager {
   }
 
   start() {
+    
     if (this.state.isPlaying) return false;
 
     const messageBox = document.getElementById("pregame-msg-box");
@@ -3914,6 +3915,160 @@ class TutorialSystem {
   }
 }
 
+
+class ArduinoWebSerial extends EventTarget {
+  constructor() {
+    super();
+    this.port = null;
+    this.reader = null;
+    this.writer = null;
+    this.isConnected = false;
+    this.isReading = false;
+  }
+
+  isSupported() {
+    return 'serial' in navigator;
+  }
+
+  async connect() {
+    if (!this.isSupported()) {
+      throw new Error('Web Serial API not supported');
+    }
+
+    try {
+      // Request a port and open it
+      this.port = await navigator.serial.requestPort();
+      await this.port.open({ baudRate: 9600 });
+
+      // Get writer for sending data to Arduino
+      this.writer = this.port.writable.getWriter();
+
+      // Start reading from Arduino
+      this.startReading();
+
+      this.isConnected = true;
+      this.dispatchEvent(new CustomEvent('connected'));
+      
+      console.log('Arduino connected successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to connect to Arduino:', error);
+      this.dispatchEvent(new CustomEvent('error', { detail: error }));
+      return false;
+    }
+  }
+
+  async disconnect() {
+    try {
+      this.isReading = false;
+      
+      if (this.reader) {
+        await this.reader.cancel();
+        await this.reader.releaseLock();
+        this.reader = null;
+      }
+
+      if (this.writer) {
+        await this.writer.releaseLock();
+        this.writer = null;
+      }
+
+      if (this.port) {
+        await this.port.close();
+        this.port = null;
+      }
+
+      this.isConnected = false;
+      this.dispatchEvent(new CustomEvent('disconnected'));
+      console.log('Arduino disconnected');
+    } catch (error) {
+      console.error('Error during disconnect:', error);
+    }
+  }
+
+  async startReading() {
+    if (!this.port || !this.port.readable) return;
+
+    this.isReading = true;
+    this.reader = this.port.readable.getReader();
+
+    try {
+      let buffer = '';
+      
+      while (this.isReading && this.port) {
+        const { value, done } = await this.reader.read();
+        
+        if (done) break;
+        
+        // Convert received data to string
+        const chunk = new TextDecoder().decode(value);
+        buffer += chunk;
+
+        // Process complete lines
+        let lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (let line of lines) {
+          line = line.trim();
+          if (line) {
+            console.log('Arduino received:', line);
+            this.dispatchEvent(new CustomEvent('line', { detail: line }));
+          }
+        }
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Error reading from Arduino:', error);
+        this.dispatchEvent(new CustomEvent('error', { detail: error }));
+      }
+    } finally {
+      if (this.reader) {
+        this.reader.releaseLock();
+        this.reader = null;
+      }
+    }
+  }
+
+  // Send command to Arduino
+  sendCommand(command) {
+    if (this.isConnected && this.writer) {
+      try {
+        const data = command + '\n';
+        this.writer.write(new TextEncoder().encode(data));
+        console.log(`Sent to Arduino: ${command}`);
+      } catch (error) {
+        console.error('Failed to send command to Arduino:', error);
+      }
+    } else {
+      console.log(`Arduino not connected, would send: ${command}`);
+    }
+  }
+
+  // Convenience methods for game events
+  onPlayerDeath() {
+    this.sendCommand('DEATH');
+  }
+
+  onGameStart() {
+    this.sendCommand('ALIVE');
+  }
+
+  onCollision() {
+    this.sendCommand('COLLISION');
+  }
+
+  // Event listener helpers (for backwards compatibility with your existing code)
+  on(event, callback) {
+    this.addEventListener(event, (e) => {
+      if (event === 'line') {
+        callback(e.detail);
+      } else {
+        callback(e);
+      }
+    });
+  }
+}
+
 class LoserLane {
   constructor() {
     this.initializeCore();
@@ -3968,44 +4123,44 @@ class LoserLane {
       this.arduino = new ArduinoWebSerial();
 
       // Handle incoming lines from Arduino
-    this.arduino.on("line", (line) => {
-  console.log("Arduino data received:", line);
-  
-  // Debug logging
-  console.log("this.controls exists:", !!this.controls);
-  if (this.controls) {
-    console.log("this.controls.keyboard exists:", !!this.controls.keyboard);
-    if (this.controls.keyboard) {
-      console.log("this.controls.keyboard.handleInput exists:", typeof this.controls.keyboard.handleInput);
-    }
-  }
-  
-  console.log("Game state:", {
-    isPlaying: this.stateManager?.isPlaying,
-    tutorialComplete: this.tutorialComplete,
-    isDead: this.stateManager?.isDead
-  });
+      this.arduino.on("line", (line) => {
+        console.log("Arduino data received:", line);
 
-  if (line === "LEFT") {
-    console.log("Processing LEFT command...");
-    if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
-      console.log("Calling this.controls.keyboard.handleInput('left')");
-      this.controls.keyboard.handleInput("left", performance.now());
-      console.log("Called handleInput for LEFT");
-    } else {
-      console.log("ERROR: Cannot call handleInput - missing controls");
-    }
-  } else if (line === "RIGHT") {
-    console.log("Processing RIGHT command...");
-    if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
-      console.log("Calling this.controls.keyboard.handleInput('right')");
-      this.controls.keyboard.handleInput("right", performance.now());
-      console.log("Called handleInput for RIGHT");
-    } else {
-      console.log("ERROR: Cannot call handleInput - missing controls");
-    }
-  }
-});
+        // Debug logging
+        console.log("this.controls exists:", !!this.controls);
+        if (this.controls) {
+          console.log("this.controls.keyboard exists:", !!this.controls.keyboard);
+          if (this.controls.keyboard) {
+            console.log("this.controls.keyboard.handleInput exists:", typeof this.controls.keyboard.handleInput);
+          }
+        }
+
+        console.log("Game state:", {
+          isPlaying: this.stateManager?.isPlaying,
+          tutorialComplete: this.tutorialComplete,
+          isDead: this.stateManager?.isDead,
+        });
+
+        if (line === "LEFT") {
+          console.log("Processing LEFT command...");
+          if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
+            console.log("Calling this.controls.keyboard.handleInput('left')");
+            this.controls.keyboard.handleInput("left", performance.now());
+            console.log("Called handleInput for LEFT");
+          } else {
+            console.log("ERROR: Cannot call handleInput - missing controls");
+          }
+        } else if (line === "RIGHT") {
+          console.log("Processing RIGHT command...");
+          if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
+            console.log("Calling this.controls.keyboard.handleInput('right')");
+            this.controls.keyboard.handleInput("right", performance.now());
+            console.log("Called handleInput for RIGHT");
+          } else {
+            console.log("ERROR: Cannot call handleInput - missing controls");
+          }
+        }
+      });
       this.arduino.on("connected", () => {
         console.log("Arduino connected!");
         // Update button text
@@ -4171,12 +4326,17 @@ class LoserLane {
 
   start() {
     if (this.stateManager.start()) {
-      this.lastFrameTime = performance.now();
-      this.frameId = requestAnimationFrame((t) => this.update(t));
-
-      // Start background music when game starts
-      //  this.soundManager.play("backgroundMusic", 1.0);
+    // Send alive command to Arduino when game starts
+    if (this.arduino && this.arduino.isConnected) {
+      this.arduino.onGameStart();
     }
+    
+    this.lastFrameTime = performance.now();
+    this.frameId = requestAnimationFrame((t) => this.update(t));
+
+    // Start background music when game starts
+    //  this.soundManager.play("backgroundMusic", 1.0);
+  }
   }
 
   update(timestamp) {
@@ -4302,7 +4462,13 @@ class LoserLane {
   // === Game State Methods ===
 
   die(reason) {
+    
     if (this.stateManager.state.isDead) return;
+
+    if (this.arduino && this.arduino.isConnected) {
+    this.arduino.onPlayerDeath();
+  }
+
     this.setDeathState();
     this.handleDeathEffects(reason);
   }
@@ -4382,6 +4548,12 @@ class LoserLane {
 
       // Initialize new world
       this.initializeGameWorld();
+
+
+// Send alive command to Arduino when restarting
+    if (this.arduino && this.arduino.isConnected) {
+      this.arduino.onGameStart();
+    }
 
       // Wait another brief moment before starting
       setTimeout(() => {
