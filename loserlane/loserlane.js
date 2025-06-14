@@ -4316,10 +4316,14 @@ class LoserLane {
   // === Game State Methods ===
 
   die(reason) {
-    if (this.stateManager.state.isDead) return;
-    this.setDeathState();
-    this.handleDeathEffects(reason);
-  }
+  if (this.stateManager.state.isDead) return;
+  
+  // Send DEATH command to Arduino to turn LED red
+  this.sendArduinoCommand('DEATH');
+  
+  this.setDeathState();
+  this.handleDeathEffects(reason);
+}
 
   setDeathState() {
     // Play death sound and stop background music
@@ -4362,13 +4366,16 @@ class LoserLane {
   }
 
   restart() {
-    console.log("\n=== Game Restart Initiated ===");
+  console.log("\n=== Game Restart Initiated ===");
 
-    // 1. Stop the current game loop first
-    if (this.frameId) {
-      cancelAnimationFrame(this.frameId);
-      this.frameId = null;
-    }
+  // Send RESTART command to Arduino to turn LED blue (waiting)
+  this.sendArduinoCommand('RESTART');
+
+  // Stop the current game loop first
+  if (this.frameId) {
+    cancelAnimationFrame(this.frameId);
+    this.frameId = null;
+  }
 
     // 2. Reset audio
     this.soundManager.resetAll();
