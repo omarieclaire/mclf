@@ -3968,15 +3968,15 @@ class LoserLane {
       this.arduino = new ArduinoWebSerial();
 
       // Handle incoming lines from Arduino
-      this.arduino.on("line", (line) => {
-        console.log("Arduino data received:", line);
+     this.arduino.on("line", (line) => {
+  console.log("Arduino data received:", line);
 
-        if (line === "LEFT") {
-          this.handleInput("left", performance.now());
-        } else if (line === "RIGHT") {
-          this.handleInput("right", performance.now());
-        }
-      });
+  if (line === "LEFT") {
+    this.controls.keyboard.handleInput("left", performance.now());
+  } else if (line === "RIGHT") {
+    this.controls.keyboard.handleInput("right", performance.now());
+  }
+});
       this.arduino.on("connected", () => {
         console.log("Arduino connected!");
         // Update button text
