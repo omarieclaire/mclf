@@ -3270,7 +3270,6 @@ class GameStateManager {
   }
 
   start() {
-    
     if (this.state.isPlaying) return false;
 
     const messageBox = document.getElementById("pregame-msg-box");
@@ -4043,32 +4042,7 @@ class ArduinoWebSerial extends EventTarget {
       console.log(`Arduino not connected, would send: ${command}`);
     }
   }
-
-  // Convenience methods for game events
-  onPlayerDeath() {
-    this.sendCommand('DEATH');
-  }
-
-  onGameStart() {
-    this.sendCommand('ALIVE');
-  }
-
-  onCollision() {
-    this.sendCommand('COLLISION');
-  }
-
-  // Event listener helpers (for backwards compatibility with your existing code)
-  on(event, callback) {
-    this.addEventListener(event, (e) => {
-      if (event === 'line') {
-        callback(e.detail);
-      } else {
-        callback(e);
-      }
-    });
-  }
 }
-
 class LoserLane {
   constructor() {
     this.initializeCore();
@@ -4326,17 +4300,12 @@ class LoserLane {
 
   start() {
     if (this.stateManager.start()) {
-    // Send alive command to Arduino when game starts
-    if (this.arduino && this.arduino.isConnected) {
-      this.arduino.onGameStart();
-    }
-    
-    this.lastFrameTime = performance.now();
-    this.frameId = requestAnimationFrame((t) => this.update(t));
+      this.lastFrameTime = performance.now();
+      this.frameId = requestAnimationFrame((t) => this.update(t));
 
-    // Start background music when game starts
-    //  this.soundManager.play("backgroundMusic", 1.0);
-  }
+      // Start background music when game starts
+      //  this.soundManager.play("backgroundMusic", 1.0);
+    }
   }
 
   update(timestamp) {
@@ -4462,13 +4431,7 @@ class LoserLane {
   // === Game State Methods ===
 
   die(reason) {
-    
     if (this.stateManager.state.isDead) return;
-
-    if (this.arduino && this.arduino.isConnected) {
-    this.arduino.onPlayerDeath();
-  }
-
     this.setDeathState();
     this.handleDeathEffects(reason);
   }
@@ -4549,7 +4512,6 @@ class LoserLane {
       // Initialize new world
       this.initializeGameWorld();
 
-      
       // Wait another brief moment before starting
       setTimeout(() => {
         this.start();
