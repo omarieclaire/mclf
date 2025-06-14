@@ -3968,13 +3968,42 @@ class LoserLane {
       this.arduino = new ArduinoWebSerial();
 
       // Handle incoming lines from Arduino
-     this.arduino.on("line", (line) => {
+    this.arduino.on("line", (line) => {
   console.log("Arduino data received:", line);
+  
+  // Debug logging
+  console.log("this.controls exists:", !!this.controls);
+  if (this.controls) {
+    console.log("this.controls.keyboard exists:", !!this.controls.keyboard);
+    if (this.controls.keyboard) {
+      console.log("this.controls.keyboard.handleInput exists:", typeof this.controls.keyboard.handleInput);
+    }
+  }
+  
+  console.log("Game state:", {
+    isPlaying: this.stateManager?.isPlaying,
+    tutorialComplete: this.tutorialComplete,
+    isDead: this.stateManager?.isDead
+  });
 
   if (line === "LEFT") {
-    this.controls.keyboard.handleInput("left", performance.now());
+    console.log("Processing LEFT command...");
+    if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
+      console.log("Calling this.controls.keyboard.handleInput('left')");
+      this.controls.keyboard.handleInput("left", performance.now());
+      console.log("Called handleInput for LEFT");
+    } else {
+      console.log("ERROR: Cannot call handleInput - missing controls");
+    }
   } else if (line === "RIGHT") {
-    this.controls.keyboard.handleInput("right", performance.now());
+    console.log("Processing RIGHT command...");
+    if (this.controls && this.controls.keyboard && this.controls.keyboard.handleInput) {
+      console.log("Calling this.controls.keyboard.handleInput('right')");
+      this.controls.keyboard.handleInput("right", performance.now());
+      console.log("Called handleInput for RIGHT");
+    } else {
+      console.log("ERROR: Cannot call handleInput - missing controls");
+    }
   }
 });
       this.arduino.on("connected", () => {
