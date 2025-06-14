@@ -3489,9 +3489,9 @@ class BaseControl {
   handleInput(direction, now) {
     if (this.game.arduino && this.game.arduino.isConnected) {
       // Add a small delay to prevent overwhelming the Arduino
-      setTimeout(() => {
-        this.game.sendArduinoCommand(direction.toUpperCase());
-      }, 10);
+      // setTimeout(() => {
+      //   this.game.sendArduinoCommand(direction.toUpperCase());
+      // }, 10);
     }
     if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
       this.game.tutorialSystem.handleMove(direction);
