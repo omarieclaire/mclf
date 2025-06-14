@@ -197,6 +197,9 @@ a {
   .grid-cell {
     width: calc(100vw / 42);
     height: 1.5vh;
+
+      width: 1ch; /* One character width exactly */
+  height: 1.2em; /* Use em for consistent ratio */
   }
 }
 
