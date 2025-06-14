@@ -3923,6 +3923,8 @@ class LoserLane {
     this.initializeSounds();
     try {
       this.initializeArduino();
+      game.arduino.write('test\n');
+
     } catch (error) {
       console.log("Arduino not available, continuing without it");
     }
