@@ -108,6 +108,9 @@ a {
   display: inline-block;
   width: 1vw;
   height: 2vh;
+
+    width: 1ch; /* One character width exactly */
+  height: 1.2em; /* Use em for consistent ratio */
   /* border: 0.1px solid rgba(146, 124, 124, 0.2); */
   text-align: center;
 }
@@ -157,7 +160,8 @@ a {
 
 #game-screen {
   background: var(--dark-grey);
-  width: 100vw;
+  /* width: 100vw; */
+  width: 42ch;
   max-width: 100vw;
   overflow: hidden;
   white-space: pre;
