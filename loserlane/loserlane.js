@@ -2509,23 +2509,18 @@ class CrossingBehavior extends EntityBehavior {
       x: position.x,
       y: position.y,
       width: this.entity.width,
-      height: this.entity.height
+      height: this.entity.height,
     };
 
     const nearbyEntities = this.entity.spatialManager.grid
       .getNearbyDarlings(position, 3)
-      .filter(entity => 
-        entity !== this.entity && 
-        (entity.type === DarlingType.WANDERER || 
-         entity.type === DarlingType.PARKED_DEATHMACHINE)
-      );
+      .filter((entity) => entity !== this.entity && (entity.type === DarlingType.WANDERER || entity.type === DarlingType.PARKED_DEATHMACHINE));
 
-    return !nearbyEntities.some(other => {
+    return !nearbyEntities.some((other) => {
       if (other.type === DarlingType.WANDERER) {
-        return Math.abs(other.position.x - position.x) < 0.5 && 
-               Math.abs(other.position.y - position.y) < 2;
+        return Math.abs(other.position.x - position.x) < 0.5 && Math.abs(other.position.y - position.y) < 2;
       }
-      
+
       if (other.type === DarlingType.PARKED_DEATHMACHINE) {
         const carHitbox = other.getHitbox();
         // Expanded hitbox for parked cars
@@ -2533,7 +2528,7 @@ class CrossingBehavior extends EntityBehavior {
           x: carHitbox.x - 1,
           y: carHitbox.y,
           width: carHitbox.width + 2,
-          height: carHitbox.height
+          height: carHitbox.height,
         };
 
         return !(
@@ -2651,12 +2646,10 @@ class WandererBehavior extends EntityBehavior {
       this.move(newPosition);
     } else {
       // Try alternate lane
-      const alternateLane = this.lane === this.config.LANES.SIDEWALK + 1 ? 
-                           this.config.LANES.SIDEWALK + 2 : 
-                           this.config.LANES.SIDEWALK + 1;
-      
+      const alternateLane = this.lane === this.config.LANES.SIDEWALK + 1 ? this.config.LANES.SIDEWALK + 2 : this.config.LANES.SIDEWALK + 1;
+
       const alternatePosition = new Position(alternateLane, newPosition.y);
-      
+
       if (this.canMoveTo(alternatePosition)) {
         this.lane = alternateLane;
         this.move(alternatePosition);
@@ -2677,31 +2670,26 @@ class WandererBehavior extends EntityBehavior {
       x: position.x,
       y: position.y,
       width: this.entity.width,
-      height: this.entity.height
+      height: this.entity.height,
     };
 
     const nearbyEntities = this.entity.spatialManager.grid
       .getNearbyDarlings(position, 3)
-      .filter(entity => 
-        entity !== this.entity && 
-        (entity.type === DarlingType.WANDERER || 
-         entity.type === DarlingType.PARKED_DEATHMACHINE)
-      );
+      .filter((entity) => entity !== this.entity && (entity.type === DarlingType.WANDERER || entity.type === DarlingType.PARKED_DEATHMACHINE));
 
-    return !nearbyEntities.some(other => {
+    return !nearbyEntities.some((other) => {
       if (other.type === DarlingType.WANDERER) {
-        return Math.abs(other.position.x - position.x) < 0.5 && 
-               Math.abs(other.position.y - position.y) < 2;
+        return Math.abs(other.position.x - position.x) < 0.5 && Math.abs(other.position.y - position.y) < 2;
       }
-      
+
       if (other.type === DarlingType.PARKED_DEATHMACHINE) {
         const carHitbox = other.getHitbox();
         // Expanded hitbox for parked cars to ensure wanderers go around them
         const expandedCarHitbox = {
-          x: carHitbox.x - 1,  // Expand left
+          x: carHitbox.x - 1, // Expand left
           y: carHitbox.y,
-          width: carHitbox.width + 2,  // Expand both sides
-          height: carHitbox.height
+          width: carHitbox.width + 2, // Expand both sides
+          height: carHitbox.height,
         };
 
         // Check collision with expanded hitbox
@@ -2722,11 +2710,7 @@ class WandererBehavior extends EntityBehavior {
 
     return this.entity.spatialManager.grid
       .getNearbyDarlings(this.entity.position, 3)
-      .filter(entity => 
-        entity !== this.entity && 
-        (entity.type === DarlingType.WANDERER || 
-         entity.type === DarlingType.PARKED_DEATHMACHINE)
-      );
+      .filter((entity) => entity !== this.entity && (entity.type === DarlingType.WANDERER || entity.type === DarlingType.PARKED_DEATHMACHINE));
   }
 }
 
@@ -2950,12 +2934,10 @@ class Wanderer extends BaseEntity {
     super(config, spawnConfig, DarlingType.WANDERER);
 
     const wandererColor = peopleCol[Math.floor(Math.random() * peopleCol.length)];
-    
+
     // Instead of using a random shape, use the full art template now that it includes body
-    const template = isGoingUp ? DARLINGS.WANDERER.UP : 
-                    isTTCPassenger ? DARLINGS.WANDERER.CROSSING : 
-                    DARLINGS.WANDERER.DOWN;
-    
+    const template = isGoingUp ? DARLINGS.WANDERER.UP : isTTCPassenger ? DARLINGS.WANDERER.CROSSING : DARLINGS.WANDERER.DOWN;
+
     this.width = template.width;
     this.height = template.height;
     this.art = template.art; // Use the full art array instead of just a single shape
@@ -3938,11 +3920,11 @@ class LoserLane {
     this.initializeSystems();
     this.initializeTimers();
     this.initializeSounds();
-  try {
-    this.initializeArduino();
-  } catch (error) {
-    console.log('Arduino not available, continuing without it');
-  }
+    try {
+      this.initializeArduino();
+    } catch (error) {
+      console.log("Arduino not available, continuing without it");
+    }
     this.initializeGameComponents();
   }
 
@@ -3975,85 +3957,84 @@ class LoserLane {
     this.lastFrameTime = performance.now();
   }
 
-initializeArduino() {
-  try {
-    // Only initialize if Web Serial is supported
-    if (!('serial' in navigator)) {
-      console.log('Web Serial API not supported in this browser');
-      return;
-    }
-
-    this.arduino = new ArduinoWebSerial();
-    
-    // Handle incoming lines from Arduino
-    this.arduino.on('line', (line) => {
-      console.log('Arduino data received:', line);
-      
-      if (line === "LEFT") {
-        this.movePlayer("left", performance.now());
-      } else if (line === "RIGHT") {
-        this.movePlayer("right", performance.now());
-      }
-    });
-
-    this.arduino.on('connected', () => {
-      console.log('Arduino connected!');
-      // Update button text
-      const button = document.getElementById('connect-arduino');
-      if (button) button.textContent = 'Disconnect Arduino';
-    });
-
-    this.arduino.on('disconnected', () => {
-      console.log('Arduino disconnected');
-      const button = document.getElementById('connect-arduino');
-      if (button) button.textContent = 'Connect Arduino';
-    });
-
-    this.arduino.on('error', (error) => {
-      console.log('Arduino error:', error);
-    });
-
-    // Set up connect button
-   const connectButton = document.getElementById('connect-arduino');
-if (connectButton) {
-  connectButton.addEventListener('click', async () => {
-    // Add visual feedback immediately
-    connectButton.textContent = 'Connecting...';
-    connectButton.disabled = true;
-    
+  initializeArduino() {
     try {
-      if (this.arduino.isConnected) {
-        await this.arduino.disconnect();
-        connectButton.textContent = 'Connect Arduino';
-      } else {
-        // Check if Web Serial is supported
-        if (!this.arduino.isSupported()) {
-          alert('Web Serial API not supported. Please use Chrome or Edge browser.');
-          connectButton.textContent = 'Connect Arduino';
+      // Only initialize if Web Serial is supported
+      if (!("serial" in navigator)) {
+        console.log("Web Serial API not supported in this browser");
+        return;
+      }
+
+      this.arduino = new ArduinoWebSerial();
+
+      // Handle incoming lines from Arduino
+      this.arduino.on("line", (line) => {
+        console.log("Arduino data received:", line);
+
+        if (line === "LEFT") {
+          this.movePlayer("left", performance.now());
+        } else if (line === "RIGHT") {
+          this.movePlayer("right", performance.now());
+        }
+      });
+
+      this.arduino.on("connected", () => {
+        console.log("Arduino connected!");
+        // Update button text
+        const button = document.getElementById("connect-arduino");
+        if (button) button.textContent = "Disconnect Arduino";
+      });
+
+      this.arduino.on("disconnected", () => {
+        console.log("Arduino disconnected");
+        const button = document.getElementById("connect-arduino");
+        if (button) button.textContent = "Connect Arduino";
+      });
+
+      this.arduino.on("error", (error) => {
+        console.log("Arduino error:", error);
+      });
+
+      const connectButton = document.getElementById("connect-arduino");
+      if (connectButton) {
+        connectButton.addEventListener("click", async () => {
+          // Add visual feedback immediately
+          connectButton.textContent = "Connecting...";
+          connectButton.disabled = true;
+
+          try {
+            if (this.arduino.isConnected) {
+              await this.arduino.disconnect();
+              connectButton.textContent = "Connect Arduino";
+            } else {
+              // Check if Web Serial is supported
+              if (!this.arduino.isSupported()) {
+                alert("Web Serial API not supported. Please use Chrome or Edge browser.");
+                connectButton.textContent = "Connect Arduino";
+                connectButton.disabled = false;
+                return;
+              }
+
+              const success = await this.arduino.connect();
+              if (success) {
+                connectButton.textContent = "Disconnect Arduino";
+              } else {
+                connectButton.textContent = "Connect Arduino";
+              }
+            }
+          } catch (error) {
+            console.error("Connection error:", error);
+            alert(`Connection failed: ${error.message}`);
+            connectButton.textContent = "Connect Arduino";
+          }
+
           connectButton.disabled = false;
-          return;
-        }
-        
-        const success = await this.arduino.connect();
-        if (success) {
-          connectButton.textContent = 'Disconnect Arduino';
-        } else {
-          connectButton.textContent = 'Connect Arduino';
-        }
+        });
       }
     } catch (error) {
-      console.error('Connection error:', error);
-      alert(`Connection failed: ${error.message}`);
-      connectButton.textContent = 'Connect Arduino';
+      console.log("Failed to initialize Arduino connection:", error);
     }
-    
-    connectButton.disabled = false;
-  });
-}
-
-} catch (error) {
-  console.log('Failed to initialize Arduino connection:', error);
-}
+  }
 
   initializeSounds() {
     this.soundManager.setupMuteButton();
