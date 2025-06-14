@@ -4315,14 +4315,24 @@ class LoserLane {
 
   // === Game State Methods ===
 
-  die(reason) {
+ die(reason) {
   if (this.stateManager.state.isDead) return;
   
-  // Send DEATH command to Arduino to turn LED red
+  // Send DEATH command to Arduino IMMEDIATELY - before any visual effects
   this.sendArduinoCommand('DEATH');
   
-  this.setDeathState();
-  this.handleDeathEffects(reason);
+  // Force the command to be sent right now by flushing any buffers
+  if (this.arduino && this.arduino.port && this.arduino.port.writable) {
+    // Give the browser a moment to actually send the data
+    setTimeout(() => {
+      this.setDeathState();
+      this.handleDeathEffects(reason);
+    }, 10); // Very short delay to ensure Arduino command goes out first
+  } else {
+    // If no Arduino, proceed normally
+    this.setDeathState();
+    this.handleDeathEffects(reason);
+  }
 }
 
   setDeathState() {
