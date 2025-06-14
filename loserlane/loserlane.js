@@ -3972,12 +3972,11 @@ class LoserLane {
         console.log("Arduino data received:", line);
 
         if (line === "LEFT") {
-          this.movePlayer("left", performance.now());
+          this.handleInput("left", performance.now());
         } else if (line === "RIGHT") {
-          this.movePlayer("right", performance.now());
+          this.handleInput("right", performance.now());
         }
       });
-
       this.arduino.on("connected", () => {
         console.log("Arduino connected!");
         // Update button text
