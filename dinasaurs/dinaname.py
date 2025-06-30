@@ -30,10 +30,11 @@ def generate_image_gallery():
         }}
         
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
             background-color: #f5f5f5;
             padding: 20px;
             line-height: 1.6;
+            font-size: 1.5rem;
         }}
         
         .container {{
@@ -48,6 +49,49 @@ def generate_image_gallery():
             font-size: 2rem;
         }}
         
+        .image-links {{
+            margin-bottom: 30px;
+            text-align: center;
+        }}
+        
+        details {{
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }}
+        
+        summary {{
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }}
+        
+        .links-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }}
+        
+        .links-grid a {{
+            display: block;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }}
+        
+        .links-grid a:hover {{
+            background: #e9ecef;
+        }}
+        
         .gallery {{
             display: flex;
             flex-wrap: wrap;
@@ -60,15 +104,9 @@ def generate_image_gallery():
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             flex: 1 1 300px;
             max-width: 400px;
             min-width: 280px;
-        }}
-        
-        .image-card:hover {{
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }}
         
         .image-container {{
@@ -85,11 +123,6 @@ def generate_image_gallery():
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
-        }}
-        
-        .image-card:hover .image-container img {{
-            transform: scale(1.05);
         }}
         
         .caption {{
@@ -97,14 +130,14 @@ def generate_image_gallery():
             text-align: center;
             font-weight: 600;
             color: #333;
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             background: white;
         }}
         
         .no-images {{
             text-align: center;
             color: #666;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             margin-top: 50px;
         }}
         
@@ -112,6 +145,7 @@ def generate_image_gallery():
         @media (max-width: 480px) {{
             body {{
                 padding: 15px;
+                font-size: 1.2rem;
             }}
             
             h1 {{
@@ -134,7 +168,11 @@ def generate_image_gallery():
             
             .caption {{
                 padding: 12px 15px;
-                font-size: 1rem;
+                font-size: 1.2rem;
+            }}
+            
+            .links-grid {{
+                grid-template-columns: 1fr;
             }}
         }}
         
@@ -142,6 +180,10 @@ def generate_image_gallery():
             .image-card {{
                 flex: 1 1 calc(50% - 10px);
                 min-width: 250px;
+            }}
+            
+            .links-grid {{
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }}
         }}
         
@@ -160,18 +202,23 @@ def generate_image_gallery():
 </head>
 <body>
     <div class="container">
-        <h1>Image Gallery</h1>"""
+        <h1>People</h1>"""
 
     # Add image links section if there are images
     if image_files:
-        html_content += """
+        html_content += f"""
         <div class="image-links">
+            <details>
+                <summary>Names! ({len(image_files)})</summary>
+                <div class="links-grid">
 """
         for i, image_file in enumerate(image_files):
             filename = Path(image_file).stem
-            html_content += f"""            <a href="#image-{i}">{filename}</a>"""
+            html_content += f"""                    <a href="#image-{i}">{filename}</a>
+"""
         
-        html_content += """
+        html_content += """                </div>
+            </details>
         </div>"""
 
     html_content += """

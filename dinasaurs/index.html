@@ -12,10 +12,11 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
             background-color: #f5f5f5;
             padding: 20px;
             line-height: 1.6;
+            font-size: 1.5rem;
         }
         
         .container {
@@ -30,6 +31,49 @@
             font-size: 2rem;
         }
         
+        .image-links {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        details {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .links-grid a {
+            display: block;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+        
+        .links-grid a:hover {
+            background: #e9ecef;
+        }
+        
         .gallery {
             display: flex;
             flex-wrap: wrap;
@@ -42,15 +86,9 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             flex: 1 1 300px;
             max-width: 400px;
             min-width: 280px;
-        }
-        
-        .image-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .image-container {
@@ -67,11 +105,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .image-card:hover .image-container img {
-            transform: scale(1.05);
         }
         
         .caption {
@@ -79,14 +112,14 @@
             text-align: center;
             font-weight: 600;
             color: #333;
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             background: white;
         }
         
         .no-images {
             text-align: center;
             color: #666;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             margin-top: 50px;
         }
         
@@ -94,6 +127,7 @@
         @media (max-width: 480px) {
             body {
                 padding: 15px;
+                font-size: 1.2rem;
             }
             
             h1 {
@@ -116,7 +150,11 @@
             
             .caption {
                 padding: 12px 15px;
-                font-size: 1rem;
+                font-size: 1.2rem;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -124,6 +162,10 @@
             .image-card {
                 flex: 1 1 calc(50% - 10px);
                 min-width: 250px;
+            }
+            
+            .links-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
         
@@ -142,9 +184,73 @@
 </head>
 <body>
     <div class="container">
-        <h1>Image Gallery</h1>
+        <h1>People</h1>
         <div class="image-links">
-            <a href="#image-0">Anna Franceschelli</a>            <a href="#image-1">Arky</a>            <a href="#image-2">Aryatama Nugraha</a>            <a href="#image-3">Ben Davis</a>            <a href="#image-4">Bharath Haridas</a>            <a href="#image-5">Bri Johns</a>            <a href="#image-6">Camila A Morales</a>            <a href="#image-7">Cristina Dezi</a>            <a href="#image-8">Daniel Finnerty</a>            <a href="#image-9">Dinoj</a>            <a href="#image-10">Eka Made Merta</a>            <a href="#image-11">Eka Prawira</a>            <a href="#image-12">Garri Bernal</a>            <a href="#image-13">Gede Bayu Pramana</a>            <a href="#image-14">Gede Budi Yuliartawan</a>            <a href="#image-15">Gede Rangga Riswana</a>            <a href="#image-16">Gede Wira Artawan</a>            <a href="#image-17">Grace Morenko</a>            <a href="#image-18">Harold Tay</a>            <a href="#image-19">Isaac</a>            <a href="#image-20">Jan maarten</a>            <a href="#image-21">Jay Bond</a>            <a href="#image-22">Jeddie Sophronius</a>            <a href="#image-23">Jilija</a>            <a href="#image-24">Joey</a>            <a href="#image-25">Josh Horowitz</a>            <a href="#image-26">Judy Major Girardin</a>            <a href="#image-27">Ketut Agus Winaya</a>            <a href="#image-28">Ketut Widi Armawan</a>            <a href="#image-29">Ketut Widiasih</a>            <a href="#image-30">Koi</a>            <a href="#image-31">Komang Ngurah Semita Dana</a>            <a href="#image-32">Komang Winastra</a>            <a href="#image-33">Kyle Chisholm</a>            <a href="#image-34">Lew Liong Leong</a>            <a href="#image-35">Lichen Kelp</a>            <a href="#image-36">Linda Hirsch</a>            <a href="#image-37">Lucinda Dayhew</a>            <a href="#image-38">Mang</a>            <a href="#image-39">Marc Juul</a>            <a href="#image-40">Marie LeBlanc Flanagan</a>            <a href="#image-41">Marta Verde</a>            <a href="#image-42">Mayowa Tomori</a>            <a href="#image-43">Milo</a>            <a href="#image-44">Monika</a>            <a href="#image-45">Ni Luh Andari Widya Lestari</a>            <a href="#image-46">Nyoman Wilantara</a>            <a href="#image-47">Olivia Cueva</a>            <a href="#image-48">Paivi Maunu</a>            <a href="#image-49">Paul Hamilton</a>            <a href="#image-50">Pippin Luh Satriasi</a>            <a href="#image-51">Pom Prasopsuk</a>            <a href="#image-52">Putu Ari Pratiwi</a>            <a href="#image-53">Sam Wong</a>            <a href="#image-54">Seamus Kildall</a>            <a href="#image-55">Seto - Levi - Saif</a>            <a href="#image-56">Sumugan Sivanesan</a>            <a href="#image-57">Tessa Zettel</a>            <a href="#image-58">Tully Arnot</a>            <a href="#image-59">Xindi</a>
+            <details>
+                <summary>Names (60)</summary>
+                <div class="links-grid">
+                    <a href="#image-0">Anna Franceschelli</a>
+                    <a href="#image-1">Arky</a>
+                    <a href="#image-2">Aryatama Nugraha</a>
+                    <a href="#image-3">Ben Davis</a>
+                    <a href="#image-4">Bharath Haridas</a>
+                    <a href="#image-5">Bri Johns</a>
+                    <a href="#image-6">Camila A Morales</a>
+                    <a href="#image-7">Cristina Dezi</a>
+                    <a href="#image-8">Daniel Finnerty</a>
+                    <a href="#image-9">Dinoj</a>
+                    <a href="#image-10">Eka Made Merta</a>
+                    <a href="#image-11">Eka Prawira</a>
+                    <a href="#image-12">Garri Bernal</a>
+                    <a href="#image-13">Gede Bayu Pramana</a>
+                    <a href="#image-14">Gede Budi Yuliartawan</a>
+                    <a href="#image-15">Gede Rangga Riswana</a>
+                    <a href="#image-16">Gede Wira Artawan</a>
+                    <a href="#image-17">Grace Morenko</a>
+                    <a href="#image-18">Harold Tay</a>
+                    <a href="#image-19">Isaac</a>
+                    <a href="#image-20">Jan maarten</a>
+                    <a href="#image-21">Jay Bond</a>
+                    <a href="#image-22">Jeddie Sophronius</a>
+                    <a href="#image-23">Jilija</a>
+                    <a href="#image-24">Joey</a>
+                    <a href="#image-25">Josh Horowitz</a>
+                    <a href="#image-26">Judy Major Girardin</a>
+                    <a href="#image-27">Ketut Agus Winaya</a>
+                    <a href="#image-28">Ketut Widi Armawan</a>
+                    <a href="#image-29">Ketut Widiasih</a>
+                    <a href="#image-30">Koi</a>
+                    <a href="#image-31">Komang Ngurah Semita Dana</a>
+                    <a href="#image-32">Komang Winastra</a>
+                    <a href="#image-33">Kyle Chisholm</a>
+                    <a href="#image-34">Lew Liong Leong</a>
+                    <a href="#image-35">Lichen Kelp</a>
+                    <a href="#image-36">Linda Hirsch</a>
+                    <a href="#image-37">Lucinda Dayhew</a>
+                    <a href="#image-38">Mang</a>
+                    <a href="#image-39">Marc Juul</a>
+                    <a href="#image-40">Marie LeBlanc Flanagan</a>
+                    <a href="#image-41">Marta Verde</a>
+                    <a href="#image-42">Mayowa Tomori</a>
+                    <a href="#image-43">Milo</a>
+                    <a href="#image-44">Monika</a>
+                    <a href="#image-45">Ni Luh Andari Widya Lestari</a>
+                    <a href="#image-46">Nyoman Wilantara</a>
+                    <a href="#image-47">Olivia Cueva</a>
+                    <a href="#image-48">Paivi Maunu</a>
+                    <a href="#image-49">Paul Hamilton</a>
+                    <a href="#image-50">Pippin Luh Satriasi</a>
+                    <a href="#image-51">Pom Prasopsuk</a>
+                    <a href="#image-52">Putu Ari Pratiwi</a>
+                    <a href="#image-53">Sam Wong</a>
+                    <a href="#image-54">Seamus Kildall</a>
+                    <a href="#image-55">Seto - Levi - Saif</a>
+                    <a href="#image-56">Sumugan Sivanesan</a>
+                    <a href="#image-57">Tessa Zettel</a>
+                    <a href="#image-58">Tully Arnot</a>
+                    <a href="#image-59">Xindi</a>
+                </div>
+            </details>
         </div>
         <div class="gallery">
             <div class="image-card" id="image-0">
