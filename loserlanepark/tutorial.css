@@ -131,7 +131,7 @@
 .tutorial-element-container {
   position: relative;
   height: 3rem;
-  width: 100%;
+  width: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -264,4 +264,64 @@
   width: 50%;
   height: 100%;
   z-index: 100;
+}
+
+
+.bike-direction-arrow {
+    position: absolute;
+    font-size: 2.5rem;
+    color: var(--green);
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    animation: arrowBounce 1s infinite;
+    font-weight: bold;
+}
+
+.bike-direction-arrow.left {
+    left: -40px;
+}
+
+.bike-direction-arrow.right {
+    right: -40px;
+}
+
+.bike-direction-arrow.show {
+    display: block;
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50% { transform: translateY(-50%) translateX(5px); }
+}
+
+.bike-direction-arrow.right {
+    animation: arrowBounceRight 1s infinite;
+}
+
+@keyframes arrowBounceRight {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50% { transform: translateY(-50%) translateX(-5px); }
+}
+
+@media (max-width: 599px) {
+  .bike-direction-arrow.left {
+    left: -35px; /* Slightly closer on mobile */
+  }
+  
+  .bike-direction-arrow.right {
+    right: -35px; /* Slightly closer on mobile */
+  }
+  
+  .bike-direction-arrow {
+    font-size: 2rem; /* Slightly smaller on mobile */
+  }
+}
+
+
+.bike-direction-arrow.success {
+    color: var(--green);
+    animation: none; /* Stop bouncing */
+    font-size: 2.5rem;
+    font-weight: bold;
 }

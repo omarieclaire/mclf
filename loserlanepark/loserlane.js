@@ -3510,62 +3510,62 @@ class KeyboardControls extends BaseControl {
     this.setupKeyboardControls();
   }
 
-setupKeyboardControls() {
-  this.addEventListenerWithTracking(document, "keydown", (e) => {
-    const keyStart = performance.now();
-    console.log(`⌨️  KEYBOARD: "${e.key}" at ${keyStart.toFixed(2)}ms`);
+  setupKeyboardControls() {
+    this.addEventListenerWithTracking(document, "keydown", (e) => {
+      const keyStart = performance.now();
+      console.log(`⌨️  KEYBOARD: "${e.key}" at ${keyStart.toFixed(2)}ms`);
 
-    if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
+      if (!this.game.stateManager.isPlaying && !this.game.tutorialComplete) {
+        if (e.key === "ArrowLeft") {
+          console.log("⌨️  KEYBOARD: LEFT tutorial");
+          this.game.tutorialSystem.handleMove("left");
+          const keyTotal = performance.now() - keyStart;
+          console.log(`⌨️  KEYBOARD LEFT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          console.log("⌨️  KEYBOARD: RIGHT tutorial");
+          this.game.tutorialSystem.handleMove("right");
+          const keyTotal = performance.now() - keyStart;
+          console.log(`⌨️  KEYBOARD RIGHT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
+          return;
+        }
+      }
+
+      if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
+        if (e.key === " " || e.key === "Spacebar") {
+          console.log("⌨️  KEYBOARD: SPACE starting game");
+          this.game.start();
+          document.getElementById("pregame-msg-box").style.display = "none";
+          let gameInfoContainer = document.getElementById("game-info-container");
+          gameInfoContainer.style.opacity = "1";
+          gameInfoContainer.style.visibility = "visible";
+          const keyTotal = performance.now() - keyStart;
+          console.log(`⌨️  KEYBOARD SPACE: Complete in ${keyTotal.toFixed(2)}ms`);
+        }
+        return;
+      }
+
       if (e.key === "ArrowLeft") {
-        console.log("⌨️  KEYBOARD: LEFT tutorial");
-        this.game.tutorialSystem.handleMove("left");
+        console.log("⌨️  KEYBOARD: LEFT game input");
+        const inputStart = performance.now();
+        this.handleInput("left", performance.now());
+        const inputTime = performance.now() - inputStart;
         const keyTotal = performance.now() - keyStart;
-        console.log(`⌨️  KEYBOARD LEFT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
-        return;
-      }
-      if (e.key === "ArrowRight") {
-        console.log("⌨️  KEYBOARD: RIGHT tutorial");
-        this.game.tutorialSystem.handleMove("right");
+        console.log(`⌨️  KEYBOARD LEFT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
+      } else if (e.key === "ArrowRight") {
+        console.log("⌨️  KEYBOARD: RIGHT game input");
+        const inputStart = performance.now();
+        this.handleInput("right", performance.now());
+        const inputTime = performance.now() - inputStart;
         const keyTotal = performance.now() - keyStart;
-        console.log(`⌨️  KEYBOARD RIGHT: Tutorial complete in ${keyTotal.toFixed(2)}ms`);
-        return;
+        console.log(`⌨️  KEYBOARD RIGHT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
+      } else if (e.key === "p" || e.key === "P") {
+        console.log("⌨️  KEYBOARD: PAUSE");
+        this.game.stateManager.togglePause();
       }
-    }
-
-    if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
-      if (e.key === " " || e.key === "Spacebar") {
-        console.log("⌨️  KEYBOARD: SPACE starting game");
-        this.game.start();
-        document.getElementById("pregame-msg-box").style.display = "none";
-        let gameInfoContainer = document.getElementById("game-info-container");
-        gameInfoContainer.style.opacity = "1";
-        gameInfoContainer.style.visibility = "visible";
-        const keyTotal = performance.now() - keyStart;
-        console.log(`⌨️  KEYBOARD SPACE: Complete in ${keyTotal.toFixed(2)}ms`);
-      }
-      return;
-    }
-
-    if (e.key === "ArrowLeft") {
-      console.log("⌨️  KEYBOARD: LEFT game input");
-      const inputStart = performance.now();
-      this.handleInput("left", performance.now());
-      const inputTime = performance.now() - inputStart;
-      const keyTotal = performance.now() - keyStart;
-      console.log(`⌨️  KEYBOARD LEFT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
-    } else if (e.key === "ArrowRight") {
-      console.log("⌨️  KEYBOARD: RIGHT game input");
-      const inputStart = performance.now();
-      this.handleInput("right", performance.now());
-      const inputTime = performance.now() - inputStart;
-      const keyTotal = performance.now() - keyStart;
-      console.log(`⌨️  KEYBOARD RIGHT: Input=${inputTime.toFixed(2)}ms, Total=${keyTotal.toFixed(2)}ms`);
-    } else if (e.key === "p" || e.key === "P") {
-      console.log("⌨️  KEYBOARD: PAUSE");
-      this.game.stateManager.togglePause();
-    }
-  });
-}
+    });
+  }
 }
 
 class TouchControls extends BaseControl {
@@ -3779,36 +3779,35 @@ class TutorialSystem {
   }
 
   showLeftTutorial() {
-    // console.log("👈 Showing left control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
-      : "Use your <span class='highlight'>left arrow key</span> to move left";
-    // console.log("Setting tutorial text to:", text);
-    // console.log("Tutorial text element:", this.tutorialText);
+      // : "Use your <span class='highlight'>left arrow key</span> to move left";
+            : "Use the <span class='highlight'>left button</span> to move left";
 
-    if (!this.tutorialText) {
-      console.error("Tutorial text element is null!");
-      return;
-    }
 
-    try {
+    // Only show instruction if we're actually on this step
+    if (this.currentStep === "left") {
       this.tutorialText.innerHTML = text;
-      // console.log("Successfully set tutorial text");
-      // console.log("Current text content:", this.tutorialText.textContent);
-    } catch (e) {
-      console.error("Error setting tutorial text:", e);
+      const bikeArrowLeft = document.getElementById("bike-arrow-left");
+      if (bikeArrowLeft) bikeArrowLeft.classList.add("show");
+      this.leftHighlight.classList.add("active");
     }
-
-    this.leftHighlight.classList.add("active");
   }
 
   showRightTutorial() {
-    // console.log("👉 Showing right control tutorial");
     const text = this.isMobile
       ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
-      : "Use your <span class='highlight'>right arrow key</span> to move right";
-    this.tutorialText.innerHTML = text;
-    this.rightHighlight.classList.add("active");
+      // : "Use your <span class='highlight'>right arrow key</span> to move right";
+            : "Use the <span class='highlight'>the right button</span> to move right";
+
+
+    // Only show instruction if we're actually on this step
+    if (this.currentStep === "right") {
+      this.tutorialText.innerHTML = text;
+      const bikeArrowRight = document.getElementById("bike-arrow-right");
+      if (bikeArrowRight) bikeArrowRight.classList.add("show");
+      this.rightHighlight.classList.add("active");
+    }
   }
 
   addControlListeners() {
@@ -3828,19 +3827,13 @@ class TutorialSystem {
   }
 
   handleMove(direction) {
-    // Handle wrong input
+    // Handle wrong input (keep existing)
     if (direction !== this.currentStep) {
-      // console.log(`Wrong input: got ${direction}, expected ${this.currentStep}`);
       const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
       wrongHighlight.classList.add("wrong");
-
-      // Save original text and add error state
-      const originalText = this.tutorialText.textContent;
       const originalHTML = this.tutorialText.innerHTML;
       this.tutorialText.classList.add("error");
       this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
-
-      // Reset everything after animation
       setTimeout(() => {
         wrongHighlight.classList.remove("wrong");
         this.tutorialText.classList.remove("error");
@@ -3849,40 +3842,64 @@ class TutorialSystem {
       return;
     }
 
-    // Rest of the existing handleMove code...
-    // console.log(`🎯 Handling ${direction} move`);
     if (this.completedSteps[direction]) return;
 
-    // Mark step as completed
+    // PHASE 1: IMMEDIATE SUCCESS ACKNOWLEDGMENT
     this.completedSteps[direction] = true;
+    const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
 
-    // Move the bike
-    if (direction === "left") {
-      this.tutorialBike.style.marginLeft = "-20px";
-      this.currentStep = "right";
-    } else {
-      this.tutorialBike.style.marginLeft = "20px";
-      this.currentStep = "complete";
+    // Remove active state
+    highlight.classList.remove("active");
+
+    // Transform the arrow into a checkmark
+    const bikeArrowLeft = document.getElementById("bike-arrow-left");
+    const bikeArrowRight = document.getElementById("bike-arrow-right");
+
+    if (direction === "left" && bikeArrowLeft) {
+      bikeArrowLeft.innerHTML = "✓";
+      bikeArrowLeft.classList.add("success");
+    } else if (direction === "right" && bikeArrowRight) {
+      bikeArrowRight.innerHTML = "✓";
+      bikeArrowRight.classList.add("success");
     }
 
-    // Show success indicator and add success state to text
-    const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
-    highlight.classList.remove("active");
-    highlight.classList.add("success");
+    // Remove checkmark from tutorial text since it's now in the arrow
     this.tutorialText.classList.add("success");
 
+    // PHASE 2: BRIEF PAUSE TO REGISTER SUCCESS
     setTimeout(() => {
-      highlight.classList.remove("success");
-      this.tutorialText.classList.remove("success");
+      // Move the bike to show progress
+      if (direction === "left") {
+        this.tutorialBike.style.marginLeft = "-40px";
+        this.currentStep = "right";
+      } else {
+        this.tutorialBike.style.marginLeft = "20px";
+        this.currentStep = "complete";
+      }
+    }, 100); // Quick pause for checkmark visibility
+
+    // PHASE 3: REMOVE CHECKMARK AND TRANSITION TO NEXT STEP
+    setTimeout(() => {
+      // Remove the checkmark after success acknowledgment
+      if (direction === "left" && bikeArrowLeft) {
+        bikeArrowLeft.classList.remove("show");
+      } else if (direction === "right" && bikeArrowRight) {
+        bikeArrowRight.classList.remove("show");
+      }
+
       if (!this.completedSteps.right) {
         this.showRightTutorial();
       } else if (!this.completedSteps.left) {
         this.showLeftTutorial();
       } else {
-        this.completeTutorial();
+        this.tutorialText.innerHTML = "GOOD";
+        setTimeout(() => {
+          this.completeTutorial();
+        }, 1200);
       }
-    }, 500);
+    }, 600); // Total checkmark display time
   }
+
   completeTutorial() {
     // console.log("🏁 Completing tutorial");
 
@@ -3890,6 +3907,11 @@ class TutorialSystem {
     this.tutorialBike.style.marginLeft = "0"; // Reset bike position
     this.leftHighlight.classList.remove("active");
     this.rightHighlight.classList.remove("active");
+
+    const bikeArrowLeft = document.getElementById("bike-arrow-left");
+    const bikeArrowRight = document.getElementById("bike-arrow-right");
+    if (bikeArrowLeft) bikeArrowLeft.classList.remove("show");
+    if (bikeArrowRight) bikeArrowRight.classList.remove("show");
 
     // Fade out tutorial elements
     this.tutorialBike.style.transition = "opacity 0.5s ease-in-out";
@@ -3933,12 +3955,9 @@ class TutorialSystem {
   }
 
   cleanup() {
-    // console.log("🧹 Cleaning up tutorial system");
-    // Remove any event listeners or styles when needed
     const tutorialStyles = document.getElementById("tutorial-styles");
     if (tutorialStyles) {
       tutorialStyles.remove();
-      // console.log("✨ Tutorial styles removed");
     }
   }
 }
@@ -3998,71 +4017,70 @@ class LoserLane {
       this.arduino = new ArduinoWebSerial();
 
       // Handle incoming lines from Arduino - use EXACT same path as keyboard
-  this.arduino.on("line", (line) => {
-  const eventStart = performance.now();
-  console.log(`🎮 Arduino RAW: "${line}" at ${eventStart.toFixed(2)}ms`);
+      this.arduino.on("line", (line) => {
+        const eventStart = performance.now();
+        console.log(`🎮 Arduino RAW: "${line}" at ${eventStart.toFixed(2)}ms`);
 
-  if (line === "LEFT") {
-    console.log("🔄 Processing LEFT command...");
-    
-    const startButton = document.getElementById("start-button");
-    if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
-      console.log("🎯 LEFT: Clicking start button");
-      startButton.click();
-      const totalTime = performance.now() - eventStart;
-      console.log(`✅ LEFT: Start button complete in ${totalTime.toFixed(2)}ms`);
-      return;
-    }
+        if (line === "LEFT") {
+          console.log("🔄 Processing LEFT command...");
 
-    console.log("🎮 LEFT: Creating fake keyboard event");
-    const fakeEventStart = performance.now();
-    const fakeEvent = new KeyboardEvent("keydown", {
-      key: "ArrowLeft",
-      code: "ArrowLeft",
-      bubbles: true,
-    });
-    const fakeEventTime = performance.now() - fakeEventStart;
-    console.log(`⚡ LEFT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
-    
-    const dispatchStart = performance.now();
-    document.dispatchEvent(fakeEvent);
-    const dispatchTime = performance.now() - dispatchStart;
-    console.log(`🚀 LEFT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
-    
-    const totalTime = performance.now() - eventStart;
-    console.log(`✅ LEFT: Total processing time ${totalTime.toFixed(2)}ms`);
-    
-  } else if (line === "RIGHT") {
-    console.log("🔄 Processing RIGHT command...");
-    
-    const startButton = document.getElementById("start-button");
-    if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
-      console.log("🎯 RIGHT: Clicking start button");
-      startButton.click();
-      const totalTime = performance.now() - eventStart;
-      console.log(`✅ RIGHT: Start button complete in ${totalTime.toFixed(2)}ms`);
-      return;
-    }
+          const startButton = document.getElementById("start-button");
+          if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+            console.log("🎯 LEFT: Clicking start button");
+            startButton.click();
+            const totalTime = performance.now() - eventStart;
+            console.log(`✅ LEFT: Start button complete in ${totalTime.toFixed(2)}ms`);
+            return;
+          }
 
-    console.log("🎮 RIGHT: Creating fake keyboard event");
-    const fakeEventStart = performance.now();
-    const fakeEvent = new KeyboardEvent("keydown", {
-      key: "ArrowRight",
-      code: "ArrowRight",
-      bubbles: true,
-    });
-    const fakeEventTime = performance.now() - fakeEventStart;
-    console.log(`⚡ RIGHT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
-    
-    const dispatchStart = performance.now();
-    document.dispatchEvent(fakeEvent);
-    const dispatchTime = performance.now() - dispatchStart;
-    console.log(`🚀 RIGHT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
-    
-    const totalTime = performance.now() - eventStart;
-    console.log(`✅ RIGHT: Total processing time ${totalTime.toFixed(2)}ms`);
-  }
-});
+          console.log("🎮 LEFT: Creating fake keyboard event");
+          const fakeEventStart = performance.now();
+          const fakeEvent = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+            code: "ArrowLeft",
+            bubbles: true,
+          });
+          const fakeEventTime = performance.now() - fakeEventStart;
+          console.log(`⚡ LEFT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
+
+          const dispatchStart = performance.now();
+          document.dispatchEvent(fakeEvent);
+          const dispatchTime = performance.now() - dispatchStart;
+          console.log(`🚀 LEFT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
+
+          const totalTime = performance.now() - eventStart;
+          console.log(`✅ LEFT: Total processing time ${totalTime.toFixed(2)}ms`);
+        } else if (line === "RIGHT") {
+          console.log("🔄 Processing RIGHT command...");
+
+          const startButton = document.getElementById("start-button");
+          if (startButton && startButton.classList.contains("visible") && !this.stateManager.isPlaying) {
+            console.log("🎯 RIGHT: Clicking start button");
+            startButton.click();
+            const totalTime = performance.now() - eventStart;
+            console.log(`✅ RIGHT: Start button complete in ${totalTime.toFixed(2)}ms`);
+            return;
+          }
+
+          console.log("🎮 RIGHT: Creating fake keyboard event");
+          const fakeEventStart = performance.now();
+          const fakeEvent = new KeyboardEvent("keydown", {
+            key: "ArrowRight",
+            code: "ArrowRight",
+            bubbles: true,
+          });
+          const fakeEventTime = performance.now() - fakeEventStart;
+          console.log(`⚡ RIGHT: Fake event created in ${fakeEventTime.toFixed(2)}ms`);
+
+          const dispatchStart = performance.now();
+          document.dispatchEvent(fakeEvent);
+          const dispatchTime = performance.now() - dispatchStart;
+          console.log(`🚀 RIGHT: Event dispatched in ${dispatchTime.toFixed(2)}ms`);
+
+          const totalTime = performance.now() - eventStart;
+          console.log(`✅ RIGHT: Total processing time ${totalTime.toFixed(2)}ms`);
+        }
+      });
 
       this.arduino.on("connected", () => {
         console.log("Arduino connected!");

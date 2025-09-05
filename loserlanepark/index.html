@@ -60,17 +60,16 @@
     <link rel="stylesheet" href="socialCard.css" />
     <link rel="stylesheet" href="tutorial.css" />
     <link rel="stylesheet" href="settings.css" />
-<!-- <script src="p5.serialport.js"></script> -->
+    <!-- <script src="p5.serialport.js"></script> -->
 
-<script src="arduino-web-serial.js"></script>
+    <script src="arduino-web-serial.js"></script>
 
     <script src="html2canvas.js"></script>
   </head>
   <body>
     <div id="game-container">
       <div id="game-screen"></div>
-      <div id="arduino-status" style="display: none;">🟢 Arduino Connected</div>
-
+      <div id="arduino-status" style="display: none">🟢 Arduino Connected</div>
 
       <div id="pregame-msg-box">
         <div id="title-bike" class="bike-art-left bike-art-title">
@@ -83,6 +82,9 @@
         <div id="main-msg-box"></div>
 
         <div class="tutorial-element-container">
+          <div class="bike-direction-arrow left" id="bike-arrow-left"><-</div>
+          <div class="bike-direction-arrow right" id="bike-arrow-right">-></div>
+
           <div id="tutorial-bike" class="bike-art-left bike-art-title">
             _|_<br />
             'o' <br />
@@ -167,7 +169,9 @@
           <h4>Arduino Connection</h4>
           <div class="setting-group">
             <div class="setting-row">
-              <button id="connect-arduino" style="padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; width: 100%;">
+              <button
+                id="connect-arduino"
+                style="padding: 10px; background: #4caf50; color: white; border: none; cursor: pointer; border-radius: 4px; width: 100%">
                 Connect Arduino
               </button>
             </div>
