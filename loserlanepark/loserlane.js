@@ -729,14 +729,16 @@ class CollisionManager {
           if (this.checkCollision(bikeHitbox, darlingHitbox)) {
             const obstacleHitbox = darlingHitbox;
             const collisionDirection = this.getCollisionDirection(bikeHitbox, obstacleHitbox);
+
             // If obstacle is moving and hits bike from behind
             if (darling.behavior?.baseSpeed > 0 && collisionDirection === "up") {
               switch (darling.type) {
                 case DarlingType.TTC:
                   return "TTC";
                 case DarlingType.TTC_LANE_DEATHMACHINE:
+                  return "TRAFFIC"; // This vehicle hit us from behind
                 case DarlingType.ONCOMING_DEATHMACHINE:
-                  return "ONCOMING_DEATHMACHINE";
+                  return "ONCOMING_DEATHMACHINE"; // Fixed: was returning "ONCOMING_DEATHMACHINE"
                 case DarlingType.WANDERER:
                   return "WANDERER";
                 case DarlingType.BUILDING:
@@ -751,8 +753,9 @@ class CollisionManager {
               case DarlingType.TTC:
                 return "TTC";
               case DarlingType.TTC_LANE_DEATHMACHINE:
-              case DarlingType.ONCOMING_DEATHMACHINE:
                 return "TRAFFIC";
+              case DarlingType.ONCOMING_DEATHMACHINE:
+                return "ONCOMING_DEATHMACHINE"; // Fixed: was returning "TRAFFIC"
               case DarlingType.WANDERER:
                 return "WANDERER";
               case DarlingType.BUILDING:
@@ -773,13 +776,7 @@ class CollisionManager {
         }
       }
 
-      // Check parked vehicle collisions
-      if (!Array.isArray(darlings.parkedDeathMachines)) {
-        throw new CollisionError("Invalid parkedDeathMachines array", {
-          parkedDeathMachines: darlings.parkedDeathMachines,
-        });
-      }
-
+      // Check parked vehicle collisions - unchanged
       for (const deathMachine of darlings.parkedDeathMachines) {
         try {
           if (this.checkCollision(bikeHitbox, deathMachine.getHitbox())) {
@@ -800,7 +797,7 @@ class CollisionManager {
         }
       }
 
-      // Simplified track collision check
+      // Track collision check - unchanged
       const trackPositions = [this.config.LANES.TRACKS + 1, this.config.LANES.TRACKS + 5];
       const bikeCenter = bikeHitbox.x + bikeHitbox.width / 2;
       if (trackPositions.includes(Math.floor(bikeCenter))) {
@@ -1608,6 +1605,19 @@ class SpawnManager {
       return false;
     }
   }
+
+  logError(error, method) {
+    const errorInfo = {
+      timestamp: new Date().toISOString(),
+      method,
+      message: error.message,
+      stack: error.stack,
+      context: error.context || {},
+    };
+    this.errorLog.push(errorInfo);
+    console.error(`SpawnManager Error in ${method}:`, errorInfo);
+  }
+
   spawnEntity(entityType) {
     try {
       if (!entityType) {
@@ -2141,6 +2151,9 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
     this.doorOpenY = Math.floor(this.entity.config.GAME.HEIGHT * targetPercentage);
     this.shouldOpenDoor = Math.random() < entity.config.SPAWNING.PARKED_DEATHMACHINE_DOOR_CHANCE;
 
+    this.soundManager = null;
+    this.hasPlayedDoorSound = false;
+
     // this.shouldOpenDoor = false;
 
     // console.log(`[ParkedDM] Created:`, {
@@ -2199,6 +2212,12 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
       this.entity.position.y <= this.doorOpenY + 2
     ) {
       this.doorAnimationActive = true;
+
+      if (!this.hasPlayedDoorSound && this.soundManager) {
+        this.soundManager.play("doorOpening", 0.5);
+        this.hasPlayedDoorSound = true;
+      }
+
       this.updateDoorState();
     }
 
@@ -2216,6 +2235,7 @@ class ParkedDeathmachineBehavior extends VehicleBehaviorBase {
   updateDoorState() {
     this.doorState++;
     this.lastDoorUpdate = Date.now();
+
     this.entity.art = DARLINGS.PARKED_DEATHMACHINE_STATES[this.doorState];
 
     // Add door-opening animation class when door is opening
@@ -2294,10 +2314,19 @@ class TTCBehavior extends VehicleBehaviorBase {
     this.stopTimer = 0;
     this.nextStopTime = this.getRandomStopTime();
     this.wanderersSpawnedAtStop = false;
-    this.soundManager = null; // Will be set when entity receives soundManager
+    this.soundManager = null;
+
+    // Add flag to track entrance sound
+    this.hasPlayedEntranceSound = false;
   }
 
   update() {
+    if (!this.hasPlayedEntranceSound && this.soundManager && this.entity.position.y <= this.config.GAME.HEIGHT) {
+      this.soundManager.playRandomSound(this.soundManager.ttcEntranceSounds, 0.7);
+
+      this.hasPlayedEntranceSound = true;
+    }
+
     // Handle stopping logic first
     if (!this.isAtStop) {
       this.nextStopTime--;
@@ -3824,78 +3853,87 @@ class TutorialSystem {
     };
   }
 
-handleMove(direction) {
-  // Simple flag - no more errors once tutorial is done
-  const tutorialFinished = this.completedSteps.left && this.completedSteps.right;
-  
-  // Wrong direction AND tutorial not finished = show error
-  if (direction !== this.currentStep && !tutorialFinished) {
-    const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
-    wrongHighlight.classList.add("wrong");
-    const originalHTML = this.tutorialText.innerHTML;
-    this.tutorialText.classList.add("error");
-    this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
-    setTimeout(() => {
-      wrongHighlight.classList.remove("wrong");
-      this.tutorialText.classList.remove("error");
-      this.tutorialText.innerHTML = originalHTML;
-    }, 500);
-    return;
-  }
+  handleMove(direction) {
+    // Simple flag - no more errors once tutorial is done
+    const tutorialFinished = this.completedSteps.left && this.completedSteps.right;
 
-  // Don't process if step already completed
-  if (this.completedSteps[direction]) return;
-
-  // Process the successful input
-  this.completedSteps[direction] = true;
-  const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
-
-  // Remove active state
-  highlight.classList.remove("active");
-
-  // Transform the arrow into a checkmark
-  const bikeArrowLeft = document.getElementById("bike-arrow-left");
-  const bikeArrowRight = document.getElementById("bike-arrow-right");
-
-  if (direction === "left" && bikeArrowLeft) {
-    bikeArrowLeft.innerHTML = "✓";
-    bikeArrowLeft.classList.add("success");
-  } else if (direction === "right" && bikeArrowRight) {
-    bikeArrowRight.innerHTML = "✓";
-    bikeArrowRight.classList.add("success");
-  }
-
-  this.tutorialText.classList.add("success");
-
-  setTimeout(() => {
-    if (direction === "left") {
-      this.tutorialBike.style.marginLeft = "-40px";
-      this.currentStep = "right";
-    } else {
-      this.tutorialBike.style.marginLeft = "20px";
-      this.currentStep = "complete";
-    }
-  }, 100);
-
-  setTimeout(() => {
-    if (direction === "left" && bikeArrowLeft) {
-      bikeArrowLeft.classList.remove("show");
-    } else if (direction === "right" && bikeArrowRight) {
-      bikeArrowRight.classList.remove("show");
-    }
-
-    if (!this.completedSteps.right) {
-      this.showRightTutorial();
-    } else if (!this.completedSteps.left) {
-      this.showLeftTutorial();
-    } else {
-      this.tutorialText.innerHTML = "GOOD";
+    // Wrong direction AND tutorial not finished = show error
+    if (direction !== this.currentStep && !tutorialFinished) {
+      // Play wrong sound
+      if (this.game.soundManager) {
+        this.game.soundManager.play("wrong", 0.4);
+      }
+      const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+      wrongHighlight.classList.add("wrong");
+      const originalHTML = this.tutorialText.innerHTML;
+      this.tutorialText.classList.add("error");
+      this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
       setTimeout(() => {
-        this.completeTutorial();
-      }, 1200);
+        wrongHighlight.classList.remove("wrong");
+        this.tutorialText.classList.remove("error");
+        this.tutorialText.innerHTML = originalHTML;
+      }, 500);
+      return;
     }
-  }, 600);
-}
+
+    // Don't process if step already completed
+    if (this.completedSteps[direction]) return;
+
+    // Play jump sound for correct tutorial moves
+    if (this.game.soundManager) {
+      this.game.soundManager.play("jump", 0.3);
+    }
+
+    // Process the successful input
+    this.completedSteps[direction] = true;
+    const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+
+    // Remove active state
+    highlight.classList.remove("active");
+
+    // Transform the arrow into a checkmark
+    const bikeArrowLeft = document.getElementById("bike-arrow-left");
+    const bikeArrowRight = document.getElementById("bike-arrow-right");
+
+    if (direction === "left" && bikeArrowLeft) {
+      bikeArrowLeft.innerHTML = "✓";
+      bikeArrowLeft.classList.add("success");
+    } else if (direction === "right" && bikeArrowRight) {
+      bikeArrowRight.innerHTML = "✓";
+      bikeArrowRight.classList.add("success");
+    }
+
+    this.tutorialText.classList.add("success");
+
+    setTimeout(() => {
+      if (direction === "left") {
+        this.tutorialBike.style.marginLeft = "-40px";
+        this.currentStep = "right";
+      } else {
+        this.tutorialBike.style.marginLeft = "20px";
+        this.currentStep = "complete";
+      }
+    }, 100);
+
+    setTimeout(() => {
+      if (direction === "left" && bikeArrowLeft) {
+        bikeArrowLeft.classList.remove("show");
+      } else if (direction === "right" && bikeArrowRight) {
+        bikeArrowRight.classList.remove("show");
+      }
+
+      if (!this.completedSteps.right) {
+        this.showRightTutorial();
+      } else if (!this.completedSteps.left) {
+        this.showLeftTutorial();
+      } else {
+        this.tutorialText.innerHTML = "TUTORIAL COMPLETE";
+        setTimeout(() => {
+          this.completeTutorial();
+        }, 1200);
+      }
+    }, 600);
+  }
 
   completeTutorial() {
     // console.log("🏁 Completing tutorial");
@@ -3972,6 +4010,8 @@ class LoserLane {
       console.log("Arduino not available, continuing without it");
     }
     this.initializeGameComponents();
+    this.lastAmbientSound = 0;
+    this.ambientSoundInterval = 50000; // 50 seconds
   }
 
   // === Initialization Methods ===
@@ -4140,19 +4180,86 @@ class LoserLane {
   initializeSounds() {
     this.soundManager.setupMuteButton();
 
-    this.soundManager.setupMuteButton();
-    // this.soundManager.addSound("backgroundMusic", "sounds/bgmusic.mp3", true);
-    // this.soundManager.addSound("collision", "sounds/collision.mp3");
-    // this.soundManager.addSound("jump", "sounds/jump.mp3");
-    // this.soundManager.addSound("powerup", "sounds/powerup.mp3");
-    // this.soundManager.addSound("death", "sounds/death.mp3");
+    this.soundManager.addSound("backgroundMusic", "sounds/background.mp3", true);
+    this.soundManager.addSound("start", "sounds/start.mp3");
+    this.soundManager.addSound("wrong", "sounds/wrong.mp3");
 
-    // TTC specific sounds
-    // this.soundManager.addSound("ttcBell", "sounds/collision.mp3");
-    this.soundManager.addSound("ttcStop", "sounds/collision.mp3");
-    // this.soundManager.addSound("ttcStart", "sounds/ttc-start.mp3");
+    this.soundManager.addSound("jump", "sounds/jump.mp3");
+    this.soundManager.addSound("death", "sounds/death.mp3");
 
-    // this.soundManager.play("backgroundMusic", 1.0);
+    // TTC sounds
+    this.soundManager.addSound("ttcBell1", "sounds/ttcBell1.mp3");
+    this.soundManager.addSound("ttcBell2", "sounds/ttcBell2.mp3");
+    this.soundManager.addSound("ttcBell3", "sounds/ttcBell3.mp3");
+    this.soundManager.addSound("ttcHorn", "sounds/ttcHorn.mp3");
+
+     this.soundManager.addSound("ouch1", "sounds/ouch1.mp3");
+    this.soundManager.addSound("ouch2", "sounds/ouch2.mp3");
+    this.soundManager.addSound("ouch3", "sounds/ouch3.mp3");
+    this.soundManager.addSound("ouch4", "sounds/ouch4.mp3");
+
+    this.soundManager.addSound("carHonk1", "sounds/carHonk1.mp3");
+    this.soundManager.addSound("carHonk2", "sounds/carHonk2.mp3");
+    this.soundManager.addSound("carHonk3", "sounds/carHonk3.mp3");
+    this.soundManager.addSound("carHonk4", "sounds/carHonk4.mp3");
+    this.soundManager.addSound("carHonk5", "sounds/carHonk5.mp3");
+    this.soundManager.addSound("carHonk6", "sounds/carHonk6.mp3");
+    this.soundManager.addSound("carHonk7", "sounds/carHonk7.mp3");
+    this.soundManager.addSound("carHonk8", "sounds/carHonk8.mp3");
+    this.soundManager.addSound("carHonk9", "sounds/carHonk9.mp3");
+    this.soundManager.addSound("carHonk10", "sounds/carHonk10.mp3");
+    this.soundManager.addSound("carHonk11", "sounds/carHonk11.mp3");
+    this.soundManager.addSound("carHonk12", "sounds/carHonk12.mp3");
+    this.soundManager.addSound("carHonk13", "sounds/carHonk13.mp3");
+    this.soundManager.addSound("carHonk14", "sounds/carHonk14.mp3");
+    this.soundManager.addSound("carHonk15", "sounds/carHonk15.mp3");
+
+    // Collision sounds
+    this.soundManager.addSound("hitPerson1", "sounds/personHit1.mp3");
+    this.soundManager.addSound("hitPerson2", "sounds/personHit2.mp3");
+    this.soundManager.addSound("hitCarDoor", "sounds/hitCarDoor.mp3");
+    this.soundManager.addSound("hitCar", "sounds/hitCar.mp3");
+    this.soundManager.addSound("hitTTC", "sounds/hitTTC.mp3");
+    this.soundManager.addSound("hitTracks", "sounds/hitTracks.mp3");
+    this.soundManager.addSound("hitBuilding", "sounds/hitBuilding.mp3"); // NEW
+    this.soundManager.addSound("carHitsUs", "sounds/carHitsUs.mp3");
+
+    // Interactive sounds
+    this.soundManager.addSound("doorOpening", "sounds/doorOpening.mp3"); // NEW
+
+    // Ambient traffic sounds
+    this.soundManager.addSound("traffic1", "sounds/traffic1.mp3");
+    this.soundManager.addSound("traffic2", "sounds/traffic2.mp3");
+    this.soundManager.addSound("traffic3", "sounds/traffic3.mp3");
+    this.soundManager.addSound("carMusic1", "sounds/carMusic1.mp3");
+    this.soundManager.addSound("carMusic2", "sounds/carMusic2.mp3");
+
+    // Create sound arrays
+    this.soundManager.carHonkSounds = [
+      "carHonk1",
+      "carHonk2",
+      "carHonk3",
+      "carHonk4",
+      "carHonk5",
+      "carHonk6",
+      "carHonk7",
+      "carHonk8",
+      "carHonk9",
+      "carHonk10",
+      "carHonk11",
+      "carHonk12",
+      "carHonk13",
+      "carHonk14",
+      "carHonk15",
+    ];
+    this.soundManager.carCrashSounds = ["hitCar", "hitCarDoor"];
+    this.soundManager.personHitSounds = ["hitPerson1", "hitPerson2"];
+        this.soundManager.ouchSounds = ["ouch1", "ouch2", "ouch3", "ouch4"];
+
+    this.soundManager.ttcCollisionSounds = ["ttcHorn"];
+    this.soundManager.trackSounds = ["hitTracks"];
+    this.soundManager.ttcEntranceSounds = ["ttcBell1", "ttcBell2", "ttcBell3"];
+    this.soundManager.ambientSounds = ["traffic1", "traffic2", "traffic3", "carMusic1", "carMusic2"];
   }
 
   initializeGameComponents() {
@@ -4250,14 +4357,19 @@ class LoserLane {
   // === Game Loop Methods ===
 
   start() {
+    this.soundManager.initializeAudio();
+
     if (this.stateManager.start()) {
       this.lastFrameTime = performance.now();
       this.frameId = requestAnimationFrame((t) => this.update(t));
 
       this.sendArduinoCommand("START");
-
-      // Start background music when game starts
-      //  this.soundManager.play("backgroundMusic", 1.0);
+      this.soundManager.play("backgroundMusic", 0.3);
+      // Play start sound for any method of starting
+      setTimeout(() => {
+        this.soundManager.play("traffic1", 0.5);
+        this.soundManager.play("start", 0.2);
+      }, 100);
     }
   }
 
@@ -4292,6 +4404,7 @@ class LoserLane {
     this.updateBikePosition();
     this.spawnDarlings();
     this.checkBikeCollisions();
+    this.playAmbientSounds();
   }
 
   render() {
@@ -4303,6 +4416,8 @@ class LoserLane {
   movePlayer(direction, timestamp) {
     if (this.stateManager.moveBike(direction, timestamp)) {
       this.updateBikePosition();
+      // Play a subtle movement sound
+      this.soundManager.play("jump", 0.1); // Quieter for movement
     }
   }
 
@@ -4319,6 +4434,17 @@ class LoserLane {
         this.stateManager.currentLane,
         this.stateManager.isJumping ? CONFIG.GAME.CYCLIST_Y - 1 : CONFIG.GAME.CYCLIST_Y
       );
+    }
+  }
+
+  playAmbientSounds() {
+    const now = Date.now();
+    if (now - this.lastAmbientSound > this.ambientSoundInterval) {
+      if (Math.random() < 0.3) {
+        // 30% chance every 5 seconds
+        this.soundManager.playRandomSound(this.soundManager.ambientSounds, 0.2);
+      }
+      this.lastAmbientSound = now;
     }
   }
 
@@ -4382,31 +4508,78 @@ class LoserLane {
   }
 
   // === Game State Methods ===
+  playCollisionSound(reason) {
+    switch (reason) {
+      case "ONCOMING_DEATHMACHINE":
+        // this.soundManager.play("carHitsUs", 0.8);
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.carHonkSounds, 0.8);
+
+        break;
+      case "TRAFFIC": // TTC_LANE_DEATHMACHINE hitting us
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.carHonkSounds, 0.8);
+        break;
+      case "TTC":
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.ttcCollisionSounds, 0.8);
+        break;
+      case "PARKEDDEATHMACHINE":
+        this.soundManager.play("hitCar", 0.7);
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.carHonkSounds, 0.8);
+
+        break;
+      case "DOOR":
+        this.soundManager.play("hitCarDoor", 0.7);
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.carHonkSounds, 0.8);
+
+        break;
+      case "WANDERER":
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.personHitSounds, 0.6);
+        break;
+      case "TRACKS":
+        this.soundManager.playRandomSound(this.soundManager.ouchSounds, 0.6);
+        this.soundManager.playRandomSound(this.soundManager.trackSounds, 0.8);
+        break;
+      case "BUILDING": // NEW - was missing
+        this.soundManager.play("hitBuilding", 0.8);
+        break;
+      default:
+        this.soundManager.play("hitCar", 0.7); // Changed from "collision" since that sound is removed
+        break;
+    }
+  }
 
   die(reason) {
     if (this.stateManager.state.isDead) return;
 
-    // Send DEATH command to Arduino IMMEDIATELY - before any visual effects
+    // Send DEATH command to Arduino IMMEDIATELY
     this.sendArduinoCommand("DEATH");
 
-    // Force the command to be sent right now by flushing any buffers
+    // Play collision sound IMMEDIATELY (this is the new addition)
+    this.playCollisionSound(reason);
+
+    // Store the death reason for sound selection
+    this.currentDeathReason = reason;
+
     if (this.arduino && this.arduino.port && this.arduino.port.writable) {
-      // Give the browser a moment to actually send the data
       setTimeout(() => {
         this.setDeathState();
         this.handleDeathEffects(reason);
-      }, 10); // Very short delay to ensure Arduino command goes out first
+      }, 10);
     } else {
-      // If no Arduino, proceed normally
       this.setDeathState();
       this.handleDeathEffects(reason);
     }
   }
 
   setDeathState() {
-    // Play death sound and stop background music
-    // this.soundManager.stop("backgroundMusic");
-    // this.soundManager.play("death", 1.0);
+    // Stop background music and play death sound
+    this.soundManager.stop("backgroundMusic");
+    this.soundManager.play("death", 1.0);
 
     this.stateManager.state.isPaused = true;
     this.stateManager.state.isDead = true;

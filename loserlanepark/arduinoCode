@@ -1,0 +1,242 @@
+#include <Adafruit_NeoPixel.h>
+
+// Button pins
+const int leftButton = 2;
+const int rightButton = 3;
+
+// NeoPixel pins
+#define LEFT_LED_PIN 5
+#define RIGHT_LED_PIN 6
+
+// Create separate NeoPixel objects for each LED
+Adafruit_NeoPixel leftLED(1, LEFT_LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel rightLED(1, RIGHT_LED_PIN, NEO_GRB + NEO_KHZ800);
+
+// Game states
+enum GameState {
+  WAITING,
+  PLAYING,
+  DYING
+};
+
+GameState currentState = WAITING;
+
+// Animation variables
+unsigned long lastUpdate = 0;
+int animationStep = 0;
+unsigned long buttonPressTime = 0;
+bool leftPressed = false;
+bool rightPressed = false;
+
+// ADDED: Button state tracking for rapid presses
+bool lastLeftButtonState = HIGH;
+bool lastRightButtonState = HIGH;
+
+// Death animation
+int deathStep = 0;
+bool deathAnimationActive = false;
+
+void setup() {
+  Serial.begin(9600);
+ 
+  // Setup buttons
+  pinMode(leftButton, INPUT_PULLUP);
+  pinMode(rightButton, INPUT_PULLUP);
+ 
+  // Initialize both NeoPixels
+  leftLED.begin();
+  rightLED.begin();
+  leftLED.setBrightness(80);  // Slightly brighter for better effects
+  rightLED.setBrightness(80);
+ 
+  // Start with gentle blue pulse
+  currentState = WAITING;
+  setWaitingColors();
+}
+
+void loop() {
+  handleSerialCommands();
+  handleButtons();
+  updateAnimations();
+}
+
+void handleSerialCommands() {
+  if (Serial.available()) {
+    String command = Serial.readString();
+    command.trim();
+   
+    if (command == "START") {
+      currentState = PLAYING;
+      animationStep = 0;
+    }
+    else if (command == "DEATH") {
+      currentState = DYING;
+      deathStep = 0;
+      deathAnimationActive = true;
+    }
+    else if (command == "RESTART") {
+      currentState = WAITING;
+      deathAnimationActive = false;
+      animationStep = 0;
+      setWaitingColors();
+    }
+  }
+}
+
+void handleButtons() {
+  // Read current button states
+  bool currentLeftState = digitalRead(leftButton);
+  bool currentRightState = digitalRead(rightButton);
+  
+  // Check for left button press (transition from HIGH to LOW)
+  if (currentLeftState == LOW && lastLeftButtonState == HIGH) {
+    Serial.println("LEFT");
+    Serial.flush();
+    leftPressed = true;
+    buttonPressTime = millis();
+    // Flash bright white on button press
+    if (currentState == PLAYING) {
+      leftLED.setPixelColor(0, leftLED.Color(255, 255, 255));
+      leftLED.show();
+    }
+  }
+  
+  // Check for left button release (transition from LOW to HIGH)
+  if (currentLeftState == HIGH && lastLeftButtonState == LOW) {
+    leftPressed = false;
+  }
+  
+  // Check for right button press (transition from HIGH to LOW)
+  if (currentRightState == LOW && lastRightButtonState == HIGH) {
+    Serial.println("RIGHT");
+    Serial.flush();
+    rightPressed = true;
+    buttonPressTime = millis();
+    // Flash bright white on button press
+    if (currentState == PLAYING) {
+      rightLED.setPixelColor(0, rightLED.Color(255, 255, 255));
+      rightLED.show();
+    }
+  }
+  
+  // Check for right button release (transition from LOW to HIGH)
+  if (currentRightState == HIGH && lastRightButtonState == LOW) {
+    rightPressed = false;
+  }
+  
+  // Update last states for next loop
+  lastLeftButtonState = currentLeftState;
+  lastRightButtonState = currentRightState;
+}
+
+void updateAnimations() {
+  unsigned long now = millis();
+ 
+  // Handle button flash timeout (very brief - 50ms)
+  if ((leftPressed || rightPressed) && (now - buttonPressTime > 50)) {
+    // Button flash is over, return to normal animation
+    if (currentState == PLAYING) {
+      updatePlayingAnimation();
+    }
+  }
+ 
+  // Update main animations every 100ms
+  if (now - lastUpdate > 100) {
+    lastUpdate = now;
+   
+    switch (currentState) {
+      case WAITING:
+        updateWaitingAnimation();
+        break;
+      case PLAYING:
+        if (!leftPressed && !rightPressed) {  // Only animate if no button pressed
+          updatePlayingAnimation();
+        }
+        break;
+      case DYING:
+        updateDeathAnimation();
+        break;
+    }
+   
+    animationStep++;
+  }
+}
+
+void updateWaitingAnimation() {
+  // Gentle blue pulse
+  int brightness = 50 + (sin(animationStep * 0.3) * 30);
+  leftLED.setPixelColor(0, leftLED.Color(0, 0, brightness));
+  rightLED.setPixelColor(0, rightLED.Color(0, 0, brightness));
+  leftLED.show();
+  rightLED.show();
+}
+
+void updatePlayingAnimation() {
+  // Cycle through different shades of green
+  int hue = (animationStep * 2) % 60;  // Stay in green range (0-60 in HSV)
+ 
+  // Convert HSV to RGB for green variations
+  uint32_t color1 = HSVtoRGB(hue, 255, 200);
+  uint32_t color2 = HSVtoRGB((hue + 20) % 60, 255, 200);
+ 
+  leftLED.setPixelColor(0, color1);
+  rightLED.setPixelColor(0, color2);
+  leftLED.show();
+  rightLED.show();
+}
+
+void updateDeathAnimation() {
+  if (!deathAnimationActive) return;
+ 
+  if (deathStep < 20) {
+    // Start with bright red, then cycle through rainbow back to green
+    int hue = map(deathStep, 0, 19, 0, 120);  // 0=red, 120=green in HSV
+    int brightness = 255 - (deathStep * 5);   // Fade brightness slightly
+    brightness = max(brightness, 150);        // Don't go too dim
+   
+    uint32_t color = HSVtoRGB(hue, 255, brightness);
+   
+    leftLED.setPixelColor(0, color);
+    rightLED.setPixelColor(0, color);
+    leftLED.show();
+    rightLED.show();
+   
+    deathStep++;
+  } else {
+    // Animation complete, stay green until restart
+    leftLED.setPixelColor(0, leftLED.Color(0, 255, 0));
+    rightLED.setPixelColor(0, rightLED.Color(0, 255, 0));
+    leftLED.show();
+    rightLED.show();
+    deathAnimationActive = false;
+  }
+}
+
+void setWaitingColors() {
+  leftLED.setPixelColor(0, leftLED.Color(0, 0, 100));
+  rightLED.setPixelColor(0, rightLED.Color(0, 0, 100));
+  leftLED.show();
+  rightLED.show();
+}
+
+// HSV to RGB conversion function
+uint32_t HSVtoRGB(int hue, int sat, int val) {
+  int r, g, b;
+  int i = hue / 60;
+  int f = hue % 60;
+  int p = (val * (255 - sat)) / 255;
+  int q = (val * (255 - (sat * f) / 60)) / 255;
+  int t = (val * (255 - (sat * (60 - f)) / 60)) / 255;
+ 
+  switch(i) {
+    case 0: r = val; g = t; b = p; break;
+    case 1: r = q; g = val; b = p; break;
+    case 2: r = p; g = val; b = t; break;
+    case 3: r = p; g = q; b = val; break;
+    case 4: r = t; g = p; b = val; break;
+    case 5: r = val; g = p; b = q; break;
+    default: r = 0; g = 0; b = 0; break;
+  }
+ 
+  return leftLED.Color(r, g, b);
+}
