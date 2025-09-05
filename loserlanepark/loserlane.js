@@ -3824,79 +3824,78 @@ class TutorialSystem {
     };
   }
 
-  handleMove(direction) {
-    // Handle wrong input (keep existing)
-    if (direction !== this.currentStep) {
-      const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
-      wrongHighlight.classList.add("wrong");
-      const originalHTML = this.tutorialText.innerHTML;
-      this.tutorialText.classList.add("error");
-      this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
-      setTimeout(() => {
-        wrongHighlight.classList.remove("wrong");
-        this.tutorialText.classList.remove("error");
-        this.tutorialText.innerHTML = originalHTML;
-      }, 500);
-      return;
-    }
-
-    if (this.completedSteps[direction]) return;
-
-    // PHASE 1: IMMEDIATE SUCCESS ACKNOWLEDGMENT
-    this.completedSteps[direction] = true;
-    const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
-
-    // Remove active state
-    highlight.classList.remove("active");
-
-    // Transform the arrow into a checkmark
-    const bikeArrowLeft = document.getElementById("bike-arrow-left");
-    const bikeArrowRight = document.getElementById("bike-arrow-right");
-
-    if (direction === "left" && bikeArrowLeft) {
-      bikeArrowLeft.innerHTML = "✓";
-      bikeArrowLeft.classList.add("success");
-    } else if (direction === "right" && bikeArrowRight) {
-      bikeArrowRight.innerHTML = "✓";
-      bikeArrowRight.classList.add("success");
-    }
-
-    // Remove checkmark from tutorial text since it's now in the arrow
-    this.tutorialText.classList.add("success");
-
-    // PHASE 2: BRIEF PAUSE TO REGISTER SUCCESS
+handleMove(direction) {
+  // Simple flag - no more errors once tutorial is done
+  const tutorialFinished = this.completedSteps.left && this.completedSteps.right;
+  
+  // Wrong direction AND tutorial not finished = show error
+  if (direction !== this.currentStep && !tutorialFinished) {
+    const wrongHighlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+    wrongHighlight.classList.add("wrong");
+    const originalHTML = this.tutorialText.innerHTML;
+    this.tutorialText.classList.add("error");
+    this.tutorialText.innerHTML = direction === "right" ? "Your other left!" : "Your other right!";
     setTimeout(() => {
-      // Move the bike to show progress
-      if (direction === "left") {
-        this.tutorialBike.style.marginLeft = "-40px";
-        this.currentStep = "right";
-      } else {
-        this.tutorialBike.style.marginLeft = "20px";
-        this.currentStep = "complete";
-      }
-    }, 100); // Quick pause for checkmark visibility
-
-    // PHASE 3: REMOVE CHECKMARK AND TRANSITION TO NEXT STEP
-    setTimeout(() => {
-      // Remove the checkmark after success acknowledgment
-      if (direction === "left" && bikeArrowLeft) {
-        bikeArrowLeft.classList.remove("show");
-      } else if (direction === "right" && bikeArrowRight) {
-        bikeArrowRight.classList.remove("show");
-      }
-
-      if (!this.completedSteps.right) {
-        this.showRightTutorial();
-      } else if (!this.completedSteps.left) {
-        this.showLeftTutorial();
-      } else {
-        this.tutorialText.innerHTML = "GOOD";
-        setTimeout(() => {
-          this.completeTutorial();
-        }, 1200);
-      }
-    }, 600); // Total checkmark display time
+      wrongHighlight.classList.remove("wrong");
+      this.tutorialText.classList.remove("error");
+      this.tutorialText.innerHTML = originalHTML;
+    }, 500);
+    return;
   }
+
+  // Don't process if step already completed
+  if (this.completedSteps[direction]) return;
+
+  // Process the successful input
+  this.completedSteps[direction] = true;
+  const highlight = direction === "left" ? this.leftHighlight : this.rightHighlight;
+
+  // Remove active state
+  highlight.classList.remove("active");
+
+  // Transform the arrow into a checkmark
+  const bikeArrowLeft = document.getElementById("bike-arrow-left");
+  const bikeArrowRight = document.getElementById("bike-arrow-right");
+
+  if (direction === "left" && bikeArrowLeft) {
+    bikeArrowLeft.innerHTML = "✓";
+    bikeArrowLeft.classList.add("success");
+  } else if (direction === "right" && bikeArrowRight) {
+    bikeArrowRight.innerHTML = "✓";
+    bikeArrowRight.classList.add("success");
+  }
+
+  this.tutorialText.classList.add("success");
+
+  setTimeout(() => {
+    if (direction === "left") {
+      this.tutorialBike.style.marginLeft = "-40px";
+      this.currentStep = "right";
+    } else {
+      this.tutorialBike.style.marginLeft = "20px";
+      this.currentStep = "complete";
+    }
+  }, 100);
+
+  setTimeout(() => {
+    if (direction === "left" && bikeArrowLeft) {
+      bikeArrowLeft.classList.remove("show");
+    } else if (direction === "right" && bikeArrowRight) {
+      bikeArrowRight.classList.remove("show");
+    }
+
+    if (!this.completedSteps.right) {
+      this.showRightTutorial();
+    } else if (!this.completedSteps.left) {
+      this.showLeftTutorial();
+    } else {
+      this.tutorialText.innerHTML = "GOOD";
+      setTimeout(() => {
+        this.completeTutorial();
+      }, 1200);
+    }
+  }, 600);
+}
 
   completeTutorial() {
     // console.log("🏁 Completing tutorial");
