@@ -269,7 +269,7 @@
 
 .bike-direction-arrow {
     position: absolute;
-    font-size: 2.5rem;
+    font-size: 1.7rem;
     color: var(--green);
     top: 50%;
     transform: translateY(-50%);

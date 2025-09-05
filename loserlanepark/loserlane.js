@@ -3533,7 +3533,7 @@ class KeyboardControls extends BaseControl {
       }
 
       if (!this.game.stateManager.isPlaying && this.game.tutorialComplete) {
-        if (e.key === " " || e.key === "Spacebar") {
+        if (e.key === " " || e.key === "Spacebar" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
           console.log("⌨️  KEYBOARD: SPACE starting game");
           this.game.start();
           document.getElementById("pregame-msg-box").style.display = "none";
@@ -3781,9 +3781,8 @@ class TutorialSystem {
   showLeftTutorial() {
     const text = this.isMobile
       ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
-      // : "Use your <span class='highlight'>left arrow key</span> to move left";
-            : "Use the <span class='highlight'>left button</span> to move left";
-
+      : // : "Use your <span class='highlight'>left arrow key</span> to move left";
+        "<span class='highlight'>Left button</span> to move left";
 
     // Only show instruction if we're actually on this step
     if (this.currentStep === "left") {
@@ -3797,9 +3796,8 @@ class TutorialSystem {
   showRightTutorial() {
     const text = this.isMobile
       ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
-      // : "Use your <span class='highlight'>right arrow key</span> to move right";
-            : "Use the <span class='highlight'>the right button</span> to move right";
-
+      : // : "Use your <span class='highlight'>right arrow key</span> to move right";
+        "<span class='highlight'>Right button</span> to move right";
 
     // Only show instruction if we're actually on this step
     if (this.currentStep === "right") {

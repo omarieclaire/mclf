@@ -163,7 +163,7 @@
 #CTO {
   text-align: center;
   /* max-width: 90%; */
-  margin: 0 auto;
+  margin: 1rem auto;
   color: var(--light-purp);
   /* letter-spacing: 0.3rem; */
   /* border-bottom: 1px solid var(--hot-pink); */
@@ -180,8 +180,7 @@
 
 #CTO a {
   text-align: center;
-  font-size: 1.2rem;
-  /* margin: 0 auto; */
+  font-size: 1.6rem;
   color: var(--light-purp);
 }
 
