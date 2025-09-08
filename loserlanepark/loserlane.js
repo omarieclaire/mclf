@@ -3810,8 +3810,8 @@ class TutorialSystem {
   showLeftTutorial() {
     const text = this.isMobile
       ? "Tap the <span class='highlight'>left side</span> of the screen to move left"
-      : // : "Use your <span class='highlight'>left arrow key</span> to move left";
-        "<span class='highlight'>Left button</span> to move left";
+     : "Use your <span class='highlight'>left arrow key</span> to move left";
+        // "<span class='highlight'>Left button</span> to move left";
 
     // Only show instruction if we're actually on this step
     if (this.currentStep === "left") {
@@ -3825,8 +3825,8 @@ class TutorialSystem {
   showRightTutorial() {
     const text = this.isMobile
       ? "Tap the <span class='highlight'>right side</span> of the screen to move right"
-      : // : "Use your <span class='highlight'>right arrow key</span> to move right";
-        "<span class='highlight'>Right button</span> to move right";
+      : "Use your <span class='highlight'>right arrow key</span> to move right";
+        // "<span class='highlight'>Right button</span> to move right";
 
     // Only show instruction if we're actually on this step
     if (this.currentStep === "right") {

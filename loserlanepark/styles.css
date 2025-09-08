@@ -113,6 +113,10 @@ a {
   height: 1.2em; /* Use em for consistent ratio */
   /* border: 0.1px solid rgba(146, 124, 124, 0.2); */
   text-align: center;
+
+    font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  word-spacing: 0;
 }
 
 /* @media (min-height: 600px) {
@@ -162,6 +166,10 @@ a {
 }
 
 #game-screen {
+  font-family: "Courier New", "Consolas", "Monaco", "Lucida Console", monospace;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0;
+  text-rendering: optimizeSpeed;
   background: var(--dark-grey);
   /* width: 100vw; */
   width: 42ch;
