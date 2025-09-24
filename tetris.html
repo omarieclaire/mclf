@@ -747,6 +747,7 @@
 
       // Place piece on board
       function placePiece(piece) {
+        console.log("Placing piece on board");
         for (let y = 0; y < piece.shape.length; y++) {
           for (let x = 0; x < piece.shape[y].length; x++) {
             if (piece.shape[y][x]) {
@@ -758,10 +759,12 @@
             }
           }
         }
+        console.log("Piece placed successfully");
       }
 
-      // Clear completed lines with animation - completely rewritten
+      // Clear completed lines with animation - with extensive logging
       function clearLines() {
+        console.log("=== CHECKING FOR COMPLETE LINES ===");
         const linesToClear = [];
 
         // Scan the entire board once to find all complete lines
@@ -774,52 +777,112 @@
             }
           }
           if (lineComplete) {
+            console.log(`Line ${y} is complete`);
             linesToClear.push(y);
           }
         }
 
+        console.log(`Total complete lines found: ${linesToClear.length}`, linesToClear);
+
         if (linesToClear.length > 0) {
-          console.log(`Clearing ${linesToClear.length} lines:`, linesToClear); // Debug log
+          console.log(`Starting line clear animation for lines:`, linesToClear);
           
           // Start line clear animation for ALL found lines
           lineClearAnimation.active = true;
-          lineClearAnimation.lines = linesToClear.slice(); // Make a copy
+          lineClearAnimation.lines = [...linesToClear]; // Store all lines to clear
           lineClearAnimation.time = 0;
+          
+          console.log(`Animation state set - active: ${lineClearAnimation.active}, lines: `, lineClearAnimation.lines);
 
           return linesToClear.length;
         }
 
+        console.log("No complete lines found");
         return 0;
       }
 
-      // Actually remove the lines after animation - simplified
+      // Actually remove the lines after animation - FIXED array manipulation bug
       function removeClearedLines() {
+        console.log("=== REMOVING CLEARED LINES ===");
         const linesCleared = lineClearAnimation.lines.length;
-        console.log(`Removing ${linesCleared} lines after animation`); // Debug log
+        console.log(`About to remove ${linesCleared} lines:`, lineClearAnimation.lines);
         
-        // Remove lines from bottom to top to maintain indices
-        const sortedLines = lineClearAnimation.lines.slice().sort((a, b) => b - a);
+        // Log board state before removal
+        console.log("Board state before line removal:");
+        for (let y = 0; y < BOARD_HEIGHT; y++) {
+          const lineStatus = board[y].every(cell => cell !== 0) ? "COMPLETE" : "incomplete";
+          console.log(`  Line ${y}: ${lineStatus}`);
+        }
         
-        for (const lineY of sortedLines) {
-          board.splice(lineY, 1);
-          board.unshift(new Array(BOARD_WIDTH).fill(0));
+        // CRITICAL FIX: Remove lines from bottom to top BUT adjust indices as we go
+        // OR remove all at once by creating a new board
+        console.log("Creating new board without cleared lines...");
+        
+        const linesToRemove = new Set(lineClearAnimation.lines);
+        const newBoard = [];
+        
+        // Add empty lines at the top for each line we're removing
+        for (let i = 0; i < linesCleared; i++) {
+          newBoard.push(new Array(BOARD_WIDTH).fill(0));
+        }
+        
+        // Copy all non-cleared lines to the new board
+        for (let y = 0; y < BOARD_HEIGHT; y++) {
+          if (!linesToRemove.has(y)) {
+            newBoard.push([...board[y]]);
+          } else {
+            console.log(`Skipping line ${y} (marked for clearing)`);
+          }
+        }
+        
+        // Replace the board
+        board = newBoard;
+        console.log(`New board created with ${board.length} lines`);
+
+        // Log board state after removal
+        console.log("Board state after line removal:");
+        let stillCompleteLines = [];
+        for (let y = 0; y < BOARD_HEIGHT; y++) {
+          const lineStatus = board[y].every(cell => cell !== 0) ? "COMPLETE" : "incomplete";
+          if (lineStatus === "COMPLETE") {
+            stillCompleteLines.push(y);
+          }
+          console.log(`  Line ${y}: ${lineStatus}`);
+        }
+        
+        if (stillCompleteLines.length > 0) {
+          console.error(`ERROR: Still have ${stillCompleteLines.length} complete lines after removal:`, stillCompleteLines);
+        } else {
+          console.log("SUCCESS: No complete lines remaining after removal");
         }
 
+        // Update game stats with ALL cleared lines
+        const oldLines = lines;
         lines += linesCleared;
+        console.log(`Lines updated: ${oldLines} -> ${lines}`);
 
-        // Scoring (classic Tetris)
+        // Scoring (classic Tetris scoring)
         const lineScores = [0, 40, 100, 300, 1200];
-        score += lineScores[linesCleared] * level;
+        const scoreToAdd = lineScores[Math.min(linesCleared, 4)] * level;
+        const oldScore = score;
+        score += scoreToAdd;
+        console.log(`Score updated: ${oldScore} -> ${score} (added ${scoreToAdd} for ${linesCleared} lines)`);
 
         // Level progression
+        const oldLevel = level;
         level = Math.floor(lines / 10) + 1;
         dropInterval = Math.max(50, 1000 - (level - 1) * 100);
+        console.log(`Level updated: ${oldLevel} -> ${level}`);
 
         updateDisplay();
 
-        // Reset animation
+        // Reset animation state completely
+        console.log("Resetting animation state");
         lineClearAnimation.active = false;
         lineClearAnimation.lines = [];
+        lineClearAnimation.time = 0;
+        
+        console.log("=== LINE REMOVAL COMPLETE ===");
       }
 
       // Move piece down
@@ -828,15 +891,20 @@
           currentPiece.y++;
           return true;
         } else {
+          console.log("=== PIECE PLACED ===");
           placePiece(currentPiece);
           
           // Check for line clears immediately after placing
           const linesCleared = clearLines();
+          console.log(`dropPiece: Found ${linesCleared} lines to clear`);
           
           // Always spawn next piece after placing, regardless of line clears
           // The line clearing animation will handle itself separately
           if (linesCleared === 0) {
+            console.log("No lines to clear, spawning next piece immediately");
             spawnNextPiece();
+          } else {
+            console.log(`Starting animation for ${linesCleared} lines`);
           }
           // If lines are being cleared, spawnNextPiece will be called after animation
 
@@ -846,6 +914,7 @@
 
       // Spawn next piece
       function spawnNextPiece() {
+        console.log("=== SPAWNING NEXT PIECE ===");
         currentPiece = nextPiece;
         nextPiece = createPiece();
 
@@ -854,6 +923,7 @@
           return;
         }
 
+        console.log("Next piece spawned successfully");
         drawNextPiece();
       }
 
@@ -1015,6 +1085,7 @@
 
       // Start new game
       function startGame() {
+        console.log("=== STARTING NEW GAME ===");
         initBoard();
         initializeBag();
         currentPiece = createPiece();
@@ -1051,8 +1122,11 @@
         // Handle line clear animation
         if (lineClearAnimation.active) {
           lineClearAnimation.time += deltaTime;
-
+          
           if (lineClearAnimation.time >= lineClearAnimation.duration) {
+            console.log("=== ANIMATION COMPLETE ===");
+            console.log(`Animation finished after ${lineClearAnimation.time}ms, removing lines and spawning next piece`);
+            // Remove all cleared lines at once and spawn next piece
             removeClearedLines();
             spawnNextPiece();
           }
@@ -1141,18 +1215,24 @@
 
       function handleTouchHardDrop() {
         if (gameRunning && !paused && currentPiece) {
+          console.log("=== TOUCH HARD DROP ===");
           while (canPlace(currentPiece, currentPiece.x, currentPiece.y + 1)) {
             currentPiece.y++;
             score += 2;
           }
           updateDisplay();
+          console.log("Touch hard drop complete, placing piece");
           placePiece(currentPiece);
           
           // Single line clear check after piece is placed
           const linesCleared = clearLines();
+          console.log(`Touch hard drop: Found ${linesCleared} lines to clear`);
           
           if (linesCleared === 0) {
+            console.log("No lines to clear from touch hard drop, spawning next piece immediately");
             spawnNextPiece();
+          } else {
+            console.log(`Starting animation for ${linesCleared} lines from touch hard drop`);
           }
           dropTime = 0;
         }
@@ -1226,18 +1306,24 @@
 
             case "Space":
               // Hard drop
+              console.log("=== HARD DROP ===");
               while (canPlace(currentPiece, currentPiece.x, currentPiece.y + 1)) {
                 currentPiece.y++;
                 score += 2;
               }
               updateDisplay();
+              console.log("Hard drop complete, placing piece");
               placePiece(currentPiece);
               
               // Single line clear check after piece is placed
               const linesCleared = clearLines();
+              console.log(`Hard drop: Found ${linesCleared} lines to clear`);
               
               if (linesCleared === 0) {
+                console.log("No lines to clear from hard drop, spawning next piece immediately");
                 spawnNextPiece();
+              } else {
+                console.log(`Starting animation for ${linesCleared} lines from hard drop`);
               }
               dropTime = 0;
               break;
