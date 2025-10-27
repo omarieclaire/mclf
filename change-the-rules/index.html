@@ -1,108 +1,384 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
 
-<head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-77465632-1");
+    </script>
 
-    function gtag() {
-      dataLayer.push(arguments);
+    <meta charset="UTF-8" />
+    <!-- helps responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="If you don't like the game, change the rules" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Change the rules</title>
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous" />
+
+    <meta property="og:title" content="Change the Rules" />
+    <meta property="og:description" content="If you don't like the game, change the rules" />
+    <meta property="og:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png" />
+    <meta property="og:url" content="https://marieflanagan.com/throne-room/" />
+    <meta property="og:type" content="article" />
+
+    <meta name="twitter:title" content="Change the Rules" />
+    <meta name="twitter:description" content="If you don't like the game, change the rules" />
+    <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <style>
+    .zine-showcase {
+      margin: 40px 0;
     }
-    gtag('js', new Date());
-    gtag('config', 'UA-77465632-1');
-  </script>
 
-  <meta charset="UTF-8">
-  <!-- helps responsiveness -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Marie Claire LeBlanc Flanagan">
-  <meta name="description" content="If you don't like the game, change the rules">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <title>Change the rules</title>
-  <link href="../styles.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    .zine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin: 32px 0;
+    }
 
-  <meta property="og:title" content="Throne Room">
-  <meta property="og:description" content="If you don't like the game, change the rules">
-  <meta property="og:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png">
-  <meta property="og:url" content="https://marieflanagan.com/throne-room/">
-  <meta property="og:type" content="article">
+    .zine-card {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 2px solid #e0e0e0;
+    }
 
+    .zine-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: #ff6b9d;
+    }
 
-  <meta name="twitter:title" content="Throne Room">
-  <meta name="twitter:description" content="If you don't like the game, change the rules">
-  <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png">
-  <meta name="twitter:card" content="summary_large_image">
+    .zine-cover {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
 
+    .zine-cover:hover {
+      transform: scale(1.02);
+    }
 
-</head>
+    .zine-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin: 12px 0 8px 0;
+      color: #2d2d2d;
+    }
 
-<body>
-  <div class="wrapper">
-    <header>
-      <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo"></a>
-      <input type="checkbox" id="nav-toggle" class="nav-toggle">
-			<p id="welcome-name">Marie LeBlanc Flanagan</p>
-      <nav>
-        <ul>
-					<!-- <li><a href="#">Home</a></li> -->
-					<li><a href="../about">About</a></li>
-					<!-- <li><a href="../works">Works</a></li> -->
-					<!-- <li><a href="../consulting">Consulting</a></li> -->
-					<li><a href="../blog">Blog</a></li>
-					<li><a href="../contact">Contact</a></li>
-					<!-- <li><a href="#">CV</a></li> -->
-        </ul>
-      </nav>
-      <label for="nav-toggle" class="nav-toggle-label">
-        <span></span>
-      </label>
-    </header>
+    .zine-type {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-    <div class="container">
-      <div class="page-content">
-        <h1>Throne Room<br><span class="subtitle">Online Bathroom Rituals</span></h1>
+    .big-button {
+      font-size: 1.8rem;
+    }
 
-        <p><a target="_blank" href="https://marieflanagan.com/throneroomclub/">Throne Room </a> was a public bathroom
-          created for events online.</p>
-        <p>In the Throne Room you are invited to draw graffitti collaboratively with others and to consider things you'd
-          like to flush away.</p>
-        <p>This project was shown at A MAZE. Berlin 2020.</p>
-        <p>Throne Room is currently "closed" but you can <a target="_blank"
-            href="https://marieflanagan.com/throneroomclub/">still visit and peek around.</a> </p>
+    .read-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b9d, #c06c84);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+      margin-right: 8px;
+    }
 
+    .read-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+      text-decoration: none;
+    }
 
-        <img src="../img/blog-images/tr-toilet.png" alt="drawing of toilets" class="wide-image image">
+    .featured-zine {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+      padding: 32px;
+    }
 
-        <h2>Early Sketches:</h2>
+    .featured-zine .zine-cover {
+      max-width: 400px;
+      margin: 0 auto;
+    }
 
-        <img src="../img/blog-images/tr-toiletScribble.png" alt="drawing of toilets" class="wide-image image">
-        <img src="../img/blog-images/tr-mirrorScribble.png" alt="drawing of toilets" class="wide-image image">
-        <img src="../img/blog-images/tr-sinkScribble.png" alt="drawing of toilets" class="wide-image image">
+    /* Download section styles */
+    .download-section {
+      background: #f0f7ff;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 48px 0;
+      border: 2px solid #d0e7ff;
+    }
 
-      </div>
+    .download-section h2 {
+      margin-top: 0;
+      color: #2d2d2d;
+    }
 
-      <footer>
-        <div>
-          <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email"
-              class="feather"></a>
-          <a href="https://linkedin.com/in/marieflanagan/" target="blank"><img src="../img/social-icons/linked-in.svg"
-              alt="LinkedIn" class="feather"></a>
-          <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg"
-              alt="twitter" class="feather"></a>
-          <a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="../img/social-icons/facebook.svg"
-              alt="facebook" class="feather"></a>
-          <a href="https://www.instagram.com/omarieclaire/" target="blank"><img src="../img/social-icons/instagram.svg"
-              alt="instagram" class="feather"></a>
+    .download-intro {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .download-box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .download-box h3 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: #2d2d2d;
+    }
+
+    .download-box-subtitle {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 16px;
+    }
+
+    .download-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .download-links.comic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 2px solid #c4ebff;
+      border-radius: 8px;
+      color: #355c7d;
+      text-decoration: none;
+      /* font-weight: 600; */
+      transition: all 0.2s ease;
+      font-size: 0.95em;
+    }
+
+    .download-link:hover {
+      background: #355c7d;
+      color: white;
+      transform: translateX(4px);
+      text-decoration: none;
+    }
+
+    .download-icon {
+      font-size: 1.2em;
+    }
+
+    .format-note {
+      margin-top: 16px;
+      padding: 12px;
+      background: #fff9e6;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #666;
+      border-left: 3px solid #ffd93d;
+    }
+
+    .button-group {
+      margin: 16px 0;
+    }
+
+    @media (max-width: 768px) {
+      .featured-zine {
+        grid-template-columns: 1fr;
+      }
+
+      .zine-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .download-section {
+        padding: 24px 16px;
+      }
+
+      .download-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .read-button {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .download-links.comic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <p id="welcome-name">Marie LeBlanc Flanagan</p>
+        <nav>
+          <ul>
+            <li><a href="../about">About</a></li>
+            <li><a href="../blog">Blog</a></li>
+            <li><a href="../contact">Contact</a></li>
+          </ul>
+        </nav>
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+      </header>
+
+      <div class="container">
+        <div class="page-content">
+          <h1>Change the Rules<br /><span class="subtitle">If you don't like the game, change the rules</span></h1>
+
+          <div class="zine-showcase">
+            <p>
+              <strong>If You Don't Like the Game, Change the Rules</strong> is a research project drawn from 88 interviews and survey responses from
+              members of worker co-operatives, game developers in the process of starting a worker co-operative, traditional game studios that
+              explicitly followed co-operative values, game union organisers, industry labour experts, and developers with unique insights on labour.
+              It's full of crunchy data, parsable charts and candid quotes.
+            </p>
+
+            <p>Available as both an illustrated comic zine and a comprehensive whitepaper, in English and French.</p>
+
+            <!-- Featured: English Comic -->
+            <div class="zine-grid">
+              <div class="zine-card featured-zine">
+                <div>
+                  <a href="comic-english.html" target="blank">
+                    <img src="img/change-rules-cover-en.png" alt="Change the Rules English Comic Cover" class="zine-cover" />
+                  </a>
+                </div>
+                <div>
+                  <h2 class="zine-title">Change the Rules</h2>
+                  <p>
+                    An illustrated story about three friends working in the video games industry in Montreal and their exploration of worker owned co-ops and unions. The story is fiction, but the contents are a snapshot of the lived realities and stories of the people we spoke to.
+</p>
+                  <div class="button-group">
+                    <a href="comic-english.html" target="blank" class="big-button read-button">Read the Comic →</a>
+                    <a href="comic-french.html" target="blank" class="read-button">Lire la BD →</a>
+                  </div>
+                  <p>Downloads</p>
+
+                  <div class="download-links comic-grid">
+                    <a href="downloads/change-rules-comic-en-spreads.pdf" class="download-link" download>
+                      <span class="download-icon">📖</span>
+                      <span>English Spreads</span>
+                    </a>
+                    <a href="downloads/change-rules-comic-fr-spreads.pdf" class="download-link" download>
+                      <span class="download-icon">📖</span>
+                      <span>French Spreads</span>
+                    </a>
+                    <a href="change-the-rules-en.pdf" class="download-link" download>
+                      <span class="download-icon">📄</span>
+                      <span>English Pages</span>
+                    </a>
+                    <a href="change-the-rules-fr.pdf" class="download-link" download>
+                      <span class="download-icon">📄</span>
+                      <span>French Pages</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="zine-card featured-zine">
+                <div>
+                  <a href="whitepaper-english.html" target="blank">
+                    <img src="img/change-rules-whitepaper-en.png" alt="Change the Rules English Whitepaper Cover" class="zine-cover" />
+                  </a>
+                </div>
+                <div>
+                  <h3 class="zine-title">Research Whitepaper</h3>
+                  <p>
+                    A companion to the comic, featuring quotes and charts. A snapshot of the workers who are changing the industry from the
+                    inside out.
+                  </p>
+
+                  <div class="button-group">
+                    <a href="whitepaper-english.html" target="blank" class="read-button">Read the Report →</a>
+                    <a href="whitepaper-french.html" target="blank" class="read-button">Lire le rapport →</a>
+                  </div>
+                  <p>Downloads</p>
+
+                  <div class="download-links">
+                    <a href="change-the-rules-whitepaper-en.pdf" class="download-link" download>
+                      <span class="download-icon">📄</span>
+                      <span>Download English White Paper</span>
+                    </a>
+                    <a href="change-the-rules-whitepaper-fr.pdf" class="download-link" download>
+                      <span class="download-icon">📄</span>
+                      <span>Download French White Paper</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </footer>
 
+        <footer>
+          <div>
+            <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
+            <a href="https://linkedin.com/in/marieflanagan/" target="blank"
+              ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
+            /></a>
+            <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+            <a href="https://www.facebook.com/0marieclaire/" target="blank"
+              ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
+            /></a>
+            <a href="https://www.instagram.com/omarieclaire/" target="blank"
+              ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
+            /></a>
+          </div>
+        </footer>
+      </div>
     </div>
-  </div>
-
-</body>
-
+  </body>
 </html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Changes-En Whitepaper</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    
+    <link rel="stylesheet" href="../flipbook/flipbook.css" />
+</head>
+<body>
+    <a href="#flipbook" class="skip-link">Skip to flipbook</a>
+    
+    <div class="fullscreen-btn-wrapper">
+        <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Toggle fullscreen">
+            <span id="fullscreen-icon">⛶</span>
+        </button>
+    </div>
+
+    <div id="main-container" class="flipbook-container">
+        <div id="loading-message" class="loading" role="status" aria-live="polite">
+            <div>Loading your zine...</div>
+            <div class="loading-bar"></div>
+        </div>
+
+        <div id="book-wrapper" class="book-wrapper" style="display: none;">
+            <button id="prev-btn" class="nav-arrow" aria-label="Previous page">◀</button>
+            <div id="flipbook-container">
+                <div id="flipbook"></div>
+            </div>
+            <button id="next-btn" class="nav-arrow" aria-label="Next page">▶</button>
+        </div>
+
+        <div id="tap-hint-left" class="tap-hint left">← Tap left</div>
+        <div id="tap-hint-right" class="tap-hint right">Tap right →</div>
+    </div>
+
+    <div id="controls" class="controls" role="toolbar" aria-label="Flipbook controls">
+        <div class="zoom-controls">
+            <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom out">−</button>
+            <span id="zoom-level" class="zoom-level" aria-live="polite">100%</span>
+            <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom in">+</button>
+            <button id="zoom-reset" class="btn btn-secondary" aria-label="Reset zoom">⊙</button>
+        </div>
+    </div>
+
+    <script>
+        const PDF_URL = 'change-the-rules-whitepaper-fr.pdf';
+    </script>
+    <script src="../flipbook/flipbook.js"></script>
+</body>
+</html>

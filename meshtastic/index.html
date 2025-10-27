@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-77465632-1");
+    </script>
+
+    <meta charset="UTF-8" />
+    <!-- helps responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="decentralized communication" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Meshtastic</title>
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous" />
+
+    <meta property="og:title" content="Meshtastic" />
+    <meta property="og:description" content="decentralized communication" />
+    <meta property="og:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png" />
+    <meta property="og:url" content="https://marieflanagan.com/throne-room/" />
+    <meta property="og:type" content="article" />
+
+    <meta name="twitter:title" content="Meshtastic" />
+    <meta name="twitter:description" content="decentralized communication" />
+    <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/eg-bye.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <style>
+    .zine-showcase {
+      margin: 40px 0;
+    }
+
+    .zine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin: 32px 0;
+    }
+
+    .zine-card {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 2px solid #e0e0e0;
+    }
+
+    .zine-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: #ff6b9d;
+    }
+
+    .zine-cover {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .zine-cover:hover {
+      transform: scale(1.02);
+    }
+
+    .zine-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin: 12px 0 8px 0;
+      color: #2d2d2d;
+    }
+
+    .zine-type {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .big-button {
+      font-size: 1.8rem;
+    }
+
+    .read-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b9d, #c06c84);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+      margin-right: 8px;
+    }
+
+    .read-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+      text-decoration: none;
+    }
+
+    .featured-zine {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+      padding: 32px;
+    }
+
+    .featured-zine .zine-cover {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Download section styles */
+    .download-section {
+      background: #f0f7ff;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 48px 0;
+      border: 2px solid #d0e7ff;
+    }
+
+    .download-section h2 {
+      margin-top: 0;
+      color: #2d2d2d;
+    }
+
+    .download-intro {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .download-box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .download-box h3 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: #2d2d2d;
+    }
+
+    .download-box-subtitle {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 16px;
+    }
+
+    .download-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .download-links.comic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 2px solid #c4ebff;
+      border-radius: 8px;
+      color: #355c7d;
+      text-decoration: none;
+      /* font-weight: 600; */
+      transition: all 0.2s ease;
+      font-size: 0.95em;
+    }
+
+    .download-link:hover {
+      background: #355c7d;
+      color: white;
+      transform: translateX(4px);
+      text-decoration: none;
+    }
+
+    .download-icon {
+      font-size: 1.2em;
+    }
+
+    .format-note {
+      margin-top: 16px;
+      padding: 12px;
+      background: #fff9e6;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #666;
+      border-left: 3px solid #ffd93d;
+    }
+
+    .button-group {
+      margin: 16px 0;
+    }
+
+    @media (max-width: 768px) {
+      .featured-zine {
+        grid-template-columns: 1fr;
+      }
+
+      .zine-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .download-section {
+        padding: 24px 16px;
+      }
+
+      .download-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .read-button {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .download-links.comic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <p id="welcome-name">Marie LeBlanc Flanagan</p>
+        <nav>
+          <ul>
+            <li><a href="../about">About</a></li>
+            <li><a href="../blog">Blog</a></li>
+            <li><a href="../contact">Contact</a></li>
+          </ul>
+        </nav>
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+      </header>
+
+      <div class="container">
+        <div class="page-content">
+          <h1>Meshtastic<br /><span class="subtitle">decentralized communication</span></h1>
+
+          <div class="zine-showcase">
+      <p></p>
+
+
+            <div class="zine-grid">
+              <div class="zine-card featured-zine">
+                <div>
+                  <a href="comic-english.html" target="blank">
+                    <img src="img/meshtastic-cover.png" alt="Meshtastic English Comic Cover" class="zine-cover" />
+                  </a>
+                </div>
+                <div>
+                  <h2 class="zine-title">Meshtastic</h2>
+                  <p>
+</p>
+                  <div class="button-group">
+                    <a href="meshtastic.html" target="blank" class="big-button read-button">Read the Zine →</a>
+                  </div>
+                  <!-- <p>Downloads</p> -->
+
+                  <!-- <div class="download-links comic-grid">
+                    <a href="downloads/change-rules-comic-en-spreads.pdf" class="download-link" download>
+                      <span class="download-icon">📖</span>
+                      <span>English Spreads</span>
+                    </a> -->
+          
+                  </div>
+                </div>
+              </div>
+
+
+        <footer>
+          <div>
+            <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
+            <a href="https://linkedin.com/in/marieflanagan/" target="blank"
+              ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
+            /></a>
+            <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+            <a href="https://www.facebook.com/0marieclaire/" target="blank"
+              ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
+            /></a>
+            <a href="https://www.instagram.com/omarieclaire/" target="blank"
+              ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
+            /></a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,437 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-gradient-1: #FF6B9D;
+    --bg-gradient-2: #C06C84;
+    --bg-gradient-3: #6C5B7B;
+    --bg-gradient-4: #355C7D;
+    --page-bg: #FFFEF7;
+    --control-bg: rgba(255, 255, 255, 0.95);
+    --control-border: #355C7D;
+    --button-primary: #FF6B9D;
+    --button-hover: #FF8FB3;
+    --text: #2D2D2D;
+    --text-light: #666;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --highlight: #FFD93D;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 25%, var(--bg-gradient-3) 75%, var(--bg-gradient-4) 100%);
+    color: var(--text);
+    overflow: hidden;
+    line-height: 1.6;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--button-primary);
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 10000;
+    border-radius: 4px;
+}
+
+.skip-link:focus {
+    top: 10px;
+    left: 10px;
+}
+
+/* Fullscreen button - top right */
+.fullscreen-btn-wrapper {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 2000;
+}
+
+.fullscreen-btn {
+    background: var(--control-bg);
+    border: 2px solid var(--control-border);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.fullscreen-btn:hover {
+    transform: scale(1.1);
+    background: white;
+    box-shadow: 0 6px 20px var(--shadow);
+}
+
+.fullscreen-btn:active {
+    transform: scale(0.95);
+}
+
+/* Main container - REDUCED PADDING */
+.flipbook-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 10px; /* CHANGED from 20px */
+}
+
+/* Loading state */
+.loading {
+    background: var(--control-bg);
+    border: 3px solid var(--control-border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    font-size: 16px;
+    box-shadow: 0 8px 24px var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.loading-bar {
+    width: 240px;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    margin: 16px auto 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 40%;
+    background: var(--button-primary);
+    border-radius: 4px;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0%, 100% { left: -40%; }
+    50% { left: 100%; }
+}
+
+/* Book wrapper - REDUCED GAP */
+.book-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* CHANGED from 20px */
+}
+
+#flipbook-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    max-height: 100%;
+}
+
+#flipbook {
+    background: transparent;
+    box-shadow: 0 10px 40px var(--shadow);
+    cursor: grab;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#flipbook:active {
+    cursor: grabbing;
+}
+
+/* Page hover effect for preview */
+.page {
+    background: var(--page-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.page canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+/* Turn.js page corner hover effect - smooth preview */
+.turn-page-wrapper {
+    transition: transform 0.3s ease !important;
+}
+
+/* Navigation arrows */
+.nav-arrow {
+    background: var(--control-bg);
+    border: 2px solid var(--control-border);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 28px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px var(--shadow);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 100;
+}
+
+.nav-arrow::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--button-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.nav-arrow:hover:not(:disabled)::before {
+    opacity: 0.2;
+}
+
+.nav-arrow:hover:not(:disabled) {
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px var(--shadow);
+    border-color: var(--button-primary);
+}
+
+.nav-arrow:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.nav-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.nav-arrow:focus-visible {
+    outline: 3px solid var(--button-primary);
+    outline-offset: 4px;
+}
+
+/* Draggable controls toolbar */
+.controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    background: var(--control-bg);
+    padding: 12px 20px;
+    border: 2px solid var(--control-border);
+    border-radius: 50px;
+    box-shadow: 0 8px 24px var(--shadow);
+    z-index: 1000;
+    cursor: move;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.zoom-controls {
+   display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center; 
+}
+
+.controls:hover {
+    box-shadow: 0 10px 30px var(--shadow);
+}
+
+.controls.dragging {
+    cursor: grabbing;
+    box-shadow: 0 12px 40px var(--shadow);
+    transform: translateX(-50%) scale(1.02);
+}
+
+/* Control buttons */
+.btn {
+    background: var(--button-primary);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text);
+    border: 2px solid var(--control-border);
+}
+
+.btn-secondary:hover {
+    background: #f8f8f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.zoom-level {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 50px;
+    text-align: center;
+}
+
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .flipbook-container {
+        padding: 10px;
+    }
+
+    .nav-arrow {
+        display: none;
+    }
+
+    .controls {
+        display: none; /* Hide entire controls on mobile since zoom isn't needed */
+    }
+
+    .fullscreen-btn-wrapper {
+        top: 10px;
+        left: 10px;
+    }
+
+    .fullscreen-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}
+
+/* Landscape mobile mode */
+@media (max-width: 926px) and (orientation: landscape) {
+    body {
+        overflow: hidden;
+    }
+
+    .flipbook-container {
+        padding: 5px;
+    }
+
+    .controls {
+        bottom: 10px;
+        padding: 6px 12px;
+        gap: 6px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .fullscreen-btn-wrapper {
+        top: 5px;
+        left: 5px;
+    }
+
+    .fullscreen-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+}
+
+/* Accessibility: Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --control-border: #000;
+        --text: #000;
+    }
+
+    .controls, .fullscreen-btn, .nav-arrow {
+        border-width: 3px;
+    }
+}
+
+/* Custom page turn animation styling */
+.turn-page {
+    transition: none;
+}
+
+.turn-page-wrapper {
+    transition: none;
+}
+
+/* Centered single page display */
+.flipbook-centered {
+    display: flex;
+    justify-content: center !important;
+}
