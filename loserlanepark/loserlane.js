@@ -3665,8 +3665,8 @@ class UIControls extends BaseControl {
           e.target.closest(".title-box");
 
         if (isExcludedElement) {
-          if (e.target.id === "add-art-link" || e.target.closest("#add-art-link")) {
-            window.open("https://docs.google.com/document/d/13KddYLkQMiNpLRuZ7cCFMzyC_1EFLc1_ksV_MJ21D90/edit?usp=sharing", "_blank");
+    if (e.target.id === "add-art-link" || e.target.closest("#add-art-link")) {
+            window.open("building-generator.html", "_blank");
           }
           return;
         }

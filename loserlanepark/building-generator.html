@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LoserLane Building Creator</title>
+   
+   <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Courier New", monospace;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background: #120303;
+      }
+
+      .container {
+        background: #1a0505;
+        /* border-radius: 10px; */
+        padding: 30px;
+        border: 2px solid #e7a900;
+        box-shadow: 0 0 20px rgba(231, 169, 0, 0.3);
+        max-width: 900px;
+        width: 100%;
+      }
+
+      h1 {
+        text-align: center;
+        color: #63f863;
+        margin-bottom: 10px;
+        font-size: 2em;
+        letter-spacing: 8px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #d1feff;
+        margin-bottom: 25px;
+        font-size: 0.9em;
+      }
+
+      .main-content {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .grid-section {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .grid-container {
+        background: #0a0202;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 2px;
+        background: #63f86368;
+        padding: 2px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .cell {
+        aspect-ratio: 1;
+        background: #120303;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: all 0.2s;
+        position: relative;
+        min-height: 35px;
+        color: #d1feff;
+      }
+
+      .cell:hover {
+        background: rgba(99, 248, 99, 0.2);
+        transform: scale(1.1);
+        z-index: 10;
+      }
+
+      .cell.active {
+        background: #120303;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: 2px solid #666;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: bold;
+        background-color: #63f863;
+        color: #120303;
+        box-shadow: 4px 4px #666;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 6px 6px #333;
+        background-color: #ff77df;
+        color: #fff;
+      }
+
+      button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px #333;
+      }
+
+      .btn-clear {
+        background: #ff77df;
+        color: white;
+      }
+
+      .btn-copy {
+        background: #63f863;
+        color: #120303;
+      }
+
+      .btn-download {
+        background: #d1feff;
+        color: #120303;
+      }
+
+      .btn-eraser {
+        background: #ff77df;
+        color: white;
+      }
+
+      .btn-eraser.active {
+        background: #63f863;
+        box-shadow: 0 0 0 3px rgba(255, 167, 38, 0.3);
+      }
+
+      .btn-add-game {
+        background: #63f863;
+        color: #120303;
+        width: 100%;
+        font-size: 16px;
+        padding: 15px;
+        margin-top: 10px;
+        border: 2px solid #666;
+      }
+
+      .btn-add-game:hover {
+        background: #ff77df;
+        color: #fff;
+      }
+
+      .palette-section {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .palette {
+        background: #0a0202;
+        padding: 15px;
+        border-radius: 8px;
+        max-height: 70vh;
+        overflow-y: auto;
+        border: 1px solid #333;
+      }
+
+      .palette-category {
+        margin-bottom: 15px;
+      }
+
+      .palette-title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #ff77df;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .palette-chars {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .char-btn {
+        padding: 8px 12px;
+        background: #120303;
+        border: 2px solid #666;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 40px;
+        text-align: center;
+        color: #d1feff;
+        box-shadow: 2px 2px #333;
+      }
+
+      .char-btn:hover {
+        border-color: #63f863;
+        background: rgba(231, 169, 0, 0.2);
+        transform: scale(1.1);
+      }
+
+      .char-btn.selected {
+        background: #63f863;
+        color: #120303;
+        border-color: #63f863;
+      }
+
+      .info-section {
+        background: rgba(231, 169, 0, 0.15);
+        padding: 20px;
+
+        
+        /* border-radius: 8px; */
+        margin-bottom: 15px;
+        border: 2px solid #ff77df;
+        text-align: center;
+      }
+
+      .current-char-label {
+        font-size: 1rem;
+        color: #ff77df;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .current-char-display {
+        font-size: 48px;
+        font-weight: bold;
+        color: #d1feff;
+      }
+
+      .instructions {
+        background: rgba(99, 248, 99, 0.15);
+        padding: 15px;
+        /* border-radius: 8px; */
+        margin-top: 15px;
+        font-size: 13px;
+        line-height: 1.6;
+        border: 1px solid #63f863;
+        color: #d1feff;
+      }
+
+      .instructions strong {
+        color: #63f863;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: #63f863;
+        color: #120303;
+        padding: 15px 30px;
+        /* border-radius: 5px; */
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 1000;
+        font-size: 14px;
+        border: 2px solid #666;
+        box-shadow: 4px 4px #666;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0a0202;
+        /* border-radius: 5px; */
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #e7a900;
+        /* border-radius: 5px; */
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #ff77df;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.5em;
+        }
+
+        .cell {
+          font-size: 16px;
+          min-height: 28px;
+        }
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .modal {
+        background: #1a0505;
+        /* border-radius: 10px; */
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+        border: 2px solid #e7a900;
+        box-shadow: 0 0 30px rgba(231, 169, 0, 0.5);
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal h2 {
+        color: #63f863;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 1.5em;
+        letter-spacing: 4px;
+      }
+
+      .modal-input-group {
+        margin-bottom: 20px;
+      }
+
+      .modal-input-group label {
+        display: block;
+        font-size: 12px;
+        color: #dfb1ff;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+      }
+
+      .modal-input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #666;
+        /* border-radius: 5px; */
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+        transition: border-color 0.2s;
+        background: #120303;
+        color: #d1feff;
+      }
+
+      .modal-input-group input:focus {
+        outline: none;
+        border-color: #e7a900;
+        box-shadow: 0 0 10px rgba(231, 169, 0, 0.3);
+      }
+
+      .building-preview {
+        background: #0a0202;
+        padding: 20px;
+        /* border-radius: 8px; */
+        margin: 20px 0;
+        font-family: "Courier New", monospace;
+        white-space: pre;
+        overflow-x: auto;
+        text-align: center;
+        font-size: 18px;
+        line-height: 1.2;
+        border: 2px solid #666;
+        color: #d1feff;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .modal-btn {
+        flex: 1;
+        padding: 15px;
+        border: 2px solid #666;
+        /* border-radius: 5px; */
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 4px 4px #666;
+      }
+
+      .modal-btn-cancel {
+        background: #666;
+        color: #d1feff;
+      }
+
+      .modal-btn-cancel:hover {
+        background: #777;
+        box-shadow: 6px 6px #333;
+      }
+
+      .modal-btn-submit {
+        background: #e7a900;
+        color: #120303;
+      }
+
+      .modal-btn-submit:hover {
+        background: #ff77df;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 6px 6px #333;
+      }
+
+      .modal-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Contribute to Loser Lane!</h1>
+      <p class="subtitle">https://marieflanagan.com/loserlanepark</p>
+
+      <p class="subtitle">Draw your building, then add it to the game!</p>
+
+      <div class="main-content">
+        <div class="grid-section">
+          <div class="info-section">
+            <div class="current-char-label">Current Character</div>
+            <div class="current-char-display" id="currentCharDisplay">█</div>
+          </div>
+
+          <div class="grid-container">
+            <div class="grid" id="grid"></div>
+            <div class="controls">
+              <button class="btn-clear" onclick="clearGrid()">X ERASE EVERYTHING X</button>
+              <button class="btn-eraser" id="eraserBtn" onclick="toggleEraser()">Eraser</button>
+            </div>
+          </div>
+
+          <button class="btn-add-game" onclick="addToGame()">Add your building to LoserLane</button>
+        </div>
+
+        <div class="palette-section">
+          <div class="palette" id="palette"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for adding to game -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <h2>🎮 Add to Game</h2>
+        <div class="modal-input-group">
+          <label>Building Name</label>
+          <input type="text" id="modalBuildingName" placeholder="e.g., BENELUX" />
+        </div>
+        <div class="modal-input-group">
+          <label>Your Name / Handle</label>
+          <input type="text" id="modalArtistName" placeholder="e.g., Avery" />
+        </div>
+        <div class="building-preview" id="buildingPreview"></div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="modal-btn modal-btn-submit" onclick="submitBuilding()">Submit 🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">Copied!</div>
+
+    <script>
+      const GRID_SIZE = 10;
+      let grid = Array(GRID_SIZE)
+        .fill()
+        .map(() => Array(GRID_SIZE).fill(""));
+      let currentChar = "█";
+      let selectedCell = null;
+      let isDrawing = false;
+      let lastDrawnCell = null;
+      let isEraserMode = false;
+
+   
+      const paletteCategories = [
+  {
+    name: "Buildings",
+    chars: [
+      "█",
+      "▓",
+      "▒",
+      "░",
+      "│",
+      "─",
+      "┌",
+      "┐",
+      "└",
+      "┘",
+      "├",
+      "┤",
+      "┬",
+      "┴",
+      "┼",
+      "║",
+      "═",
+      "╔",
+      "╗",
+      "╚",
+      "╝",
+      "╠",
+      "╣",
+      "╦",
+      "╩",
+      "╬",
+      "▀",
+      "▄",
+      "■",
+      "□",
+      "▪",
+      "▫",
+      "▁",
+      "▂",
+      "▃",
+      "▅",
+      "▆",
+      "▇",
+      "▉",
+      "▊",
+      "▋",
+      "▌",
+      "▍",
+      "▎",
+      "▏",
+      "▐",
+      "▔",
+      "▕",
+    ],
+  },
+  {
+    name: "Windows & Doors",
+    chars: [
+      "◼",
+      "◻",
+      "◾",
+      "◽",
+      "▢",
+      "▣",
+      "▤",
+      "▥",
+      "▦",
+      "▧",
+      "▨",
+      "▩",
+      "⊞",
+      "⊟",
+      "⊠",
+      "⊡",
+      "∥",
+      "≑",
+      "≜",
+      "▬",
+      "▭",
+      "▮",
+      "▯",
+      "▰",
+      "▱",
+    ],
+  },
+  {
+    name: "Roofs & Details",
+    chars: [
+      "◢",
+      "◣",
+      "◤",
+      "◥",
+      "△",
+      "▲",
+      "▽",
+      "▼",
+      "◊",
+      "◇",
+      "⋰",
+      "⋱",
+      "╱",
+      "╲",
+      "╳",
+      "⌒",
+      "⌓",
+    ],
+  },
+  {
+    name: "Decorative",
+    chars: [
+      "★",
+      "☆",
+      "✦",
+      "✧",
+      "✩",
+      "✪",
+      "✫",
+      "✬",
+      "✭",
+      "✮",
+      "✯",
+      "⁂",
+      "❀",
+      "❁",
+      "❂",
+      "❃",
+      "⚘",
+      "○",
+      "●",
+      "◐",
+      "◑",
+      "⚐",
+      "⚑",
+      "⚙",
+      "⚛",
+      "⚜",
+      "⛨",
+      "⛩",
+      "⛫",
+      "⛬",
+    ],
+  },
+  {
+    name: "Lines & Corners",
+    chars: [
+      "─",
+      "━",
+      "│",
+      "┃",
+      "┌",
+      "┍",
+      "┎",
+      "┏",
+      "┐",
+      "┑",
+      "┒",
+      "┓",
+      "└",
+      "┕",
+      "┖",
+      "┗",
+      "┘",
+      "┙",
+      "┚",
+      "┛",
+      "├",
+      "┝",
+      "┞",
+      "┟",
+      "┠",
+      "┡",
+      "┢",
+      "┣",
+      "┤",
+      "┥",
+      "┦",
+      "┧",
+      "┨",
+      "┩",
+      "┪",
+      "┫",
+      "┬",
+      "┭",
+      "┮",
+      "┯",
+      "┰",
+      "┱",
+      "┲",
+      "┳",
+      "┴",
+      "┵",
+      "┶",
+      "┷",
+      "┸",
+      "┹",
+      "┺",
+      "┻",
+      "┼",
+      "┽",
+      "┾",
+      "┿",
+      "╀",
+      "╁",
+      "╂",
+      "╃",
+      "╄",
+      "╅",
+      "╆",
+      "╇",
+      "╈",
+      "╉",
+      "╊",
+      "╋",
+      "╌",
+      "╍",
+      "╎",
+      "╏",
+      "┄",
+      "┅",
+      "┆",
+      "┇",
+      "┈",
+      "┉",
+      "┊",
+      "┋",
+      "╼",
+      "╽",
+      "╾",
+      "╿",
+    ],
+  },
+  {
+    name: "Double Lines",
+    chars: [
+      "═",
+      "║",
+      "╒",
+      "╓",
+      "╔",
+      "╕",
+      "╖",
+      "╗",
+      "╘",
+      "╙",
+      "╚",
+      "╛",
+      "╜",
+      "╝",
+      "╞",
+      "╟",
+      "╠",
+      "╡",
+      "╢",
+      "╣",
+      "╤",
+      "╥",
+      "╦",
+      "╧",
+      "╨",
+      "╩",
+      "╪",
+      "╫",
+      "╬",
+    ],
+  },
+  {
+    name: "Curved & Round",
+    chars: [
+      "╭",
+      "╮",
+      "╯",
+      "╰",
+      "⌜",
+      "⌝",
+      "⌞",
+      "⌟",
+      "⌈",
+      "⌉",
+      "⌊",
+      "⌋",
+      "〈",
+      "〉",
+      "《",
+      "》",
+      "「",
+      "」",
+      "『",
+      "』",
+    ],
+  },
+  {
+    name: "Patterns",
+    chars: [
+      "░",
+      "▒",
+      "▓",
+      "█",
+      "▀",
+      "▄",
+      "▌",
+      "▐",
+      "▖",
+      "▗",
+      "▘",
+      "▙",
+      "▚",
+      "▛",
+      "▜",
+      "▝",
+      "▞",
+      "▟",
+      "⬒",
+      "⬓",
+      "⬔",
+      "⬕",
+      "⠀",
+      "⠁",
+      "⠂",
+      "⠃",
+      "⠄",
+      "⠅",
+      "⠆",
+      "⠇",
+      "⠈",
+      "⠉",
+      "⠊",
+      "⠋",
+      "⠌",
+      "⠍",
+      "⠎",
+      "⠏",
+      "⠐",
+      "⠑",
+      "⠒",
+      "⠓",
+      "⠔",
+      "⠕",
+      "⠖",
+      "⠗",
+      "⠘",
+      "⠙",
+      "⠚",
+      "⠛",
+      "⠜",
+      "⠝",
+      "⠞",
+      "⠟",
+    ],
+  },
+  {
+    name: "Circles & Dots",
+    chars: [
+      "○",
+      "●",
+      "◐",
+      "◑",
+      "⚬",
+      "⚭",
+      "⦾",
+      "⦿",
+      "⧂",
+      "⧃",
+      "◌",
+      "◍",
+      "◔",
+      "◕",
+      "◖",
+      "◗",
+      "◘",
+      "◙",
+      "◚",
+      "◛",
+      "◜",
+      "◝",
+      "◞",
+      "◟",
+      "◠",
+      "◡",
+    ],
+  },
+  {
+    name: "Triangles & Arrows",
+    chars: [
+      "△",
+      "▲",
+      "▽",
+      "▼",
+      "◄",
+      "◅",
+      "►",
+      "▻",
+      "▴",
+      "▵",
+      "▸",
+      "▹",
+      "▾",
+      "▿",
+      "◂",
+      "◃",
+    ],
+  },
+  {
+    name: "Symbols",
+    chars: [
+      "~",
+      "≈",
+      "≋",
+      "≈",
+      "∿",
+      "〜",
+      "⌇",
+      "⌠",
+      "⌡",
+      "⌢",
+      "⌣",
+      "⌯",
+      "⍝",
+      "⍞",
+      "⍟",
+      "◄",
+      "►",
+      "⳺",
+      "⳻",
+      "o",
+      "O",
+      "°",
+      "⚬",
+      "⚭",
+      "⌘",
+      "⌥",
+      "⎋",
+      "⌫",
+      "⌦",
+      "␣",
+      "⏎",
+      "⏏",
+      "⎈",
+      "⎆",
+      "⎇",
+      "⌤",
+      "⌧",
+      "⚠",
+      "⚡",
+      "☢",
+      "☣",
+      "⚕",
+    ],
+  },
+  {
+    name: "Letters (A-Z)",
+    chars: [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
+    ],
+  },
+  {
+    name: "Numbers (0-9)",
+    chars: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  },
+  {
+    name: "Basic",
+    chars: [
+      "#",
+      "@",
+      "*",
+      "+",
+      "=",
+      "-",
+      "_",
+      "|",
+      "/",
+      "\\",
+      "^",
+      "v",
+      "<",
+      ">",
+      ".",
+      ",",
+      ":",
+      ";",
+      "!",
+      "?",
+      "~",
+    ],
+  },
+];
+
+      function initGrid() {
+        const gridElement = document.getElementById("grid");
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.index = i;
+
+          // Mouse events for drawing
+          cell.addEventListener("mousedown", () => {
+            isDrawing = true;
+            lastDrawnCell = null;
+            handleCellDraw(i);
+          });
+          cell.addEventListener("mouseenter", (e) => {
+            if (isDrawing) {
+              handleCellDraw(i);
+            }
+            // Update custom cursor
+            updateCellCursor(e.target);
+          });
+          cell.addEventListener("mouseleave", (e) => {
+            // Reset cursor
+            e.target.style.cursor = "";
+          });
+          cell.addEventListener("click", () => handleCellClick(i));
+          gridElement.appendChild(cell);
+        }
+
+        // Stop drawing when mouse is released anywhere
+        document.addEventListener("mouseup", () => {
+          isDrawing = false;
+          lastDrawnCell = null;
+        });
+      }
+
+      function updateCellCursor(cellElement) {
+        if (isEraserMode) {
+          cellElement.style.cursor =
+            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="18" font-family="Courier New, monospace" fill="%23999">X</text></svg>\') 12 12, crosshair';
+        } else {
+          // Create a simple cursor showing just the current character
+          const char = currentChar || "█";
+          const encodedChar = encodeURIComponent(char);
+          cellElement.style.cursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="18" font-family="Courier New, monospace" fill="%23999">${encodedChar}</text></svg>') 12 12, crosshair`;
+        }
+      }
+
+      function toggleEraser() {
+        isEraserMode = !isEraserMode;
+        const eraserBtn = document.getElementById("eraserBtn");
+
+        if (isEraserMode) {
+          eraserBtn.classList.add("active");
+          showToast("Eraser mode activated");
+          // Deselect all palette buttons
+          document.querySelectorAll(".char-btn").forEach((btn) => {
+            btn.classList.remove("selected");
+          });
+        } else {
+          eraserBtn.classList.remove("active");
+          showToast("Eraser mode deactivated");
+          // Re-select the current character
+          selectChar(currentChar);
+        }
+      }
+
+      function initPalette() {
+        const paletteElement = document.getElementById("palette");
+
+        paletteCategories.forEach((category) => {
+          const categoryDiv = document.createElement("div");
+          categoryDiv.className = "palette-category";
+
+          const title = document.createElement("div");
+          title.className = "palette-title";
+          title.textContent = category.name;
+          categoryDiv.appendChild(title);
+
+          const charsDiv = document.createElement("div");
+          charsDiv.className = "palette-chars";
+
+          category.chars.forEach((char) => {
+            const btn = document.createElement("button");
+            btn.className = "char-btn";
+            btn.textContent = char;
+            btn.addEventListener("click", () => selectChar(char));
+            charsDiv.appendChild(btn);
+          });
+
+          categoryDiv.appendChild(charsDiv);
+          paletteElement.appendChild(categoryDiv);
+        });
+      }
+
+      function handleCellClick(index) {
+        const row = Math.floor(index / GRID_SIZE);
+        const col = index % GRID_SIZE;
+
+        if (isEraserMode) {
+          // Erase the cell
+          grid[row][col] = "";
+          updateGrid();
+        } else {
+          // If cell has content, pick that character
+          if (grid[row][col]) {
+            selectChar(grid[row][col]);
+          } else {
+            // Otherwise, place current character
+            grid[row][col] = currentChar;
+            updateGrid();
+          }
+        }
+
+        selectedCell = index;
+        highlightCell(index);
+      }
+
+      function handleCellDraw(index) {
+        // Prevent drawing the same cell multiple times in one drag
+        if (lastDrawnCell === index) return;
+
+        const row = Math.floor(index / GRID_SIZE);
+        const col = index % GRID_SIZE;
+
+        if (isEraserMode) {
+          grid[row][col] = "";
+        } else {
+          grid[row][col] = currentChar;
+        }
+        updateGrid();
+        lastDrawnCell = index;
+      }
+
+      function selectChar(char) {
+        currentChar = char;
+        document.getElementById("currentCharDisplay").textContent = char;
+        isEraserMode = false;
+        document.getElementById("eraserBtn").classList.remove("active");
+
+        // Update palette selection
+        document.querySelectorAll(".char-btn").forEach((btn) => {
+          btn.classList.toggle("selected", btn.textContent === char);
+        });
+      }
+
+      function highlightCell(index) {
+        document.querySelectorAll(".cell").forEach((cell) => {
+          cell.classList.remove("active");
+        });
+        if (index !== null) {
+          document.querySelector(`[data-index="${index}"]`).classList.add("active");
+        }
+      }
+
+      function updateGrid() {
+        document.querySelectorAll(".cell").forEach((cell, index) => {
+          const row = Math.floor(index / GRID_SIZE);
+          const col = index % GRID_SIZE;
+          cell.textContent = grid[row][col];
+        });
+      }
+
+      function clearGrid() {
+        grid = Array(GRID_SIZE)
+          .fill()
+          .map(() => Array(GRID_SIZE).fill(""));
+        updateGrid();
+        selectedCell = null;
+        highlightCell(null);
+        showToast("Grid cleared!");
+        // if (confirm('Clear your building? This cannot be undone.')) {
+        // }
+      }
+
+      function getBuildingText() {
+        return grid.map((row) => row.join("")).join("\n");
+      }
+
+      function addToGame() {
+        // Show the modal with building preview
+        const preview = grid.map((row) => row.join("")).join("\n");
+        document.getElementById("buildingPreview").textContent = preview;
+        document.getElementById("modalOverlay").classList.add("show");
+
+        // Focus on the first input
+        setTimeout(() => {
+          document.getElementById("modalBuildingName").focus();
+        }, 100);
+      }
+
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("show");
+        document.getElementById("modalBuildingName").value = "";
+        document.getElementById("modalArtistName").value = "";
+      }
+
+      function submitBuilding() {
+        let buildingName = document.getElementById("modalBuildingName").value.trim();
+        let artistName = document.getElementById("modalArtistName").value.trim();
+
+        if (!buildingName) {
+          showToast("Please enter a building name!");
+          document.getElementById("modalBuildingName").focus();
+          return;
+        }
+
+        if (!artistName) {
+          showToast("Please enter your name or handle!");
+          document.getElementById("modalArtistName").focus();
+          return;
+        }
+
+        // Check character limits
+        if (buildingName.length > 30) {
+          showToast("Building name too long! Max 30 characters.");
+          document.getElementById("modalBuildingName").focus();
+          return;
+        }
+
+        if (artistName.length > 30) {
+          showToast("Artist name too long! Max 30 characters.");
+          document.getElementById("modalArtistName").focus();
+          return;
+        }
+
+        // Remove spaces from inputs (as per form requirements)
+        buildingName = buildingName.replace(/\s+/g, "_").toUpperCase();
+        artistName = artistName.replace(/\s+/g, "_");
+
+        // Trim empty rows from top and bottom
+        let trimmedGrid = [...grid];
+
+        // Remove empty rows from top
+        while (trimmedGrid.length > 0 && trimmedGrid[0].every((cell) => cell === "")) {
+          trimmedGrid.shift();
+        }
+
+        // Remove empty rows from bottom
+        while (trimmedGrid.length > 0 && trimmedGrid[trimmedGrid.length - 1].every((cell) => cell === "")) {
+          trimmedGrid.pop();
+        }
+
+        // Generate the art array - each line is exactly GRID_SIZE (10) characters
+        const artLines = trimmedGrid.map((row) => {
+          // Convert empty strings to spaces, then join
+          const line = row.map((cell) => (cell === "" ? " " : cell)).join("");
+          return `            "${line}"`;
+        });
+
+        // Create the complete JavaScript object format
+        const formattedObject = `    {
+        name: "${buildingName}",
+        artist: "${artistName}",
+        art: [
+${artLines.join(",\n")}
+        ]
+    },`;
+
+        // Prepare form data for Google Form submission
+        const formData = new URLSearchParams();
+        formData.append("entry.1432455807", "Montreal"); // Location (default Montreal)
+        formData.append("entry.540203602", buildingName); // Building_Name
+        formData.append("entry.1023700221", artistName); // Your Name or Handle
+        formData.append("entry.1869243340", formattedObject); // Your art! (full formatted object)
+
+        // Submit to Google Form
+        fetch("https://docs.google.com/forms/d/e/1FAIpQLSeI6SFIJq0mfRlNYxAKm-36wQas02aU5HM4EyQZiIhEKZhdag/formResponse", {
+          method: "POST",
+          mode: "no-cors",
+          body: formData,
+        })
+          .then(() => {
+            closeModal();
+            showToast("Building submitted successfully! Thank you!");
+
+            // Optional: Clear the grid after successful submission
+            // setTimeout(() => clearGrid(), 1000);
+          })
+          .catch((error) => {
+            closeModal();
+            showToast("Submission may have failed. Please try again.");
+            console.error("Submission error:", error);
+          });
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2500);
+      }
+
+      // Keyboard support
+      document.addEventListener("keydown", (e) => {
+        // Handle modal keyboard shortcuts
+        if (document.getElementById("modalOverlay").classList.contains("show")) {
+          if (e.key === "Enter") {
+            submitBuilding();
+            e.preventDefault();
+          } else if (e.key === "Escape") {
+            closeModal();
+            e.preventDefault();
+          }
+          return;
+        }
+
+        if (selectedCell === null) {
+          selectedCell = 0;
+          highlightCell(0);
+        }
+
+        const row = Math.floor(selectedCell / GRID_SIZE);
+        const col = selectedCell % GRID_SIZE;
+
+        // Handle arrow keys
+        if (e.key === "ArrowUp" && row > 0) {
+          selectedCell -= GRID_SIZE;
+          highlightCell(selectedCell);
+          e.preventDefault();
+        } else if (e.key === "ArrowDown" && row < GRID_SIZE - 1) {
+          selectedCell += GRID_SIZE;
+          highlightCell(selectedCell);
+          e.preventDefault();
+        } else if (e.key === "ArrowLeft" && col > 0) {
+          selectedCell--;
+          highlightCell(selectedCell);
+          e.preventDefault();
+        } else if (e.key === "ArrowRight" && col < GRID_SIZE - 1) {
+          selectedCell++;
+          highlightCell(selectedCell);
+          e.preventDefault();
+        }
+        // Handle backspace/delete - acts as eraser
+        else if (e.key === "Backspace" || e.key === "Delete") {
+          grid[row][col] = "";
+          updateGrid();
+          e.preventDefault();
+        }
+        // Handle 'E' key to toggle eraser
+        else if (e.key.toLowerCase() === "e" && !e.ctrlKey && !e.metaKey) {
+          toggleEraser();
+          e.preventDefault();
+        }
+        // Handle space to place current character
+        else if (e.key === " ") {
+          if (isEraserMode) {
+            grid[row][col] = "";
+          } else {
+            grid[row][col] = currentChar;
+          }
+          updateGrid();
+          e.preventDefault();
+        }
+        // Handle any printable character
+        else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+          selectChar(e.key);
+          grid[row][col] = e.key;
+          updateGrid();
+          e.preventDefault();
+        }
+      });
+
+      // Initialize
+      initGrid();
+      initPalette();
+      selectChar(currentChar);
+    </script>
+  </body>
+</html>
