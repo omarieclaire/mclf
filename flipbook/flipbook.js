@@ -34,14 +34,7 @@
             
             document.getElementById('loading-message').style.display = 'none';
             document.getElementById('book-wrapper').style.display = 'flex';
-            
-            // Show mobile tap hints on first load (mobile only)
-            if (window.innerWidth <= 768) {
-                setTimeout(() => {
-                    document.getElementById('tap-hint-left').style.animation = 'fadeInOut 3s ease-in-out';
-                    document.getElementById('tap-hint-right').style.animation = 'fadeInOut 3s ease-in-out';
-                }, 500);
-            }
+                       
         } catch (error) {
             console.error('Error loading PDF:', error);
             document.getElementById('loading-message').innerHTML = 
