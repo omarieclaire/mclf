@@ -4,21 +4,31 @@ const STYLES = {
   TTC: "<span style='color: #FF0000; background-color: #660000'>", // Red with Dark Red background
   BIKE: "<span style='color: #00FFFF'>", // Cyan
   // PARKED: "<span style='color: #AAAAAA'>", // Medium Gray
-  WANDERER: "<span style='color: #00FFFF'>", // Cyan
+  HUMANBEING: "<span style='color: #00FFFF'>", // Cyan
   SIDEWALK: "<span style='background-color: #333333'>", // Dark Gray
   // BUILDINGS: "<span style='color: #FFFFFF'>", // White
   TRACKS: "<span style='color: #444444'>", // Dark Gray
 };
 
 const COLOURS = {
+  BUILDINGGEN: [
+    "rgba(65, 211, 255, 1)", // Sky Blue
+    "rgba(42, 166, 204, 1)", // Sky Blue
+    "rgba(65, 195, 255, 1)", // Sky Blue
+    "rgba(65, 179, 255, 1)", // Sky Blue
+    "rgba(65, 182, 255, 1)", // Sky Blue
+
+    // "#e7a900", // Fuchsia
+    // "#1effb4d1", // Mint Aqua
+  ],
   BUILDINGS: [
-    "#FF9999", // Soft Pink
+    "#ffa5a5ff", // Soft Pink
     "#99FF99", // Light Mint Green
-    "#9999FF", // Soft Lavender
-    "#FFFF99", // Soft Yellow
+    "#9595d8ff", // Soft Lavender
+    "#e5e578ff", // Soft Yellow
     "#FF99FF", // Light Orchid
     "#99FFFF", // Soft Aqua
-    "#66FF66", // Bright Mint Green
+    "#87ff87ff", // Bright Mint Green
     "#66B2FF", // Sky Blue
     "#FFFF66", // Lemon Yellow
     "#FF66FF", // Fuchsia
@@ -26,7 +36,7 @@ const COLOURS = {
     "#FFCC66", // Soft Orange
     "#66FFCC", // Mint Aqua
     "#CC99FF", // Lavender Purple
-    "#FF6666", // Coral
+    "#ff8766ff", // Coral
     "#66FF99", // Pale Green
     "#FF6699", // Rose Pink
     "#66FFFF", // Light Cyan
@@ -99,17 +109,17 @@ const peopleCol = [
   // '#8D5524', // Dark
   // '#4C3024', // Very dark
 
-  '#FFD1DC', // Pastel pink
-  '#FFB6C1', // Light pink
-  '#FFEC8B', // Light yellow
-  '#B0E57C', // Pastel green
-  '#ADD8E6', // Light blue
-  '#D1C4E9', // Lavender
-  '#F5DEB3', // Light wheat
-  '#FFC0CB', // Baby pink
-  '#FFFACD', // Lemon chiffon
-  '#FFE4E1', // Misty rose
-  '#E0FFFF', // Light cyan
-  '#F0E68C', // Khaki
-  '#FAEBD7', // Antique white
+  "#FFD1DC", // Pastel pink
+  "#FFB6C1", // Light pink
+  "#FFEC8B", // Light yellow
+  "#B0E57C", // Pastel green
+  "#ADD8E6", // Light blue
+  "#D1C4E9", // Lavender
+  "#F5DEB3", // Light wheat
+  "#FFC0CB", // Baby pink
+  "#FFFACD", // Lemon chiffon
+  "#FFE4E1", // Misty rose
+  "#E0FFFF", // Light cyan
+  "#F0E68C", // Khaki
+  "#FAEBD7", // Antique white
 ];
