@@ -1,0 +1,790 @@
+/* ========================================
+   STANDARDIZED BUILDING CREATOR STYLES
+   ======================================== */
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+:root {
+  --theme-color: #63f863;
+  --theme-color-alpha: #63f863;
+  --background: #120303;
+  --surface: #0a0202;
+  --border: #666;
+  --text-primary: #d1feff;
+  --text-secondary: #ff77df;
+  --accent-yellow: #e7a900;
+}
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: "Courier New", monospace;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  background: var(--background);
+  color: var(--text-primary);
+  overflow: auto;
+}
+
+a {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #ff77df;
+  text-decoration: underline;
+}
+
+/* ========================================
+   STANDARDIZED BUTTONS
+   ======================================== */
+button,
+.btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: normal;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+button:hover,
+.btn:hover {
+  transform: translateY(-1px);
+  background: var(--text-secondary);
+  color: #fff;
+}
+
+button:active,
+.btn:active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button Variants */
+.btn-primary {
+  background: var(--theme-color);
+  color: var(--background);
+  border-color: var(--border);
+}
+
+.btn-primary:hover {
+  background: var(--theme-color);
+  filter: brightness(1.2);
+  color: var(--background);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  /* background: var(--text-secondary); */
+  /* color: var(--background); */
+}
+
+.btn-accent {
+  background: var(--accent-yellow);
+  color: var(--background);
+}
+
+/* Special Button States */
+button.active,
+.btn.active {
+  background: var(--theme-color);
+  color: var(--background);
+}
+
+button.first-time {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+
+#add-to-game-btn {
+  margin-top: 7px;
+  width: 100%;
+}
+
+/* ========================================
+   LAYOUT
+   ======================================== */
+.container {
+  background: #000;
+  padding: 25px;
+  border: 2px solid var(--accent-yellow);
+  max-width: 650px;
+  width: 100%;
+}
+
+.main-content {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#header-container {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+#title-bike {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: bolder;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  border-bottom: 1px solid;
+}
+
+/* ========================================
+   FIXED POSITION ELEMENTS
+   ======================================== */
+.lang-toggle-container,
+.info-button-container {
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
+}
+
+.lang-toggle-container {
+  right: 20px;
+}
+
+.info-button-container {
+  right: 80px;
+}
+
+.lang-toggle,
+.info-toggle {
+  background: transparent;
+  border: 1px solid var(--theme-color);
+  padding: 4px;
+  font-size: 0.8rem;
+  width: 50px;
+  color: var(--theme-color);
+}
+
+.info-toggle:hover {
+  color: var(--text-secondary);
+}
+
+/* Info Popup */
+.info-popup {
+  display: none;
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #000;
+  border: 2px solid var(--accent-yellow);
+  padding: 20px;
+  max-width: 300px;
+  z-index: 1001;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-popup.show {
+  display: block;
+}
+
+.info-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.info-close:hover {
+  color: var(--theme-color);
+  transform: none;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--theme-color);
+  color: var(--background);
+  padding: 5px 20px;
+  font-weight: bold;
+  z-index: 2000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Landscape Hint */
+.landscape-hint {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(99, 248, 99, 0.95);
+  color: var(--background);
+  padding: 12px 20px;
+  font-size: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  z-index: 999;
+  border: 6px solid var(--background);
+  max-width: 95%;
+  text-align: center;
+}
+
+.landscape-hint.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========================================
+   GRID SECTION
+   ======================================== */
+.grid-section {
+  flex: 1;
+  min-width: 280px;
+}
+
+.grid-container {
+  background: var(--surface);
+  max-height: 60vh;
+  overflow: auto;
+  user-select: none;
+  padding: 2px;
+  margin-bottom: 10px;
+  font-size: 2.2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 0.6em);
+  background: #000;
+  justify-content: center;
+}
+
+.cell {
+  aspect-ratio: 1 / 1.5;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: inherit;
+  transition: all 0.2s;
+  color: var(--theme-color-alpha);
+  opacity: 0.9;
+  text-align: center;
+  width: 0.6em;
+  height: 1.2em;
+}
+
+.cell:hover {
+  background: rgba(99, 248, 99, 0.2);
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.cell.active {
+  background: var(--background);
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.controls button {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 2px
+}
+
+/* ========================================
+   PALETTE SECTION
+   ======================================== */
+.palette-section {
+  flex: 1;
+  min-width: 280px;
+}
+
+.palette {
+  background: var(--surface);
+  padding: 12px;
+  max-height: 75vh;
+  overflow-y: auto;
+  border: 1px solid #333;
+}
+
+.palette-category {
+  margin-bottom: 12px;
+}
+
+.palette-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--text-secondary);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.palette-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.char-btn {
+  padding: 6px 10px;
+  background: var(--background);
+  border: 1px solid #000;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 36px;
+  text-align: center;
+  color: var(--theme-color-alpha);
+  opacity: 0.8;
+}
+
+.char-btn:hover {
+  border-color: var(--theme-color);
+  background: rgba(231, 169, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.char-btn.selected {
+  background: var(--theme-color-alpha);
+  color: var(--background);
+  border-color: var(--theme-color-alpha);
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal {
+  background: #000;
+  padding: 25px;
+  max-width: 550px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+  border: 2px solid var(--accent-yellow);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal h2 {
+  color: var(--theme-color);
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5em;
+  letter-spacing: 4px;
+}
+
+/* Modal Forms */
+.modal-input-group {
+  margin-bottom: 20px;
+}
+
+.modal-input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.modal-input-group input {
+  width: 100%;
+  padding: 12px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-primary);
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.modal-input-group input:focus {
+  outline: none;
+  border-color: var(--theme-color);
+}
+
+.validation-error {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  min-height: 1.2rem;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 15px;
+}
+
+/* ========================================
+   BUILDING DISPLAYS (Standardized)
+   ======================================== */
+.building-preview-container {
+  display: flex;
+  margin: 15px auto;
+  justify-content: center;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 8px;
+}
+
+/* Universal building display class */
+.building-display {
+  background: var(--background);
+  font-family: "Courier New", monospace;
+  color: var(--theme-color-alpha);
+  display: grid;
+  grid-template-columns: repeat(10, 0.6em);
+  gap: 0;
+  line-height: 1;
+  justify-content: center;
+  font-size: 2.2rem;
+}
+
+.building-display-small {
+  font-size: 14px;
+}
+
+.building-display-medium {
+  font-size: 1.4rem;
+}
+
+.building-cell {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.9em;
+  aspect-ratio: 1 / 1.5;
+  text-align: center;
+}
+
+/* Gallery specific */
+.gallery-building {
+  min-height: 180px;
+  color: var(--building-color, var(--theme-color-alpha));
+}
+
+/* ========================================
+   CONTEXT MENU
+   ======================================== */
+.context-menu {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  min-width: 140px;
+  padding: 4px 0;
+}
+
+.context-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #000;
+}
+
+.context-menu-item:hover {
+  background: #f0f0f0;
+}
+
+.context-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   GALLERY
+   ======================================== */
+.community-gallery {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 2px solid #333;
+}
+
+.community-gallery h3 {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.gallery-scroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 15px 5px;
+}
+
+.gallery-item {
+  flex: 0 0 auto;
+  min-width: 140px;
+  max-width: 180px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+}
+
+.gallery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.gallery-building-name {
+  font-size: 0.75rem;
+  color: var(--theme-color);
+  font-weight: bold;
+}
+
+.gallery-artist-name {
+  font-size: 0.65rem;
+  color: var(--text-primary);
+  opacity: 0.8;
+}
+
+/* ========================================
+   SHARE CARD
+   ======================================== */
+#shareCardContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+#shareCardContainer.hidden {
+  display: none !important;
+}
+
+.share-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+  max-width: 90vw;
+  background: #000;
+  padding: 30px;
+  font-family: "Courier New", monospace;
+}
+
+.share-card-building-display {
+  background: #000;
+  padding: 20px;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.share-card-building-art {
+  font-size: 18px;
+  min-height: 180px;
+}
+
+.share-card-building-name {
+  color: var(--theme-color);
+  font-size: 1.1rem;
+  margin: 10px 0 5px 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.share-card-artist-name {
+  color: var(--text-primary);
+  opacity: 0.8;
+  font-size: 0.85rem;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.share-card-footer {
+  color: var(--text-primary);
+  font-size: 0.7rem;
+  margin-top: 15px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.share-message {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.share-buttons-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+.hidden {
+  display: none !important;
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-yellow);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 900px) and (orientation: landscape) {
+  .container {
+    max-width: 82vw;
+  }
+
+  .main-content {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .grid-section {
+    flex: 0 0 auto;
+    max-width: 35%;
+    min-width: 280px;
+  }
+
+  .grid-container {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .palette-section {
+    flex: 1 1 65%;
+    max-width: 65%;
+  }
+
+  .palette {
+    max-height: 74vh;
+  }
+}
