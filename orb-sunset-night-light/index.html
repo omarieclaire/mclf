@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Load Stripe.js on your website. -->
+    <script src="https://js.stripe.com/v3"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-77465632-1");
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta
+      name="description"
+      content="Join us for an evening of experimental play with glowing orbs at Frédéric Back Park. Part of Montreal Games Week." />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Orbs Sunset Night Light</title>
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <meta property="og:image" content="img/logo.png" />
+    <meta property="og:url" content="https://marieflanagan.com/orbs-park-games/index.html" />
+
+    <meta name="twitter:title" content="Orbs Sunset Night Light" />
+    <meta
+      name="twitter:description"
+      content="Join us for an evening of experimental play with glowing orbs at Frédéric Back Park. Part of Montreal Games Week." />
+    <meta name="twitter:image" content="https://marieflanagan.com/orbs-park-games/img/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Orbs Sunset Night Light at Frédéric Back Park</h1>
+      <nav>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#details">Details</a></li>
+          <li><a href="#notes">Notes</a></li>
+          <li><a href="#signup">Sign Up</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div>
+      <img src="img/orb.png" alt="Orbs event illustration" id="logo" />
+    </div>
+
+    <div id="about" class="section">
+      <h1>Play with glowing orbs at dusk</h1>
+      <p>
+        Join us for an evening of ritual and play at Frédéric Back Park, where mysterious glowing orbs dot the landscape. As the sun sets, we'll
+        play with light on the orbs.
+      </p>
+      <h2>Why here?</h2>
+      <p>
+        Frédéric Back Park sits on 40 million tonnes of material.On the surface, you'll find mysterious orbs, venting ports for an active process
+        happening beneath our feet.
+      </p>
+
+      <h2>What to expect</h2>
+
+      <p class="highlight">
+        Experimental play at dusk, exploring trash, territory, and transformation. Bring a flashlight or bike light and dress warm.
+      </p>
+
+      <p>We'll begin with a mediative ritual as the sun sets, and shift into faster-paced play in the late dusk.</p>
+     </div>
+
+    <img src="img/s3.png" alt="Park at dusk" class="work-Img" />
+
+    <div id="details" class="section">
+      <h1>Details</h1>
+
+      <h2>When and Where</h2>
+      <ul>
+        <li><strong>When:</strong> Saturday, November 15, 2025, <strong>arrive for 3:45pm.</strong> We start at 4pm sharp, the sunset is unstoppable.</li>
+        <li><strong>Where:</strong> Frédéric Back Park</li>
+        <li>
+          <strong>Who:</strong> <a target="_blank" href="https://marieflanagan.com/about">Marie LeBlanc Flanagan</a> and some other curious and
+          playful people, with <a target="_blank" href="https://www.semainedujeuvideodemontreal.com/">Montreal Games Week</a>
+        </li>
+        <li><strong>How:</strong> Sign up below to reserve your spot</li>
+      </ul>
+
+      <h2>What to bring</h2>
+      <ul>
+        <li>Flashlight or bike light (essential!)</li>
+        <li>Warm clothing</li>
+        <li>Your sense of play and curiosity</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 id="notes">Important Notes</h2>
+      <ul>
+        <li>This event takes place outdoors at dusk in mid-November. Dress warmly.</li>
+        <li>Join the Signal group (link sent after registration) for help finding us as well as coordinating rideshares.</li>
+        <li>
+          Light is essential for play, so bring a flashlight or bike light. 
+        </li>
+        <li>
+          The first part involves very slow walking through the park, the second part involves light physical activity. Please reach out if you have accessibility questions.
+        </li>
+        <li>This is an experimental, participatory experience. Come ready to play!</li>
+      </ul>
+      <br />
+    </div>
+
+    <div id="signup" class="section">
+      <h1>Sign up</h1>
+
+      <p>This event is pay-what-you-can, with a suggested contribution of $15.</p>
+
+      <div class="payment-options">
+        <a href="https://book.stripe.com/fZu3cwgrHeJu2NP9Mk3ks02" class="button payment-button"> Supportive Tier — $30 </a>
+
+        <a href="https://book.stripe.com/3cI9AUb7nate4VXf6E3ks05" class="button payment-button payment-button-recommended"> Standard Tier — $15 </a>
+
+        <a href="https://buy.stripe.com/eVqcN61wN30MgEF0bK3ks04" class="button payment-button"> Accessibility Tier — $1 </a>
+      </div>
+
+      <p>Fees cover labour and materials.</p>
+      <p>If late capitalism has got you down, you don't need to pay anything. Just email me and let me know you'd like to attend.</p>
+
+      <p>Questions? Write to me at <a href="mailto:marieflanagan@gmail.com" target="_blank" rel="noopener noreferrer">marieflanagan@gmail.com</a></p>
+
+      <div id="error-message"></div>
+
+      <script>
+        (function () {
+          var stripe = Stripe("pk_live_GN4rzNopq4foXx4GMQiRdvb20034bVG58q");
+
+          var checkoutButton = document.getElementById("checkout-button");
+          checkoutButton.classList.add("button");
+          checkoutButton.addEventListener("click", function () {
+            // When the customer clicks on the button, redirect
+            // them to Checkout.
+            stripe
+              .redirectToCheckout({
+                lineItems: [
+                  {
+                    price: "prod_TMK4Bvhv9AvOXe",
+                    quantity: 1,
+                  },
+                ],
+                mode: "payment",
+                successUrl: "http://marieflanagan.com/orbs-park-games/confirmed.html",
+                cancelUrl: "http://marieflanagan.com/orbs-park-games/cancelled.html",
+              })
+              .then(function (result) {
+                if (result.error) {
+                  // If `redirectToCheckout` fails due to a browser or network
+                  // error, display the localized error message to your customer.
+                  var displayError = document.getElementById("error-message");
+                  displayError.textContent = result.error.message;
+                }
+              });
+          });
+        })();
+      </script>
+    </div>
+
+    <!-- <img src="img/s1.png" alt="Park at dusk" class="e"> -->
+
+    <footer>
+      <div>
+        <!-- <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="img/social-icons/mail.svg" alt="email"
+					class="feather"></a> -->
+        <a href="https://linkedin.com/in/marieflanagan/" target="blank"
+          ><img src="img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
+        /></a>
+        <a href="https://twitter.com/omarieclaire/" target="blank"><img src="img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+        <a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="img/social-icons/facebook.svg" alt="facebook" class="feather" /></a>
+        <a href="https://www.instagram.com/omarieclaire/" target="blank"
+          ><img src="img/social-icons/instagram.svg" alt="instagram" class="feather"
+        /></a>
+      </div>
+    </footer>
+  </body>
+</html>

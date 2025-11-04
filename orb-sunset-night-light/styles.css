@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Quicksand:wght@500&display=swap');
+
+
+body {
+  font-family: 'Open-sans', sans-serif;
+  font-size: 1.3rem;
+  background:rgb(250, 252, 255);
+  /* background: rgb(131,58,180); */
+  /* background: linear-gradient(161deg, rgba(131,58,180,1) 0%, rgb(116, 93, 247) 50%, rgba(252,175,69,1) 100%); */
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+
+}
+
+.section {
+  margin: 4rem 25vw;
+  padding: 2rem;
+  border-radius: 12px;
+  background:rgb(250, 252, 255, .7);
+}
+
+@media (max-width: 480px) {
+  .section {
+    margin: 4rem 2vw;
+    padding: 2rem;
+    background:rgb(250, 252, 255, .7);
+  }
+}
+
+p {
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.75);
+  /* margin: 20vw; */
+}
+
+.strong {
+  font-weight: 800;
+}
+
+.highlight {
+  background-color: rgb(255, 253, 226);
+  padding: .3rem;
+}
+
+a {
+  color: #2f08ff;
+}
+
+a:hover {
+  color: salmon;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+#logo {
+  display: block;
+  max-width: 50vw;
+  margin: auto;
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+
+#logo-small{
+  display: block;
+  max-width: 20vw;
+  margin: auto;
+}
+
+@media (max-width: 480px) {
+  #logo{
+    padding-top: 2rem;
+    max-width: 80vw;
+
+  }
+}
+
+#logo:hover{
+  rotate: 90;
+  /* background: black; */
+}
+
+.work-Img {
+  display: block;
+  max-width: 40vw;
+  margin: 3rem auto 3rem auto;
+}
+
+h1 {
+  font-family: 'Quicksand', sans-serif;
+
+  border-bottom: 1px solid rgba(82, 44, 252, .8);
+  color: rgba(82, 44, 252, .8);
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  font-weight: 900;
+  margin: 2rem 0;
+  padding: 1rem 0 1rem 0;
+}
+
+h2 {
+  font-family: 'Quicksand', sans-serif;
+  color: rgba(250, 128, 114, 0.9);
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin: 3rem 0 1.35rem 0;
+
+}
+
+.strikethru {
+  text-decoration: line-through;
+}
+
+/* header stuff */
+header {
+  text-align: center;
+  width: 100%;
+}
+
+nav ul {
+  font-family: 'Quicksand', sans-serif;
+  letter-spacing: 1.5px;
+  padding: 0 0 0 2rem;
+  list-style: none;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  margin: 2rem 0 0 0;
+}
+
+@media (max-width: 480px) {
+  nav ul {
+    display:none;
+  }  
+}
+
+nav li {
+  float: left;
+}
+
+li {
+  margin-bottom: 1rem;
+}
+
+li::marker {
+  color: rgb(24, 24, 24);
+  /* font-size: 1.5em; */
+}
+
+nav a {
+  color: rgba(54, 41, 122, 0.95);
+  text-decoration: none;
+  font-size: 1.6rem;
+  transition: opacity 150ms ease-in-out;
+  display: block;
+  text-align: center;
+  padding: 1rem;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: rgba(46, 34, 107, 0.95);
+}
+
+#contact {
+  padding: 0 0 3rem 0;
+}
+
+/* button stuff */
+button {
+  text-decoration: none;
+  background-color:#6772E5;
+  color:#FFF;
+  padding:8px 12px;
+  margin: 1rem;
+  border:0;
+  border-radius:4px;
+  font-size:1em;
+}
+
+button:hover {
+  outline: 3px solid white;
+}
+
+button:active {
+  box-shadow: 3px 5px rgb(17, 17, 160);
+  transform: translateY(4px);
+}
+
+
+/* Footer
+=================== */
+footer {
+  padding: 3rem 0 3rem 0;
+  background-color: rgba(245, 243, 251, .9);
+  text-align: center;
+  width: 100%;
+}
+
+.feather {
+  margin: .3em 1.1em;
+  opacity: 0.3;
+}
+
+.feather:hover {
+  opacity: 0.7;
+}
+
+/* Payment button styles */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 2rem 0;
+}
+
+.payment-button {
+  text-decoration: none;
+  background-color: #6772E5;
+  color: #FFF;
+  padding: 16px 20px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.1em;
+  text-align: center;
+  display: block;
+  transition: all 150ms ease-in-out;
+}
+
+.payment-button:hover {
+  outline: 3px solid white;
+  color: #FFF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 114, 229, 0.4);
+}
+
+.payment-button:active {
+  box-shadow: 3px 5px rgb(17, 17, 160);
+  transform: translateY(4px);
+}
+
+.payment-button-recommended {
+  background-color: rgba(250, 128, 114, 0.9);
+  font-weight: 600;
+}
+
+.payment-button-recommended:hover {
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+
