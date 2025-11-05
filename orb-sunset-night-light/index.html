@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <!-- Load Stripe.js on your website. -->
     <script src="https://js.stripe.com/v3"></script>
@@ -34,17 +34,65 @@
       content="Join us for an evening of experimental play with glowing orbs at Frédéric Back Park. Part of Montreal Games Week." />
     <meta name="twitter:image" content="https://marieflanagan.com/orbs-park-games/img/orb.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    
+    <style>
+      .language-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+      
+      .language-toggle button {
+        background-color: rgba(82, 44, 252, 0.8);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 150ms ease-in-out;
+      }
+      
+      .language-toggle button:hover {
+        background-color: rgba(82, 44, 252, 1);
+        transform: scale(1.05);
+      }
+      
+      .french-notice {
+        background-color: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 2rem 0;
+        display: none;
+      }
+      
+      .french-notice p {
+        margin: 0;
+        color: #856404;
+      }
+      
+      [lang="fr"] .french-notice {
+        display: block;
+      }
+    </style>
   </head>
 
   <body>
+    <div class="language-toggle">
+      <button id="langToggle" onclick="toggleLanguage()">FR</button>
+    </div>
+
     <header>
-      <h1>Orbs Sunset Night Light at Frédéric Back Park</h1>
+      <h1 data-en="Orbs Sunset Night Light at Frédéric Back Park" data-fr="Orbes au coucher du soleil au Parc Frédéric-Back">Orbs Sunset Night Light at Frédéric Back Park</h1>
       <nav>
         <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#details">Details</a></li>
-          <li><a href="#notes">Notes</a></li>
-          <li><a href="#signup">Sign Up</a></li>
+          <li><a href="#about" data-en="About" data-fr="À propos">About</a></li>
+          <li><a href="#details" data-en="Details" data-fr="Détails">Details</a></li>
+          <li><a href="#notes" data-en="Notes" data-fr="Notes">Notes</a></li>
+          <li><a href="#signup" data-en="Sign Up" data-fr="Inscription">Sign Up</a></li>
         </ul>
       </nav>
     </header>
@@ -54,81 +102,91 @@
     </div>
 
     <div id="about" class="section">
-      <h1>Play with glowing orbs at dusk</h1>
-      <p>
+      <div class="french-notice">
+        <p><strong>Note :</strong> Cet événement se déroulera en anglais. Si suffisamment de personnes sont intéressées, nous essaierons d'organiser un événement en français également.</p>
+      </div>
+      
+      <h1 data-en="Play with glowing orbs at dusk" data-fr="Jouez avec des orbes lumineux au crépuscule">Play with glowing orbs at dusk</h1>
+      <p data-en="Join us for an evening of ritual and play at Frédéric Back Park." data-fr="Joignez-vous à nous pour une soirée de rituel et de jeu au Parc Frédéric-Back.">
         Join us for an evening of ritual and play at Frédéric Back Park. 
       </p>
-      <p>
+      <p data-en="Frédéric Back Park sits on 40 million tonnes of material. On the surface, you'll find mysterious orbs, venting ports for an active process happening beneath our feet. As the sun sets, we'll paint with light on the orbs." data-fr="Le Parc Frédéric-Back repose sur 40 millions de tonnes de matériaux. À la surface, vous trouverez des orbes mystérieux, des évents pour un processus actif qui se déroule sous nos pieds. Au coucher du soleil, nous peindrons avec de la lumière sur les orbes.">
         Frédéric Back Park sits on 40 million tonnes of material. On the surface, you'll find mysterious orbs, venting ports for an active process
         happening beneath our feet. As the sun sets, we'll
         paint with light on the orbs.
       </p>
 
-      <h2>What to expect</h2>
+      <h2 data-en="What to expect" data-fr="À quoi s'attendre">What to expect</h2>
 
-      <p class="highlight">
+      <p class="highlight" data-en="Experimental play at dusk, exploring trash, territory, and transformation. Bring a flashlight or bike light and dress warm." data-fr="Jeu expérimental au crépuscule, explorant les déchets, le territoire et la transformation. Apportez une lampe de poche ou une lumière de vélo et habillez-vous chaudement.">
         Experimental play at dusk, exploring trash, territory, and transformation. Bring a flashlight or bike light and dress warm.
       </p>
 
-      <p>We'll begin with a mediative ritual as the sun sets, and shift into faster-paced play in the late dusk.</p>
+      <p data-en="We'll begin with a mediative ritual as the sun sets, and shift into faster-paced play in the late dusk." data-fr="Nous commencerons par un rituel méditatif au coucher du soleil, puis passerons à un jeu plus rapide à la fin du crépuscule.">We'll begin with a mediative ritual as the sun sets, and shift into faster-paced play in the late dusk.</p>
      </div>
 
     <img src="img/s3.png" alt="Park at dusk" class="work-Img" />
 
     <div id="details" class="section">
-      <h1>Details</h1>
+      <h1 data-en="Details" data-fr="Détails">Details</h1>
 
-      <h2>When and Where</h2>
+      <h2 data-en="When and Where" data-fr="Quand et où">When and Where</h2>
       <ul>
-        <li><strong>When:</strong> Saturday, November 15, 2025, <strong>arrive for 3:45pm.</strong> We start at 4pm, the sunset is unstoppable.</li>
-        <li><strong>Where:</strong> Frédéric Back Park</li>
+        <li><strong data-en="When:" data-fr="Quand :">When:</strong> <span data-en="Saturday, November 15, 2025, arrive for 3:45pm. We start at 4pm, the sunset is unstoppable." data-fr="Samedi 15 novembre 2025, arrivée pour 15h45. On commence à 16h, le coucher du soleil est imparable.">Saturday, November 15, 2025, <strong>arrive for 3:45pm.</strong> We start at 4pm, the sunset is unstoppable.</span></li>
+        <li><strong data-en="Where:" data-fr="Où :">Where:</strong> <span data-en="Frédéric Back Park" data-fr="Parc Frédéric-Back">Frédéric Back Park</span></li>
         <li>
-          <strong>Who:</strong> <a target="_blank" href="https://marieflanagan.com/about">Marie LeBlanc Flanagan</a> and some other curious and
-          playful people, with <a target="_blank" href="https://www.semainedujeuvideodemontreal.com/">Montreal Games Week</a>
+          <strong data-en="Who:" data-fr="Qui :">Who:</strong> <span data-en='<a target="_blank" href="https://marieflanagan.com/about">Marie LeBlanc Flanagan</a> and some other curious and playful people, with <a target="_blank" href="https://www.semainedujeuvideodemontreal.com/">Montreal Games Week</a>' data-fr='<a target="_blank" href="https://marieflanagan.com/about">Marie LeBlanc Flanagan</a> et d'autres personnes curieuses et joueuses, avec <a target="_blank" href="https://www.semainedujeuvideodemontreal.com/">La Semaine du jeu vidéo de Montréal</a>'><a target="_blank" href="https://marieflanagan.com/about">Marie LeBlanc Flanagan</a> and some other curious and
+          playful people, with <a target="_blank" href="https://www.semainedujeuvideodemontreal.com/">Montreal Games Week</a></span>
         </li>
-        <li><strong>How:</strong> Sign up below to reserve your spot</li>
+        <li><strong data-en="How:" data-fr="Comment :">How:</strong> <span data-en="Sign up below to reserve your spot" data-fr="Inscrivez-vous ci-dessous pour réserver votre place">Sign up below to reserve your spot</span></li>
       </ul>
 
-      <h2>What to bring</h2>
+      <h2 data-en="What to bring" data-fr="Quoi apporter">What to bring</h2>
       <ul>
-        <li>Flashlight or bike light (essential!)</li>
-        <li>Warm clothing</li>
-        <li>Your sense of play and curiosity</li>
+        <li data-en="Flashlight or bike light (essential!)" data-fr="Lampe de poche ou lumière de vélo (essentiel!)">Flashlight or bike light (essential!)</li>
+        <li data-en="Warm clothing" data-fr="Vêtements chauds">Warm clothing</li>
+        <li data-en="Your sense of play and curiosity" data-fr="Votre sens du jeu et de la curiosité">Your sense of play and curiosity</li>
       </ul>
     </div>
 
     <div class="section">
-      <h2 id="notes">Important Notes</h2>
+      <h2 id="notes" data-en="Important Notes" data-fr="Notes importantes">Important Notes</h2>
       <ul>
-        <li>This event takes place outdoors at dusk in mid-November. Dress warmly.</li>
-        <li>Join the Signal group (link sent after registration) for help finding us as well as coordinating rideshares.</li>
-        <li>
+        <li data-en="This event takes place outdoors at dusk in mid-November. Dress warmly." data-fr="Cet événement a lieu à l'extérieur au crépuscule à la mi-novembre. Habillez-vous chaudement.">This event takes place outdoors at dusk in mid-November. Dress warmly.</li>
+        <li data-en="Join the Signal group (link sent after registration) for help finding us as well as coordinating rideshares." data-fr="Rejoignez le groupe Signal (lien envoyé après l'inscription) pour nous trouver et coordonner le covoiturage.">Join the Signal group (link sent after registration) for help finding us as well as coordinating rideshares.</li>
+        <li data-en="Light is essential for play, so bring a flashlight or bike light." data-fr="La lumière est essentielle pour jouer, alors apportez une lampe de poche ou une lumière de vélo.">
           Light is essential for play, so bring a flashlight or bike light. 
         </li>
-        <li>
+        <li data-en="The first part involves very slow walking through the park, the second part involves light physical activity. Please reach out if you have accessibility questions." data-fr="La première partie implique une marche très lente dans le parc, la deuxième partie implique une activité physique légère. N'hésitez pas à nous contacter si vous avez des questions d'accessibilité.">
           The first part involves very slow walking through the park, the second part involves light physical activity. Please reach out if you have accessibility questions.
         </li>
-        <li>This is an experimental, participatory experience. Come ready to play!</li>
+        <li data-en="This is an experimental, participatory experience. Come ready to play!" data-fr="Il s'agit d'une expérience expérimentale et participative. Venez prêt à jouer!">This is an experimental, participatory experience. Come ready to play!</li>
       </ul>
       <br />
     </div>
 
     <div id="signup" class="section">
-      <h1>Sign up</h1>
-      <p>Tickets will be limited to keep it intimate.</p>
+      <h1 data-en="Sign up" data-fr="Inscription">Sign up</h1>
+      <p data-en="Tickets will be limited to keep it intimate." data-fr="Les billets seront limités pour garder une ambiance intime.">Tickets will be limited to keep it intimate.</p>
 
       <div class="payment-options">
-        <a href="https://book.stripe.com/fZu3cwgrHeJu2NP9Mk3ks02" class="button payment-button"> Supportive Tier — $30 </a>
+        <a href="https://book.stripe.com/fZu3cwgrHeJu2NP9Mk3ks02" class="button payment-button"> 
+          <span data-en="Supportive Tier — $30" data-fr="Tarif de soutien — 30 $">Supportive Tier — $30</span>
+        </a>
 
-        <a href="https://book.stripe.com/3cI9AUb7nate4VXf6E3ks05" class="button payment-button payment-button-recommended"> Standard Tier — $15 </a>
+        <a href="https://book.stripe.com/3cI9AUb7nate4VXf6E3ks05" class="button payment-button payment-button-recommended"> 
+          <span data-en="Standard Tier — $15" data-fr="Tarif standard — 15 $">Standard Tier — $15</span>
+        </a>
 
-        <a href="https://buy.stripe.com/eVqcN61wN30MgEF0bK3ks04" class="button payment-button"> Accessibility Tier — $1 </a>
+        <a href="https://buy.stripe.com/eVqcN61wN30MgEF0bK3ks04" class="button payment-button"> 
+          <span data-en="Accessibility Tier — $1" data-fr="Tarif accessibilité — 1 $">Accessibility Tier — $1</span>
+        </a>
       </div>
 
-      <p>Fees go to covering labour and materials.</p>
-      <p>If late capitalism has got you down, you don't need to pay anything. Just email me and let me know you'd like to attend.</p>
+      <p data-en="Fees go to covering labour and materials." data-fr="Les frais servent à couvrir la main-d'œuvre et les matériaux.">Fees go to covering labour and materials.</p>
+      <p data-en="If late capitalism has got you down, you don't need to pay anything. Just email me and let me know you'd like to attend." data-fr="Si le capitalisme tardif vous déprime, vous n'avez rien à payer. Envoyez-moi simplement un courriel pour me faire savoir que vous aimeriez participer.">If late capitalism has got you down, you don't need to pay anything. Just email me and let me know you'd like to attend.</p>
 
-      <p>Questions? Write to me at <a href="mailto:marieflanagan@gmail.com" target="_blank" rel="noopener noreferrer">marieflanagan@gmail.com</a></p>
+      <p><span data-en="Questions? Write to me at" data-fr="Des questions? Écrivez-moi à">Questions? Write to me at</span> <a href="mailto:marieflanagan@gmail.com" target="_blank" rel="noopener noreferrer">marieflanagan@gmail.com</a></p>
 
       <div id="error-message"></div>
 
@@ -137,50 +195,80 @@
           var stripe = Stripe("pk_live_GN4rzNopq4foXx4GMQiRdvb20034bVG58q");
 
           var checkoutButton = document.getElementById("checkout-button");
-          checkoutButton.classList.add("button");
-          checkoutButton.addEventListener("click", function () {
-            // When the customer clicks on the button, redirect
-            // them to Checkout.
-            stripe
-              .redirectToCheckout({
-                lineItems: [
-                  {
-                    price: "prod_TMK4Bvhv9AvOXe",
-                    quantity: 1,
-                  },
-                ],
-                mode: "payment",
-                successUrl: "http://marieflanagan.com/orbs-park-games/confirmed.html",
-                cancelUrl: "http://marieflanagan.com/orbs-park-games/cancelled.html",
-              })
-              .then(function (result) {
-                if (result.error) {
-                  // If `redirectToCheckout` fails due to a browser or network
-                  // error, display the localized error message to your customer.
-                  var displayError = document.getElementById("error-message");
-                  displayError.textContent = result.error.message;
-                }
-              });
-          });
+          if (checkoutButton) {
+            checkoutButton.classList.add("button");
+            checkoutButton.addEventListener("click", function () {
+              stripe
+                .redirectToCheckout({
+                  lineItems: [
+                    {
+                      price: "prod_TMK4Bvhv9AvOXe",
+                      quantity: 1,
+                    },
+                  ],
+                  mode: "payment",
+                  successUrl: "http://marieflanagan.com/orbs-park-games/confirmed.html",
+                  cancelUrl: "http://marieflanagan.com/orbs-park-games/cancelled.html",
+                })
+                .then(function (result) {
+                  if (result.error) {
+                    var displayError = document.getElementById("error-message");
+                    displayError.textContent = result.error.message;
+                  }
+                });
+            });
+          }
         })();
       </script>
     </div>
 
-    <!-- <img src="img/s1.png" alt="Park at dusk" class="e"> -->
-
     <footer>
       <div>
-        <!-- <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="img/social-icons/mail.svg" alt="email"
-					class="feather"></a> -->
         <a href="https://linkedin.com/in/marieflanagan/" target="blank"
           ><img src="img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
         /></a>
-        <!-- <a href="https://twitter.com/omarieclaire/" target="blank"><img src="img/social-icons/twitter.svg" alt="twitter" class="feather" /></a> -->
         <a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="img/social-icons/facebook.svg" alt="facebook" class="feather" /></a>
         <a href="https://www.instagram.com/omarieclaire/" target="blank"
           ><img src="img/social-icons/instagram.svg" alt="instagram" class="feather"
         /></a>
       </div>
     </footer>
+
+    <script>
+      let currentLang = 'en';
+      
+      function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'fr' : 'en';
+        const langToggle = document.getElementById('langToggle');
+        langToggle.textContent = currentLang === 'en' ? 'FR' : 'EN';
+        
+        // Update HTML lang attribute
+        document.documentElement.lang = currentLang;
+        
+        // Update all elements with translations
+        const elements = document.querySelectorAll('[data-en][data-fr]');
+        elements.forEach(element => {
+          const translation = currentLang === 'en' ? element.getAttribute('data-en') : element.getAttribute('data-fr');
+          
+          // Check if the element contains HTML (like links)
+          if (translation.includes('<')) {
+            element.innerHTML = translation;
+          } else {
+            element.textContent = translation;
+          }
+        });
+        
+        // Save preference
+        localStorage.setItem('preferredLanguage', currentLang);
+      }
+      
+      // Load saved language preference on page load
+      window.addEventListener('DOMContentLoaded', function() {
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang === 'fr') {
+          toggleLanguage();
+        }
+      });
+    </script>
   </body>
 </html>
