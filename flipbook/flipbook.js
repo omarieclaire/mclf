@@ -20,35 +20,66 @@
     let isFullscreen = false;
     let pdfDoc = null;
     let totalPages = 0;
+    const RENDER_SCALE = 1.5; // Reduced from 2.0 for better performance
+    const renderedPages = new Set(); // Track which pages have been rendered
+    const renderingPages = new Set(); // Track pages currently being rendered
 
     async function loadPDF() {
         try {
-            const loadingTask = pdfjsLib.getDocument(PDF_URL);
+            const loadingMessage = document.getElementById('loading-message');
+            
+            const loadingTask = pdfjsLib.getDocument({
+                url: PDF_URL,
+                onProgress: function(progress) {
+                    if (progress.total) {
+                        const percent = Math.round((progress.loaded / progress.total) * 100);
+                        const loaded = (progress.loaded / (1024 * 1024)).toFixed(1);
+                        const total = (progress.total / (1024 * 1024)).toFixed(1);
+                        
+                        loadingMessage.innerHTML = `
+                            <div style="margin-bottom: 16px;">Loading PDF...</div>
+                            <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                                ${loaded} MB / ${total} MB (${percent}%)
+                            </div>
+                            <div class="loading-bar">
+                                <div style="width: ${percent}%; height: 100%; background: var(--button-primary); border-radius: 4px; transition: width 0.3s ease;"></div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
             pdfDoc = await loadingTask.promise;
             totalPages = pdfDoc.numPages;
             
             console.log('PDF loaded:', totalPages, 'pages');
             
-            await renderAllPages();
-            initializeFlipbook();
+            loadingMessage.innerHTML = '<div>Preparing flipbook...</div>';
             
-            document.getElementById('loading-message').style.display = 'none';
+            await initializeFlipbook();
+            
+            loadingMessage.style.display = 'none';
             document.getElementById('book-wrapper').style.display = 'flex';
                        
         } catch (error) {
             console.error('Error loading PDF:', error);
             document.getElementById('loading-message').innerHTML = 
-                '<div>Unable to load the zine. Please check the PDF file.</div>';
+                '<div style="color: #d32f2f;">Unable to load the zine. Please check the PDF file.</div>' +
+                '<div style="font-size: 14px; margin-top: 8px; color: #666;">Error: ' + error.message + '</div>';
         }
     }
 
-    async function renderAllPages() {
-        const flipbook = $('#flipbook');
+    async function renderPage(pageNum) {
+        // Prevent duplicate rendering
+        if (renderedPages.has(pageNum) || renderingPages.has(pageNum)) {
+            return;
+        }
         
-        // Render each page to canvas
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        renderingPages.add(pageNum);
+        
+        try {
             const page = await pdfDoc.getPage(pageNum);
-            const viewport = page.getViewport({ scale: 2.0 }); // High quality render
+            const viewport = page.getViewport({ scale: RENDER_SCALE });
             
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
@@ -60,22 +91,115 @@
                 viewport: viewport
             }).promise;
             
-            const pageDiv = $('<div class="page"></div>');
-            pageDiv.append(canvas);
-            flipbook.append(pageDiv);
+            // Find the page div and update it
+            const pageDiv = $(`.page[data-page="${pageNum}"]`);
+            if (pageDiv.length) {
+                pageDiv.empty().append(canvas);
+                renderedPages.add(pageNum);
+                console.log('Rendered page', pageNum);
+            }
+            
+        } catch (error) {
+            console.error('Error rendering page', pageNum, ':', error);
+        } finally {
+            renderingPages.delete(pageNum);
         }
     }
 
-    function initializeFlipbook() {
+    async function renderVisiblePages(currentPage, displayMode) {
+        // Determine which pages to render based on display mode
+        let pagesToRender = [];
+        
+        if (displayMode === 'single') {
+            // Single page mode: render current + 2 ahead + 1 behind
+            pagesToRender = [
+                currentPage - 1,
+                currentPage,
+                currentPage + 1,
+                currentPage + 2
+            ];
+        } else {
+            // Double page mode: render current spread + next/prev spreads
+            // Turn.js uses odd pages on the right in double mode
+            const isOdd = currentPage % 2 === 1;
+            
+            if (isOdd) {
+                // Odd page (right side): render it and the next page (left side)
+                pagesToRender = [
+                    currentPage - 2,
+                    currentPage - 1,
+                    currentPage,
+                    currentPage + 1,
+                    currentPage + 2,
+                    currentPage + 3
+                ];
+            } else {
+                // Even page (left side): render it and the previous page (right side)
+                pagesToRender = [
+                    currentPage - 3,
+                    currentPage - 2,
+                    currentPage - 1,
+                    currentPage,
+                    currentPage + 1,
+                    currentPage + 2
+                ];
+            }
+        }
+        
+        // Filter to valid page numbers
+        pagesToRender = pagesToRender.filter(p => p >= 1 && p <= totalPages);
+        
+        // Render pages in order of priority (current first, then adjacent)
+        const currentIndex = pagesToRender.indexOf(currentPage);
+        if (currentIndex !== -1) {
+            // Reorder: current page first
+            const reordered = [currentPage];
+            for (let i = 1; i < pagesToRender.length; i++) {
+                const leftIdx = currentIndex - i;
+                const rightIdx = currentIndex + i;
+                if (rightIdx < pagesToRender.length) reordered.push(pagesToRender[rightIdx]);
+                if (leftIdx >= 0) reordered.push(pagesToRender[leftIdx]);
+            }
+            pagesToRender = reordered;
+        }
+        
+        // Render pages
+        for (const pageNum of pagesToRender) {
+            await renderPage(pageNum);
+        }
+        
+        // Optional: Clean up pages that are far away to free memory
+        cleanupDistantPages(currentPage, displayMode);
+    }
+
+    function cleanupDistantPages(currentPage, displayMode) {
+        const keepDistance = displayMode === 'single' ? 5 : 8;
+        
+        renderedPages.forEach(pageNum => {
+            if (Math.abs(pageNum - currentPage) > keepDistance) {
+                const pageDiv = $(`.page[data-page="${pageNum}"]`);
+                const canvas = pageDiv.find('canvas');
+                
+                if (canvas.length) {
+                    // Replace canvas with placeholder
+                    pageDiv.html('<div class="page-placeholder"></div>');
+                    renderedPages.delete(pageNum);
+                    console.log('Cleaned up page', pageNum);
+                }
+            }
+        });
+    }
+
+    async function initializeFlipbook() {
         const flipbook = $('#flipbook');
         const isMobile = window.innerWidth <= 768;
         
-        // Get first canvas to determine dimensions
-        const firstCanvas = $('#flipbook canvas').first();
-        if (!firstCanvas.length) return;
+        // Get first page to determine dimensions
+        const firstPage = await pdfDoc.getPage(1);
+        const firstViewport = firstPage.getViewport({ scale: RENDER_SCALE });
         
-        const canvasWidth = firstCanvas[0].width;
-        const canvasHeight = firstCanvas[0].height;
+        const canvasWidth = firstViewport.width;
+        const canvasHeight = firstViewport.height;
         const aspectRatio = canvasWidth / canvasHeight;
         const isLandscape = aspectRatio > 1;
         
@@ -138,6 +262,16 @@
         console.log('Display mode:', displayMode);
         console.log('Available space:', window.innerWidth, 'x', window.innerHeight);
         
+        // Create placeholder divs for all pages
+        for (let i = 1; i <= totalPages; i++) {
+            const pageDiv = $('<div class="page" data-page="' + i + '"></div>');
+            pageDiv.html('<div class="page-placeholder">Page ' + i + '</div>');
+            flipbook.append(pageDiv);
+        }
+        
+        // Render first few pages
+        await renderVisiblePages(1, displayMode);
+        
         // Initialize Turn.js with MUCH better flip animations
         flipbook.turn({
             width: bookWidth,
@@ -151,8 +285,12 @@
             display: displayMode,
             when: {
                 turning: function(event, page, pageObject) {
+                    // Render pages as user starts turning
+                    const currentDisplayMode = $(this).turn('display');
+                    renderVisiblePages(page, currentDisplayMode);
+                    
                     // Add class for single page centering on first/last page
-                    if ((page === 1 || page === totalPages) && displayMode === 'double') {
+                    if ((page === 1 || page === totalPages) && currentDisplayMode === 'double') {
                         $(this).addClass('flipbook-centered');
                     } else {
                         $(this).removeClass('flipbook-centered');
@@ -160,6 +298,10 @@
                 },
                 turned: function(event, page) {
                     updatePageInfo(page);
+                    
+                    // Render additional pages after turn completes
+                    const currentDisplayMode = $(this).turn('display');
+                    renderVisiblePages(page, currentDisplayMode);
                 },
                 start: function(event, pageObject, corner) {
                     // Enable corner peek preview on hover
@@ -402,11 +544,28 @@
         if (!$('#flipbook').turn('is')) return;
         
         const isMobile = window.innerWidth <= 768;
+        
+        // Get canvas dimensions from first rendered page
         const firstCanvas = $('#flipbook canvas').first();
-        if (!firstCanvas.length) return;
+        if (!firstCanvas.length) {
+            // If no canvas rendered yet, get from PDF
+            if (!pdfDoc) return;
+            
+            pdfDoc.getPage(1).then(page => {
+                const viewport = page.getViewport({ scale: RENDER_SCALE });
+                const canvasWidth = viewport.width;
+                const canvasHeight = viewport.height;
+                resizeFlipbook(canvasWidth, canvasHeight, isMobile);
+            });
+            return;
+        }
         
         const canvasWidth = firstCanvas[0].width;
         const canvasHeight = firstCanvas[0].height;
+        resizeFlipbook(canvasWidth, canvasHeight, isMobile);
+    }
+
+    function resizeFlipbook(canvasWidth, canvasHeight, isMobile) {
         const aspectRatio = canvasWidth / canvasHeight;
         const isLandscape = aspectRatio > 1;
         
@@ -463,6 +622,10 @@
         
         $('#flipbook').turn('size', bookWidth, bookHeight);
         $('#flipbook').turn('display', displayMode);
+        
+        // Re-render visible pages after resize
+        const currentPage = $('#flipbook').turn('page');
+        renderVisiblePages(currentPage, displayMode);
     }
 
     let resizeTimer;
