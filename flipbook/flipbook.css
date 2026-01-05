@@ -262,14 +262,27 @@ body:-ms-fullscreen .flipbook-container {
 #flipbook {
     background: transparent;
     box-shadow: 0 10px 40px var(--shadow);
-    cursor: grab;
+    cursor: grab; /* Shows grab cursor when hovering */
     max-width: 100%;
     max-height: 100%;
+    user-select: none; /* Prevent text selection during drag */
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 #flipbook:active {
-    cursor: grabbing;
+    cursor: grabbing; /* Shows grabbing cursor when dragging */
 }
+
+/* Make sure Turn.js drag events work properly */
+.turn-page {
+    cursor: grab !important;
+}
+
+.turn-page:active {
+    cursor: grabbing !important;
+}
+
 
 /* Page hover effect for preview */
 .page {
@@ -304,6 +317,7 @@ body:-ms-fullscreen .flipbook-container {
 }
 
 /* Navigation arrows - AUTO-HIDE on desktop */
+/* Navigation arrows - AUTO-HIDE on desktop but ALWAYS CLICKABLE */
 .nav-arrow {
     background: var(--control-bg);
     border: 2px solid var(--control-border);
@@ -323,12 +337,11 @@ body:-ms-fullscreen .flipbook-container {
     position: fixed;
     z-index: 1500;
     opacity: 0;
-    pointer-events: none;
+    pointer-events: auto; /* CHANGED: Always clickable even when invisible */
 }
 
 .nav-arrow.visible {
     opacity: 1;
-    pointer-events: auto;
 }
 
 #prev-btn {
@@ -363,6 +376,7 @@ body:-ms-fullscreen .flipbook-container {
     transform: translateY(-50%) scale(1.15);
     box-shadow: 0 6px 20px var(--shadow);
     border-color: var(--button-primary);
+    opacity: 1; /* ADDED: Show on hover even when auto-hidden */
 }
 
 #prev-btn:hover:not(:disabled) {
@@ -385,6 +399,7 @@ body:-ms-fullscreen .flipbook-container {
 .nav-arrow:focus-visible {
     outline: 3px solid var(--button-primary);
     outline-offset: 4px;
+    opacity: 1; /* ADDED: Show on keyboard focus */
 }
 
 /* Control buttons */
