@@ -65,11 +65,6 @@
             
             loadingMessage.style.display = 'none';
             document.getElementById('book-wrapper').style.display = 'flex';
-            
-            // Show keyboard hint on desktop
-            if (!isMobile) {
-                showKeyboardHint();
-            }
                        
         } catch (error) {
             console.error('Error loading PDF:', error);
@@ -204,7 +199,7 @@
         if (isMobileDevice) {
             displayMode = 'double';
             const maxWidth = window.innerWidth;
-            const maxHeight = window.innerHeight - 80; // Leave space for controls
+            const maxHeight = window.innerHeight - 60; // Leave space for page counter
             
             bookHeight = maxHeight;
             bookWidth = bookHeight * aspectRatio * 2;
@@ -221,8 +216,8 @@
             }
             
             // MAXIMIZE: Use almost all viewport space
-            const maxWidth = window.innerWidth - 40; // Just 20px padding on each side
-            const maxHeight = window.innerHeight - 40; // Just 20px padding top/bottom
+            const maxWidth = window.innerWidth - 40;
+            const maxHeight = window.innerHeight - 40;
             
             if (displayMode === 'single') {
                 bookHeight = maxHeight;
@@ -344,7 +339,6 @@
                 const deltaX = touchEndX - touchStartX;
                 const deltaY = touchEndY - touchStartY;
                 
-                // Only trigger if horizontal swipe is dominant
                 if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
                     if (deltaX > 0) {
                         $(this).turn('previous');
@@ -361,6 +355,9 @@
         if (!isMobile) {
             setupUIAutoHide();
         }
+        
+        // Setup info panel toggle
+        setupInfoPanel();
     }
 
     function updatePageInfo(page) {
@@ -375,7 +372,6 @@
         let pageText = '';
         
         if (displayMode === 'double' && page !== 1 && page !== totalPages) {
-            // In double mode, show both page numbers
             const leftPage = page % 2 === 0 ? page - 1 : page;
             const rightPage = leftPage + 1;
             pageText = `${leftPage}-${rightPage} / ${totalPages}`;
@@ -388,11 +384,46 @@
         console.log('Current page:', page, '/', totalPages);
     }
 
+    // Info panel toggle
+    function setupInfoPanel() {
+        const infoBtn = $('#info-btn');
+        const infoPanel = $('#info-panel');
+        let infoPanelVisible = false;
+        
+        if (isMobile) {
+            // Mobile: tap to toggle
+            infoBtn.on('click', function(e) {
+                e.stopPropagation();
+                infoPanelVisible = !infoPanelVisible;
+                if (infoPanelVisible) {
+                    infoPanel.addClass('visible');
+                } else {
+                    infoPanel.removeClass('visible');
+                }
+            });
+            
+            // Close when tapping outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.top-right-controls').length) {
+                    infoPanelVisible = false;
+                    infoPanel.removeClass('visible');
+                }
+            });
+        } else {
+            // Desktop: hover to show
+            infoBtn.on('mouseenter', function() {
+                infoPanel.addClass('visible');
+            });
+            
+            $('.top-right-controls').on('mouseleave', function() {
+                infoPanel.removeClass('visible');
+            });
+        }
+    }
+
     // UI Auto-hide functionality (desktop only)
     function setupUIAutoHide() {
-        const controls = $('.controls');
         const arrows = $('.nav-arrow');
-        const fullscreenBtn = $('.fullscreen-btn-wrapper');
         
         // Show UI immediately on first load
         showUI();
@@ -405,53 +436,19 @@
             showUI();
             startUIHideTimer();
         });
-        
-        // Keep UI visible when hovering over controls
-        controls.on('mouseenter', function() {
-            clearTimeout(uiHideTimeout);
-        });
-        
-        controls.on('mouseleave', function() {
-            startUIHideTimer();
-        });
     }
 
     function showUI() {
-        $('.controls').addClass('visible');
         $('.nav-arrow').addClass('visible');
-        $('.fullscreen-btn-wrapper').addClass('visible');
     }
 
     function hideUI() {
-        $('.controls').removeClass('visible');
         $('.nav-arrow').removeClass('visible');
-        $('.fullscreen-btn-wrapper').removeClass('visible');
     }
 
     function startUIHideTimer() {
         clearTimeout(uiHideTimeout);
         uiHideTimeout = setTimeout(hideUI, UI_HIDE_DELAY);
-    }
-
-    // Keyboard shortcuts hint
-    function showKeyboardHint() {
-        const hint = $(`
-            <div class="keyboard-hint show">
-                <h3>⌨️ Keyboard Shortcuts</h3>
-                <ul>
-                    <li><kbd>←</kbd> <kbd>→</kbd> Navigate pages</li>
-                    <li><kbd>Space</kbd> Next page</li>
-                    <li><kbd>Home</kbd> <kbd>End</kbd> First/last page</li>
-                </ul>
-            </div>
-        `);
-        
-        $('body').append(hint);
-        
-        setTimeout(() => {
-            hint.removeClass('show');
-            setTimeout(() => hint.remove(), 500);
-        }, 3000);
     }
 
     // Navigation buttons
@@ -471,12 +468,6 @@
         } else if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
             e.preventDefault();
             $('#flipbook').turn('next');
-        } else if (e.key === 'Home') {
-            e.preventDefault();
-            $('#flipbook').turn('page', 1);
-        } else if (e.key === 'End') {
-            e.preventDefault();
-            $('#flipbook').turn('page', $('#flipbook').turn('pages'));
         }
     });
 
@@ -556,62 +547,6 @@
         }, 100);
     }
 
-    // Draggable controls
-    let isDragging = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-
-    const controls = document.getElementById('controls');
-
-    controls.addEventListener('mousedown', startDrag);
-    controls.addEventListener('touchstart', startDrag);
-
-    function startDrag(e) {
-        if (e.target.closest('button')) return;
-        
-        isDragging = true;
-        controls.classList.add('dragging');
-        
-        const rect = controls.getBoundingClientRect();
-        const clientX = e.clientX || e.touches[0].clientX;
-        const clientY = e.clientY || e.touches[0].clientY;
-        
-        dragOffsetX = clientX - rect.left - rect.width / 2;
-        dragOffsetY = clientY - rect.top - rect.height / 2;
-        
-        e.preventDefault();
-    }
-
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
-
-    function drag(e) {
-        if (!isDragging) return;
-        
-        const clientX = e.clientX || e.touches[0].clientX;
-        const clientY = e.clientY || e.touches[0].clientY;
-        
-        const x = clientX - dragOffsetX;
-        const y = clientY - dragOffsetY;
-        
-        controls.style.left = x + 'px';
-        controls.style.bottom = 'auto';
-        controls.style.top = y + 'px';
-        controls.style.transform = 'none';
-        
-        e.preventDefault();
-    }
-
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('touchend', stopDrag);
-
-    function stopDrag() {
-        if (isDragging) {
-            isDragging = false;
-            controls.classList.remove('dragging');
-        }
-    }
-
     // Responsive handling
     function handleResize() {
         if (!$('#flipbook').turn('is')) return;
@@ -646,7 +581,7 @@
         if (isMobileDevice) {
             displayMode = 'double';
             const maxWidth = window.innerWidth;
-            const maxHeight = window.innerHeight - 80;
+            const maxHeight = window.innerHeight - 60;
             
             bookHeight = maxHeight;
             bookWidth = bookHeight * aspectRatio * 2;
@@ -662,8 +597,10 @@
                 displayMode = 'double';
             }
             
-            const maxWidth = window.innerWidth - 40;
-            const maxHeight = window.innerHeight - 40;
+            // In fullscreen, use even more space
+            const padding = isFullscreen ? 20 : 40;
+            const maxWidth = window.innerWidth - padding;
+            const maxHeight = window.innerHeight - padding;
             
             if (displayMode === 'single') {
                 bookHeight = maxHeight;

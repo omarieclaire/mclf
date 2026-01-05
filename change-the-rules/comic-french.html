@@ -14,35 +14,45 @@
   <body>
     <a href="#flipbook" class="skip-link">Skip to flipbook</a>
 
-    <div class="fullscreen-btn-wrapper">
-      <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Toggle fullscreen">
-        <span id="fullscreen-icon">⛶</span>
-      </button>
-    </div>
-
-    <div id="main-container" class="flipbook-container">
-      <div id="loading-message" class="loading" role="status" aria-live="polite">
-        <div>Loading your zine...</div>
-        <div class="loading-bar"></div>
-      </div>
-
-      <div id="book-wrapper" class="book-wrapper" style="display: none">
-        <button id="prev-btn" class="nav-arrow" aria-label="Previous page">◀</button>
-        <div id="flipbook-container">
-          <div id="flipbook"></div>
-        </div>
-        <button id="next-btn" class="nav-arrow" aria-label="Next page">▶</button>
-      </div>
-    </div>
-
-<div id="controls" class="controls">
-    <div class="page-counter" id="page-counter">1 / 1</div>
+<!-- Top-right controls -->
+<div class="top-right-controls">
+  <div class="info-panel" id="info-panel">
+    <h3>Zoom</h3>
     <div class="zoom-controls">
-        <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom out">−</button>
-        <span class="zoom-level" id="zoom-level">100%</span>
-        <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom in">+</button>
-        <button id="zoom-reset" class="btn btn-secondary">Reset</button>
+      <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom out">−</button>
+      <span class="zoom-level" id="zoom-level">100%</span>
+      <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom in">+</button>
     </div>
+    <button id="zoom-reset" class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;">Reset</button>
+    
+    <ul class="shortcuts-list">
+      <li><kbd>←</kbd> <kbd>→</kbd> Navigate</li>
+      <li><kbd>Space</kbd> Next page</li>
+    </ul>
+  </div>
+  
+  <button id="info-btn" class="info-btn" aria-label="Info and shortcuts">ⓘ</button>
+  <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Toggle fullscreen">
+    <span id="fullscreen-icon">⛶</span>
+  </button>
+</div>
+
+<!-- Page counter - bottom right -->
+<div class="page-counter" id="page-counter">1 / 1</div>
+
+<div id="main-container" class="flipbook-container">
+  <div id="loading-message" class="loading" role="status" aria-live="polite">
+    <div>Loading your zine...</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <div id="book-wrapper" class="book-wrapper" style="display: none">
+    <button id="prev-btn" class="nav-arrow" aria-label="Previous page">◀</button>
+    <div id="flipbook-container">
+      <div id="flipbook"></div>
+    </div>
+    <button id="next-btn" class="nav-arrow" aria-label="Next page">▶</button>
+  </div>
 </div>
 
     <script>
