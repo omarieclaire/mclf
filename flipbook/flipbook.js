@@ -20,9 +20,14 @@
     let isFullscreen = false;
     let pdfDoc = null;
     let totalPages = 0;
-    const RENDER_SCALE = 1.5; // Reduced from 2.0 for better performance
-    const renderedPages = new Set(); // Track which pages have been rendered
-    const renderingPages = new Set(); // Track pages currently being rendered
+    const RENDER_SCALE = 2.0; // High quality rendering
+    const renderedPages = new Set();
+    const renderingPages = new Set();
+    
+    // UI visibility
+    let uiHideTimeout = null;
+    const UI_HIDE_DELAY = 2000; // Hide UI after 2 seconds of no mouse movement
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     async function loadPDF() {
         try {
@@ -60,6 +65,11 @@
             
             loadingMessage.style.display = 'none';
             document.getElementById('book-wrapper').style.display = 'flex';
+            
+            // Show keyboard hint on desktop
+            if (!isMobile) {
+                showKeyboardHint();
+            }
                        
         } catch (error) {
             console.error('Error loading PDF:', error);
@@ -70,7 +80,6 @@
     }
 
     async function renderPage(pageNum) {
-        // Prevent duplicate rendering
         if (renderedPages.has(pageNum) || renderingPages.has(pageNum)) {
             return;
         }
@@ -91,7 +100,6 @@
                 viewport: viewport
             }).promise;
             
-            // Find the page div and update it
             const pageDiv = $(`.page[data-page="${pageNum}"]`);
             if (pageDiv.length) {
                 pageDiv.empty().append(canvas);
@@ -107,11 +115,9 @@
     }
 
     async function renderVisiblePages(currentPage, displayMode) {
-        // Determine which pages to render based on display mode
         let pagesToRender = [];
         
         if (displayMode === 'single') {
-            // Single page mode: render current + 2 ahead + 1 behind
             pagesToRender = [
                 currentPage - 1,
                 currentPage,
@@ -119,12 +125,9 @@
                 currentPage + 2
             ];
         } else {
-            // Double page mode: render current spread + next/prev spreads
-            // Turn.js uses odd pages on the right in double mode
             const isOdd = currentPage % 2 === 1;
             
             if (isOdd) {
-                // Odd page (right side): render it and the next page (left side)
                 pagesToRender = [
                     currentPage - 2,
                     currentPage - 1,
@@ -134,7 +137,6 @@
                     currentPage + 3
                 ];
             } else {
-                // Even page (left side): render it and the previous page (right side)
                 pagesToRender = [
                     currentPage - 3,
                     currentPage - 2,
@@ -146,13 +148,10 @@
             }
         }
         
-        // Filter to valid page numbers
         pagesToRender = pagesToRender.filter(p => p >= 1 && p <= totalPages);
         
-        // Render pages in order of priority (current first, then adjacent)
         const currentIndex = pagesToRender.indexOf(currentPage);
         if (currentIndex !== -1) {
-            // Reorder: current page first
             const reordered = [currentPage];
             for (let i = 1; i < pagesToRender.length; i++) {
                 const leftIdx = currentIndex - i;
@@ -163,12 +162,10 @@
             pagesToRender = reordered;
         }
         
-        // Render pages
         for (const pageNum of pagesToRender) {
             await renderPage(pageNum);
         }
         
-        // Optional: Clean up pages that are far away to free memory
         cleanupDistantPages(currentPage, displayMode);
     }
 
@@ -181,7 +178,6 @@
                 const canvas = pageDiv.find('canvas');
                 
                 if (canvas.length) {
-                    // Replace canvas with placeholder
                     pageDiv.html('<div class="page-placeholder"></div>');
                     renderedPages.delete(pageNum);
                     console.log('Cleaned up page', pageNum);
@@ -192,9 +188,8 @@
 
     async function initializeFlipbook() {
         const flipbook = $('#flipbook');
-        const isMobile = window.innerWidth <= 768;
+        const isMobileDevice = window.innerWidth <= 768;
         
-        // Get first page to determine dimensions
         const firstPage = await pdfDoc.getPage(1);
         const firstViewport = firstPage.getViewport({ scale: RENDER_SCALE });
         
@@ -206,51 +201,41 @@
         let bookWidth, bookHeight;
         let displayMode;
         
-        if (isMobile) {
-            // Mobile: ALWAYS show double page spread for zine reading
+        if (isMobileDevice) {
             displayMode = 'double';
-            const maxWidth = window.innerWidth - 20;
-            const maxHeight = window.innerHeight - 20;
+            const maxWidth = window.innerWidth;
+            const maxHeight = window.innerHeight - 80; // Leave space for controls
             
-            // For double page spread, calculate based on two pages side by side
             bookHeight = maxHeight;
-            bookWidth = bookHeight * aspectRatio * 2; // Two pages wide
+            bookWidth = bookHeight * aspectRatio * 2;
             
             if (bookWidth > maxWidth) {
                 bookWidth = maxWidth;
                 bookHeight = (bookWidth / 2) / aspectRatio;
             }
         } else {
-            // Desktop: show spreads for portrait pages
             if (isLandscape) {
                 displayMode = 'single';
             } else {
                 displayMode = 'double';
             }
             
-            // Simple calculation: window size minus known UI elements
-            const horizontalReserved = 20 + 120 + 20; // padding + arrows + gaps = 160px
-            const verticalReserved = 20 + 40; // padding + small margin for controls = 60px
-            
-            const maxWidth = window.innerWidth - horizontalReserved;
-            const maxHeight = window.innerHeight - verticalReserved;
+            // MAXIMIZE: Use almost all viewport space
+            const maxWidth = window.innerWidth - 40; // Just 20px padding on each side
+            const maxHeight = window.innerHeight - 40; // Just 20px padding top/bottom
             
             if (displayMode === 'single') {
-                // Try to maximize height first for single pages
                 bookHeight = maxHeight;
                 bookWidth = bookHeight * aspectRatio;
                 
-                // Only reduce if width doesn't fit
                 if (bookWidth > maxWidth) {
                     bookWidth = maxWidth;
                     bookHeight = bookWidth / aspectRatio;
                 }
             } else {
-                // Double page spread - PRIORITIZE HEIGHT
                 bookHeight = maxHeight;
                 bookWidth = bookHeight * aspectRatio * 2;
                 
-                // Only reduce if width doesn't fit
                 if (bookWidth > maxWidth) {
                     bookWidth = maxWidth;
                     bookHeight = (bookWidth / 2) / aspectRatio;
@@ -260,19 +245,15 @@
         
         console.log('Book dimensions:', bookWidth, 'x', bookHeight);
         console.log('Display mode:', displayMode);
-        console.log('Available space:', window.innerWidth, 'x', window.innerHeight);
         
-        // Create placeholder divs for all pages
         for (let i = 1; i <= totalPages; i++) {
             const pageDiv = $('<div class="page" data-page="' + i + '"></div>');
             pageDiv.html('<div class="page-placeholder">Page ' + i + '</div>');
             flipbook.append(pageDiv);
         }
         
-        // Render first few pages
         await renderVisiblePages(1, displayMode);
         
-        // Initialize Turn.js with MUCH better flip animations
         flipbook.turn({
             width: bookWidth,
             height: bookHeight,
@@ -280,16 +261,14 @@
             gradients: true,
             acceleration: true,
             elevation: 50,
-            duration: 800, // Balanced duration
-            turnCorners: 'br,bl,tr,tl', // Enable corner turning on all devices
+            duration: 800,
+            turnCorners: 'br,bl,tr,tl',
             display: displayMode,
             when: {
                 turning: function(event, page, pageObject) {
-                    // Render pages as user starts turning
                     const currentDisplayMode = $(this).turn('display');
                     renderVisiblePages(page, currentDisplayMode);
                     
-                    // Add class for single page centering on first/last page
                     if ((page === 1 || page === totalPages) && currentDisplayMode === 'double') {
                         $(this).addClass('flipbook-centered');
                     } else {
@@ -299,19 +278,16 @@
                 turned: function(event, page) {
                     updatePageInfo(page);
                     
-                    // Render additional pages after turn completes
                     const currentDisplayMode = $(this).turn('display');
                     renderVisiblePages(page, currentDisplayMode);
                 },
                 start: function(event, pageObject, corner) {
-                    // Enable corner peek preview on hover
                     console.log('Turn started from corner:', corner);
                 }
             }
         });
 
-        // Add hover effect for page corner peel preview (DESKTOP ONLY)
-        if (!isMobile) {
+        if (!isMobileDevice) {
             flipbook.on('mouseover', function(e) {
                 const offset = $(this).offset();
                 const mouseX = e.pageX - offset.left;
@@ -319,60 +295,163 @@
                 const bookWidth = $(this).width();
                 const bookHeight = $(this).height();
                 
-                // Check if mouse is near a corner (for peek effect)
                 const cornerSize = 100;
                 
                 if (mouseX < cornerSize && mouseY < cornerSize) {
-                    // Top left corner - previous page
                     $(this).turn('peel', 'tl');
                 } else if (mouseX > bookWidth - cornerSize && mouseY < cornerSize) {
-                    // Top right corner - next page
                     $(this).turn('peel', 'tr');
                 } else if (mouseX < cornerSize && mouseY > bookHeight - cornerSize) {
-                    // Bottom left corner - previous page
                     $(this).turn('peel', 'bl');
                 } else if (mouseX > bookWidth - cornerSize && mouseY > bookHeight - cornerSize) {
-                    // Bottom right corner - next page
                     $(this).turn('peel', 'br');
                 }
             });
 
             flipbook.on('mouseout', function() {
-                // Remove peel effect when mouse leaves
                 if (!$(this).turn('animating')) {
                     $(this).turn('peel', false);
                 }
             });
         }
 
-        // Simple tap-to-flip for easier mobile navigation
-        if (isMobile) {
+        if (isMobileDevice) {
             flipbook.on('click', function(e) {
                 const bookWidth = $(this).width();
                 const offset = $(this).offset();
                 const relativeX = e.pageX - offset.left;
                 
-                // Left half = previous, right half = next
                 if (relativeX < bookWidth / 2) {
                     $(this).turn('previous');
                 } else {
                     $(this).turn('next');
                 }
             });
+            
+            // Add swipe support for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            flipbook.on('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            flipbook.on('touchend', function(e) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Only trigger if horizontal swipe is dominant
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0) {
+                        $(this).turn('previous');
+                    } else {
+                        $(this).turn('next');
+                    }
+                }
+            });
         }
         
         updatePageInfo(1);
+        
+        // Setup UI auto-hide for desktop
+        if (!isMobile) {
+            setupUIAutoHide();
+        }
     }
 
     function updatePageInfo(page) {
         const flipbook = $('#flipbook');
         const totalPages = flipbook.turn('pages');
         
-        // Update navigation button states
         $('#prev-btn').prop('disabled', page === 1);
         $('#next-btn').prop('disabled', page === totalPages);
         
+        // Update page counter
+        const displayMode = flipbook.turn('display');
+        let pageText = '';
+        
+        if (displayMode === 'double' && page !== 1 && page !== totalPages) {
+            // In double mode, show both page numbers
+            const leftPage = page % 2 === 0 ? page - 1 : page;
+            const rightPage = leftPage + 1;
+            pageText = `${leftPage}-${rightPage} / ${totalPages}`;
+        } else {
+            pageText = `${page} / ${totalPages}`;
+        }
+        
+        $('#page-counter').text(pageText);
+        
         console.log('Current page:', page, '/', totalPages);
+    }
+
+    // UI Auto-hide functionality (desktop only)
+    function setupUIAutoHide() {
+        const controls = $('.controls');
+        const arrows = $('.nav-arrow');
+        const fullscreenBtn = $('.fullscreen-btn-wrapper');
+        
+        // Show UI immediately on first load
+        showUI();
+        
+        // Hide after delay
+        startUIHideTimer();
+        
+        // Show UI on mouse movement
+        $(document).on('mousemove', function() {
+            showUI();
+            startUIHideTimer();
+        });
+        
+        // Keep UI visible when hovering over controls
+        controls.on('mouseenter', function() {
+            clearTimeout(uiHideTimeout);
+        });
+        
+        controls.on('mouseleave', function() {
+            startUIHideTimer();
+        });
+    }
+
+    function showUI() {
+        $('.controls').addClass('visible');
+        $('.nav-arrow').addClass('visible');
+        $('.fullscreen-btn-wrapper').addClass('visible');
+    }
+
+    function hideUI() {
+        $('.controls').removeClass('visible');
+        $('.nav-arrow').removeClass('visible');
+        $('.fullscreen-btn-wrapper').removeClass('visible');
+    }
+
+    function startUIHideTimer() {
+        clearTimeout(uiHideTimeout);
+        uiHideTimeout = setTimeout(hideUI, UI_HIDE_DELAY);
+    }
+
+    // Keyboard shortcuts hint
+    function showKeyboardHint() {
+        const hint = $(`
+            <div class="keyboard-hint show">
+                <h3>⌨️ Keyboard Shortcuts</h3>
+                <ul>
+                    <li><kbd>←</kbd> <kbd>→</kbd> Navigate pages</li>
+                    <li><kbd>Space</kbd> Next page</li>
+                    <li><kbd>Home</kbd> <kbd>End</kbd> First/last page</li>
+                </ul>
+            </div>
+        `);
+        
+        $('body').append(hint);
+        
+        setTimeout(() => {
+            hint.removeClass('show');
+            setTimeout(() => hint.remove(), 500);
+        }, 3000);
     }
 
     // Navigation buttons
@@ -427,7 +506,7 @@
         updateZoom();
     });
 
-    // Fullscreen with landscape orientation hint on mobile
+    // Fullscreen
     $('#fullscreen-btn').on('click', function() {
         const container = document.getElementById('main-container');
         
@@ -440,11 +519,8 @@
                 container.msRequestFullscreen();
             }
             
-            // On mobile, try to lock to landscape
             if (window.innerWidth <= 768 && screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(() => {
-                    // Orientation lock not supported or failed
-                });
+                screen.orientation.lock('landscape').catch(() => {});
             }
         } else {
             if (document.exitFullscreen) {
@@ -455,7 +531,6 @@
                 document.msExitFullscreen();
             }
             
-            // Unlock orientation
             if (screen.orientation && screen.orientation.unlock) {
                 screen.orientation.unlock();
             }
@@ -474,7 +549,6 @@
         const icon = document.getElementById('fullscreen-icon');
         icon.textContent = isFullscreen ? '⛶' : '⛶';
         
-        // Re-initialize flipbook on fullscreen change
         setTimeout(() => {
             if ($('#flipbook').turn('is')) {
                 handleResize();
@@ -493,7 +567,6 @@
     controls.addEventListener('touchstart', startDrag);
 
     function startDrag(e) {
-        // Don't drag if clicking on a button
         if (e.target.closest('button')) return;
         
         isDragging = true;
@@ -543,40 +616,37 @@
     function handleResize() {
         if (!$('#flipbook').turn('is')) return;
         
-        const isMobile = window.innerWidth <= 768;
+        const isMobileDevice = window.innerWidth <= 768;
         
-        // Get canvas dimensions from first rendered page
         const firstCanvas = $('#flipbook canvas').first();
         if (!firstCanvas.length) {
-            // If no canvas rendered yet, get from PDF
             if (!pdfDoc) return;
             
             pdfDoc.getPage(1).then(page => {
                 const viewport = page.getViewport({ scale: RENDER_SCALE });
                 const canvasWidth = viewport.width;
                 const canvasHeight = viewport.height;
-                resizeFlipbook(canvasWidth, canvasHeight, isMobile);
+                resizeFlipbook(canvasWidth, canvasHeight, isMobileDevice);
             });
             return;
         }
         
         const canvasWidth = firstCanvas[0].width;
         const canvasHeight = firstCanvas[0].height;
-        resizeFlipbook(canvasWidth, canvasHeight, isMobile);
+        resizeFlipbook(canvasWidth, canvasHeight, isMobileDevice);
     }
 
-    function resizeFlipbook(canvasWidth, canvasHeight, isMobile) {
+    function resizeFlipbook(canvasWidth, canvasHeight, isMobileDevice) {
         const aspectRatio = canvasWidth / canvasHeight;
         const isLandscape = aspectRatio > 1;
         
         let bookWidth, bookHeight;
         let displayMode;
         
-        if (isMobile) {
-            // Mobile: ALWAYS double page spread
+        if (isMobileDevice) {
             displayMode = 'double';
-            const maxWidth = window.innerWidth - 20;
-            const maxHeight = window.innerHeight - 20;
+            const maxWidth = window.innerWidth;
+            const maxHeight = window.innerHeight - 80;
             
             bookHeight = maxHeight;
             bookWidth = bookHeight * aspectRatio * 2;
@@ -592,12 +662,8 @@
                 displayMode = 'double';
             }
             
-            // Simple calculation: window size minus known UI elements
-            const horizontalReserved = 20 + 120 + 20; // padding + arrows + gaps
-            const verticalReserved = 20 + 40; // padding + small margin for controls
-            
-            const maxWidth = window.innerWidth - horizontalReserved;
-            const maxHeight = window.innerHeight - verticalReserved;
+            const maxWidth = window.innerWidth - 40;
+            const maxHeight = window.innerHeight - 40;
             
             if (displayMode === 'single') {
                 bookHeight = maxHeight;
@@ -623,7 +689,6 @@
         $('#flipbook').turn('size', bookWidth, bookHeight);
         $('#flipbook').turn('display', displayMode);
         
-        // Re-render visible pages after resize
         const currentPage = $('#flipbook').turn('page');
         renderVisiblePages(currentPage, displayMode);
     }
@@ -634,7 +699,6 @@
         resizeTimer = setTimeout(handleResize, 250);
     });
 
-    // Initialize when DOM is ready
     $(document).ready(function() {
         loadPDF();
     });

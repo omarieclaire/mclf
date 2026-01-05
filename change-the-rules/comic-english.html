@@ -36,14 +36,15 @@
 
     </div>
 
-    <div id="controls" class="controls" role="toolbar" aria-label="Flipbook controls">
-      <div class="zoom-controls">
+<div id="controls" class="controls">
+    <div class="page-counter" id="page-counter">1 / 1</div>
+    <div class="zoom-controls">
         <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom out">−</button>
-        <span id="zoom-level" class="zoom-level" aria-live="polite">100%</span>
+        <span class="zoom-level" id="zoom-level">100%</span>
         <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom in">+</button>
-        <button id="zoom-reset" class="btn btn-secondary" aria-label="Reset zoom">⊙</button>
-      </div>
+        <button id="zoom-reset" class="btn btn-secondary">Reset</button>
     </div>
+</div>
 
     <script>
       const PDF_URL = "change-the-rules-en.pdf";
