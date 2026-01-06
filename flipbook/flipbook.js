@@ -19,13 +19,17 @@
   let isFullscreen = false;
   let pdfDoc = null;
   let totalPages = 0;
-  const RENDER_SCALE = 2.0; // High quality rendering
+  const RENDER_SCALE = 2.0;
   const renderedPages = new Set();
   const renderingPages = new Set();
 
-  // UI visibility
-  let uiHideTimeout = null;
-  const UI_HIDE_DELAY = 2000; // Hide UI after 2 seconds of no mouse movement
+  // Pan when zoomed
+  let isPanning = false;
+  let panStartX = 0;
+  let panStartY = 0;
+  let panOffsetX = 0;
+  let panOffsetY = 0;
+
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   async function loadPDF() {
@@ -179,7 +183,7 @@
     if (isMobileDevice) {
       displayMode = "double";
       const maxWidth = window.innerWidth;
-      const maxHeight = window.innerHeight - 60; // Leave space for page counter
+      const maxHeight = window.innerHeight - 60;
 
       bookHeight = maxHeight;
       bookWidth = bookHeight * aspectRatio * 2;
@@ -195,9 +199,9 @@
         displayMode = "double";
       }
 
-      // MAXIMIZE: Use almost all viewport space
-      const maxWidth = window.innerWidth - 40;
-      const maxHeight = window.innerHeight - 40;
+      // MAXIMIZE: Use almost all viewport space (less padding)
+      const maxWidth = window.innerWidth - 20;
+      const maxHeight = window.innerHeight - 20;
 
       if (displayMode === "single") {
         bookHeight = maxHeight;
@@ -229,7 +233,7 @@
 
     await renderVisiblePages(1, displayMode);
 
-    // Initialize Turn.js with drag-to-flip enabled
+    // Initialize Turn.js with enhanced drag support
     flipbook.turn({
       width: bookWidth,
       height: bookHeight,
@@ -237,10 +241,9 @@
       gradients: true,
       acceleration: true,
       elevation: 50,
-      duration: 800,
+      duration: 600,
       turnCorners: "br,bl,tr,tl",
       display: displayMode,
-      // Enable drag anywhere on page to flip
       when: {
         turning: function (event, page, pageObject) {
           const currentDisplayMode = $(this).turn("display");
@@ -257,26 +260,42 @@
 
           const currentDisplayMode = $(this).turn("display");
           renderVisiblePages(page, currentDisplayMode);
+
+          // Loop back to beginning after last page
+          if (page === totalPages) {
+            setTimeout(() => {
+              $(this).turn("page", 1);
+            }, 800); // Wait for animation to complete
+          }
         },
         start: function (event, pageObject, corner) {
-          console.log("Turn started from corner:", corner);
+          // Only allow flipping if not zoomed in
+          if (currentZoom > 1) {
+            event.preventDefault();
+            return false;
+          }
         },
       },
     });
 
-    // Enhanced corner peel + drag interaction for desktop
+    // Enhanced drag interaction
     if (!isMobileDevice) {
-      // Corner peel preview on hover
+      // Show page curl preview on hover near corners
       flipbook.on("mousemove", function (e) {
+        // Don't show peel if zoomed in
+        if (currentZoom > 1) {
+          $(this).turn("peel", false);
+          return;
+        }
+
         const offset = $(this).offset();
         const mouseX = e.pageX - offset.left;
         const mouseY = e.pageY - offset.top;
         const bookWidth = $(this).width();
         const bookHeight = $(this).height();
 
-        const cornerSize = 100;
+        const cornerSize = 120;
 
-        // Only show peel preview if not currently dragging
         if (!$(this).turn("animating")) {
           if (mouseX < cornerSize && mouseY < cornerSize) {
             $(this).turn("peel", "tl");
@@ -298,20 +317,9 @@
         }
       });
     }
+
+    // Mobile: tap and swipe
     if (isMobileDevice) {
-      flipbook.on("click", function (e) {
-        const bookWidth = $(this).width();
-        const offset = $(this).offset();
-        const relativeX = e.pageX - offset.left;
-
-        if (relativeX < bookWidth / 2) {
-          $(this).turn("previous");
-        } else {
-          $(this).turn("next");
-        }
-      });
-
-      // Add swipe support for mobile
       let touchStartX = 0;
       let touchStartY = 0;
 
@@ -327,6 +335,7 @@
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
 
+        // Swipe gesture
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
           if (deltaX > 0) {
             $(this).turn("previous");
@@ -338,22 +347,13 @@
     }
 
     updatePageInfo(1);
-
-    // Setup UI auto-hide for desktop
-    if (!isMobile) {
-      setupUIAutoHide();
-    }
-
-    // Setup info panel toggle
     setupInfoPanel();
+    setupPanWhenZoomed();
   }
 
   function updatePageInfo(page) {
     const flipbook = $("#flipbook");
     const totalPages = flipbook.turn("pages");
-
-    $("#prev-btn").prop("disabled", page === 1);
-    $("#next-btn").prop("disabled", page === totalPages);
 
     // Update page counter
     const displayMode = flipbook.turn("display");
@@ -379,7 +379,6 @@
     let infoPanelVisible = false;
 
     if (isMobile) {
-      // Mobile: tap to toggle
       infoBtn.on("click", function (e) {
         e.stopPropagation();
         infoPanelVisible = !infoPanelVisible;
@@ -390,7 +389,6 @@
         }
       });
 
-      // Close when tapping outside
       $(document).on("click", function (e) {
         if (!$(e.target).closest(".top-right-controls").length) {
           infoPanelVisible = false;
@@ -398,7 +396,6 @@
         }
       });
     } else {
-      // Desktop: hover to show
       infoBtn.on("mouseenter", function () {
         infoPanel.addClass("visible");
       });
@@ -409,44 +406,64 @@
     }
   }
 
-  // UI Auto-hide functionality (desktop only)
-  function setupUIAutoHide() {
-    const arrows = $(".nav-arrow");
+  // Pan when zoomed functionality
+  function setupPanWhenZoomed() {
+    const bookWrapper = document.getElementById("book-wrapper");
 
-    // Show UI immediately on first load
-    showUI();
+    bookWrapper.addEventListener("mousedown", (e) => {
+      if (currentZoom > 1) {
+        isPanning = true;
+        panStartX = e.clientX - panOffsetX;
+        panStartY = e.clientY - panOffsetY;
+        bookWrapper.style.cursor = "grabbing";
+        e.preventDefault();
+      }
+    });
 
-    // Hide after delay
-    startUIHideTimer();
+    document.addEventListener("mousemove", (e) => {
+      if (isPanning && currentZoom > 1) {
+        panOffsetX = e.clientX - panStartX;
+        panOffsetY = e.clientY - panStartY;
+        updateTransform();
+        e.preventDefault();
+      }
+    });
 
-    // Show UI on mouse movement
-    $(document).on("mousemove", function () {
-      showUI();
-      startUIHideTimer();
+    document.addEventListener("mouseup", () => {
+      if (isPanning) {
+        isPanning = false;
+        const bookWrapper = document.getElementById("book-wrapper");
+        bookWrapper.style.cursor = currentZoom > 1 ? "grab" : "default";
+      }
+    });
+
+    // Touch support for mobile pan when zoomed
+    bookWrapper.addEventListener("touchstart", (e) => {
+      if (currentZoom > 1) {
+        isPanning = true;
+        panStartX = e.touches[0].clientX - panOffsetX;
+        panStartY = e.touches[0].clientY - panOffsetY;
+      }
+    });
+
+    bookWrapper.addEventListener("touchmove", (e) => {
+      if (isPanning && currentZoom > 1) {
+        panOffsetX = e.touches[0].clientX - panStartX;
+        panOffsetY = e.touches[0].clientY - panStartY;
+        updateTransform();
+        e.preventDefault();
+      }
+    });
+
+    bookWrapper.addEventListener("touchend", () => {
+      isPanning = false;
     });
   }
 
-  function showUI() {
-    $(".nav-arrow").addClass("visible");
+  function updateTransform() {
+    const bookWrapper = document.getElementById("book-wrapper");
+    bookWrapper.style.transform = `translate(${panOffsetX}px, ${panOffsetY}px) scale(${currentZoom})`;
   }
-
-  function hideUI() {
-    $(".nav-arrow").removeClass("visible");
-  }
-
-  function startUIHideTimer() {
-    clearTimeout(uiHideTimeout);
-    uiHideTimeout = setTimeout(hideUI, UI_HIDE_DELAY);
-  }
-
-  // Navigation buttons
-  $("#prev-btn").on("click", function () {
-    $("#flipbook").turn("previous");
-  });
-
-  $("#next-btn").on("click", function () {
-    $("#flipbook").turn("next");
-  });
 
   // Keyboard navigation
   $(document).on("keydown", function (e) {
@@ -462,7 +479,17 @@
   // Zoom functionality
   function updateZoom() {
     const bookWrapper = document.getElementById("book-wrapper");
-    bookWrapper.style.transform = `scale(${currentZoom})`;
+    
+    // Reset pan when zoom changes
+    if (currentZoom <= 1) {
+      panOffsetX = 0;
+      panOffsetY = 0;
+      bookWrapper.style.cursor = "default";
+    } else {
+      bookWrapper.style.cursor = "grab";
+    }
+    
+    updateTransform();
     document.getElementById("zoom-level").textContent = Math.round(currentZoom * 100) + "%";
   }
 
@@ -583,8 +610,8 @@
         displayMode = "double";
       }
 
-      // In fullscreen, use even more space
-      const padding = isFullscreen ? 20 : 40;
+      // In fullscreen, use maximum space (minimal padding)
+      const padding = isFullscreen ? 10 : 20;
       const maxWidth = window.innerWidth - padding;
       const maxHeight = window.innerHeight - padding;
 

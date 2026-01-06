@@ -1,3 +1,111 @@
+
+
+(function () { "use strict"; // Check if PDF_URL is defined if (typeof PDF_URL === "undefined") { console.error("PDF_URL must be defined before loading flipbook.js"); document.getElementById("loading-message").innerHTML = "<div>Configuration error: PDF file not specified.</div>";
+
+pasted
+
+
+(function () { "use strict"; // Check if PDF_URL is defined if (typeof PDF_URL === "undefined") { console.error("PDF_URL must be defined before loading flipbook.js"); document.getElementById("loading-message").innerHTML = "<div>Configuration error: PDF file not specified.</div>";
+
+pasted
+
+
+* { margin: 0; padding: 0; box-sizing: border-box; } :root { --page-bg: #f9e3ff2d; --control-bg: rgba(255, 255, 255, 0.95); --control-border: #355C7D; --button-primary: #FF6B9D; --button-hover: #FF8FB3; --text: #2D2D2D; --text-light: #666; --shadow: rgba(
+
+pasted
+
+My flipbook code isn't perfect. 
+
+Rather than little arrow buttons, I want the user to just drag the page (or click on it / touch it) to flip it.
+
+Also, when we go fullscreen, it should be bigger - there's more page for it to take up, it should take that up. 
+
+also, I want the "page flipping" visual effect AS we drag the page. right now it's not happening. 
+
+also, when we get to the last page and flip it, we should start at the beginning again.
+
+also, when we are zoomed in, we should be able to drag the page around to see details
+
+we need to make sure we keep it responsive (working on mobile too)
+
+Show more
+6:38 PM
+
+Architected flipbook enhancements: drag navigation, fullscreen expansion, visual flip effects, looping pages, zoom panning.
+19s
+
+
+
+
+
+
+
+
+
+
+
+I'll help you improve your flipbook! Let me create updated versions that address all your requirements.
+
+
+10 steps
+
+Presented 4 files
+
+Synthesized multiple interactive flipbook enhancements into cohesive solution.
+
+I've completely revamped your flipbook! Here's what I fixed:
+
+✨ Key Improvements
+1. Drag-to-Flip (No More Arrows!)
+
+Arrow buttons are completely hidden
+Just drag the page corners to flip - Turn.js handles the visual effect as you drag
+Corner peel preview on hover (desktop)
+Swipe gestures on mobile
+2. Bigger in Fullscreen
+
+Reduced padding from 40px → 10px in fullscreen
+Pages now fill almost the entire screen
+3. Visual Page Flip During Drag
+
+Turn.js shows the page curl animation in real-time as you drag
+Adjusted settings: duration: 600ms, acceleration: true, gradients: true
+Corner size increased to 120px for easier grabbing
+4. Auto-Loop After Last Page
+
+When you flip past the last page, it waits 800ms then automatically goes back to page 1
+Perfect for continuous reading
+5. Pan When Zoomed
+
+Zoom in using the controls
+When zoom > 1, drag anywhere to pan around
+Page flipping is disabled while zoomed (prevents conflicts)
+Cursor changes to grab/grabbing
+Works on both desktop (mouse) and mobile (touch)
+6. Stays Responsive
+
+All features work on mobile with touch support
+Swipe left/right to turn pages
+Tap-to-pan when zoomed on mobile
+The files include a working example HTML and detailed README. Just set your PDF_URL and you're good to go!
+
+Flipbook
+JS 
+Styles
+Code · CSS 
+Example
+Code · HTML 
+Readme
+Document · MD 
+
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+Styles · CSS
+Copy
+
 * {
     margin: 0;
     padding: 0;
@@ -239,7 +347,7 @@ body:-ms-fullscreen .flipbook-container {
     50% { left: 100%; }
 }
 
-/* Book wrapper - MAXIMIZED */
+/* Book wrapper - MAXIMIZED with pan support */
 .book-wrapper {
     position: relative;
     width: 100%;
@@ -248,6 +356,8 @@ body:-ms-fullscreen .flipbook-container {
     align-items: center;
     justify-content: center;
     gap: 0;
+    transition: transform 0.1s ease-out;
+    transform-origin: center center;
 }
 
 #flipbook-container {
@@ -262,29 +372,38 @@ body:-ms-fullscreen .flipbook-container {
 #flipbook {
     background: transparent;
     box-shadow: 0 10px 40px var(--shadow);
-    cursor: grab; /* Shows grab cursor when hovering */
     max-width: 100%;
     max-height: 100%;
-    user-select: none; /* Prevent text selection during drag */
+    user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    cursor: grab;
+    touch-action: none; /* Improve touch dragging */
 }
 
 #flipbook:active {
-    cursor: grabbing; /* Shows grabbing cursor when dragging */
+    cursor: grabbing;
 }
 
-/* Make sure Turn.js drag events work properly */
-.turn-page {
-    cursor: grab !important;
+/* Enhanced drag cursor states */
+.book-wrapper[style*="scale(1)"] #flipbook {
+    cursor: grab;
 }
 
-.turn-page:active {
-    cursor: grabbing !important;
+.book-wrapper[style*="scale(1)"] #flipbook:active {
+    cursor: grabbing;
 }
 
+/* When zoomed, show grab cursor on wrapper */
+.book-wrapper[style*="scale"]:not([style*="scale(1)"]) {
+    cursor: grab;
+}
 
-/* Page hover effect for preview */
+.book-wrapper[style*="scale"]:not([style*="scale(1)"]):active {
+    cursor: grabbing;
+}
+
+/* Page styling */
 .page {
     background: var(--page-bg);
     display: flex;
@@ -300,6 +419,7 @@ body:-ms-fullscreen .flipbook-container {
     height: 100%;
     display: block;
     object-fit: contain;
+    pointer-events: none; /* Allow drag events to pass through */
 }
 
 .page-placeholder {
@@ -311,95 +431,27 @@ body:-ms-fullscreen .flipbook-container {
     background: #f5f5f5;
 }
 
-/* Turn.js page corner hover effect - smooth preview */
+/* Turn.js enhancements for smooth drag */
 .turn-page-wrapper {
-    transition: transform 0.3s ease !important;
+    transition: none !important; /* Let Turn.js handle transitions */
 }
 
-/* Navigation arrows - AUTO-HIDE on desktop */
-/* Navigation arrows - AUTO-HIDE on desktop but ALWAYS CLICKABLE */
+.turn-page {
+    cursor: grab !important;
+}
+
+.turn-page:active {
+    cursor: grabbing !important;
+}
+
+/* Page flip shadow and gradient */
+.turn-page-wrapper .turn-page {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* HIDE Navigation arrows - replaced with drag-to-flip */
 .nav-arrow {
-    background: var(--control-bg);
-    border: 2px solid var(--control-border);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 28px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px var(--shadow);
-    backdrop-filter: blur(10px);
-    position: fixed;
-    z-index: 1500;
-    opacity: 0;
-    pointer-events: auto; /* CHANGED: Always clickable even when invisible */
-}
-
-.nav-arrow.visible {
-    opacity: 1;
-}
-
-#prev-btn {
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-#next-btn {
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.nav-arrow::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: var(--button-primary);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
-.nav-arrow:hover:not(:disabled)::before {
-    opacity: 0.2;
-}
-
-.nav-arrow:hover:not(:disabled) {
-    transform: translateY(-50%) scale(1.15);
-    box-shadow: 0 6px 20px var(--shadow);
-    border-color: var(--button-primary);
-    opacity: 1; /* ADDED: Show on hover even when auto-hidden */
-}
-
-#prev-btn:hover:not(:disabled) {
-    transform: translateY(-50%) scale(1.15);
-}
-
-#next-btn:hover:not(:disabled) {
-    transform: translateY(-50%) scale(1.15);
-}
-
-.nav-arrow:active:not(:disabled) {
-    transform: translateY(-50%) scale(0.95);
-}
-
-.nav-arrow:disabled {
-    opacity: 0.15 !important;
-    cursor: not-allowed;
-}
-
-.nav-arrow:focus-visible {
-    outline: 3px solid var(--button-primary);
-    outline-offset: 4px;
-    opacity: 1; /* ADDED: Show on keyboard focus */
+    display: none !important;
 }
 
 /* Control buttons */
@@ -454,15 +506,28 @@ body:-ms-fullscreen .flipbook-container {
     text-align: center;
 }
 
+/* Visual hint for draggable pages */
+.page::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.05) 50%);
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.page:hover::after {
+    opacity: 1;
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
     .flipbook-container {
         padding: 0;
-    }
-
-    /* Hide navigation arrows on mobile */
-    .nav-arrow {
-        display: none;
     }
 
     .top-right-controls {
@@ -498,6 +563,11 @@ body:-ms-fullscreen .flipbook-container {
     .zoom-level {
         font-size: 12px;
         min-width: 40px;
+    }
+
+    /* Hide corner hint on mobile */
+    .page::after {
+        display: none;
     }
 }
 
@@ -548,22 +618,18 @@ body:-ms-fullscreen .flipbook-container {
         --text: #000;
     }
 
-    .info-panel, .info-btn, .fullscreen-btn, .page-counter, .nav-arrow {
+    .info-panel, .info-btn, .fullscreen-btn, .page-counter {
         border-width: 3px;
     }
-}
-
-/* Custom page turn animation styling */
-.turn-page {
-    transition: none;
-}
-
-.turn-page-wrapper {
-    transition: none;
 }
 
 /* Centered single page display */
 .flipbook-centered {
     display: flex;
     justify-content: center !important;
+}
+
+/* Smooth page flip animations */
+.animated {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
