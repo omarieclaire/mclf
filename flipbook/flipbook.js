@@ -233,7 +233,9 @@
 
     await renderVisiblePages(1, displayMode);
 
-    // Initialize Turn.js with enhanced drag support
+    // Initialize Turn.js with drag-to-flip
+    // Turn.js automatically enables drag-to-flip by default
+    // Users can click near page corners and drag to flip pages
     flipbook.turn({
       width: bookWidth,
       height: bookHeight,
@@ -242,7 +244,7 @@
       acceleration: true,
       elevation: 50,
       duration: 600,
-      turnCorners: "br,bl,tr,tl",
+      turnCorners: "br,bl,tr,tl", // All corners are draggable
       display: displayMode,
       when: {
         turning: function (event, page, pageObject) {
@@ -265,7 +267,7 @@
           if (page === totalPages) {
             setTimeout(() => {
               $(this).turn("page", 1);
-            }, 800); // Wait for animation to complete
+            }, 800);
           }
         },
         start: function (event, pageObject, corner) {
@@ -278,42 +280,22 @@
       },
     });
 
-    // Enhanced drag interaction
+    // Enhanced drag interaction with click-to-flip
     if (!isMobileDevice) {
-      // Show page curl preview on hover near corners
-      flipbook.on("mousemove", function (e) {
-        // Don't show peel if zoomed in
-        if (currentZoom > 1) {
-          $(this).turn("peel", false);
-          return;
-        }
-
-        const offset = $(this).offset();
-        const mouseX = e.pageX - offset.left;
-        const mouseY = e.pageY - offset.top;
+      // Click to flip pages (detect which side was clicked)
+      flipbook.on("click", function (e) {
+        // Don't flip if zoomed in
+        if (currentZoom > 1) return;
+        
         const bookWidth = $(this).width();
-        const bookHeight = $(this).height();
+        const offset = $(this).offset();
+        const relativeX = e.pageX - offset.left;
 
-        const cornerSize = 120;
-
-        if (!$(this).turn("animating")) {
-          if (mouseX < cornerSize && mouseY < cornerSize) {
-            $(this).turn("peel", "tl");
-          } else if (mouseX > bookWidth - cornerSize && mouseY < cornerSize) {
-            $(this).turn("peel", "tr");
-          } else if (mouseX < cornerSize && mouseY > bookHeight - cornerSize) {
-            $(this).turn("peel", "bl");
-          } else if (mouseX > bookWidth - cornerSize && mouseY > bookHeight - cornerSize) {
-            $(this).turn("peel", "br");
-          } else {
-            $(this).turn("peel", false);
-          }
-        }
-      });
-
-      flipbook.on("mouseleave", function () {
-        if (!$(this).turn("animating")) {
-          $(this).turn("peel", false);
+        // Click on left side = previous, right side = next
+        if (relativeX < bookWidth / 2) {
+          $(this).turn("previous");
+        } else {
+          $(this).turn("next");
         }
       });
     }
@@ -322,22 +304,38 @@
     if (isMobileDevice) {
       let touchStartX = 0;
       let touchStartY = 0;
+      let touchStartTime = 0;
 
       flipbook.on("touchstart", function (e) {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
       });
 
       flipbook.on("touchend", function (e) {
         const touchEndX = e.changedTouches[0].clientX;
         const touchEndY = e.changedTouches[0].clientY;
+        const touchEndTime = Date.now();
 
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
+        const deltaTime = touchEndTime - touchStartTime;
 
-        // Swipe gesture
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        // Swipe gesture (fast movement)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50 && deltaTime < 300) {
           if (deltaX > 0) {
+            $(this).turn("previous");
+          } else {
+            $(this).turn("next");
+          }
+        }
+        // Tap gesture (minimal movement, quick touch)
+        else if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 300) {
+          const bookWidth = $(this).width();
+          const offset = $(this).offset();
+          const relativeX = touchStartX - offset.left;
+
+          if (relativeX < bookWidth / 2) {
             $(this).turn("previous");
           } else {
             $(this).turn("next");
@@ -554,7 +552,7 @@
     icon.textContent = isFullscreen ? "⛶" : "⛶";
 
     setTimeout(() => {
-      if ($("#flipbook").turn("is")) {
+      if ($("#flipbook").data("turn")) {
         handleResize();
       }
     }, 100);
@@ -562,7 +560,8 @@
 
   // Responsive handling
   function handleResize() {
-    if (!$("#flipbook").turn("is")) return;
+    // Check if flipbook is initialized
+    if (!$("#flipbook").data("turn")) return;
 
     const isMobileDevice = window.innerWidth <= 768;
 
