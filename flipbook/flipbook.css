@@ -548,16 +548,19 @@ body:-ms-fullscreen .flipbook-container {
     
     /* Add pinch zoom hint */
     body::before {
-        content: '📌 Pinch to zoom • Tap sides to flip';
+        content: 'Pinch to zoom • Tap sides to flip';
         position: fixed;
-        bottom: 60px;
+        top: 30vh;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(255, 107, 157, 0.95);
-        color: white;
-        padding: 8px 16px;
+        width: 70vw;
+        text-align: center;
+        background-color: white;
+        color: black;
+        padding: 4rem 1rem;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 1.2rem;
+        border: 2px solid black;
         font-weight: 600;
         z-index: 1000;
         pointer-events: none;
