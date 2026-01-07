@@ -567,6 +567,21 @@ body:-ms-fullscreen .flipbook-container {
         opacity: 0;
         animation: hintFade 8s ease-in-out;
     }
+
+    .zoom-controls {
+        display: none !important;
+    }
+    
+    .info-panel h3 {
+        font-size: 15px;
+        margin-bottom: 14px;
+    }
+    
+    /* Remove the border since zoom controls are hidden */
+    .shortcuts-list {
+        border-top: none;
+        padding-top: 0;
+    }
     
     @keyframes hintFade {
         0%, 100% { opacity: 0; }
