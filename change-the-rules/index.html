@@ -51,74 +51,51 @@
     }
 
     .zine-card {
-      background: #f8f8f8;
+      background: white;
       border-radius: 12px;
       padding: 24px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border: 2px solid #e0e0e0;
-    }
-
-    .zine-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      border-color: #ff6b9d;
+      border: 2px solid rgba(250, 128, 114, 0.3);
     }
 
     .zine-cover {
       width: 100%;
       height: auto;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       margin-bottom: 16px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .zine-cover:hover {
-      transform: scale(1.02);
     }
 
     .zine-title {
+      font-family: "Quicksand", sans-serif;
       font-size: 1.4em;
-      font-weight: bold;
+      font-weight: 600;
       margin: 12px 0 8px 0;
-      color: #2d2d2d;
-    }
-
-    .zine-type {
-      font-size: 0.9em;
-      color: #666;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .big-button {
-      font-size: 1.8rem;
+      color: rgba(250, 128, 114, 0.9);
     }
 
     .read-button {
       display: inline-block;
-      background: linear-gradient(135deg, #ff6b9d, #c06c84);
+      background: rgba(82, 44, 252, 0.8);
       color: white;
-      padding: 12px 24px;
-      border-radius: 24px;
+      padding: 10px 20px;
+      border-radius: 4px;
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.2s ease;
+      transition: opacity 0.2s ease;
       margin-top: 8px;
       margin-right: 8px;
     }
 
     .read-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+      opacity: 0.8;
       text-decoration: none;
+      background: rgba(82, 44, 252, 0.8);
+
+      color: purple;
     }
 
     .featured-zine {
       grid-column: 1 / -1;
-      display: grid;
+      /* display: grid; */
       grid-template-columns: 1fr 1fr;
       gap: 32px;
       align-items: center;
@@ -128,52 +105,6 @@
     .featured-zine .zine-cover {
       max-width: 400px;
       margin: 0 auto;
-    }
-
-    /* Download section styles */
-    .download-section {
-      background: #f0f7ff;
-      border-radius: 12px;
-      padding: 32px;
-      margin: 48px 0;
-      border: 2px solid #d0e7ff;
-    }
-
-    .download-section h2 {
-      margin-top: 0;
-      color: #2d2d2d;
-    }
-
-    .download-intro {
-      font-size: 1.1em;
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-
-    .download-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-      margin-top: 24px;
-    }
-
-    .download-box {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      border: 2px solid #e0e0e0;
-    }
-
-    .download-box h3 {
-      margin-top: 0;
-      font-size: 1.2em;
-      color: #2d2d2d;
-    }
-
-    .download-box-subtitle {
-      color: #666;
-      font-size: 0.9em;
-      margin-bottom: 16px;
     }
 
     .download-links {
@@ -195,34 +126,22 @@
       gap: 8px;
       padding: 10px 16px;
       background: white;
-      border: 2px solid #c4ebff;
-      border-radius: 8px;
-      color: #355c7d;
+      border: 1px solid rgba(82, 44, 252, 0.3);
+      border-radius: 4px;
+      color: rgba(54, 41, 122, 0.95);
       text-decoration: none;
-      /* font-weight: 600; */
       transition: all 0.2s ease;
       font-size: 0.95em;
     }
 
     .download-link:hover {
-      background: #355c7d;
-      color: white;
-      transform: translateX(4px);
+      border-color: rgba(82, 44, 252, 0.8);
+      color: rgba(82, 44, 252, 0.8);
       text-decoration: none;
     }
 
     .download-icon {
       font-size: 1.2em;
-    }
-
-    .format-note {
-      margin-top: 16px;
-      padding: 12px;
-      background: #fff9e6;
-      border-radius: 6px;
-      font-size: 0.9em;
-      color: #666;
-      border-left: 3px solid #ffd93d;
     }
 
     .button-group {
@@ -235,14 +154,6 @@
       }
 
       .zine-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .download-section {
-        padding: 24px 16px;
-      }
-
-      .download-grid {
         grid-template-columns: 1fr;
       }
 
@@ -299,30 +210,32 @@
                 <div>
                   <h2 class="zine-title">Change the Rules</h2>
                   <p>
-                    An illustrated story about three friends working in the video games industry in Montreal and their exploration of worker owned co-ops and unions. The story is fiction, but the contents are a snapshot of the lived realities and stories of the people we spoke to.
-</p>
+                    An illustrated story about three friends working in the video games industry in Montreal and their exploration of worker owned
+                    co-ops and unions. The story is fiction, but the contents are a snapshot of the lived realities and stories of the people we spoke
+                    to.
+                  </p>
                   <div class="button-group">
-                    <a href="comic-english.html" target="blank" class="big-button read-button">Read the Comic →</a>
+                    <a href="comic-english.html" target="blank" class="read-button">Read the Comic →</a>
                     <a href="comic-french.html" target="blank" class="read-button">Lire la BD →</a>
                   </div>
                   <p>Downloads</p>
 
                   <div class="download-links comic-grid">
                     <a href="downloads/change-rules-comic-en-spreads.pdf" class="download-link" download>
-                      <span class="download-icon">📖</span>
+                      <span class="download-icon">⬇️</span>
                       <span>English Spreads</span>
                     </a>
                     <a href="downloads/change-rules-comic-fr-spreads.pdf" class="download-link" download>
-                      <span class="download-icon">📖</span>
+                      <span class="download-icon">⬇️</span>
                       <span>French Spreads</span>
                     </a>
                     <a href="change-the-rules-en.pdf" class="download-link" download>
-                      <span class="download-icon">📄</span>
-                      <span>English Pages</span>
+                      <span class="download-icon">⬇️</span>
+                      <span>English Single Pages</span>
                     </a>
                     <a href="change-the-rules-fr.pdf" class="download-link" download>
-                      <span class="download-icon">📄</span>
-                      <span>French Pages</span>
+                      <span class="download-icon">⬇️</span>
+                      <span>French Single Pages</span>
                     </a>
                   </div>
                 </div>
@@ -337,8 +250,8 @@
                 <div>
                   <h3 class="zine-title">Research Whitepaper</h3>
                   <p>
-                    A companion to the comic, featuring quotes and charts. A snapshot of the workers who are changing the industry from the
-                    inside out.
+                    A companion to the comic, featuring quotes and charts. A snapshot of the workers who are changing the industry from the inside
+                    out.
                   </p>
 
                   <div class="button-group">

@@ -164,6 +164,63 @@ body {
     transform: scale(0.95);
 }
 
+/* Page navigation buttons - subtle and on edges */
+.page-nav-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1500;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 48px;
+    height: 80px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    opacity: 0.4;
+    user-select: none;
+}
+
+.page-nav-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.page-nav-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.page-nav-left {
+    left: 12px;
+}
+
+.page-nav-right {
+    right: 12px;
+}
+
+/* Show navigation buttons more prominently when zoomed */
+.book-wrapper[style*="scale"]:not([style*="scale(1)"]) ~ .page-nav-btn,
+body:has(.book-wrapper[style*="scale"]:not([style*="scale(1)"])) .page-nav-btn {
+    opacity: 0.7;
+}
+
+.book-wrapper[style*="scale"]:not([style*="scale(1)"]) ~ .page-nav-btn:hover,
+body:has(.book-wrapper[style*="scale"]:not([style*="scale(1)"])) .page-nav-btn:hover {
+    opacity: 1;
+    background: rgba(255, 107, 157, 0.9);
+    border-color: var(--button-primary);
+    color: white;
+}
+
 /* Page counter - bottom right */
 .page-counter {
     position: fixed;
@@ -457,6 +514,21 @@ body:-ms-fullscreen .flipbook-container {
         min-width: 40px;
     }
 
+    /* Adjust navigation buttons for mobile */
+    .page-nav-btn {
+        width: 40px;
+        height: 64px;
+        font-size: 28px;
+    }
+
+    .page-nav-left {
+        left: 8px;
+    }
+
+    .page-nav-right {
+        right: 8px;
+    }
+
     /* Hide corner hint on mobile */
     .page::after {
         display: none;
@@ -492,6 +564,20 @@ body:-ms-fullscreen .flipbook-container {
         font-size: 12px;
         padding: 6px 12px;
     }
+
+    .page-nav-btn {
+        width: 36px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .page-nav-left {
+        left: 6px;
+    }
+
+    .page-nav-right {
+        right: 6px;
+    }
 }
 
 /* Accessibility: Prefers reduced motion */
@@ -510,7 +596,7 @@ body:-ms-fullscreen .flipbook-container {
         --text: #000;
     }
 
-    .info-panel, .info-btn, .fullscreen-btn, .page-counter {
+    .info-panel, .info-btn, .fullscreen-btn, .page-counter, .page-nav-btn {
         border-width: 3px;
     }
 }

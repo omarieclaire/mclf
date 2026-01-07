@@ -45,7 +45,7 @@
             const total = (progress.total / (1024 * 1024)).toFixed(1);
 
             loadingMessage.innerHTML = `
-                            <div style="margin-bottom: 16px;">Loading PDF...</div>
+                            <div style="margin-bottom: 16px;">Loading...</div>
                             <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
                                 ${loaded} MB / ${total} MB (${percent}%)
                             </div>
@@ -62,7 +62,7 @@
 
       console.log("PDF loaded:", totalPages, "pages");
 
-      loadingMessage.innerHTML = "<div>Preparing flipbook...</div>";
+      loadingMessage.innerHTML = "<div>Almost there...</div>";
 
       await initializeFlipbook();
 
@@ -287,6 +287,9 @@
         // Don't flip if zoomed in
         if (currentZoom > 1) return;
         
+        // Don't flip if clicking on navigation buttons
+        if ($(e.target).closest('.page-nav-btn').length) return;
+        
         const bookWidth = $(this).width();
         const offset = $(this).offset();
         const relativeX = e.pageX - offset.left;
@@ -299,6 +302,9 @@
         }
       });
     }
+    
+    // Add navigation buttons
+    addNavigationButtons();
 
     // Mobile: tap and swipe
     if (isMobileDevice) {
@@ -347,6 +353,26 @@
     updatePageInfo(1);
     setupInfoPanel();
     setupPanWhenZoomed();
+  }
+
+  function addNavigationButtons() {
+    // Create navigation buttons
+    const navLeft = $('<button class="page-nav-btn page-nav-left" aria-label="Previous page">‹</button>');
+    const navRight = $('<button class="page-nav-btn page-nav-right" aria-label="Next page">›</button>');
+    
+    // Add to book wrapper
+    $('#book-wrapper').append(navLeft, navRight);
+    
+    // Add click handlers
+    navLeft.on('click', function(e) {
+      e.stopPropagation();
+      $('#flipbook').turn('previous');
+    });
+    
+    navRight.on('click', function(e) {
+      e.stopPropagation();
+      $('#flipbook').turn('next');
+    });
   }
 
   function updatePageInfo(page) {
@@ -409,6 +435,9 @@
     const bookWrapper = document.getElementById("book-wrapper");
 
     bookWrapper.addEventListener("mousedown", (e) => {
+      // Don't pan if clicking on navigation buttons
+      if (e.target.closest('.page-nav-btn')) return;
+      
       if (currentZoom > 1) {
         isPanning = true;
         panStartX = e.clientX - panOffsetX;
