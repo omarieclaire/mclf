@@ -273,7 +273,7 @@
           if (page === totalPages) {
             setTimeout(() => {
               $(this).turn("page", 1);
-            }, 800);
+            }, 80000);
           }
         },
         start: function (event, pageObject, corner) {
