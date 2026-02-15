@@ -19,7 +19,7 @@
   let isFullscreen = false;
   let pdfDoc = null;
   let totalPages = 0;
-  const RENDER_SCALE = 2.0;
+const RENDER_SCALE = window.devicePixelRatio * 1.5; // or just 3.0
   const renderedPages = new Set();
   const renderingPages = new Set();
 
