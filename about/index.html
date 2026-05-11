@@ -1,32 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
 
-<head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-77465632-1");
+    </script>
+    <meta charset="UTF-8" />
+    <!-- helps responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="Designing and building play experiences, experimental games, installations, events, and spaces for people." />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>MCLF</title>
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+    <link href="aboutstyles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous" />
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-    gtag("config", "UA-77465632-1");
-  </script>
-  <meta charset="UTF-8" />
-  <!-- helps responsiveness -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="Marie Claire LeBlanc Flanagan" />
-  <meta name="description"
-    content="Designing and building play experiences, experimental games, installations, events, and spaces for people." />
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-  <title>MCLF</title>
-  <link href="../styles.css" rel="stylesheet" type="text/css" />
-  <link href="aboutstyles.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
-
-        <meta property="og:title" content="Meshtastic" />
+    <meta property="og:title" content="Meshtastic" />
     <meta property="og:description" content="meshtastic zine" />
     <meta property="og:image" content="https://marieflanagan.com/meshtastic/img/meshtasticcover.png" />
     <meta property="og:url" content="https://marieflanagan.com/meshtastic/" />
@@ -36,663 +37,1413 @@
     <meta name="twitter:description" content="meshtastic zine" />
     <meta name="twitter:image" content="https://marieflanagan.com/meshtastic/img/meshtasticcover.png" />
     <meta name="twitter:card" content="summary_large_image" />
-</head>
+  </head>
 
-<body>
-  <header>
-    <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-    <p id="welcome-name"><a href="../index.html">Marie LeBlanc Flanagan</a></p>
-    <nav>
-      <ul>
-        <!-- <li><a href="#">Home</a></li> -->
-        <li>
-          <a href="../about">About</a>
-        </li>
-        <!-- <li>
+  <body>
+    <header>
+      <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <p id="welcome-name"><a href="../index.html">Marie LeBlanc Flanagan</a></p>
+      <nav>
+        <ul>
+          <!-- <li><a href="#">Home</a></li> -->
+          <li>
+            <a href="../about">About</a>
+          </li>
+          <!-- <li>
           <a href="../works">Works</a>
         </li>
         <li> -->
-        <!-- <a href="../consulting">Consulting</a>
+          <!-- <a href="../consulting">Consulting</a>
         </li> -->
-        <li>
-          <a href="../blog">Blog</a>
-        </li>
-        <li>
-          <a href="../contact">Contact</a>
-        </li>
+          <li>
+            <a href="../blog">Blog</a>
+          </li>
+          <li>
+            <a href="../contact">Contact</a>
+          </li>
 
-        <li><a href="../cv/">CV</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <div class="container">
-      <div class="page-content">
-        <h1>Bio</h1>
-        <div class="content-container">
-          <div class="slider-labels"><span>Tiny</span> <span>Short</span> <span>Med</span> <span>Long</span>
-            <span>Blah</span>
+          <li><a href="../cv/">CV</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <div class="container">
+        <div class="page-content">
+          <h1>Bio</h1>
+          <div class="content-container">
+            <div class="slider-labels">
+              <span>Tiny</span> <span>Short</span> <span>Med</span> <span>Long</span>
+              <span>Blah</span>
+            </div>
+            <input type="range" id="bio-slider" min="0" max="4" step="1" value="0" />
+            <div id="bio-text">
+              <!-- Default bio content -->
+              <p>
+                <a href="http://marieflanagan.com/">Marie LeBlanc Flanagan</a> is an artist working in the playful spaces between people, especially
+                related to connection and community. Marie builds experimental video games, playful installations, and cooperative experiences and has
+                an enduring fondness for the possibilities of trash.
+              </p>
+              <p>
+                Marie co-founded <a href="https://wyrdartsinitiatives.org/">Wyrd Arts Initiatives</a>;
+                <a href="http://droneday.org/">founded Drone Day</a>; served as the editor-in-chief of
+                <a href="https://weirdcanada.com/">Weird Canada;</a> co-founded <a href="https://imaginaryresidency.com/">Imaginary Residency</a>, an
+                artist-run online residency; co-founded <a href="https://torontogamesweek.com/">Toronto Games Week</a>; and co-organizes
+                <a href="http://gaiasymposium.net/">GAIA</a>.
+              </p>
+              <p>
+                Marie has worked with <a href="https://wizardzines.com/">Wizard Zines</a>,
+                <a href="https://2021.amaze-berlin.de/">A MAZE. Berlin</a> International Games and Playful Media Festival,
+                <a href="https://processingfoundation.org/">The Processing Foundation</a>,
+                <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>,
+                <a href="https://www.ada-x.org/">Ada x</a>, <a href="https://www.dailytouslesjours.com/en">Daily Tous Les Jours</a>, and
+                <a href="https://gameartsinternational.network/">Game Arts International Network</a>.
+              </p>
+            </div>
           </div>
-          <input type="range" id="bio-slider" min="0" max="4" step="1" value="0" />
-          <div id="bio-text">
-            <!-- Default bio content -->
-            <p>
-              <a href="http://marieflanagan.com/">Marie LeBlanc Flanagan</a> is an artist working in the playful spaces
-              between people, especially
-              related to connection and community. Marie builds experimental video games, playful installations, and
-              cooperative experiences and has
-              an enduring fondness for the possibilities of trash.
-            </p>
-            <p>
-              Marie co-founded <a href="https://wyrdartsinitiatives.org/">Wyrd Arts Initiatives</a>;
-              <a href="http://droneday.org/">founded Drone Day</a>; served as the editor-in-chief of
-              <a href="https://weirdcanada.com/">Weird Canada;</a> co-founded <a
-                href="https://imaginaryresidency.com/">Imaginary Residency</a>, an
-              artist-run online residency; co-founded <a href="https://torontogamesweek.com/">Toronto Games Week</a>;
-              and co-organizes
-              <a href="http://gaiasymposium.net/">GAIA</a>.
-            </p>
-            <p>
-              Marie has worked with <a href="https://wizardzines.com/">Wizard Zines</a>,
-              <a href="https://2021.amaze-berlin.de/">A MAZE. Berlin</a> International Games and Playful Media Festival,
-              <a href="https://processingfoundation.org/">The Processing Foundation</a>,
-              <a href="https://www.schoolofma.org/">The School of Machines, Making, and Make-Believe</a>,
-              <a href="https://www.ada-x.org/">Ada x</a>, <a href="https://www.dailytouslesjours.com/en">Daily Tous Les
-                Jours</a>, and
-              <a href="https://gameartsinternational.network/">Game Arts International Network</a>.
-            </p>
-          </div>
-        </div>
-        <br />
-        <br />
+          <br />
+          <br />
 
-        <!-- <div class="image-container">
+          <!-- <div class="image-container">
           <img src="/img/marie.jpg" alt="Marie smiling in front of red leaves. Marie's head is tilted and their hair is a curly joyful mess." class="circle-image">
         </div> -->
 
-        <h1>Timeline</h1>
-        <div class="grid-container">
-              <div class="grid-item year">2026</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the radiant year of 2026:</span> I will continue existing. <a
-                href="">Probably?</a> ☀ 
-            </p>
-          </div>
+          <h1>Timeline</h1>
+          <div class="grid-container">
+            <div class="grid-item year">2026</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the radiant year of 2026:</span> I will continue existing.
+                <a href="" data-preview="/img/about-img/probably.png" data-preview-type="image">Probably?</a> ☀
+              </p>
+            </div>
 
+            <div class="grid-item year">2025</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the technicolour year of 2025:</span> I showed 3 games at
+                <a href="https://www.instagram.com/ludodrome/?hl=en" data-preview="/img/about-img/ludodrome.mp4" data-preview-type="video"
+                  >Ludodrome</a
+                >
+                ☀ Ran the third
+                <a href="https://torontogamesweek.com/archive/2025-schedule.html" data-preview="/img/about-img/tgw2025.png" data-preview-type="image"
+                  >Toronto Games Week</a
+                >
+                with Jim with over 40 events! We projected massive games onto the waterfront Silos and played them with
+                <a href="https://en.wikipedia.org/wiki/Olivia_Chow" data-preview="/img/about-img/olivia.png" data-preview-type="image"
+                  >Olivia Chow,</a
+                >
+                ran a Secret Night Bike Parkcade with
+                <a href="https://molleindustria.org/" data-preview="/img/about-img/molleindustria.png" data-preview-type="image"
+                  >Molleindustria&#39;s</a
+                >
+                solarpunk preview, played with a giant parachute, and watched people pilot a flight simulator to chase endless sunsets around the
+                globe. ☀ Showed
+                <a href="https://marieflanagan.com/loserlane/" data-preview="/img/about-img/loserlane.png" data-preview-type="image">loserlane</a> in
+                the park ☀ Skied in an almost-blizzard in Verdun with Ellen and Kay ☀ made a soundboard full of my sounds for when I can&#39;t make
+                sounds anymore ☀ Went to my first ever Quebec cabane à sucre! ☀ Drew some
+                <a href="https://www.lecabanon.diy/" data-preview="/img/about-img/lecabanon.png" data-preview-type="image">little friends</a> for Le
+                Cabinon ☀ Founding board member for
+                <a href="https://radiosnack.ca/" data-preview="/img/about-img/radiosnack.png" data-preview-type="image">radiosnack</a> ☀ Snowboarded
+                with <a href="https://github.com/thomasfredericks" data-preview="/img/about-img/thomas.png" data-preview-type="image">Thomas</a> and
+                <a href="https://molior.ca/en/aurelie-besson-2/" data-preview="/img/about-img/aurelie.png" data-preview-type="image">Aurelie</a> ☀
+                Protests! ☀ So much reading in the park ☀ Made a secret game ☀ Ate a baby ataulfo mango ☀ Swam in the fleuve with
+                <a href="https://www.wendt-dufaux.com/about" data-preview="/img/about-img/sarahpascal.png" data-preview-type="image"
+                  >Sarah and Pascal</a
+                >
+                and then warmed up at a fire ☀ I tried to win my to-do list, still trying! ☀ Held the 11th annual
+                <a href="http://droneday.org/" data-preview="/img/about-img/droneday2025.png" data-preview-type="image">drone day</a>, for celebrating
+                drone sounds and community ☀ Got into mesh networks, working on a
+                <a href="https://marieflanagan.com/meshtastic/" data-preview="/img/about-img/meshtastic.png" data-preview-type="image">zine</a> about
+                Meshtastic, which is a way to send text messages to friends and neighbours over radio waves (no tech giants, wifi, or data needed!) ☀
+                Did a Drone Day interview with
+                <a href="https://www.katiedown.com/" data-preview="/img/about-img/katie.png" data-preview-type="image">Katie</a> ☀ Crucified
+                <a href="https://undeen.com/" data-preview="/img/about-img/don.png" data-preview-type="image">Don</a> (he requested it) ☀ Paired on
+                new a
+                <a href="https://wizardzines.com/zines/terminal/" data-preview="/img/about-img/terminal.png" data-preview-type="image"
+                  >Secret Rules of the Terminal zine</a
+                >
+                with <a href="https://jvns.ca/" data-preview="/img/about-img/julia.png" data-preview-type="image">Julia</a>. ☀ Creation with
+                <a href="https://www.studio303.ca/en/fili-周-gibbons/" data-preview="/img/about-img/fili.png" data-preview-type="image">Fili</a> ☀
+                Talked about adding and subtracting, multiplying and dividing with
+                <a href="https://github.com/mguaypaq" data-preview="/img/about-img/mathieu.png" data-preview-type="image">Mathieu</a>. ☀ Floated in
+                the fleuve on a big Joe pool noodle ☀ Made the
+                <a href="https://torontogamesweek.com/" data-preview="/img/about-img/tgwcoloring.png" data-preview-type="image"
+                  >Toronto Games Week coloring site</a
+                >. ☀ Final adventures with
+                <a href="https://ronniyjoseph.com/" data-preview="/img/about-img/ronniy.png" data-preview-type="image">Ronniy</a> ☀ Worked at MUTEK ☀
+                Made a <a href="http://ferluccilundi.club/" data-preview="/img/about-img/ferlucci.png" data-preview-type="image">silly site</a> for
+                <a href="https://www.jennkitagawa.com/" data-preview="/img/about-img/jenn.png" data-preview-type="image">Jenn</a> ☀ So much therapy,
+                thank you J ☀Traveled to
+                <a href="https://dinacon.org/" data-preview="/img/about-img/dinacon.png" data-preview-type="image">DiNaCon</a> in Indonesia and made a
+                game where you hug a starfish to slow down time ☀ Hosted an alt controller workshop ☀ Met
+                <a href="https://marieflanagan.com/about/LINK" data-preview="/img/about-img/mayowa.png" data-preview-type="image">Mayowa</a> ☀ Made a
+                kite! ☀ Learned to snorkel, then immediately learned to scuba dive ☀ Travelled with
+                <a href="https://monicarikic.com/" data-preview="/img/about-img/monica.png" data-preview-type="image">Mónica</a> ☀ Officiated the
+                wedding of Ellen and Kay ☀ Tried to join a gym but hated it (the only good part was the massage chair) ☀ Showed
+                <a href="https://marieflanagan.com/loserlane/" data-preview="/img/about-img/loserlane-ago.png" data-preview-type="image">loserlane</a>
+                at the art gallery of ontario ☀ I worked with Julia on the
+                <a href="https://git-scm.com/" data-preview="/img/about-img/git.png" data-preview-type="image">Git documentation</a> + addded a
+                <a href="https://git-scm.com/cheat-sheet" data-preview="/img/about-img/gitcheat.png" data-preview-type="image">cheatsheet!</a> ☀
+                Hosted
+                <a
+                  href="https://eventum.upf.edu/139808/detail/inscripcio-workshop-amb-marie-leblanc-flanagan.html?private=8e3f021842f102148cdd"
+                  data-preview="/img/about-img/playworkshop.png"
+                  data-preview-type="image"
+                  >a kind of play workshop</a
+                >
+                in Barcelona ☀ Co-ran
+                <a href="https://marieflanagan.com/about/LINK" data-preview="/img/about-img/gaia2025.png" data-preview-type="image">GAIA</a> with
+                <a href="https://linktr.ee/luoulton" data-preview="/img/about-img/lujan.png" data-preview-type="image">Luján</a> and
+                <a href="https://jimmunroe.net/" data-preview="/img/about-img/jim.png" data-preview-type="image">Jim</a> and
+                <a href="https://www.shalevmoran.com/" data-preview="/img/about-img/shalev.png" data-preview-type="image">Shalev</a> in Barcelona with
+                many incredible
+                <a href="https://gaiasymposium.net/index2025.html" data-preview="/img/about-img/gaiasessions.png" data-preview-type="image"
+                  >sessions</a
+                >, including some on the beach. ☀ I went to Majorca with
+                <a href="https://www.actofplay.com/" data-preview="/img/about-img/pietro.png" data-preview-type="image">Pietro</a> and
+                <a href="https://www.instagram.com/matajuegos.coop/?hl=en" data-preview="/img/about-img/pablo.png" data-preview-type="image">Pablo</a>
+                for a sidequest related to total revolution. ☀ Made music ☀ Continued curating and adding to the montreal cultural calendar ☀
+                Literally chased a sunset right off the island on my bike ☀
+                <a href="https://www.ada-x.org/" data-preview="/img/about-img/adax2025.png" data-preview-type="image">Ada X</a> programming committee
+                ☀ Lost my first and dearest mentor (PD) ☀ Co curated a show at
+                <a href="https://www.instagram.com/_parquette/?hl=en" data-preview="/img/about-img/parquette.png" data-preview-type="image"
+                  >Parquette</a
+                >
+                ☀ Made a specific version of tetris that is meaningful to only me ☀ Accidentally rollerbladed an almost quarter marathon (was just
+                keeping someone company) ☀ Made a Montreal version of
+                <a href="https://omarieclaire.github.io/loserlanemontreal" data-preview="/img/about-img/loserlanemtl.png" data-preview-type="image"
+                  >loserlane</a
+                >
+                for the election ☀ Make a
+                <a
+                  href="https://omarieclaire.github.io/loserlanemontreal/building-generator"
+                  data-preview="/img/about-img/buildinggen.png"
+                  data-preview-type="image"
+                  >building generator</a
+                >
+                so it would be easier for people to draw their favourite buildings ☀ Designed and hosted an
+                <a href="https://marieflanagan.com/orb-sunset-night-light/index.html" data-preview="/img/about-img/orb.png" data-preview-type="image"
+                  >orb game/ritual</a
+                >
+                in Frédéric Back Park for the first ever
+                <a href="https://www.semainedujeuvideodemontreal.com/en" data-preview="/img/about-img/mtlgamesweek.png" data-preview-type="image"
+                  >Montreal Games Week</a
+                >
+                ☀ Ice skating and cross country skiing and sometimes both ☀ Made a zine flip book tool for myself ☀ drew a t-shirt design for Le
+                Cabinon ☀ Co curated a games exhibition at the radiosnack 1 year anniversary ☀ Made an
+                <a href="" data-preview="/img/about-img/imgcal.png" data-preview-type="image">img -&gt; cal</a> site (and chrome plugin) ☀ an intense
+                spiritual experience out of the blue ☀ co-founded
+                <a href="https://www.instagram.com/c_sidecollective/reels/" data-preview="/img/about-img/cside.png" data-preview-type="image"
+                  >c-side games curation collective</a
+                >
+                with Lynn, Ida, Paloma ☀ Riso experimentation with Julia and
+                <a href="https://leecyb.org/" data-preview="/img/about-img/lee.png" data-preview-type="image">Lee</a> ☀ Exploration with
+                <a href="https://sarahalmamoun.com/" data-preview="/img/about-img/sarah.png" data-preview-type="image">Sarah</a> and
+                <a href="https://www.instagram.com/khatipsy/" data-preview="/img/about-img/rami.png" data-preview-type="image">Rami</a> ☀ Helped out
+                with an installation at
+                <a href="https://ra.co/events/2279286" data-preview="/img/about-img/pandemonium.png" data-preview-type="image">Pandemonium</a>, didn't
+                show a game because of the fire alarm situation ☀ Started compiling my research into collaborative play
+              </p>
+            </div>
 
-
-          <div class="grid-item year">2025</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the technicolour year of 2025:</span> I showed 3 games at <a
-                href="https://www.instagram.com/ludodrome/?hl=en">Ludodrome</a> ☀ Ran the third <a
-                href="https://torontogamesweek.com/">Toronto Games Week</a> with Jim with over 40 events! We projected
-              massive games onto the waterfront Silos and played them with <a
-                href="https://en.wikipedia.org/wiki/Olivia_Chow">Olivia Chow,</a> ran a Secret Night Bike Parkcade with
-              <a href="https://molleindustria.org/">Molleindustria&#39;s</a> solarpunk preview, played with a giant
-              parachute, and watched people pilot a flight simulator to chase endless sunsets around the globe. ☀ Showed
-              <a href="https://marieflanagan.com/loserlane/">loserlane</a> in the park ☀ Skied in an almost-blizzard in
-              Verdun with Ellen and Kay ☀ made a soundboard full of my sounds for when I can&#39;t make sounds
-              anymore ☀ Went to my first ever Quebec cabane à sucre! ☀ Drew some <a
-                href="https://www.lecabanon.diy/">little friends</a> for Le Cabinon ☀ Founding board member for <a
-                href="https://radiosnack.ca/">radiosnack</a> ☀ Snowboarded with <a
-                href="https://github.com/thomasfredericks">Thomas</a> and <a
-                href="https://molior.ca/en/aurelie-besson-2/">Aurelie</a> ☀ Protests! ☀ So much reading in the park ☀
-              Made a secret game ☀ Ate a baby ataulfo mango ☀ Swam in the fleuve with <a
-                href="https://www.wendt-dufaux.com/about">Sarah and Pascal</a> and then warmed up at a fire ☀ I tried to
-              win my to-do list, still trying! ☀ Held the 11th annual <a href="http://droneday.org/">drone day</a>, for
-              celebrating drone sounds and community ☀ Got into mesh networks, working on a <a
-                href="https://marieflanagan.com/meshtastic/">zine</a> about Meshtastic, which is a way to send text
-              messages to friends and neighbours over radio waves (no tech giants, wifi, or data needed!) ☀ Did a Drone
-              Day interview with <a href="https://www.katiedown.com/">Katie</a> ☀ Crucified <a
-                href="https://undeen.com/">Don</a> (he requested it) ☀ Paired on new a <a
-                href="https://wizardzines.com/zines/terminal/">Secret Rules of the Terminal zine</a> with <a
-                href="https://jvns.ca/">Julia</a>. ☀ Creation with <a
-                href="https://www.studio303.ca/en/fili-周-gibbons/">Fili</a> ☀ Talked about adding and subtracting, multiplying
-              and dividing with <a href="https://github.com/mguaypaq">Mathieu</a>. ☀ Floated in the fleuve on a big Joe
-              pool noodle ☀ Made the <a href="https://torontogamesweek.com/">Toronto Games Week coloring site</a>. ☀
-              Final adventures with <a href="https://ronniyjoseph.com/">Ronniy</a> ☀ Worked at MUTEK ☀ Made a <a
-                href="http://ferluccilundi.club/">silly site</a> for <a href="https://www.jennkitagawa.com/">Jenn</a> ☀
-              So much therapy, thank you J ☀Traveled to <a href="https://dinacon.org/">DiNaCon</a> in Indonesia and made
-              a game where you hug a starfish to slow down time ☀ Hosted an alt controller workshop ☀ Met <a
-                href="https://marieflanagan.com/about/LINK">Mayowa</a> ☀ Made a kite! ☀ Learned to snorkel, then
-              immediately learned to scuba dive ☀ Travelled with <a href="https://monicarikic.com/">Mónica</a> ☀
-              Officiated the wedding of Ellen and Kay ☀ Tried to join a gym but hated
-              it (the only good part was the massage chair) ☀ Showed <a
-                href="https://marieflanagan.com/loserlane/">loserlane</a> at the art gallery of ontario ☀ I worked with
-              Julia on the <a href="https://git-scm.com/">Git documentation</a> + addded a <a
-                href="https://git-scm.com/cheat-sheet">cheatsheet!</a> ☀ Hosted <a
-                href="https://eventum.upf.edu/139808/detail/inscripcio-workshop-amb-marie-leblanc-flanagan.html?private=8e3f021842f102148cdd">a
-                kind of play workshop</a> in Barcelona ☀ Co-ran <a href="https://marieflanagan.com/about/LINK">GAIA</a>
-              with <a href="https://linktr.ee/luoulton">Luján</a> and <a href="https://jimmunroe.net/">Jim</a> and <a
-                href="https://www.shalevmoran.com/">Shalev</a> in Barcelona with many incredible <a
-                href="https://gaiasymposium.net/index2025.html">sessions</a>, including some on the beach. ☀ I went to
-              Majorca with <a href="https://www.actofplay.com/">Pietro</a> and <a
-                href="https://www.instagram.com/matajuegos.coop/?hl=en">Pablo</a> for a sidequest related to total
-              revolution. ☀ Made music ☀ Continued curating and adding to the montreal cultural calendar ☀ Literally
-              chased a sunset right off the island on my bike ☀ <a href="https://www.ada-x.org/">Ada X</a> programming
-              committee ☀ Lost my first and dearest mentor (PD) ☀ Co curated a show at <a
-                href="https://www.instagram.com/_parquette/?hl=en">Parquette</a> ☀ Made a specific version of tetris that is meaningful to only me ☀
-              Accidentally
-              rollerbladed an almost quarter marathon (was just keeping someone company) ☀ Made a Montreal version of <a
-                href="https://omarieclaire.github.io/loserlanemontreal">loserlane</a> for the election ☀ Make a <a
-                href="https://omarieclaire.github.io/loserlanemontreal/building-generator">building generator</a> so it
-              would be easier for people to draw their favourite buildings ☀ Designed and hosted an <a
-                href="https://marieflanagan.com/orb-sunset-night-light/index.html">orb game/ritual</a> in Frédéric Back
-              Park for the first ever <a href="https://www.semainedujeuvideodemontreal.com/en">Montreal Games Week</a> ☀
-              Ice skating and cross country skiing and sometimes both ☀ Made a zine flip book tool for myself ☀ drew a
-              t-shirt design for Le Cabinon ☀ Co curated a games exhibition at the radiosnack 1 year anniversary ☀ Made an <a
-                href="">img -&gt; cal</a> site (and
-              chrome plugin) ☀ an intense spiritual experience out of the
-              blue ☀ co-founded <a href="https://www.instagram.com/c_sidecollective/reels/">c-side games curation
-                collective</a> with Lynn, Ida, Paloma ☀ Riso experimentation with Julia and <a
-                href="https://leecyb.org/">Lee</a> ☀ Exploration with <a href="https://sarahalmamoun.com/">Sarah</a> and
-              <a href="https://www.instagram.com/khatipsy/">Rami</a> ☀ Helped
-              out with an installation at <a href="https://ra.co/events/2279286">Pandemonium</a>, didn’t show a game
-              because of the fire alarm situation ☀ Started compiling my research into collaborative play
-            </p>
-          </div>
-
-          <div class="grid-item year">2024</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the playful year of 2024:</span> I made the
-              <a target="_blank" href="https://www.instagram.com/p/C2SfoPhg_IA-B9TzVkjJ7_KRC1kYkRz_soVtls0/?hl=en">best
-                game I ever made</a>: take a
-              string with two ends. Each person takes one end. We each can let go, or not. ☀ I cross-country skied in
-              the park with Julia, Kamal,
-              and Kyle and skated with Ronniy! ☀ I snowboarded again for the first time in many many many years. ☀ I
-              worked on my second residency
-              at the <a target="_blank" href="https://sat.qc.ca/en/satosphere/">Satosphère</a>. I travelled to Kitchener
-              to run a weekend-long
-              playful session with <a target="_blank"
-                href="https://www.ada-x.org/en/participants/liane-decary-chen/">Liane Decary-Chen</a>
-              <a target="_blank" href="https://www.isabella-stefanescu.ca/">Isabella Stefanescu</a>
-              <a target="_blank" href="https://palomadawkins.com/">Paloma Dawkins</a>
-              <a target="_blank" href="https://www.instagram.com/filiapothicaire/">Fili 周 Gibbons</a> and
-              <a target="_blank" href="https://fluxscopic.com/">Brian Cullen</a> and more. We did playful experiments
-              with sound,
-              <a target="_blank" href="https://thingsplustime.net/entry/parsley-root-sounds">3d scans</a> and play. ☀ I
-              continue to work on a zine
-              about Git with <a target="_blank" href="https://wizardzines.com/">Wizard Zines</a>. I hosted an epic
-              birthday party with a blanket
-              fort, pen-plotter, and music jam. I went to LA and hid a painting on the beach. I spoke about co-ops and
-              unions at
-              <a target="_blank"
-                href="https://dev.schedule.gdconf.com/session/change-the-rules-co-ops-unions-and-other-game-labor-structures/898791">GDC</a>,
-              <a target="_blank" href="https://allevents.in/oakland/slug-world-2024/10000807346082867">Slug World</a>,
-              and
-              <a target="_blank" href="https://lostlevels.net/">Lost Levels</a>. I toured the Exploratorium with Pen,
-              <a target="_blank" href="https://everest-pipkin.com/">Everest Pipkin</a>,
-              <a target="_blank" href="https://fernantastic.github.io/2022/">Fer Ramallo</a>,
-              <a target="_blank" href="https://www.saganyee.com/">Sagan Yee</a>,
-              <a target="_blank" href="https://bsky.app/profile/pfquarta.bsky.social">Pablo Quarta</a>,
-              <a target="_blank" href="https://www.consciousless.net/">Brenny and more</a>. We also went to the
-              <a target="_blank" href="https://museemecanique.com/">Musée Mécanique</a>! I had the unspeakable
-              experience of a total solar eclipse.
-              Jim and I successfully pulled off the second <a target="_blank"
-                href="https://torontogamesweek.com/">Toronto Games Week</a> with close
-              to 3000 combined attendees (3X our first year) at 25 events over seven magical days, including a night
-              parkcade adventure in an
-              eastend ravine where I encountered a raccoon that still haunts my dreams. I contributed a chapter to the
-              <a target="_blank" href="https://services.publishing.umich.edu/Books/V/Video-Game-Art-Reader9">The Game
-                Art Curators Kit</a>, which
-              was published this year by Amherst College Press (contents also available
-              <a target="_blank" href="https://gameartsinternational.network/gameartscuratorskit/doku.php">here</a>). ☀
-              I learned to weld at foulab.
-              ☀ Cohosted a tiny zine-making workshop with <a target="_blank" href="https://cyberlove.garden/">cyberlove</a> for <a target="_blank"
-                href="https://2024.oshwa.org/attend-the-summit/">OHS</a> ☀ Showed 10 experimental games for my SAT residency in the dome with <a target="_blank"
-                href="http://cabbibo.com/">Cabbibo</a>, Manu, drawings from <a target="_blank"
-                href="https://www.twitch.tv/pendletonward">Pen</a>, and music from <a target="_blank"
-                href="https://en.wikipedia.org/wiki/J%C3%B3nsi">Jónsi</a> and
-              sounds from <a target="_blank" href="https://kristiannorth.bandcamp.com/music">Kristian</a>. ☀ I made
-              Loser Lane, a tiny protest game about the terrifying reality of biking ☀ I showed two game poems at
-              Pique winter edition in Ottawa ☀ Co-led a session on open source and labour (worker-owned co-ops) <a target="_blank"
-                href="https://2024.oshwa.org/attend-the-summit/">Open Hardware Summit</a> ☀ I worked on Monahan, a meditative sound piece and narrative experience
-              inspired by the Monahan
-              wetlands, which was awarded the Creative City Network
-              of Canada's Public Art
-              Award!
-            </p>
-          </div>
-          <div class="grid-item year">2022</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the transformative year of 2022:</span> I did a residency at the Société des
-              arts technologiques
-              <a target="_blank" href="https://sat.qc.ca/en/metalab">Metalab</a> and made
-              <a target="_blank" href="https://marieflanagan.com/come-with-me/">ComeWithMe</a>, a game exploring
-              connection and the spaces between
-              people (I wrote a <a target="_blank" href="https://marieflanagan.com/stuck/">blog post about getting
-                stuck</a> along the way). ☀ I
-              created <a target="_blank" href="https://tendercircuits.ca/home/indexx/">Tender Circuits</a>, a web
-              experience documenting the work of
-              artists exploring the concept of connection and fungal intelligence through participating in AR app
-              development for
-              <a target="_blank" href="https://digitalartsresourcecentre.ca/">Digital Arts Resource Centre (DARC)</a>. ☀
-              I co-created the game
-              <a target="_blank" href="https://www.instagram.com/p/Cd1LID2pTDi/">Song of the Soil</a> with Dirtpunk
-              (Henry Driver, Rebecka
-              Pettersson, Ashley Cho, and Sacha Holsnyder) about
-              <a target="_blank" href="https://instagram.com/p/CdEIKmNpg6o/">microbes and fungus</a> and the beauty of
-              <a target="_blank" href="https://twitter.com/omarieclaire/status/1521181177704558594">soil</a> for
-              <a target="_blank" href="https://www.indiecade.com/">IndieCade's</a> Climate Jam, and we won the Most
-              Adventurous/Innovative award ☀ I
-              created <a target="_blank" href="https://messwithdns.net/">The Pocket Guide to Debugging</a>​ with Julia
-              Evans, a zine that helps you
-              find your way through the trickiest computer bugs. ☀ I taught A hands-on guide to making personal games
-              again with
-              <a target="_blank" href="https://iqoqo.org/bahiyya-khans-activism-through-video-games/">Bahiyya Khan</a>,
-              and
-              <a target="_blank" href="https://lorenzo.pilia.it/">Lorenzo Pilia</a> at the
-              <a target="_blank" href="https://www.schoolofma.org/">The School of Machines, Making, and
-                Make-Believe</a>, ☀ I worked with Leslie
-              Ting to create <a target="_blank" href="http://summerworks.ca/show/what-brings-you-in/">What Brings You
-                In</a>, an interactive online
-              show with music, live narration, guest voices, and playful interactions. ☀ I worked with
-              <a target="_blank" href="https://adelheid.ca/welcome">adelheid</a> on
-              <a target="_blank" href="https://adelheid.ca/in-development">You are swimming here</a>, an AR exploration
-              of the human and natural
-              histories that exist in our shared spaces. ☀ We celebrated the 8th annual
-              <a target="_blank" href="http://droneday.org/">Drone Day</a>, and I organized the first ever
-              <a target="_blank" href="https://itch.io/jam/drone">Drone Jam</a>, where we made experimental games, toys,
-              or playful things related
-              to the idea of sustained tones (<a target="_blank" href="https://droneday.org/play.html">drone games</a>).
-              ☀ I worked with
-              <a target="_blank" href="https://truluv.ai/">TruLuv</a> on Design for
-              <a target="_blank" href="https://truluv.ai/selfcare">#SelfCare</a>, incorporating rituals to deepen care,
-              compassion, and connection.
-              ☀ I co-organized <a target="_blank" href="https://ccfest.rocks/virtual-cc-fest-june-18">Virtual Creative
-                Code Fest (CC Fest)</a>, a
-              free & friendly event for anyone curious about creative code with workshops on pixel art, music, color,
-              and arduino with
-              <a target="_blank" href="https://www.edsaber.info/">Saber Khan</a> ☀ I hosted some
-              <a target="_blank" href="https://www.instagram.com/p/CfcRZecpoE7skXFdHO6gLK8XD_do3825LdoiDg0/">ai / ethics
-                / being here now playsessions</a>
-              where we tried out new AI tools and talked about what it means for us. ☀ I co-organized with
-              <a href="https://www.ada-x.org/">Ada X</a>, and InterAccess
-              <a target="_blank"
-                href="https://interaccess.org/event/2022/ctrlshift-data-sovereignty-community-action">Ctrl+Shift: Data
-                Sovereignty & Community Action</a>, conversations about listening, inquiring, contemplating, and
-              consent-building in the age of digital giants. ☀ I hosted
-              conversations with
-              <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/fp4tga4fbxtnbnsp98zjfffx975j2w">Grace
-                Scheele</a>: not yr angel
-              bby harpist, <a target="_blank"
-                href="https://interartsmatrix.ca/x-camera-talks/v/e4lmf7fg4alnrhsssjpnp2yyykfwtk">Viktorija Kovac</a>:
-              Theatre of Heartbreak(s),
-              <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/lbjd57kr34jt69dm9kwb32y8dfsm26">Sam
-                Mercury</a>: mixed(er),
-              <a target="_blank"
-                href="https://interartsmatrix.ca/x-camera-talks/v/ltpe2se4nxr9j8tredarjtb5ej6am5">Andrew Jacob
-                Rinehart</a>:
-              Searching for Stillness through Radical Play,
-              <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks/v/d76t6l3h9m2c4cn9mrkpsa5rfdzl76">Kate
-                Kamo McHugh</a>: Seeds of
-              Reclamation, and
-              <a target="_blank"
-                href="https://interartsmatrix.ca/x-camera-talks/v/gc3c2nlfe4hwyd735f9cgl6jhrwkmf">Lauren Prousky</a>:
-              When we speak
-              at the same time, we speak the same language, in the
-              <a target="_blank" href="https://interartsmatrix.ca/x-camera-talks">X-Camera</a> series to discuss their
-              artistic practice. ☀ I
-              continued to serve on the <a target="_blank" href="https://www.instagram.com/easternblocmtl/">Eastern
-                Bloc</a> programming commitee. ☀
-              I organized a series of workshops called "playsessions" on making experimental games, including
-              <a target="_blank" href="https://interartsmatrix.ca/events/concentric-fictions">Concentric Fictions</a>
-              with
-              <a target="_blank" href="https://oleomingus.com/about-1">Dhruv Jani</a>, exploring magical realism,
-              experimentation, and nonsense
-              verse; <a target="_blank" href="https://interartsmatrix.ca/events/weird-theatre-games">Weird Theatre
-                Games</a>, a workshop about
-              transforming emotionally challenging situations into one-of-a-kind awkward theatre games with
-              <a target="_blank" href="https://squinky.me/">D. Squinkifer</a>,
-              <a target="_blank"
-                href="https://interartsmatrix.ca/events/making-it-work-tools-modes-for-interactive-experiences">Making
-                It Work: Tools & Modes for Interactive Experiences</a>, a workshop about designing playful interactive
-              experiences with
-              <a target="_blank" href="https://jeka.games/">Jess Rowan Marcotte</a>, and
-              <a target="_blank"
-                href="https://interartsmatrix.ca/events/create-your-own-biomorphic-world-in-blender-with-shonee">Create
-                your own biomorphic world in Blender</a>
-              with <a target="_blank" href="https://www.instagram.com/shhonee/?hl=en">Shonee</a>. ☀ I created a series
-              of sessions on funding games,
-              including
-              <a target="_blank"
-                href="https://interartsmatrix.ca/events/how-to-start-an-indie-game-without-going-into-debt-or-burning-out">How
-                to Finance Your Game without Going into Debt</a>, a workshop about financing games for small indie game
-              studios with
-              <a target="_blank" href="https://achimogames.ca/">Meagan Byrne</a>,
-              <a target="_blank" href="https://interartsmatrix.ca/events/fund-your-game-ontario-creates">Fund! Your!
-                Game! with Kim Gibson from Ontario Creates</a>,
-              <a target="_blank"
-                href="https://interartsmatrix.ca/events/fund-your-game-with-megan-leduc-from-canada-council-for-the-arts">Fund!
-                Your! Game! with Megan Leduc from Canada Council for the Arts</a>, and
-              <a target="_blank"
-                href="https://interartsmatrix.ca/events/fund-your-game-with-mark-and-zhe-from-ontario-arts-council">Fund!
-                Your! Game! with Mark and Zhe from Ontario Arts Council.</a>
-              ☀ At the close of the <a href="https://interartsmatrix.ca/projects/cove-covox">COVE/COVOX project</a>
-              (where a group of artists worked
-              together to unearth new ways of connecting with audiences using technologies; invest in local arts
-              succession, and create and present
-              six interdisciplinary performances) I created a
-              <a target="_blank" href="https://artistseekscrowd.com/zine.html">64-page zine</a> documenting the entire
-              project. ☀ I created a
-              <a target="_blank" href="http://www.artistseekscrowd.com">playful site exploring the idea of digital
-                audience engagement</a>, based on
-              the mood-ring project. ☀ I did research on the TouchingYou project, exploring softness, touch and
-              connection grounding “knowledge” in
-              lived experience, somatics, and play. ☀ I spoke at
-              <a target="_blank" href="https://octobre-numerique.fr/">Festival Octobre Numérique Faire Monde</a> in
-              Arles and led a
-              <a target="_blank" href="https://www.instagram.com/p/CkQibFWgXWdxpLX0ut9j9kikYYaZMIN-2reLhw0/">A Kind Of
-                Play workshop</a> on making
-              experimental games. I spoke in Barcelona about my practice with
-              <a target="_blank" href="https://www.lucacarrubba.net/">Luca Carrubba</a> of
-              <a target="_blank" href="https://arsgames.net/">ARSGAMES</a> at
-              <a target="_blank" href="https://www.baued.es/en">BAU College of Arts and Design of Barcelona</a>.
-              (Edmonton, Toronto, Arles,
-              Barcelona, Berlin, Kitchener, Montreal)
-            </p>
-          </div>
-          <!-- //2021 -->
-          <div class="grid-item year">2021</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the generative year of 2021:</span> ☀ I created
-              <a href="https://marieflanagan.com/softiee/">Soft Sanctuary</a> for <a
-                href="https://proyectobios.com/">Proyecto Bios</a> in
-              Argentina, a peaceful web space for slow connection, through interactive question prompt, 3D sculptures,
-              and soft sounds with the
-              support of the Canadian Embassy. ☀ I co-organized the
-              <a href="https://gaiasymposium.net/">Game Arts International Assembly (GAIA)</a> Online, a 9-session
-              online conference event for 150+
-              game curators around the world, focused on interconnecting existing game arts organizations and nurturing
-              new structures in emerging
-              regions. Check out the <a target="_blank"
-                href="https://gameartsinternational.network/looking-back-on-gaia-2021/">visual notes</a>! ☀
-              I made a online playground called <a target="_blank" href="https://messwithdns.net/">Mess With DNS</a>​
-              with Julia Evans, a resource
-              to learn about Domain Name Systems through playful experiments. ☀ I ran
-              <a target="_blank"
-                href="https://milieux.concordia.ca/event/hypo-hyper-presence-workshop-n%CB%9A-1-filters-with-marie-leblanc-flanagan/">HYPO//HYPER
-                PRESENCE N˚ 1: FILTERS</a>, an Augmented Realities workshop at the Milieux Institute. ☀ I moderated and
-              hosted AI The End, a conversation with
-              <a target="_blank"
-                href="https://www.ada-x.org/en/activities/ai-the-end-gina-hara-residency-presentation/">Gina Hara</a> at
-              <a target="_blank" href="https://www.ada-x.org/en/">Ada X</a>. ☀ I co-ran an edition of the
-              <a target="_blank" href="https://imaginaryresidency.com/">Imaginary Residency</a> (March 6th-April 10th)
-              with
-              <a href="https://memcpy.io/">Robert Foss</a>, <a href="mailto:nick@nanocat.net">Nick Morrison</a>,
-              <a href="https://twitter.com/saganyee">Sagan Yee</a> , <a
-                href="https://kofioduro.myportfolio.com/links">Kofi Oduro</a>,
-              <a href="https://www.are.na/amused-av">Marie Dahlén</a>, <a href="mailto:tempest@ualberta">eryn</a>,
-              <a href="mailto:dahjac@gmail.com">Jack</a>, <a target="_blank" href="https://www.truekvlt.com/">Jay
-                Palmer</a>,
-              <a target="_blank" href="https://xin-xin.info/">Xin Xin</a> and
-              <a target="_blank" href="https://www.ada-x.org/en/participants/liane-decary-chen/">Liane Décary-Chen</a>.
-              ☀ I co-led the Tech Tech
-              Tech project exploring alternatives to the Tech Giants with <a href="https://www.ada-x.org/">Ada x</a> in
-              Montreal, which included
-              deep research, interviews, a 4-part workshop with co-researchers exploring alternatives for office tools,
-              social media, online
-              gatherings, portfolios, performances & exhibitions. At the end I wrote and pubished
-              <a target="_blank" href="https://www.ada-x.org/activities/zines-tech-tech-tech/">two zines: Living in the
-                time of tech giants and Finding our way</a>. ☀ I worked with <a target="_blank"
-                href="https://www.instagram.com/longwinterto/">Long Winter</a>, on customization and extensions
-              of a virtual platform. ☀ I created a zine about <a href="https://marieflanagan.com/how-dns-works">How DNS
-                Works</a>, all about how
-              your computer knows where to go when you type in a web address, with Julia Evans. ☀ I created a feedback
-              site with Julia Evans for
-              <a target="_blank" href="https://wizardzines.com/">Wizard Zines</a>, which allows us to get useful
-              feedback on zines as we are writing
-              them by allowing people to click and give feedback anywhere on the page, as well as dividing feedback into
-              categories like "I'm
-              confused" or "I love this". ☀ I worked with <a target="_blank" href="https://www.gmsm.ca/">Gros Morne
-                Summer Music (GMSM)</a> to
-              create Mummer’s Journey, a virtual, 3D immersive version of the community of Woody Point, as well as an
-              online interactive advent
-              calendar experience. ☀ I co-ran another edition of the
-              <a target="_blank" href="https://imaginaryresidency.com/">Imaginary Residency</a>, an open-source
-              collaborative artist residency from
-              (March 6th -April 10th) with <a href="https://palomadawkins.com/">Paloma Dawkins</a>,
-              <a href="https://www.ethanmuller.com/">Ethan Muller</a>, <a href="https://cabbi.bo/">Cabbibo</a>, and
-              <a href="https://en.wikipedia.org/wiki/Nathalie_Lawhead">nathalie lawhead</a>. ☀ I taught a series of
-              sold-out classes on how to
-              <a target="_blank" href="https://www.instagram.com/p/COeUcr5Ahf5vfzCUXR6P8uid-8e5IjucI6FvK40/">make your
-                own website with html and css</a>. ☀ I co-hosted a series of events called "Tiny Conversations" about
-              topics like
-              <a target="_blank" href="https://draw.chat/A669A502685980DDE43:h0h8mc5x#p1,0,0,r0,s1">participatory
-                art</a> (Marie, Eryn, Kofi, Ida,
-              Jay, Edith);
-              <a target="_blank"
-                href="https://docs.google.com/document/d/1Abg2COHzswoaVtoTn0iV2XWwCBw9IdGMfomcxUNCjvU/edit#heading=h.sdqm75hso569">arts
-                communities</a>
-              (Raph, Ida, Toph, J, Marie, Edith). ☀ I ran a series of events called Playful Questions with
-              <a target="_blank" href="https://gameartsinternational.network/">GAIN</a>, a monthly discussion series
-              with video game curators and
-              intermediaries around the world. ☀ Led sessions and participated in the
-              <a target="_blank" href="https://numun.fund/">NUMUNS Feminist Technology Playground</a>, exploring ideas
-              and tech with feminists from
-              all over the world ☀ With alumni from the Imaginary Residency, we ran a a special collaborative session
-              and created
-              <a target="_blank" href="https://www.instagram.com/p/CXZ1C-wA-pI7Po1THDGHooyLT2KpNGNdE-83uY0/">We Dance
-                with Space Owl</a>, an
-              exploration of movement mapping and light. ☀ I worked with Leslie Ting to create
-              <a target="_blank" href="https://www.leslieting.com/speculation">Speculation</a>, a theatrical concert
-              with an immersive visual design
-              based on the experience of vision loss. ☀ I made my very own social media, called Friend News, which was a
-              weekly newspaper with
-              maximum one "article" per friend, and a special guest column from a friend of a friend. ☀ I wrote and
-              never shared
-              <a target="_blank" href="https://marieflanagan.com/dimensions/">"Dimensions of Online Spaces"</a>, because
-              I couldn't find funding or
-              space to finish developing the ideas. ☀ I ran a series of workshops on interactivity, experience, and
-              ritual for Escapism with
-              <a target="_blank" href="https://avita.space/">Avita Maheen</a>,
-              <a target="_blank" href="https://oyoun.de/en/profil/tea-boyarchuk/">Téa Boyarchuk</a>,
-              <a target="_blank" href="https://oyoun.de/en/tag/sol-martinez-sole/">Sol Martínez Solé</a>, and
-              <a target="_blank" href="https://www.izdiharafyouni.com/">Izdihar Afyouni</a> with
-              <a target="_blank" href="https://oyoun.de/">Oyoun - Kultur NeuDenken</a>. ☀ I contributed my thoughts to
-              <a target="_blank" href="https://onm.art/">Offer Need Machine</a>, part of Artengine’s Digital Economies
-              Lab’s objective to
-              interrogate issues around precariousness in the creative community. ☀ I gave a talk for the at
-              <a target="_blank" href="https://gutefabrik.com/">Die Gute Fabrik</a> Practice Sessions. ☀ I worked with
-              the
-              <a target="_blank" href="https://liveness.milieux.ca/">LIVENESS Research Group</a> exploring the
-              intersections of liveness, game
-              structures and rules, and the digital. ☀ I co-led machine learning workshops with
-              <a target="_blank" href="https://genielab.co/en/">GenieLab</a>. ☀ I ran the 8th edition of
-              <a href="https://droneday.org/">Drone Day</a>, an annual celebration of drone, community, and experimental
-              sounds, and some
-              <a target="_blank"
-                href="https://www.owensoundsuntimes.com/news/local-news/buzz-about-drones-the-aural-kind-gets-kids-excited-about-learning">kids</a>
-              joined in. ☀ I organized an unsucessful event called Parallel park play - a tiny gathering for us to play
-              alongside each other. ☀ I
-              hosted exploratory sessions called
-              <a target="_blank"
-                href="https://www.instagram.com/p/CP3xK35Asm4XOc27yrqvYkQRCUfc4pBl8V8tNM0/">NoWorking</a>, an online
-              series of
-              sessions dedicated to not working, and challenging ideas around labour. ☀ I contributed to the
-              <a target="_blank" href="https://processingfoundation.org/advocacy/community-catalog">Processing Org 20th
-                Anniversary Community Catalog</a>, a community catalog to celebrate 20 years of Processing. ☀ I
-              contributed to the
-              <a target="_blank" href="https://gameartsinternational.network/gameartscuratorskit/doku.php">Game Arts
-                Curators Kit</a>, a seventy
-              page handbook for anyone interested in bringing a curatorial eye to the presentation of video games. ☀ I
-              started cross country skiing!
-              ☀ I researched, wrote, and illustrated
-              <a target="_blank" href="https://gameartsinternational.network/isolation-nation/">Isolation Nation</a>
-              with the support of
-              <a target="_blank" href="https://gameartsinternational.network/">GAIN</a>, the
-              <a target="_blank" href="https://cmf-fmc.ca/">Canada Media Fund</a>, and
-              <a target="_blank" href="https://www.ontariocreates.ca/">Ontario Creates</a>, a free resource for tips and
-              tricks culled from 70
-              Canadian game creators. ☀ To the delight of my mom, I spoke on
-              <a target="_blank" href="https://www.cbc.ca/radio/thecurrent/the-current-for-jan-6-2021-1.5863009">The
-                Current (CBC)</a> exploring
-              creative ways for people to connect online. ☀ I got really sick but then I got better. ☀ I did a special
-              Iceland residency with
-              <a target="_blank" href="https://cabbi.bo/">Cabbibo</a>,
-              <a target="_blank" href="https://www.instagram.com/zvhgpyxqtnys/">zvhgpyxqtnys</a>,
-              <a target="_blank" href="https://en.wikipedia.org/wiki/Hayden_Dunham">Hayden Dunham</a>,
-              <a target="_blank" href="https://www.instagram.com/cherry2diamond/">cherry2diamond</a>,
-              <a target="_blank" href="https://www.instagram.com/essteb/">Celeste Betancur</a>, and
-              <a target="_blank" href="https://jackarmitage.com/">Jack Armitage</a>. ☀ I led a workshop on making games
-              and served as a mentor for
-              <a target="_blank" href="https://pixelles.ca/">Pixelles</a>. ☀ I served on the Inter Arts Matrix:
-              Birthplace of Hybrid Art board. ☀ I
-              served on the Eastern Bloc programming committee. (Online, Montreal, Iceland)
-            </p>
-          </div>
-          <!-- maybe nnneka stopped here  -->
-          <!-- //2020 -->
-          <div class="grid-item year">2020</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the unspeakable year of 2020:</span> ☀ I showed my game
-              <a target="_blank" href="https://marieflanagan.com/closer/">Closer</a> at the Living Arts Centre in
-              Mississauga, with thousands of
-              other people who also had no idea that a pandemic was about to hit. I organized an
-              <a target="_blank" href="https://marieflanagan.com/experimental-gatherings-1/">Experimental Gathering</a>.
-              Then the pandemic hit. ☀ I
-              pretty much immediately wrote about what I knew about
-              <a target="_blank" href="https://marieflanagan.com/video-tools/">basic tools for meeting online</a> and
-              <a target="_blank" href="https://marieflanagan.com/teaching-online/">and teaching online</a>, because I
-              was getting a lot of requests
-              from people who had never used any tools before and suddenly needed to be experts. ☀ I made Special Guest
-              with a collaborative team of
-              international artists, an experimental marketplace for booking playful guests to improve online meetings
-              (the finisher finishes
-              meetings at all costs, the hype-person supports your ideas, the bard makes a song about your meeting), and
-              an invitation to imagine
-              other ways of gathering. ☀ I made Throne Room, a virtual bathroon for people to collaboratively graffiti
-              and deface at
-              <a href="https://2023.amaze-berlin.de/">A MAZE. Berlin</a>, and for people to consider what they flush
-              away. ☀ I co-organized
-              <a target="_blank" href="https://ccfest.rocks/virtual-cc-fest-june-18">Future Tense: Virtual Creative Code
-                Fest (CC Fest)</a>, a free
-              & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and
-              arduino with
-              <a target="_blank" href="https://www.edsaber.info/">Saber Khan</a> ☀ I made
-              <a target="_blank" href="https://mood-ring.ca/">Mood Ring</a>, a dreamy choose-your-own adventure site
-              where you are given a song,
-              with <a target="_blank" href="https://www.instagram.com/pink_veil_/?hl=en">Rachel Weldon</a>,
-              <a target="_blank" href="https://www.debaser.ca/mood-ring-creators">Emily McQuarrie</a>, and
-              <a target="_blank" href="https://www.richardsondupuis.studio/">Robin Richardson-Dupuis</a>, for
-              <a target="_blank" href="https://www.debaser.ca/">Debaser</a>. ☀ I made
-              <a target="_blank" href="https://marieflanagan.com/neighbourbot/">Neighbourbot</a>, space for short
-              spontaneous connections with
-              neighbours at online events with Julia Evans for <a href="https://bangbangcon.com/index.html">!!Con
-                2020</a>. ☀ I worked with the
-              <a target="_blank" href="https://liveness.milieux.ca/">LIVENESS Research Group</a> on Scaling Liveness in
-              Participatory Experiences ☀
-              I taught a class, a hands-on guide to making personal games with
-              <a target="_blank" href="https://iqoqo.org/bahiyya-khans-activism-through-video-games/">Bahiyya Khan</a>,
-              and
-              <a target="_blank" href="https://lorenzo.pilia.it/">Lorenzo Pilia</a> at the
-              <a target="_blank" href="https://www.schoolofma.org/">The School of Machines, Making, and
-                Make-Believe</a>, ☀ I led a small
-              <a target="_blank" href="https://www.instagram.com/p/CEcKO0pgrF9q_hvpnWXgRO4ABnIp-b6Zgb1L5A0/">gathering
-                for exploring experimental online platforms</a>
-              with Processing Foundation and <a target="_blank" href="https://naotohieda.com/">Naoto Hieda</a> . ☀ I
-              played with arduino and
-              <a target="_blank" href="https://www.instagram.com/p/B8kDIADgdIyfU-Lg6ufxZzlTBVeTkt6C7KtAJ80/">sensors</a>
-              for a while, and also with
-              <a target="_blank" href="https://www.instagram.com/p/B7lw76KgpMzsNU3VdAiGpYqNq0PSWOmqAGRDaQ0/">clay</a>. ☀
-              I made a collection of
-              playful sound games for <a target="_blank" href="https://droneday.org/">Drone Day</a>, inviting people to
-              get intimate, playful, and
-              curious about their relationship to sound. ☀ I did collaborative drawing sessions with Isabella and Nomi.
-              ☀ I did the Softie Feelies
-              (Online) Interdisciplinary Artist Residency. (Online)
-            </p>
-          </div>
-          <!-- //2019 -->
-          <div class="grid-item year">2019</div>
-          <div class="grid-item description">
-            <p>
-              <span class="year-intro">In the anticipatory year of 2019:</span> I did an artist residency at the at the
-              <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a>, where I made a number of games
-              with students, faculty, and
-              community members there, including Arcade Friend, Emergency Exhibition Care, and
-              <a target="_blank" href="https://marieflanagan.com/follow/">Follow</a>, which I made for the No Quarter
-              Exhibition. ☀ Someday I might
-              write more about this year! (New York, Montreal)
-            </p>
-            <!-- //2018 -->
-            <!-- <div class="grid-item year">2019</div>
-<div class="grid-item description">
-<p>
-  <span class="year-intro">In the curious year of 2018:</span> 
-  I did an artist residency at the at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a>, where I made a number of games with students, faculty, and community members there, including Arcade Friend, Emergency Exhibition Care, and Follow, which I made for the No Quarter Exhibition. 
-  ☀ Someday I might write more about this year! (New York, Montreal)
-</p> -->
-            <!-- //2017 -->
-            <!-- <div class="grid-item year">2019</div>
-<div class="grid-item description">
-<p>
-  <span class="year-intro">In the curious year of 2017:</span> 
-  I did an artist residency at the at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a>, where I made a number of games with students, faculty, and community members there, including Arcade Friend, Emergency Exhibition Care, and Follow, which I made for the No Quarter Exhibition. 
-  ☀ Someday I might write more about this year! (New York, Montreal)
-</p> -->
-            <!-- //2016 -->
-            <!-- <div class="grid-item year">2019</div>
-<div class="grid-item description">
-<p>
-  <span class="year-intro">In the curious year of 2016:</span> 
-  I did an artist residency at the at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a>, where I made a number of games with students, faculty, and community members there, including Arcade Friend, Emergency Exhibition Care, and Follow, which I made for the No Quarter Exhibition. 
-  ☀ Someday I might write more about this year! (New York, Montreal)
-</p> -->
-            <!-- //2015 -->
-            <!-- <div class="grid-item year">2019</div>
-<div class="grid-item description">
-<p>
-  <span class="year-intro">In the curious year of 2015:</span> 
-  I did an artist residency at the at the <a target="_blank" href="https://gamecenter.nyu.edu/">NYU Game Center</a>, where I made a number of games with students, faculty, and community members there, including Arcade Friend, Emergency Exhibition Care, and Follow, which I made for the No Quarter Exhibition. 
-  ☀ Someday I might write more about this year! (New York, Montreal)
-</p> -->
-            <!-- //2019 Lungbutter? New York: Artist in Residence 
-            //2018: I built a one-month city-wide play experience for CAFKA in Kitchener-Waterloo. To Montreal to do an artist residency at <a target="_blank" href="https://tag.hexagram.ca/">Technoculture, Art and Games</a>. I consulted with <a target="_blank" href="http://www.dailytouslesjours.com/">Daily Tous Les Jours</a> and <a target="_blank" href="https://www.genielab.co/">GenieLab</a> on creative installations and gatherings. I spent 6 months learning the fundamentals of French</p>`,
-          // 2020: Online Spaces - Event series exploring online spaces together. ☀
-          //   2020 Experimental Gatherings - Inspiration Show & Tell.
-          //   2020: Now & Next podcast.
-          /* Daily Tous les jours Trillium Consultation */
-          /* Daily Tous les jours FOMO Consultation */
-          // 2020 Lungbutter | "Curtain" Music Video, Performer ☀
-          // 433 with Leslie
-          
-          /* genielab Arch Consult
-          ation */
-          /* we throw switches */
-          /* we throw switches 2 - Hon - V&A Dundee
-           */
-          
-          /* 2018 - hand eye society.  */
-
- -->
+            <div class="grid-item year">2024</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the playful year of 2024:</span> I made the
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/C2SfoPhg_IA-B9TzVkjJ7_KRC1kYkRz_soVtls0/?hl=en"
+                  data-preview="/img/about-img/bestgame.png"
+                  data-preview-type="image"
+                  >best game I ever made</a
+                >: take a string with two ends. Each person takes one end. We each can let go, or not. ☀ I cross-country skied in the park with Julia,
+                Kamal, and Kyle and skated with Ronniy! ☀ I snowboarded again for the first time in many many many years. ☀ I worked on my second
+                residency at the
+                <a target="_blank" href="https://sat.qc.ca/en/satosphere/" data-preview="/img/about-img/satosphere.png" data-preview-type="image"
+                  >Satosphère</a
+                >. I travelled to Kitchener to run a weekend-long playful session with
+                <a
+                  target="_blank"
+                  href="https://www.ada-x.org/en/participants/liane-decary-chen/"
+                  data-preview="/img/about-img/liane.png"
+                  data-preview-type="image"
+                  >Liane Decary-Chen</a
+                >
+                <a target="_blank" href="https://www.isabella-stefanescu.ca/" data-preview="/img/about-img/isabella.png" data-preview-type="image"
+                  >Isabella Stefanescu</a
+                >
+                <a target="_blank" href="https://palomadawkins.com/" data-preview="/img/about-img/paloma.png" data-preview-type="image"
+                  >Paloma Dawkins</a
+                >
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/filiapothicaire/"
+                  data-preview="/img/about-img/fili2024.png"
+                  data-preview-type="image"
+                  >Fili 周 Gibbons</a
+                >
+                and
+                <a target="_blank" href="https://fluxscopic.com/" data-preview="/img/about-img/brian.png" data-preview-type="image">Brian Cullen</a>
+                and more. We did playful experiments with sound,
+                <a
+                  target="_blank"
+                  href="https://thingsplustime.net/entry/parsley-root-sounds"
+                  data-preview="/img/about-img/3dscans.png"
+                  data-preview-type="image"
+                  >3d scans</a
+                >
+                and play. ☀ I continue to work on a zine about Git with
+                <a target="_blank" href="https://wizardzines.com/" data-preview="/img/about-img/wizardzines.png" data-preview-type="image"
+                  >Wizard Zines</a
+                >. I hosted an epic birthday party with a blanket fort, pen-plotter, and music jam. I went to LA and hid a painting on the beach. I
+                spoke about co-ops and unions at
+                <a
+                  target="_blank"
+                  href="https://dev.schedule.gdconf.com/session/change-the-rules-co-ops-unions-and-other-game-labor-structures/898791"
+                  data-preview="/img/about-img/gdc.png"
+                  data-preview-type="image"
+                  >GDC</a
+                >,
+                <a
+                  target="_blank"
+                  href="https://allevents.in/oakland/slug-world-2024/10000807346082867"
+                  data-preview="/img/about-img/slugworld.png"
+                  data-preview-type="image"
+                  >Slug World</a
+                >, and
+                <a target="_blank" href="https://lostlevels.net/" data-preview="/img/about-img/lostlevels.png" data-preview-type="image"
+                  >Lost Levels</a
+                >. I toured the Exploratorium with Pen,
+                <a target="_blank" href="https://everest-pipkin.com/" data-preview="/img/about-img/everest.png" data-preview-type="image"
+                  >Everest Pipkin</a
+                >,
+                <a target="_blank" href="https://fernantastic.github.io/2022/" data-preview="/img/about-img/fer.png" data-preview-type="image"
+                  >Fer Ramallo</a
+                >,
+                <a target="_blank" href="https://www.saganyee.com/" data-preview="/img/about-img/sagan.png" data-preview-type="image">Sagan Yee</a>,
+                <a
+                  target="_blank"
+                  href="https://bsky.app/profile/pfquarta.bsky.social"
+                  data-preview="/img/about-img/pabloquarta.png"
+                  data-preview-type="image"
+                  >Pablo Quarta</a
+                >,
+                <a target="_blank" href="https://www.consciousless.net/" data-preview="/img/about-img/brenny.png" data-preview-type="image"
+                  >Brenny and more</a
+                >. We also went to the
+                <a target="_blank" href="https://museemecanique.com/" data-preview="/img/about-img/musee.png" data-preview-type="image"
+                  >Musée Mécanique</a
+                >! I had the unspeakable experience of a total solar eclipse. Jim and I successfully pulled off the second
+                <a target="_blank" href="https://torontogamesweek.com/" data-preview="/img/about-img/tgw2024.png" data-preview-type="image"
+                  >Toronto Games Week</a
+                >
+                with close to 3000 combined attendees (3X our first year) at 25 events over seven magical days, including a night parkcade adventure
+                in an eastend ravine where I encountered a raccoon that still haunts my dreams. I contributed a chapter to the
+                <a
+                  target="_blank"
+                  href="https://services.publishing.umich.edu/Books/V/Video-Game-Art-Reader9"
+                  data-preview="/img/about-img/curatorskit.png"
+                  data-preview-type="image"
+                  >The Game Art Curators Kit</a
+                >, which was published this year by Amherst College Press (contents also available
+                <a
+                  target="_blank"
+                  href="https://gameartsinternational.network/gameartscuratorskit/doku.php"
+                  data-preview="/img/about-img/curatorskit2.png"
+                  data-preview-type="image"
+                  >here</a
+                >). ☀ I learned to weld at foulab. ☀ Cohosted a tiny zine-making workshop with
+                <a target="_blank" href="https://cyberlove.garden/" data-preview="/img/about-img/cyberlove.png" data-preview-type="image"
+                  >cyberlove</a
+                >
+                for
+                <a target="_blank" href="https://2024.oshwa.org/attend-the-summit/" data-preview="/img/about-img/ohs.png" data-preview-type="image"
+                  >OHS</a
+                >
+                ☀ Showed 10 experimental games for my SAT residency in the dome with
+                <a target="_blank" href="http://cabbibo.com/" data-preview="/img/about-img/cabbibo.png" data-preview-type="image">Cabbibo</a>, Manu,
+                drawings from
+                <a target="_blank" href="https://www.twitch.tv/pendletonward" data-preview="/img/about-img/pen.png" data-preview-type="image">Pen</a>,
+                and music from
+                <a target="_blank" href="https://en.wikipedia.org/wiki/J%C3%B3nsi" data-preview="/img/about-img/jonsi.png" data-preview-type="image"
+                  >Jónsi</a
+                >
+                and sounds from
+                <a
+                  target="_blank"
+                  href="https://kristiannorth.bandcamp.com/music"
+                  data-preview="/img/about-img/kristian.png"
+                  data-preview-type="image"
+                  >Kristian</a
+                >. ☀ I made Loser Lane, a tiny protest game about the terrifying reality of biking ☀ I showed two game poems at Pique winter edition
+                in Ottawa ☀ Co-led a session on open source and labour (worker-owned co-ops)
+                <a target="_blank" href="https://2024.oshwa.org/attend-the-summit/" data-preview="/img/about-img/ohs2.png" data-preview-type="image"
+                  >Open Hardware Summit</a
+                >
+                ☀ I worked on Monahan, a meditative sound piece and narrative experience inspired by the Monahan wetlands, which was awarded the
+                Creative City Network of Canada's Public Art Award!
+              </p>
+            </div>
+            <div class="grid-item year">2022</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the transformative year of 2022:</span> I did a residency at the Société des arts technologiques
+                <a target="_blank" href="https://sat.qc.ca/en/metalab" data-preview="/img/about-img/metalab.png" data-preview-type="image">Metalab</a>
+                and made
+                <a
+                  target="_blank"
+                  href="https://marieflanagan.com/come-with-me/"
+                  data-preview="/img/about-img/comewithme.png"
+                  data-preview-type="image"
+                  >ComeWithMe</a
+                >, a game exploring connection and the spaces between people (I wrote a
+                <a target="_blank" href="https://marieflanagan.com/stuck/" data-preview="/img/about-img/stuck.png" data-preview-type="image"
+                  >blog post about getting stuck</a
+                >
+                along the way). ☀ I created
+                <a
+                  target="_blank"
+                  href="https://tendercircuits.ca/home/indexx/"
+                  data-preview="/img/about-img/tendercircuits.png"
+                  data-preview-type="image"
+                  >Tender Circuits</a
+                >, a web experience documenting the work of artists exploring the concept of connection and fungal intelligence through participating
+                in AR app development for
+                <a target="_blank" href="https://digitalartsresourcecentre.ca/" data-preview="/img/about-img/darc.png" data-preview-type="image"
+                  >Digital Arts Resource Centre (DARC)</a
+                >. ☀ I co-created the game
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/Cd1LID2pTDi/"
+                  data-preview="/img/about-img/songofsoil.png"
+                  data-preview-type="image"
+                  >Song of the Soil</a
+                >
+                with Dirtpunk (Henry Driver, Rebecka Pettersson, Ashley Cho, and Sacha Holsnyder) about
+                <a target="_blank" href="https://instagram.com/p/CdEIKmNpg6o/" data-preview="/img/about-img/microbes.png" data-preview-type="image"
+                  >microbes and fungus</a
+                >
+                and the beauty of
+                <a
+                  target="_blank"
+                  href="https://twitter.com/omarieclaire/status/1521181177704558594"
+                  data-preview="/img/about-img/soil.png"
+                  data-preview-type="image"
+                  >soil</a
+                >
+                for
+                <a target="_blank" href="https://www.indiecade.com/" data-preview="/img/about-img/indiecade.png" data-preview-type="image"
+                  >IndieCade's</a
+                >
+                Climate Jam, and we won the Most Adventurous/Innovative award ☀ I created
+                <a target="_blank" href="https://messwithdns.net/" data-preview="/img/about-img/debugging.png" data-preview-type="image"
+                  >The Pocket Guide to Debugging</a
+                >​ with Julia Evans, a zine that helps you find your way through the trickiest computer bugs. ☀ I taught A hands-on guide to making
+                personal games again with
+                <a
+                  target="_blank"
+                  href="https://iqoqo.org/bahiyya-khans-activism-through-video-games/"
+                  data-preview="/img/about-img/bahiyya.png"
+                  data-preview-type="image"
+                  >Bahiyya Khan</a
+                >, and
+                <a target="_blank" href="https://lorenzo.pilia.it/" data-preview="/img/about-img/lorenzo.png" data-preview-type="image"
+                  >Lorenzo Pilia</a
+                >
+                at the
+                <a target="_blank" href="https://www.schoolofma.org/" data-preview="/img/about-img/schoolofma.png" data-preview-type="image"
+                  >The School of Machines, Making, and Make-Believe</a
+                >, ☀ I worked with Leslie Ting to create
+                <a
+                  target="_blank"
+                  href="http://summerworks.ca/show/what-brings-you-in/"
+                  data-preview="/img/about-img/whatbringsyouin.png"
+                  data-preview-type="image"
+                  >What Brings You In</a
+                >, an interactive online show with music, live narration, guest voices, and playful interactions. ☀ I worked with
+                <a target="_blank" href="https://adelheid.ca/welcome" data-preview="/img/about-img/adelheid.png" data-preview-type="image"
+                  >adelheid</a
+                >
+                on
+                <a target="_blank" href="https://adelheid.ca/in-development" data-preview="/img/about-img/swimming.png" data-preview-type="image"
+                  >You are swimming here</a
+                >, an AR exploration of the human and natural histories that exist in our shared spaces. ☀ We celebrated the 8th annual
+                <a target="_blank" href="http://droneday.org/" data-preview="/img/about-img/droneday2022.png" data-preview-type="image">Drone Day</a>,
+                and I organized the first ever
+                <a target="_blank" href="https://itch.io/jam/drone" data-preview="/img/about-img/dronejam.png" data-preview-type="image">Drone Jam</a
+                >, where we made experimental games, toys, or playful things related to the idea of sustained tones (<a
+                  target="_blank"
+                  href="https://droneday.org/play.html"
+                  data-preview="/img/about-img/dronegames.png"
+                  data-preview-type="image"
+                  >drone games</a
+                >). ☀ I worked with
+                <a target="_blank" href="https://truluv.ai/" data-preview="/img/about-img/truluv.png" data-preview-type="image">TruLuv</a> on Design
+                for
+                <a target="_blank" href="https://truluv.ai/selfcare" data-preview="/img/about-img/selfcare.png" data-preview-type="image">#SelfCare</a
+                >, incorporating rituals to deepen care, compassion, and connection. ☀ I co-organized
+                <a
+                  target="_blank"
+                  href="https://ccfest.rocks/virtual-cc-fest-june-18"
+                  data-preview="/img/about-img/ccfest2022.png"
+                  data-preview-type="image"
+                  >Virtual Creative Code Fest (CC Fest)</a
+                >, a free & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and arduino with
+                <a target="_blank" href="https://www.edsaber.info/" data-preview="/img/about-img/saber.png" data-preview-type="image">Saber Khan</a> ☀
+                I hosted some
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/CfcRZecpoE7skXFdHO6gLK8XD_do3825LdoiDg0/"
+                  data-preview="/img/about-img/aiethics.png"
+                  data-preview-type="image"
+                  >ai / ethics / being here now playsessions</a
+                >
+                where we tried out new AI tools and talked about what it means for us. ☀ I co-organized with
+                <a href="https://www.ada-x.org/" data-preview="/img/about-img/adax2022.png" data-preview-type="image">Ada X</a>, and InterAccess
+                <a
+                  target="_blank"
+                  href="https://interaccess.org/event/2022/ctrlshift-data-sovereignty-community-action"
+                  data-preview="/img/about-img/ctrlshift.png"
+                  data-preview-type="image"
+                  >Ctrl+Shift: Data Sovereignty & Community Action</a
+                >, conversations about listening, inquiring, contemplating, and consent-building in the age of digital giants. ☀ I hosted
+                conversations with
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/fp4tga4fbxtnbnsp98zjfffx975j2w"
+                  data-preview="/img/about-img/grace.png"
+                  data-preview-type="image"
+                  >Grace Scheele</a
+                >: not yr angel bby harpist,
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/e4lmf7fg4alnrhsssjpnp2yyykfwtk"
+                  data-preview="/img/about-img/viktorija.png"
+                  data-preview-type="image"
+                  >Viktorija Kovac</a
+                >: Theatre of Heartbreak(s),
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/lbjd57kr34jt69dm9kwb32y8dfsm26"
+                  data-preview="/img/about-img/sam.png"
+                  data-preview-type="image"
+                  >Sam Mercury</a
+                >: mixed(er),
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/ltpe2se4nxr9j8tredarjtb5ej6am5"
+                  data-preview="/img/about-img/andrew.png"
+                  data-preview-type="image"
+                  >Andrew Jacob Rinehart</a
+                >: Searching for Stillness through Radical Play,
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/d76t6l3h9m2c4cn9mrkpsa5rfdzl76"
+                  data-preview="/img/about-img/kate.png"
+                  data-preview-type="image"
+                  >Kate Kamo McHugh</a
+                >: Seeds of Reclamation, and
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks/v/gc3c2nlfe4hwyd735f9cgl6jhrwkmf"
+                  data-preview="/img/about-img/lauren.png"
+                  data-preview-type="image"
+                  >Lauren Prousky</a
+                >: When we speak at the same time, we speak the same language, in the
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/x-camera-talks"
+                  data-preview="/img/about-img/xcamera.png"
+                  data-preview-type="image"
+                  >X-Camera</a
+                >
+                series to discuss their artistic practice. ☀ I continued to serve on the
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/easternblocmtl/"
+                  data-preview="/img/about-img/easternbloc.png"
+                  data-preview-type="image"
+                  >Eastern Bloc</a
+                >
+                programming commitee. ☀ I organized a series of workshops called "playsessions" on making experimental games, including
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/concentric-fictions"
+                  data-preview="/img/about-img/concentric.png"
+                  data-preview-type="image"
+                  >Concentric Fictions</a
+                >
+                with
+                <a target="_blank" href="https://oleomingus.com/about-1" data-preview="/img/about-img/dhruv.png" data-preview-type="image"
+                  >Dhruv Jani</a
+                >, exploring magical realism, experimentation, and nonsense verse;
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/weird-theatre-games"
+                  data-preview="/img/about-img/weirdtheatre.png"
+                  data-preview-type="image"
+                  >Weird Theatre Games</a
+                >, a workshop about transforming emotionally challenging situations into one-of-a-kind awkward theatre games with
+                <a target="_blank" href="https://squinky.me/" data-preview="/img/about-img/squinky.png" data-preview-type="image">D. Squinkifer</a>,
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/making-it-work-tools-modes-for-interactive-experiences"
+                  data-preview="/img/about-img/makingitwork.png"
+                  data-preview-type="image"
+                  >Making It Work: Tools & Modes for Interactive Experiences</a
+                >, a workshop about designing playful interactive experiences with
+                <a target="_blank" href="https://jeka.games/" data-preview="/img/about-img/jess.png" data-preview-type="image">Jess Rowan Marcotte</a
+                >, and
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/create-your-own-biomorphic-world-in-blender-with-shonee"
+                  data-preview="/img/about-img/biomorphic.png"
+                  data-preview-type="image"
+                  >Create your own biomorphic world in Blender</a
+                >
+                with
+                <a target="_blank" href="https://www.instagram.com/shhonee/?hl=en" data-preview="/img/about-img/shonee.png" data-preview-type="image"
+                  >Shonee</a
+                >. ☀ I created a series of sessions on funding games, including
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/how-to-start-an-indie-game-without-going-into-debt-or-burning-out"
+                  data-preview="/img/about-img/financegame.png"
+                  data-preview-type="image"
+                  >How to Finance Your Game without Going into Debt</a
+                >, a workshop about financing games for small indie game studios with
+                <a target="_blank" href="https://achimogames.ca/" data-preview="/img/about-img/meagan.png" data-preview-type="image">Meagan Byrne</a>,
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/fund-your-game-ontario-creates"
+                  data-preview="/img/about-img/fundkim.png"
+                  data-preview-type="image"
+                  >Fund! Your! Game! with Kim Gibson from Ontario Creates</a
+                >,
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/fund-your-game-with-megan-leduc-from-canada-council-for-the-arts"
+                  data-preview="/img/about-img/fundmegan.png"
+                  data-preview-type="image"
+                  >Fund! Your! Game! with Megan Leduc from Canada Council for the Arts</a
+                >, and
+                <a
+                  target="_blank"
+                  href="https://interartsmatrix.ca/events/fund-your-game-with-mark-and-zhe-from-ontario-arts-council"
+                  data-preview="/img/about-img/fundmark.png"
+                  data-preview-type="image"
+                  >Fund! Your! Game! with Mark and Zhe from Ontario Arts Council.</a
+                >
+                ☀ At the close of the
+                <a href="https://interartsmatrix.ca/projects/cove-covox" data-preview="/img/about-img/covecovox.png" data-preview-type="image"
+                  >COVE/COVOX project</a
+                >
+                (where a group of artists worked together to unearth new ways of connecting with audiences using technologies; invest in local arts
+                succession, and create and present six interdisciplinary performances) I created a
+                <a target="_blank" href="https://artistseekscrowd.com/zine.html" data-preview="/img/about-img/covezine.png" data-preview-type="image"
+                  >64-page zine</a
+                >
+                documenting the entire project. ☀ I created a
+                <a target="_blank" href="http://www.artistseekscrowd.com" data-preview="/img/about-img/artistseeks.png" data-preview-type="image"
+                  >playful site exploring the idea of digital audience engagement</a
+                >, based on the mood-ring project. ☀ I did research on the TouchingYou project, exploring softness, touch and connection grounding
+                "knowledge" in lived experience, somatics, and play. ☀ I spoke at
+                <a target="_blank" href="https://octobre-numerique.fr/" data-preview="/img/about-img/octobre.png" data-preview-type="image"
+                  >Festival Octobre Numérique Faire Monde</a
+                >
+                in Arles and led a
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/CkQibFWgXWdxpLX0ut9j9kikYYaZMIN-2reLhw0/"
+                  data-preview="/img/about-img/playworkshop2022.png"
+                  data-preview-type="image"
+                  >A Kind Of Play workshop</a
+                >
+                on making experimental games. I spoke in Barcelona about my practice with
+                <a target="_blank" href="https://www.lucacarrubba.net/" data-preview="/img/about-img/luca.png" data-preview-type="image"
+                  >Luca Carrubba</a
+                >
+                of
+                <a target="_blank" href="https://arsgames.net/" data-preview="/img/about-img/arsgames.png" data-preview-type="image">ARSGAMES</a> at
+                <a target="_blank" href="https://www.baued.es/en" data-preview="/img/about-img/bau.png" data-preview-type="image"
+                  >BAU College of Arts and Design of Barcelona</a
+                >. (Edmonton, Toronto, Arles, Barcelona, Berlin, Kitchener, Montreal)
+              </p>
+            </div>
+            <!-- //2021 -->
+            <div class="grid-item year">2021</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the generative year of 2021:</span> ☀ I created
+                <a href="https://marieflanagan.com/softiee/" data-preview="/img/about-img/softsanctuary.png" data-preview-type="image"
+                  >Soft Sanctuary</a
+                >
+                for <a href="https://proyectobios.com/" data-preview="/img/about-img/proyectobios.png" data-preview-type="image">Proyecto Bios</a> in
+                Argentina, a peaceful web space for slow connection, through interactive question prompt, 3D sculptures, and soft sounds with the
+                support of the Canadian Embassy. ☀ I co-organized the
+                <a href="https://gaiasymposium.net/" data-preview="/img/about-img/gaia2021.png" data-preview-type="image"
+                  >Game Arts International Assembly (GAIA)</a
+                >
+                Online, a 9-session online conference event for 150+ game curators around the world, focused on interconnecting existing game arts
+                organizations and nurturing new structures in emerging regions. Check out the
+                <a
+                  target="_blank"
+                  href="https://gameartsinternational.network/looking-back-on-gaia-2021/"
+                  data-preview="/img/about-img/gaianotes.png"
+                  data-preview-type="image"
+                  >visual notes</a
+                >! ☀ I made a online playground called
+                <a target="_blank" href="https://messwithdns.net/" data-preview="/img/about-img/messwithdns.png" data-preview-type="image"
+                  >Mess With DNS</a
+                >​ with Julia Evans, a resource to learn about Domain Name Systems through playful experiments. ☀ I ran
+                <a
+                  target="_blank"
+                  href="https://milieux.concordia.ca/event/hypo-hyper-presence-workshop-n%CB%9A-1-filters-with-marie-leblanc-flanagan/"
+                  data-preview="/img/about-img/hypohyper.png"
+                  data-preview-type="image"
+                  >HYPO//HYPER PRESENCE N˚ 1: FILTERS</a
+                >, an Augmented Realities workshop at the Milieux Institute. ☀ I moderated and hosted AI The End, a conversation with
+                <a
+                  target="_blank"
+                  href="https://www.ada-x.org/en/activities/ai-the-end-gina-hara-residency-presentation/"
+                  data-preview="/img/about-img/ginahara.png"
+                  data-preview-type="image"
+                  >Gina Hara</a
+                >
+                at <a target="_blank" href="https://www.ada-x.org/en/" data-preview="/img/about-img/adax2021.png" data-preview-type="image">Ada X</a>.
+                ☀ I co-ran an edition of the
+                <a target="_blank" href="https://imaginaryresidency.com/" data-preview="/img/about-img/imaginary.png" data-preview-type="image"
+                  >Imaginary Residency</a
+                >
+                (March 6th-April 10th) with
+                <a href="https://memcpy.io/" data-preview="/img/about-img/robert.png" data-preview-type="image">Robert Foss</a>,
+                <a href="mailto:nick@nanocat.net" data-preview="/img/about-img/nick.png" data-preview-type="image">Nick Morrison</a>,
+                <a href="https://twitter.com/saganyee" data-preview="/img/about-img/sagan2021.png" data-preview-type="image">Sagan Yee</a> ,
+                <a href="https://kofioduro.myportfolio.com/links" data-preview="/img/about-img/kofi.png" data-preview-type="image">Kofi Oduro</a>,
+                <a href="https://www.are.na/amused-av" data-preview="/img/about-img/mariedahlen.png" data-preview-type="image">Marie Dahlén</a>,
+                <a href="mailto:tempest@ualberta" data-preview="/img/about-img/eryn.png" data-preview-type="image">eryn</a>,
+                <a href="mailto:dahjac@gmail.com" data-preview="/img/about-img/jack.png" data-preview-type="image">Jack</a>,
+                <a target="_blank" href="https://www.truekvlt.com/" data-preview="/img/about-img/jay.png" data-preview-type="image">Jay Palmer</a>,
+                <a target="_blank" href="https://xin-xin.info/" data-preview="/img/about-img/xinxin.png" data-preview-type="image">Xin Xin</a> and
+                <a
+                  target="_blank"
+                  href="https://www.ada-x.org/en/participants/liane-decary-chen/"
+                  data-preview="/img/about-img/liane2021.png"
+                  data-preview-type="image"
+                  >Liane Décary-Chen</a
+                >. ☀ I co-led the Tech Tech Tech project exploring alternatives to the Tech Giants with
+                <a href="https://www.ada-x.org/" data-preview="/img/about-img/adaxtech.png" data-preview-type="image">Ada x</a> in Montreal, which
+                included deep research, interviews, a 4-part workshop with co-researchers exploring alternatives for office tools, social media,
+                online gatherings, portfolios, performances & exhibitions. At the end I wrote and pubished
+                <a
+                  target="_blank"
+                  href="https://www.ada-x.org/activities/zines-tech-tech-tech/"
+                  data-preview="/img/about-img/techtechtech.png"
+                  data-preview-type="image"
+                  >two zines: Living in the time of tech giants and Finding our way</a
+                >. ☀ I worked with
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/longwinterto/"
+                  data-preview="/img/about-img/longwinter.png"
+                  data-preview-type="image"
+                  >Long Winter</a
+                >, on customization and extensions of a virtual platform. ☀ I created a zine about
+                <a href="https://marieflanagan.com/how-dns-works" data-preview="/img/about-img/howdns.png" data-preview-type="image">How DNS Works</a
+                >, all about how your computer knows where to go when you type in a web address, with Julia Evans. ☀ I created a feedback site with
+                Julia Evans for
+                <a target="_blank" href="https://wizardzines.com/" data-preview="/img/about-img/wizardzines2021.png" data-preview-type="image"
+                  >Wizard Zines</a
+                >, which allows us to get useful feedback on zines as we are writing them by allowing people to click and give feedback anywhere on
+                the page, as well as dividing feedback into categories like "I'm confused" or "I love this". ☀ I worked with
+                <a target="_blank" href="https://www.gmsm.ca/" data-preview="/img/about-img/gmsm.png" data-preview-type="image"
+                  >Gros Morne Summer Music (GMSM)</a
+                >
+                to create Mummer's Journey, a virtual, 3D immersive version of the community of Woody Point, as well as an online interactive advent
+                calendar experience. ☀ I co-ran another edition of the
+                <a target="_blank" href="https://imaginaryresidency.com/" data-preview="/img/about-img/imaginary2.png" data-preview-type="image"
+                  >Imaginary Residency</a
+                >, an open-source collaborative artist residency from (March 6th -April 10th) with
+                <a href="https://palomadawkins.com/" data-preview="/img/about-img/paloma2021.png" data-preview-type="image">Paloma Dawkins</a>,
+                <a href="https://www.ethanmuller.com/" data-preview="/img/about-img/ethan.png" data-preview-type="image">Ethan Muller</a>,
+                <a href="https://cabbi.bo/" data-preview="/img/about-img/cabbibo2021.png" data-preview-type="image">Cabbibo</a>, and
+                <a href="https://en.wikipedia.org/wiki/Nathalie_Lawhead" data-preview="/img/about-img/nathalie.png" data-preview-type="image"
+                  >nathalie lawhead</a
+                >. ☀ I taught a series of sold-out classes on how to
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/COeUcr5Ahf5vfzCUXR6P8uid-8e5IjucI6FvK40/"
+                  data-preview="/img/about-img/htmlcss.png"
+                  data-preview-type="image"
+                  >make your own website with html and css</a
+                >. ☀ I co-hosted a series of events called "Tiny Conversations" about topics like
+                <a
+                  target="_blank"
+                  href="https://draw.chat/A669A502685980DDE43:h0h8mc5x#p1,0,0,r0,s1"
+                  data-preview="/img/about-img/participatory.png"
+                  data-preview-type="image"
+                  >participatory art</a
+                >
+                (Marie, Eryn, Kofi, Ida, Jay, Edith);
+                <a
+                  target="_blank"
+                  href="https://docs.google.com/document/d/1Abg2COHzswoaVtoTn0iV2XWwCBw9IdGMfomcxUNCjvU/edit#heading=h.sdqm75hso569"
+                  data-preview="/img/about-img/artscommunities.png"
+                  data-preview-type="image"
+                  >arts communities</a
+                >
+                (Raph, Ida, Toph, J, Marie, Edith). ☀ I ran a series of events called Playful Questions with
+                <a target="_blank" href="https://gameartsinternational.network/" data-preview="/img/about-img/gain.png" data-preview-type="image"
+                  >GAIN</a
+                >, a monthly discussion series with video game curators and intermediaries around the world. ☀ Led sessions and participated in the
+                <a target="_blank" href="https://numun.fund/" data-preview="/img/about-img/numuns.png" data-preview-type="image"
+                  >NUMUNS Feminist Technology Playground</a
+                >, exploring ideas and tech with feminists from all over the world ☀ With alumni from the Imaginary Residency, we ran a a special
+                collaborative session and created
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/CXZ1C-wA-pI7Po1THDGHooyLT2KpNGNdE-83uY0/"
+                  data-preview="/img/about-img/spaceowl.png"
+                  data-preview-type="image"
+                  >We Dance with Space Owl</a
+                >, an exploration of movement mapping and light. ☀ I worked with Leslie Ting to create
+                <a
+                  target="_blank"
+                  href="https://www.leslieting.com/speculation"
+                  data-preview="/img/about-img/speculation.png"
+                  data-preview-type="image"
+                  >Speculation</a
+                >, a theatrical concert with an immersive visual design based on the experience of vision loss. ☀ I made my very own social media,
+                called Friend News, which was a weekly newspaper with maximum one "article" per friend, and a special guest column from a friend of a
+                friend. ☀ I wrote and never shared
+                <a target="_blank" href="https://marieflanagan.com/dimensions/" data-preview="/img/about-img/dimensions.png" data-preview-type="image"
+                  >"Dimensions of Online Spaces"</a
+                >, because I couldn't find funding or space to finish developing the ideas. ☀ I ran a series of workshops on interactivity,
+                experience, and ritual for Escapism with
+                <a target="_blank" href="https://avita.space/" data-preview="/img/about-img/avita.png" data-preview-type="image">Avita Maheen</a>,
+                <a target="_blank" href="https://oyoun.de/en/profil/tea-boyarchuk/" data-preview="/img/about-img/tea.png" data-preview-type="image"
+                  >Téa Boyarchuk</a
+                >,
+                <a target="_blank" href="https://oyoun.de/en/tag/sol-martinez-sole/" data-preview="/img/about-img/sol.png" data-preview-type="image"
+                  >Sol Martínez Solé</a
+                >, and
+                <a target="_blank" href="https://www.izdiharafyouni.com/" data-preview="/img/about-img/izdihar.png" data-preview-type="image"
+                  >Izdihar Afyouni</a
+                >
+                with
+                <a target="_blank" href="https://oyoun.de/" data-preview="/img/about-img/oyoun.png" data-preview-type="image"
+                  >Oyoun - Kultur NeuDenken</a
+                >. ☀ I contributed my thoughts to
+                <a target="_blank" href="https://onm.art/" data-preview="/img/about-img/onm.png" data-preview-type="image">Offer Need Machine</a>,
+                part of Artengine's Digital Economies Lab's objective to interrogate issues around precariousness in the creative community. ☀ I gave
+                a talk for the at
+                <a target="_blank" href="https://gutefabrik.com/" data-preview="/img/about-img/gutefabrik.png" data-preview-type="image"
+                  >Die Gute Fabrik</a
+                >
+                Practice Sessions. ☀ I worked with the
+                <a target="_blank" href="https://liveness.milieux.ca/" data-preview="/img/about-img/liveness.png" data-preview-type="image"
+                  >LIVENESS Research Group</a
+                >
+                exploring the intersections of liveness, game structures and rules, and the digital. ☀ I co-led machine learning workshops with
+                <a target="_blank" href="https://genielab.co/en/" data-preview="/img/about-img/genielab.png" data-preview-type="image">GenieLab</a>. ☀
+                I ran the 8th edition of
+                <a href="https://droneday.org/" data-preview="/img/about-img/droneday2021.png" data-preview-type="image">Drone Day</a>, an annual
+                celebration of drone, community, and experimental sounds, and some
+                <a
+                  target="_blank"
+                  href="https://www.owensoundsuntimes.com/news/local-news/buzz-about-drones-the-aural-kind-gets-kids-excited-about-learning"
+                  data-preview="/img/about-img/dronekids.png"
+                  data-preview-type="image"
+                  >kids</a
+                >
+                joined in. ☀ I organized an unsucessful event called Parallel park play - a tiny gathering for us to play alongside each other. ☀ I
+                hosted exploratory sessions called
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/CP3xK35Asm4XOc27yrqvYkQRCUfc4pBl8V8tNM0/"
+                  data-preview="/img/about-img/noworking.png"
+                  data-preview-type="image"
+                  >NoWorking</a
+                >, an online series of sessions dedicated to not working, and challenging ideas around labour. ☀ I contributed to the
+                <a
+                  target="_blank"
+                  href="https://processingfoundation.org/advocacy/community-catalog"
+                  data-preview="/img/about-img/processing.png"
+                  data-preview-type="image"
+                  >Processing Org 20th Anniversary Community Catalog</a
+                >, a community catalog to celebrate 20 years of Processing. ☀ I contributed to the
+                <a
+                  target="_blank"
+                  href="https://gameartsinternational.network/gameartscuratorskit/doku.php"
+                  data-preview="/img/about-img/curatorskit2021.png"
+                  data-preview-type="image"
+                  >Game Arts Curators Kit</a
+                >, a seventy page handbook for anyone interested in bringing a curatorial eye to the presentation of video games. ☀ I started cross
+                country skiing! ☀ I researched, wrote, and illustrated
+                <a
+                  target="_blank"
+                  href="https://gameartsinternational.network/isolation-nation/"
+                  data-preview="/img/about-img/isolation.png"
+                  data-preview-type="image"
+                  >Isolation Nation</a
+                >
+                with the support of
+                <a target="_blank" href="https://gameartsinternational.network/" data-preview="/img/about-img/gain2.png" data-preview-type="image"
+                  >GAIN</a
+                >, the
+                <a target="_blank" href="https://cmf-fmc.ca/" data-preview="/img/about-img/cmf.png" data-preview-type="image">Canada Media Fund</a>,
+                and
+                <a target="_blank" href="https://www.ontariocreates.ca/" data-preview="/img/about-img/ontariocreates.png" data-preview-type="image"
+                  >Ontario Creates</a
+                >, a free resource for tips and tricks culled from 70 Canadian game creators. ☀ To the delight of my mom, I spoke on
+                <a
+                  target="_blank"
+                  href="https://www.cbc.ca/radio/thecurrent/the-current-for-jan-6-2021-1.5863009"
+                  data-preview="/img/about-img/cbc.png"
+                  data-preview-type="image"
+                  >The Current (CBC)</a
+                >
+                exploring creative ways for people to connect online. ☀ I got really sick but then I got better. ☀ I did a special Iceland residency
+                with
+                <a target="_blank" href="https://cabbi.bo/" data-preview="/img/about-img/cabbiboiceland.png" data-preview-type="image">Cabbibo</a>,
+                <a target="_blank" href="https://www.instagram.com/zvhgpyxqtnys/" data-preview="/img/about-img/zvhg.png" data-preview-type="image"
+                  >zvhgpyxqtnys</a
+                >,
+                <a
+                  target="_blank"
+                  href="https://en.wikipedia.org/wiki/Hayden_Dunham"
+                  data-preview="/img/about-img/hayden.png"
+                  data-preview-type="image"
+                  >Hayden Dunham</a
+                >,
+                <a target="_blank" href="https://www.instagram.com/cherry2diamond/" data-preview="/img/about-img/cherry.png" data-preview-type="image"
+                  >cherry2diamond</a
+                >,
+                <a target="_blank" href="https://www.instagram.com/essteb/" data-preview="/img/about-img/celeste.png" data-preview-type="image"
+                  >Celeste Betancur</a
+                >, and
+                <a target="_blank" href="https://jackarmitage.com/" data-preview="/img/about-img/jackarmitage.png" data-preview-type="image"
+                  >Jack Armitage</a
+                >. ☀ I led a workshop on making games and served as a mentor for
+                <a target="_blank" href="https://pixelles.ca/" data-preview="/img/about-img/pixelles.png" data-preview-type="image">Pixelles</a>. ☀ I
+                served on the Inter Arts Matrix: Birthplace of Hybrid Art board. ☀ I served on the Eastern Bloc programming committee. (Online,
+                Montreal, Iceland)
+              </p>
+            </div>
+            <!-- maybe nnneka stopped here  -->
+            <!-- //2020 -->
+            <div class="grid-item year">2020</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the unspeakable year of 2020:</span> ☀ I showed my game
+                <a target="_blank" href="https://marieflanagan.com/closer/" data-preview="/img/about-img/closer.png" data-preview-type="image"
+                  >Closer</a
+                >
+                at the Living Arts Centre in Mississauga, with thousands of other people who also had no idea that a pandemic was about to hit. I
+                organized an
+                <a
+                  target="_blank"
+                  href="https://marieflanagan.com/experimental-gatherings-1/"
+                  data-preview="/img/about-img/expgathering.png"
+                  data-preview-type="image"
+                  >Experimental Gathering</a
+                >. Then the pandemic hit. ☀ I pretty much immediately wrote about what I knew about
+                <a
+                  target="_blank"
+                  href="https://marieflanagan.com/video-tools/"
+                  data-preview="/img/about-img/videotools.png"
+                  data-preview-type="image"
+                  >basic tools for meeting online</a
+                >
+                and
+                <a
+                  target="_blank"
+                  href="https://marieflanagan.com/teaching-online/"
+                  data-preview="/img/about-img/teachingonline.png"
+                  data-preview-type="image"
+                  >and teaching online</a
+                >, because I was getting a lot of requests from people who had never used any tools before and suddenly needed to be experts. ☀ I made
+                Special Guest with a collaborative team of international artists, an experimental marketplace for booking playful guests to improve
+                online meetings (the finisher finishes meetings at all costs, the hype-person supports your ideas, the bard makes a song about your
+                meeting), and an invitation to imagine other ways of gathering. ☀ I made Throne Room, a virtual bathroon for people to collaboratively
+                graffiti and deface at
+                <a href="https://2023.amaze-berlin.de/" data-preview="/img/about-img/amaze.png" data-preview-type="image">A MAZE. Berlin</a>, and for
+                people to consider what they flush away. ☀ I co-organized
+                <a
+                  target="_blank"
+                  href="https://ccfest.rocks/virtual-cc-fest-june-18"
+                  data-preview="/img/about-img/ccfest2020.png"
+                  data-preview-type="image"
+                  >Future Tense: Virtual Creative Code Fest (CC Fest)</a
+                >, a free & friendly event for anyone curious about creative code with workshops on pixel art, music, color, and arduino with
+                <a target="_blank" href="https://www.edsaber.info/" data-preview="/img/about-img/saber2020.png" data-preview-type="image"
+                  >Saber Khan</a
+                >
+                ☀ I made
+                <a target="_blank" href="https://mood-ring.ca/" data-preview="/img/about-img/moodring.png" data-preview-type="image">Mood Ring</a>, a
+                dreamy choose-your-own adventure site where you are given a song, with
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/pink_veil_/?hl=en"
+                  data-preview="/img/about-img/rachel.png"
+                  data-preview-type="image"
+                  >Rachel Weldon</a
+                >,
+                <a target="_blank" href="https://www.debaser.ca/mood-ring-creators" data-preview="/img/about-img/emily.png" data-preview-type="image"
+                  >Emily McQuarrie</a
+                >, and
+                <a target="_blank" href="https://www.richardsondupuis.studio/" data-preview="/img/about-img/robin.png" data-preview-type="image"
+                  >Robin Richardson-Dupuis</a
+                >, for
+                <a target="_blank" href="https://www.debaser.ca/" data-preview="/img/about-img/debaser.png" data-preview-type="image">Debaser</a>. ☀ I
+                made
+                <a
+                  target="_blank"
+                  href="https://marieflanagan.com/neighbourbot/"
+                  data-preview="/img/about-img/neighbourbot.png"
+                  data-preview-type="image"
+                  >Neighbourbot</a
+                >, space for short spontaneous connections with neighbours at online events with Julia Evans for
+                <a href="https://bangbangcon.com/index.html" data-preview="/img/about-img/bangbangcon.png" data-preview-type="image">!!Con 2020</a>. ☀
+                I worked with the
+                <a target="_blank" href="https://liveness.milieux.ca/" data-preview="/img/about-img/liveness2020.png" data-preview-type="image"
+                  >LIVENESS Research Group</a
+                >
+                on Scaling Liveness in Participatory Experiences ☀ I taught a class, a hands-on guide to making personal games with
+                <a
+                  target="_blank"
+                  href="https://iqoqo.org/bahiyya-khans-activism-through-video-games/"
+                  data-preview="/img/about-img/bahiyya2020.png"
+                  data-preview-type="image"
+                  >Bahiyya Khan</a
+                >, and
+                <a target="_blank" href="https://lorenzo.pilia.it/" data-preview="/img/about-img/lorenzo2020.png" data-preview-type="image"
+                  >Lorenzo Pilia</a
+                >
+                at the
+                <a target="_blank" href="https://www.schoolofma.org/" data-preview="/img/about-img/schoolofma2020.png" data-preview-type="image"
+                  >The School of Machines, Making, and Make-Believe</a
+                >, ☀ I led a small
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/CEcKO0pgrF9q_hvpnWXgRO4ABnIp-b6Zgb1L5A0/"
+                  data-preview="/img/about-img/expplatforms.png"
+                  data-preview-type="image"
+                  >gathering for exploring experimental online platforms</a
+                >
+                with Processing Foundation and
+                <a target="_blank" href="https://naotohieda.com/" data-preview="/img/about-img/naoto.png" data-preview-type="image">Naoto Hieda</a> .
+                ☀ I played with arduino and
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/B8kDIADgdIyfU-Lg6ufxZzlTBVeTkt6C7KtAJ80/"
+                  data-preview="/img/about-img/sensors.png"
+                  data-preview-type="image"
+                  >sensors</a
+                >
+                for a while, and also with
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/p/B7lw76KgpMzsNU3VdAiGpYqNq0PSWOmqAGRDaQ0/"
+                  data-preview="/img/about-img/clay.png"
+                  data-preview-type="image"
+                  >clay</a
+                >. ☀ I made a collection of playful sound games for
+                <a target="_blank" href="https://droneday.org/" data-preview="/img/about-img/droneday2020.png" data-preview-type="image">Drone Day</a
+                >, inviting people to get intimate, playful, and curious about their relationship to sound. ☀ I did collaborative drawing sessions
+                with Isabella and Nomi. ☀ I did the Softie Feelies (Online) Interdisciplinary Artist Residency. (Online)
+              </p>
+            </div>
+            <!-- //2019 -->
+            <div class="grid-item year">2019</div>
+            <div class="grid-item description">
+              <p>
+                <span class="year-intro">In the anticipatory year of 2019:</span> I did an artist residency at the at the
+                <a target="_blank" href="https://gamecenter.nyu.edu/" data-preview="/img/about-img/nyugame.png" data-preview-type="image"
+                  >NYU Game Center</a
+                >, where I made a number of games with students, faculty, and community members there, including Arcade Friend, Emergency Exhibition
+                Care, and
+                <a target="_blank" href="https://marieflanagan.com/follow/" data-preview="/img/about-img/follow.png" data-preview-type="image"
+                  >Follow</a
+                >, which I made for the No Quarter Exhibition. ☀ Someday I might write more about this year! (New York, Montreal)
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-  <footer>
-    <div>
-      <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email"
-          class="feather" /></a>
-      <a href="https://linkedin.com/in/marieflanagan/" target="blank"><img src="../img/social-icons/linked-in.svg"
-          alt="LinkedIn" class="feather" /></a>
-      <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg"
-          alt="twitter" class="feather" /></a>
-      <a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="../img/social-icons/facebook.svg"
-          alt="facebook" class="feather" /></a>
-      <a href="https://www.instagram.com/omarieclaire/" target="blank"><img src="../img/social-icons/instagram.svg"
-          alt="instagram" class="feather" /></a>
-    </div>
-  </footer>
-  <script src="bio.js"></script>
-</body>
+    </main>
+    <footer>
+      <div>
+        <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
+        <a href="https://linkedin.com/in/marieflanagan/" target="blank"
+          ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
+        /></a>
+        <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+        <a href="https://www.facebook.com/0marieclaire/" target="blank"
+          ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
+        /></a>
+        <a href="https://www.instagram.com/omarieclaire/" target="blank"
+          ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
+        /></a>
+      </div>
+    </footer>
+    <script src="bio.js"></script>
+    <script>
+  /**
+ * Link Preview — hover (desktop) / long-press (mobile)
+ *
+ * DEBUG: open browser console to see [preview] logs
+ */
+(function () {
+  console.log("[preview] script loaded");
 
+  const previewFloat = document.createElement("div");
+  previewFloat.id = "preview-float";
+  document.body.appendChild(previewFloat);
+
+  const mobileOverlay = document.createElement("div");
+  mobileOverlay.id = "mobile-overlay";
+  mobileOverlay.innerHTML =
+    '<div class="preview-content"></div><div class="hint">release to close · tap link to visit</div>';
+  document.body.appendChild(mobileOverlay);
+  const mobileContent = mobileOverlay.querySelector(".preview-content");
+
+  var previewLinks = document.querySelectorAll("a[data-preview]");
+  console.log("[preview] found " + previewLinks.length + " links with data-preview");
+
+  if (!document.getElementById("preview-styles")) {
+    var style = document.createElement("style");
+    style.id = "preview-styles";
+    style.textContent = `
+      a[data-preview] {
+        text-decoration-color: #b8a9e8;
+        text-decoration-thickness: 2px;
+      }
+      a[data-preview]:hover {
+        text-decoration-color: #7c5cbf;
+      }
+      #preview-float {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(8px) scale(0.97);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        max-width: 520px;
+        max-height: 440px;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+        background: #fff;
+      }
+      #preview-float.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      #preview-float img,
+      #preview-float video {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 440px;
+        object-fit: cover;
+      }
+      #mobile-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 2rem;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+      #mobile-overlay.visible {
+        display: flex;
+        opacity: 1;
+      }
+      #mobile-overlay .preview-content {
+        max-width: 90vw;
+        max-height: 60vh;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        background: #fff;
+      }
+      #mobile-overlay .preview-content img,
+      #mobile-overlay .preview-content video {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+      }
+      #mobile-overlay .hint {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.7);
+        text-align: center;
+      }
+      a[data-preview].pressing {
+        background: rgba(184, 169, 232, 0.15);
+        border-radius: 2px;
+      }
+    `;
+    document.head.appendChild(style);
+    console.log("[preview] styles injected");
+  }
+
+  var isTouchDevice = function () {
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  };
+  console.log("[preview] touch device:", isTouchDevice());
+
+  function buildMedia(src, type, onError, onReady) {
+    console.log("[preview] buildMedia() — type:", type, "src:", src);
+
+    if (type === "video") {
+      var vid = document.createElement("video");
+      vid.muted = true;
+      vid.loop = true;
+      vid.playsInline = true;
+      vid.setAttribute("playsinline", "");
+      vid.setAttribute("muted", "");
+      vid.preload = "auto";
+
+      vid.onerror = function (e) {
+        console.error("[preview] VIDEO onerror fired — src:", src);
+        if (vid.error) {
+          console.error("[preview] video.error.code:", vid.error.code, "message:", vid.error.message);
+        }
+        console.error("[preview] networkState:", vid.networkState, "readyState:", vid.readyState);
+        if (onError) onError();
+      };
+
+      vid.addEventListener("loadstart", function () {
+        console.log("[preview] video EVENT: loadstart");
+      });
+
+      vid.addEventListener("progress", function () {
+        console.log("[preview] video EVENT: progress — buffered ranges:", vid.buffered.length);
+      });
+
+      vid.addEventListener("loadedmetadata", function () {
+        console.log("[preview] video EVENT: loadedmetadata —", vid.videoWidth + "x" + vid.videoHeight, "duration:", vid.duration + "s");
+      });
+
+      vid.addEventListener("loadeddata", function () {
+        console.log("[preview] video EVENT: loadeddata — readyState:", vid.readyState);
+      });
+
+      vid.addEventListener("canplay", function () {
+        console.log("[preview] video EVENT: canplay — attempting play()");
+        vid.play()
+          .then(function () {
+            console.log("[preview] video play() OK");
+          })
+          .catch(function (err) {
+            console.error("[preview] video play() REJECTED:", err.name, err.message);
+          });
+        if (onReady) onReady();
+      }, { once: true });
+
+      vid.addEventListener("playing", function () {
+        console.log("[preview] video EVENT: playing — it's actually playing!");
+      });
+
+      vid.addEventListener("stalled", function () {
+        console.warn("[preview] video EVENT: stalled");
+      });
+
+      vid.addEventListener("suspend", function () {
+        console.log("[preview] video EVENT: suspend");
+      });
+
+      vid.addEventListener("abort", function () {
+        console.warn("[preview] video EVENT: abort");
+      });
+
+      vid.src = src;
+      vid.load();
+      console.log("[preview] video.load() called — full src:", vid.src);
+      console.log("[preview] video element:", vid);
+      return vid;
+    }
+
+    // Image
+    var img = document.createElement("img");
+    img.alt = "";
+    img.onerror = function () {
+      console.error("[preview] IMAGE onerror — src:", src, "full:", img.src);
+      if (onError) onError();
+    };
+    img.onload = function () {
+      console.log("[preview] IMAGE loaded —", img.naturalWidth + "x" + img.naturalHeight, "src:", src);
+      if (onReady) onReady();
+    };
+    img.src = src;
+    return img;
+  }
+
+  // ── DESKTOP ──────────────────────────────────────────────────
+  var currentHoverLink = null;
+  var showTimeout = null;
+
+  function positionFloat(e) {
+    var pad = 16, fw = 320, fh = 240;
+    var x = e.clientX + pad;
+    var y = e.clientY + pad;
+    if (x + fw > window.innerWidth) x = e.clientX - fw - pad;
+    if (y + fh > window.innerHeight) y = e.clientY - fh - pad;
+    if (x < 0) x = pad;
+    if (y < 0) y = pad;
+    previewFloat.style.left = x + "px";
+    previewFloat.style.top = y + "px";
+  }
+
+  function hideFloat() {
+    clearTimeout(showTimeout);
+    currentHoverLink = null;
+    previewFloat.classList.remove("visible");
+    var vid = previewFloat.querySelector("video");
+    if (vid) vid.pause();
+  }
+
+  function handleMouseEnter(e) {
+    var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+    var link = el ? el.closest("a[data-preview]") : null;
+    if (!link || isTouchDevice()) return;
+
+    var src = link.dataset.preview;
+    var type = link.dataset.previewType || "image";
+    console.log("[preview] ─── HOVER ───", link.textContent.trim(), "| type:", type, "| src:", src);
+
+    currentHoverLink = link;
+    var lastEvent = e;
+
+    showTimeout = setTimeout(function () {
+      console.log("[preview] hover delay passed — building media now");
+      previewFloat.innerHTML = "";
+      var media = buildMedia(
+        src,
+        type,
+        function () {
+          console.log("[preview] load failed — hiding");
+          hideFloat();
+        },
+        function () {
+          if (currentHoverLink === link) {
+            console.log("[preview] media ready — SHOWING preview");
+            positionFloat(lastEvent);
+            previewFloat.classList.add("visible");
+            console.log("[preview] preview-float classes:", previewFloat.className);
+            console.log("[preview] preview-float position:", previewFloat.style.left, previewFloat.style.top);
+            console.log("[preview] preview-float children:", previewFloat.children.length);
+          } else {
+            console.log("[preview] media ready but mouse already left — not showing");
+          }
+        }
+      );
+      previewFloat.appendChild(media);
+      console.log("[preview] media appended, waiting for load callbacks...");
+    }, 120);
+
+    function trackMouse(ev) { lastEvent = ev; }
+    link.addEventListener("mousemove", trackMouse);
+    link.addEventListener("mouseleave", function cleanup() {
+      link.removeEventListener("mousemove", trackMouse);
+      link.removeEventListener("mouseleave", cleanup);
+    });
+  }
+
+  function handleMouseMove(e) {
+    if (!currentHoverLink) return;
+    positionFloat(e);
+  }
+
+  function handleMouseLeave(e) {
+    var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+    var link = el ? el.closest("a[data-preview]") : null;
+    if (!link) return;
+    console.log("[preview] ─── LEAVE ───", link.textContent.trim());
+    hideFloat();
+  }
+
+  document.addEventListener("mouseenter", handleMouseEnter, true);
+  document.addEventListener("mouseleave", handleMouseLeave, true);
+  document.addEventListener("mousemove", handleMouseMove);
+
+  // ── MOBILE ───────────────────────────────────────────────────
+  var pressTimer = null;
+  var pressedLink = null;
+  var didLongPress = false;
+  var LONG_PRESS_MS = 400;
+
+  function showMobilePreview(link) {
+    var src = link.dataset.preview;
+    var type = link.dataset.previewType || "image";
+    console.log("[preview] ─── MOBILE PREVIEW ───", link.textContent.trim(), "| src:", src);
+    mobileContent.innerHTML = "";
+    var media = buildMedia(src, type, function () {
+      console.log("[preview] mobile load failed — hiding overlay");
+      hideMobilePreview();
+    }, null);
+    mobileContent.appendChild(media);
+    mobileOverlay.classList.add("visible");
+    if (navigator.vibrate) navigator.vibrate(30);
+  }
+
+  function hideMobilePreview() {
+    mobileOverlay.classList.remove("visible");
+    var vid = mobileContent.querySelector("video");
+    if (vid) vid.pause();
+  }
+
+  document.addEventListener("touchstart", function (e) {
+    var link = e.target.closest("a[data-preview]");
+    if (!link) return;
+    console.log("[preview] TOUCHSTART —", link.textContent.trim());
+    pressedLink = link;
+    didLongPress = false;
+    link.classList.add("pressing");
+    pressTimer = setTimeout(function () {
+      didLongPress = true;
+      showMobilePreview(link);
+    }, LONG_PRESS_MS);
+  }, { passive: true });
+
+  document.addEventListener("touchend", function (e) {
+    clearTimeout(pressTimer);
+    if (pressedLink) pressedLink.classList.remove("pressing");
+    if (didLongPress) {
+      e.preventDefault();
+      hideMobilePreview();
+      didLongPress = false;
+    }
+    pressedLink = null;
+  });
+
+  document.addEventListener("touchmove", function () {
+    clearTimeout(pressTimer);
+    if (pressedLink) pressedLink.classList.remove("pressing");
+    if (didLongPress) {
+      hideMobilePreview();
+      didLongPress = false;
+    }
+  }, { passive: true });
+
+  mobileOverlay.addEventListener("click", function () {
+    hideMobilePreview();
+  });
+
+  console.log("[preview] ✓ all event listeners registered, ready to go");
+})();
+    </script>
+  </body>
 </html>

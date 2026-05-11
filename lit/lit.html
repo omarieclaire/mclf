@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="meshtastic zine" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Meshtastic</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+    <link rel="stylesheet" href="../flipbook/flipbook.css" />
+
+       <meta property="og:title" content="Meshtastic" />
+    <meta property="og:description" content="meshtastic zine" />
+    <meta property="og:image" content="https://marieflanagan.com/meshtastic/img/meshtasticcover.png" />
+    <meta property="og:url" content="https://marieflanagan.com/meshtastic/" />
+    <meta property="og:type" content="article" />
+
+    <meta name="twitter:title" content="Meshtastic" />
+    <meta name="twitter:description" content="meshtastic zine" />
+    <meta name="twitter:image" content="https://marieflanagan.com/meshtastic/img/meshtasticcover.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+     <a href="#flipbook" class="skip-link">Skip to flipbook</a>
+
+<!-- Top-right controls -->
+<div class="top-right-controls">
+  <div class="info-panel" id="info-panel">
+    <h3>Zoom</h3>
+    <div class="zoom-controls">
+      <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom out">−</button>
+      <span class="zoom-level" id="zoom-level">100%</span>
+      <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom in">+</button>
+    </div>
+    <button id="zoom-reset" class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;">Reset</button>
+    
+    <ul class="shortcuts-list">
+      <li><kbd>←</kbd> <kbd>→</kbd> Navigate</li>
+      <li><kbd>Space</kbd> Next page</li>
+    </ul>
+  </div>
+  
+  <button id="info-btn" class="info-btn" aria-label="Info and shortcuts">ⓘ</button>
+  <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Toggle fullscreen">
+    <span id="fullscreen-icon">⛶</span>
+  </button>
+</div>
+
+<!-- Page counter - bottom right -->
+<div class="page-counter" id="page-counter">1 / 1</div>
+
+<div id="main-container" class="flipbook-container">
+  <div id="loading-message" class="loading" role="status" aria-live="polite">
+    <div>Loading your zine...</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <div id="book-wrapper" class="book-wrapper" style="display: none">
+    <button id="prev-btn" class="nav-arrow" aria-label="Previous page">◀</button>
+    <div id="flipbook-container">
+      <div id="flipbook"></div>
+    </div>
+    <button id="next-btn" class="nav-arrow" aria-label="Next page">▶</button>
+  </div>
+</div>
+
+    <script>
+      const PDF_URL = "lit.pdf";
+    </script>
+    <script src="../flipbook/flipbook.js"></script>
+  </body>
+</html>
