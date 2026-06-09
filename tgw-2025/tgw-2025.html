@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toronto Games Week</title>
+
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet" />
+
+    <!-- Meta Tags -->
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta name="description" content="Celebrating games in Toronto, Canada" />
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Toronto Games Week" />
+    <meta property="og:description" content="Celebrating games in Toronto, Canada" />
+
+    <meta property="og:image" content="https://torontogamesweek.comimages/2025/TGW_Poster_Assets_2025/smPoster.png" />
+    <meta property="og:url" content="https://torontogamesweek.com" />
+    <meta property="og:type" content="webpage" />
+
+    <!-- Twitter Tags -->
+    <meta name="twitter:title" content="Toronto Games Week" />
+    <meta name="twitter:description" content="Celebrating games in Toronto, Canada" />
+    <meta name="twitter:image" content="https://torontogamesweek.comimages/2025/TGW_Poster_Assets_2025/smPoster.png" id="indexImage" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Image Specifications -->
+    <meta
+      property="og:image:alt"
+      content="Poster for TGW - an illustration of a magical city with many tiny elements related to Toronto like a racoon, the TTC, and the beach" />
+
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+
+    <style>
+      canvas {
+        position: absolute;
+        width: 100%;
+        background-image: none;
+        height: auto;
+        left: 0;
+        top: 0;
+      }
+
+      .image-container {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(1000px * (9 / 16));
+      }
+
+      .footer-credit {
+        font-size: 1rem;
+        color: blue;
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+        margin-top: 0;
+        background-color: none;
+      }
+
+      /* Main content areas */
+      .content {
+        pointer-events: none;
+      }
+
+      .textBox {
+        background-color: hsla(0, 0%, 100%, 0.9);
+        pointer-events: none;
+        /* max-width: 98vw; */
+        /* padding: 4rem 10rem; */
+      }
+
+      .contentContainer > * .headerImgDiv img,
+      .btn,
+      .floatingBtn,
+      .textBox > * {
+        pointer-events: all;
+        z-index: 2;
+      }
+
+      /* Header */
+      header {
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        top: 0;
+        pointer-events: auto;
+        height: 4rem;
+        margin-top: 0;
+      }
+
+      @media screen and (min-width: 900px) {
+      }
+
+      @media (min-width: 768px) {
+        header {
+          height: 0;
+        }
+
+        canvas {
+          position: absolute; /* Reset for desktop */
+        }
+
+        .image-container {
+          height: 100vh; /* Reset for desktop */
+        }
+
+        main {
+          margin-top: 90vh; /* Desktop margin */
+        }
+
+        header {
+          position: relative;
+        }
+      }
+
+      /* Base */
+      main {
+        position: relative;
+        z-index: 1;
+        margin-top: 3vh;
+      }
+
+      /* Tablet */
+      @media (min-width: 768px) {
+        main {
+          margin-top: 90vh;
+        }
+      }
+
+      /* desktop size ~1976px */
+      @media (min-width: 1900px) {
+        main {
+          margin-top: 120vh;
+        }
+      }
+
+      /* Larger monitors */
+      @media (min-width: 2500px) {
+        main {
+          margin-top: 150vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="image-container">
+      <canvas id="myCanvas" width="500" height="400"></canvas>
+    </div>
+    <main class="no-pointer-events">
+      <div class="contentContainer" id="landingPage">
+        <div class="footer-credit">
+          <p class="footer-credit"><a href="http://marieflanagan.com/" target="_blank">site made by Marie LeBlanc Flanagan</a></p>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const bwImage = new Image();
+      const colorImage = new Image();
+
+      let lastX = 0,
+        lastY = 0;
+      let isFirstTouch = true;
+      let particles = [];
+      let isFixed = false;
+      let scrollTriggerInstance;
+
+      const imagePaths = {
+        small: {
+          bw: "images/2025/sbw-nodate.jpg",
+          color: "images/2025/scolour-nodate.jpg",
+        },
+        medium: {
+          bw: "images/2025/lbw-nodate.jpg",
+          color: "images/2025/mcolour-nodate.jpg",
+        },
+        large: {
+          bw: "images/2025/lbw-nodate.jpg",
+          color: "images/2025/lcolour-nodate.jpg",
+        },
+        xlarge: {
+          bw: "images/2025/xlbw-nodate.jpg",
+          color: "images/2025/xlcolour-nodate.jpg",
+        },
+      };
+
+      // Function to determine which image size to load
+      function getImageSizeToLoad() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        // For special case like projectors
+        if (width >= 3000 || height >= 2000) {
+          return "xlarge";
+        }
+        // For large desktop screens
+        else if (width >= 1920 || height >= 1080) {
+          return "large";
+        }
+        // For medium screens (tablets and small laptops)
+        else if (width >= 768) {
+          return "medium";
+        }
+        // For mobile screens
+        else {
+          return "small";
+        }
+      }
+
+      function loadAppropriateImages() {
+        const sizeToLoad = getImageSizeToLoad();
+        console.log(`Loading ${sizeToLoad} images`);
+
+        bwImage.src = imagePaths[sizeToLoad].bw;
+        colorImage.src = imagePaths[sizeToLoad].color;
+      }
+
+      function resizeCanvas() {
+        if (bwImage.complete) {
+          canvas.width = window.innerWidth;
+          canvas.height = bwImage.naturalHeight * (window.innerWidth / bwImage.naturalWidth);
+          ctx.drawImage(bwImage, 0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      function createScrollTrigger() {
+        if (scrollTriggerInstance) {
+          scrollTriggerInstance.kill();
+        }
+
+        const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+
+        scrollTriggerInstance = ScrollTrigger.create({
+          trigger: ".contentContainer",
+          start: isDesktop ? "top bottom" : "top 10%",
+          end: "bottom top",
+          scrub: 2,
+          pin: ".image-container",
+          pinSpacing: false,
+        });
+      }
+
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.clientX || e.touches?.[0]?.clientX || lastX;
+        const clientY = e.clientY || e.touches?.[0]?.clientY || lastY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height),
+        };
+      }
+
+      let eventRef;
+      function draw() {
+        const coords = getCoords(eventRef);
+
+        if (isFirstTouch) {
+          lastX = coords.x;
+          lastY = coords.y;
+          isFirstTouch = false;
+          return;
+        }
+
+        ctx.globalCompositeOperation = "destination-out";
+
+        const newParticles = Array(18)
+          .fill()
+          .map(() => ({
+            x: coords.x,
+            y: coords.y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 16 + 2,
+            opacity: 0.77,
+          }));
+
+        particles.push(...newParticles);
+
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.opacity *= 0.95;
+          ctx.globalAlpha = p.opacity;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        particles = particles.filter((p) => p.x > 0 && p.x < canvas.width && p.y > 0 && p.y < canvas.height && p.opacity > 0.01);
+
+        ctx.globalCompositeOperation = "destination-over";
+        const ratio = colorImage.naturalHeight / colorImage.naturalWidth;
+        const width = canvas.width;
+        const height = width * ratio;
+        ctx.drawImage(colorImage, 0, 0, width, height);
+
+        lastX = coords.x;
+        lastY = coords.y;
+      }
+
+      // Debounce function for resize events
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      // Event listeners
+      window.addEventListener("load", () => {
+        // Initial load of the appropriate images
+        loadAppropriateImages();
+        createScrollTrigger();
+      });
+
+      // Only reload images if screen size category changes
+      let currentSizeCategory = getImageSizeToLoad();
+
+      window.addEventListener(
+        "resize",
+        debounce(() => {
+          const newSizeCategory = getImageSizeToLoad();
+
+          // Only reload images if we've crossed a breakpoint
+          if (newSizeCategory !== currentSizeCategory) {
+            currentSizeCategory = newSizeCategory;
+            loadAppropriateImages();
+          }
+
+          resizeCanvas();
+          createScrollTrigger();
+        }, 250),
+      );
+
+      let timeoutReference;
+
+      canvas.addEventListener("mousemove", (e) => {
+        eventRef = e;
+        if (timeoutReference) return;
+
+        timeoutReference = setInterval(() => {
+          draw();
+        }, 1);
+      });
+      canvas.addEventListener("touchmove", (e) => {
+        eventRef = e;
+        if (timeoutReference) return;
+
+        timeoutReference = setInterval(() => {
+          draw();
+        }, 1);
+      });
+
+      window.addEventListener("blur", () => {
+        clearInterval(timeoutReference);
+        timeoutReference = null;
+      });
+      canvas.addEventListener("mouseout", () => {
+        isFirstTouch = true;
+      });
+      canvas.addEventListener("touchend", () => {
+        isFirstTouch = true;
+      });
+
+      // Image load handlers
+      bwImage.onload = resizeCanvas;
+      colorImage.onload = resizeCanvas;
+    </script>
+  </body>
+</html>
