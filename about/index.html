@@ -63,7 +63,7 @@
             <a href="../contact">Contact</a>
           </li>
 
-          <li><a href="../cv/">CV</a></li>
+          <!-- <li><a href="../cv/">CV</a></li> -->
         </ul>
       </nav>
     </header>
@@ -115,6 +115,27 @@
               <p>
                 <span class="year-intro">In the radiant year of 2026:</span> I will continue existing.
                 <a href="" data-preview="/img/about-img/probably.png" data-preview-type="image">Probably?</a> ☀
+
+                <!-- went to le massif  -->
+                <!-- finished the mesh zine  -->
+                <!-- made a cute postcard for tgw  -->
+                <!-- made playful site for tgw  -->
+                <!-- coloured the mesh zine for a riso and discovered risos are not cheap to use  -->
+                <!-- visited angelo in france  -->
+                <!-- gave talk at. ENJMIN Game Conferences (EGC), -->
+                <!-- met quakers  -->
+                <!-- hosted a veagn cheese party  -->
+                <!-- co hosted teh C-side 5 a 7 -->
+                <!-- vipassana 2.0 -->
+                <!-- made teh montreal cult cal  -->
+                <!-- tried OT  -->
+                <!-- sat lights game  -->
+                <!-- tgw  -->
+                <!-- moderated AI activism in arts panel  -->
+                <!-- curated night parkcade -->
+                <!-- co curated giant video games  -->
+                <!-- Elektra presentation -->
+                <!-- critical about ai hang at bar darling -->
               </p>
             </div>
 
@@ -1090,32 +1111,31 @@
     </footer>
     <script src="bio.js"></script>
     <script>
-  /**
- * Link Preview — hover (desktop) / long-press (mobile)
- *
- * DEBUG: open browser console to see [preview] logs
- */
-(function () {
-  console.log("[preview] script loaded");
+      /**
+       * Link Preview — hover (desktop) / long-press (mobile)
+       *
+       * DEBUG: open browser console to see [preview] logs
+       */
+      (function () {
+        console.log("[preview] script loaded");
 
-  const previewFloat = document.createElement("div");
-  previewFloat.id = "preview-float";
-  document.body.appendChild(previewFloat);
+        const previewFloat = document.createElement("div");
+        previewFloat.id = "preview-float";
+        document.body.appendChild(previewFloat);
 
-  const mobileOverlay = document.createElement("div");
-  mobileOverlay.id = "mobile-overlay";
-  mobileOverlay.innerHTML =
-    '<div class="preview-content"></div><div class="hint">release to close · tap link to visit</div>';
-  document.body.appendChild(mobileOverlay);
-  const mobileContent = mobileOverlay.querySelector(".preview-content");
+        const mobileOverlay = document.createElement("div");
+        mobileOverlay.id = "mobile-overlay";
+        mobileOverlay.innerHTML = '<div class="preview-content"></div><div class="hint">release to close · tap link to visit</div>';
+        document.body.appendChild(mobileOverlay);
+        const mobileContent = mobileOverlay.querySelector(".preview-content");
 
-  var previewLinks = document.querySelectorAll("a[data-preview]");
-  console.log("[preview] found " + previewLinks.length + " links with data-preview");
+        var previewLinks = document.querySelectorAll("a[data-preview]");
+        console.log("[preview] found " + previewLinks.length + " links with data-preview");
 
-  if (!document.getElementById("preview-styles")) {
-    var style = document.createElement("style");
-    style.id = "preview-styles";
-    style.textContent = `
+        if (!document.getElementById("preview-styles")) {
+          var style = document.createElement("style");
+          style.id = "preview-styles";
+          style.textContent = `
       a[data-preview] {
         text-decoration-color: #b8a9e8;
         text-decoration-thickness: 2px;
@@ -1195,255 +1215,277 @@
         border-radius: 2px;
       }
     `;
-    document.head.appendChild(style);
-    console.log("[preview] styles injected");
-  }
-
-  var isTouchDevice = function () {
-    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  };
-  console.log("[preview] touch device:", isTouchDevice());
-
-  function buildMedia(src, type, onError, onReady) {
-    console.log("[preview] buildMedia() — type:", type, "src:", src);
-
-    if (type === "video") {
-      var vid = document.createElement("video");
-      vid.muted = true;
-      vid.loop = true;
-      vid.playsInline = true;
-      vid.setAttribute("playsinline", "");
-      vid.setAttribute("muted", "");
-      vid.preload = "auto";
-
-      vid.onerror = function (e) {
-        console.error("[preview] VIDEO onerror fired — src:", src);
-        if (vid.error) {
-          console.error("[preview] video.error.code:", vid.error.code, "message:", vid.error.message);
+          document.head.appendChild(style);
+          console.log("[preview] styles injected");
         }
-        console.error("[preview] networkState:", vid.networkState, "readyState:", vid.readyState);
-        if (onError) onError();
-      };
 
-      vid.addEventListener("loadstart", function () {
-        console.log("[preview] video EVENT: loadstart");
-      });
+        var isTouchDevice = function () {
+          return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        };
+        console.log("[preview] touch device:", isTouchDevice());
 
-      vid.addEventListener("progress", function () {
-        console.log("[preview] video EVENT: progress — buffered ranges:", vid.buffered.length);
-      });
+        function buildMedia(src, type, onError, onReady) {
+          console.log("[preview] buildMedia() — type:", type, "src:", src);
 
-      vid.addEventListener("loadedmetadata", function () {
-        console.log("[preview] video EVENT: loadedmetadata —", vid.videoWidth + "x" + vid.videoHeight, "duration:", vid.duration + "s");
-      });
+          if (type === "video") {
+            var vid = document.createElement("video");
+            vid.muted = true;
+            vid.loop = true;
+            vid.playsInline = true;
+            vid.setAttribute("playsinline", "");
+            vid.setAttribute("muted", "");
+            vid.preload = "auto";
 
-      vid.addEventListener("loadeddata", function () {
-        console.log("[preview] video EVENT: loadeddata — readyState:", vid.readyState);
-      });
+            vid.onerror = function (e) {
+              console.error("[preview] VIDEO onerror fired — src:", src);
+              if (vid.error) {
+                console.error("[preview] video.error.code:", vid.error.code, "message:", vid.error.message);
+              }
+              console.error("[preview] networkState:", vid.networkState, "readyState:", vid.readyState);
+              if (onError) onError();
+            };
 
-      vid.addEventListener("canplay", function () {
-        console.log("[preview] video EVENT: canplay — attempting play()");
-        vid.play()
-          .then(function () {
-            console.log("[preview] video play() OK");
-          })
-          .catch(function (err) {
-            console.error("[preview] video play() REJECTED:", err.name, err.message);
-          });
-        if (onReady) onReady();
-      }, { once: true });
+            vid.addEventListener("loadstart", function () {
+              console.log("[preview] video EVENT: loadstart");
+            });
 
-      vid.addEventListener("playing", function () {
-        console.log("[preview] video EVENT: playing — it's actually playing!");
-      });
+            vid.addEventListener("progress", function () {
+              console.log("[preview] video EVENT: progress — buffered ranges:", vid.buffered.length);
+            });
 
-      vid.addEventListener("stalled", function () {
-        console.warn("[preview] video EVENT: stalled");
-      });
+            vid.addEventListener("loadedmetadata", function () {
+              console.log("[preview] video EVENT: loadedmetadata —", vid.videoWidth + "x" + vid.videoHeight, "duration:", vid.duration + "s");
+            });
 
-      vid.addEventListener("suspend", function () {
-        console.log("[preview] video EVENT: suspend");
-      });
+            vid.addEventListener("loadeddata", function () {
+              console.log("[preview] video EVENT: loadeddata — readyState:", vid.readyState);
+            });
 
-      vid.addEventListener("abort", function () {
-        console.warn("[preview] video EVENT: abort");
-      });
+            vid.addEventListener(
+              "canplay",
+              function () {
+                console.log("[preview] video EVENT: canplay — attempting play()");
+                vid
+                  .play()
+                  .then(function () {
+                    console.log("[preview] video play() OK");
+                  })
+                  .catch(function (err) {
+                    console.error("[preview] video play() REJECTED:", err.name, err.message);
+                  });
+                if (onReady) onReady();
+              },
+              { once: true },
+            );
 
-      vid.src = src;
-      vid.load();
-      console.log("[preview] video.load() called — full src:", vid.src);
-      console.log("[preview] video element:", vid);
-      return vid;
-    }
+            vid.addEventListener("playing", function () {
+              console.log("[preview] video EVENT: playing — it's actually playing!");
+            });
 
-    // Image
-    var img = document.createElement("img");
-    img.alt = "";
-    img.onerror = function () {
-      console.error("[preview] IMAGE onerror — src:", src, "full:", img.src);
-      if (onError) onError();
-    };
-    img.onload = function () {
-      console.log("[preview] IMAGE loaded —", img.naturalWidth + "x" + img.naturalHeight, "src:", src);
-      if (onReady) onReady();
-    };
-    img.src = src;
-    return img;
-  }
+            vid.addEventListener("stalled", function () {
+              console.warn("[preview] video EVENT: stalled");
+            });
 
-  // ── DESKTOP ──────────────────────────────────────────────────
-  var currentHoverLink = null;
-  var showTimeout = null;
+            vid.addEventListener("suspend", function () {
+              console.log("[preview] video EVENT: suspend");
+            });
 
-  function positionFloat(e) {
-    var pad = 16, fw = 320, fh = 240;
-    var x = e.clientX + pad;
-    var y = e.clientY + pad;
-    if (x + fw > window.innerWidth) x = e.clientX - fw - pad;
-    if (y + fh > window.innerHeight) y = e.clientY - fh - pad;
-    if (x < 0) x = pad;
-    if (y < 0) y = pad;
-    previewFloat.style.left = x + "px";
-    previewFloat.style.top = y + "px";
-  }
+            vid.addEventListener("abort", function () {
+              console.warn("[preview] video EVENT: abort");
+            });
 
-  function hideFloat() {
-    clearTimeout(showTimeout);
-    currentHoverLink = null;
-    previewFloat.classList.remove("visible");
-    var vid = previewFloat.querySelector("video");
-    if (vid) vid.pause();
-  }
-
-  function handleMouseEnter(e) {
-    var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
-    var link = el ? el.closest("a[data-preview]") : null;
-    if (!link || isTouchDevice()) return;
-
-    var src = link.dataset.preview;
-    var type = link.dataset.previewType || "image";
-    console.log("[preview] ─── HOVER ───", link.textContent.trim(), "| type:", type, "| src:", src);
-
-    currentHoverLink = link;
-    var lastEvent = e;
-
-    showTimeout = setTimeout(function () {
-      console.log("[preview] hover delay passed — building media now");
-      previewFloat.innerHTML = "";
-      var media = buildMedia(
-        src,
-        type,
-        function () {
-          console.log("[preview] load failed — hiding");
-          hideFloat();
-        },
-        function () {
-          if (currentHoverLink === link) {
-            console.log("[preview] media ready — SHOWING preview");
-            positionFloat(lastEvent);
-            previewFloat.classList.add("visible");
-            console.log("[preview] preview-float classes:", previewFloat.className);
-            console.log("[preview] preview-float position:", previewFloat.style.left, previewFloat.style.top);
-            console.log("[preview] preview-float children:", previewFloat.children.length);
-          } else {
-            console.log("[preview] media ready but mouse already left — not showing");
+            vid.src = src;
+            vid.load();
+            console.log("[preview] video.load() called — full src:", vid.src);
+            console.log("[preview] video element:", vid);
+            return vid;
           }
+
+          // Image
+          var img = document.createElement("img");
+          img.alt = "";
+          img.onerror = function () {
+            console.error("[preview] IMAGE onerror — src:", src, "full:", img.src);
+            if (onError) onError();
+          };
+          img.onload = function () {
+            console.log("[preview] IMAGE loaded —", img.naturalWidth + "x" + img.naturalHeight, "src:", src);
+            if (onReady) onReady();
+          };
+          img.src = src;
+          return img;
         }
-      );
-      previewFloat.appendChild(media);
-      console.log("[preview] media appended, waiting for load callbacks...");
-    }, 120);
 
-    function trackMouse(ev) { lastEvent = ev; }
-    link.addEventListener("mousemove", trackMouse);
-    link.addEventListener("mouseleave", function cleanup() {
-      link.removeEventListener("mousemove", trackMouse);
-      link.removeEventListener("mouseleave", cleanup);
-    });
-  }
+        // ── DESKTOP ──────────────────────────────────────────────────
+        var currentHoverLink = null;
+        var showTimeout = null;
 
-  function handleMouseMove(e) {
-    if (!currentHoverLink) return;
-    positionFloat(e);
-  }
+        function positionFloat(e) {
+          var pad = 16,
+            fw = 320,
+            fh = 240;
+          var x = e.clientX + pad;
+          var y = e.clientY + pad;
+          if (x + fw > window.innerWidth) x = e.clientX - fw - pad;
+          if (y + fh > window.innerHeight) y = e.clientY - fh - pad;
+          if (x < 0) x = pad;
+          if (y < 0) y = pad;
+          previewFloat.style.left = x + "px";
+          previewFloat.style.top = y + "px";
+        }
 
-  function handleMouseLeave(e) {
-    var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
-    var link = el ? el.closest("a[data-preview]") : null;
-    if (!link) return;
-    console.log("[preview] ─── LEAVE ───", link.textContent.trim());
-    hideFloat();
-  }
+        function hideFloat() {
+          clearTimeout(showTimeout);
+          currentHoverLink = null;
+          previewFloat.classList.remove("visible");
+          var vid = previewFloat.querySelector("video");
+          if (vid) vid.pause();
+        }
 
-  document.addEventListener("mouseenter", handleMouseEnter, true);
-  document.addEventListener("mouseleave", handleMouseLeave, true);
-  document.addEventListener("mousemove", handleMouseMove);
+        function handleMouseEnter(e) {
+          var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+          var link = el ? el.closest("a[data-preview]") : null;
+          if (!link || isTouchDevice()) return;
 
-  // ── MOBILE ───────────────────────────────────────────────────
-  var pressTimer = null;
-  var pressedLink = null;
-  var didLongPress = false;
-  var LONG_PRESS_MS = 400;
+          var src = link.dataset.preview;
+          var type = link.dataset.previewType || "image";
+          console.log("[preview] ─── HOVER ───", link.textContent.trim(), "| type:", type, "| src:", src);
 
-  function showMobilePreview(link) {
-    var src = link.dataset.preview;
-    var type = link.dataset.previewType || "image";
-    console.log("[preview] ─── MOBILE PREVIEW ───", link.textContent.trim(), "| src:", src);
-    mobileContent.innerHTML = "";
-    var media = buildMedia(src, type, function () {
-      console.log("[preview] mobile load failed — hiding overlay");
-      hideMobilePreview();
-    }, null);
-    mobileContent.appendChild(media);
-    mobileOverlay.classList.add("visible");
-    if (navigator.vibrate) navigator.vibrate(30);
-  }
+          currentHoverLink = link;
+          var lastEvent = e;
 
-  function hideMobilePreview() {
-    mobileOverlay.classList.remove("visible");
-    var vid = mobileContent.querySelector("video");
-    if (vid) vid.pause();
-  }
+          showTimeout = setTimeout(function () {
+            console.log("[preview] hover delay passed — building media now");
+            previewFloat.innerHTML = "";
+            var media = buildMedia(
+              src,
+              type,
+              function () {
+                console.log("[preview] load failed — hiding");
+                hideFloat();
+              },
+              function () {
+                if (currentHoverLink === link) {
+                  console.log("[preview] media ready — SHOWING preview");
+                  positionFloat(lastEvent);
+                  previewFloat.classList.add("visible");
+                  console.log("[preview] preview-float classes:", previewFloat.className);
+                  console.log("[preview] preview-float position:", previewFloat.style.left, previewFloat.style.top);
+                  console.log("[preview] preview-float children:", previewFloat.children.length);
+                } else {
+                  console.log("[preview] media ready but mouse already left — not showing");
+                }
+              },
+            );
+            previewFloat.appendChild(media);
+            console.log("[preview] media appended, waiting for load callbacks...");
+          }, 120);
 
-  document.addEventListener("touchstart", function (e) {
-    var link = e.target.closest("a[data-preview]");
-    if (!link) return;
-    console.log("[preview] TOUCHSTART —", link.textContent.trim());
-    pressedLink = link;
-    didLongPress = false;
-    link.classList.add("pressing");
-    pressTimer = setTimeout(function () {
-      didLongPress = true;
-      showMobilePreview(link);
-    }, LONG_PRESS_MS);
-  }, { passive: true });
+          function trackMouse(ev) {
+            lastEvent = ev;
+          }
+          link.addEventListener("mousemove", trackMouse);
+          link.addEventListener("mouseleave", function cleanup() {
+            link.removeEventListener("mousemove", trackMouse);
+            link.removeEventListener("mouseleave", cleanup);
+          });
+        }
 
-  document.addEventListener("touchend", function (e) {
-    clearTimeout(pressTimer);
-    if (pressedLink) pressedLink.classList.remove("pressing");
-    if (didLongPress) {
-      e.preventDefault();
-      hideMobilePreview();
-      didLongPress = false;
-    }
-    pressedLink = null;
-  });
+        function handleMouseMove(e) {
+          if (!currentHoverLink) return;
+          positionFloat(e);
+        }
 
-  document.addEventListener("touchmove", function () {
-    clearTimeout(pressTimer);
-    if (pressedLink) pressedLink.classList.remove("pressing");
-    if (didLongPress) {
-      hideMobilePreview();
-      didLongPress = false;
-    }
-  }, { passive: true });
+        function handleMouseLeave(e) {
+          var el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+          var link = el ? el.closest("a[data-preview]") : null;
+          if (!link) return;
+          console.log("[preview] ─── LEAVE ───", link.textContent.trim());
+          hideFloat();
+        }
 
-  mobileOverlay.addEventListener("click", function () {
-    hideMobilePreview();
-  });
+        document.addEventListener("mouseenter", handleMouseEnter, true);
+        document.addEventListener("mouseleave", handleMouseLeave, true);
+        document.addEventListener("mousemove", handleMouseMove);
 
-  console.log("[preview] ✓ all event listeners registered, ready to go");
-})();
+        // ── MOBILE ───────────────────────────────────────────────────
+        var pressTimer = null;
+        var pressedLink = null;
+        var didLongPress = false;
+        var LONG_PRESS_MS = 400;
+
+        function showMobilePreview(link) {
+          var src = link.dataset.preview;
+          var type = link.dataset.previewType || "image";
+          console.log("[preview] ─── MOBILE PREVIEW ───", link.textContent.trim(), "| src:", src);
+          mobileContent.innerHTML = "";
+          var media = buildMedia(
+            src,
+            type,
+            function () {
+              console.log("[preview] mobile load failed — hiding overlay");
+              hideMobilePreview();
+            },
+            null,
+          );
+          mobileContent.appendChild(media);
+          mobileOverlay.classList.add("visible");
+          if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function hideMobilePreview() {
+          mobileOverlay.classList.remove("visible");
+          var vid = mobileContent.querySelector("video");
+          if (vid) vid.pause();
+        }
+
+        document.addEventListener(
+          "touchstart",
+          function (e) {
+            var link = e.target.closest("a[data-preview]");
+            if (!link) return;
+            console.log("[preview] TOUCHSTART —", link.textContent.trim());
+            pressedLink = link;
+            didLongPress = false;
+            link.classList.add("pressing");
+            pressTimer = setTimeout(function () {
+              didLongPress = true;
+              showMobilePreview(link);
+            }, LONG_PRESS_MS);
+          },
+          { passive: true },
+        );
+
+        document.addEventListener("touchend", function (e) {
+          clearTimeout(pressTimer);
+          if (pressedLink) pressedLink.classList.remove("pressing");
+          if (didLongPress) {
+            e.preventDefault();
+            hideMobilePreview();
+            didLongPress = false;
+          }
+          pressedLink = null;
+        });
+
+        document.addEventListener(
+          "touchmove",
+          function () {
+            clearTimeout(pressTimer);
+            if (pressedLink) pressedLink.classList.remove("pressing");
+            if (didLongPress) {
+              hideMobilePreview();
+              didLongPress = false;
+            }
+          },
+          { passive: true },
+        );
+
+        mobileOverlay.addEventListener("click", function () {
+          hideMobilePreview();
+        });
+
+        console.log("[preview] ✓ all event listeners registered, ready to go");
+      })();
     </script>
   </body>
 </html>
