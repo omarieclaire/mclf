@@ -44,13 +44,13 @@
       }
 
       .piece-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-        gap: 2rem;
+        columns: 3 15rem;
+        column-gap: 2rem;
         margin: 2rem 0 1rem;
       }
       .piece-grid figure {
-        margin: 0;
+        margin: 0 0 2rem;
+        break-inside: avoid;
       }
       .piece-grid img {
         width: 100%;
@@ -208,7 +208,7 @@
               </figure>
               <figure>
                 <img src="../img/blog-images/er-tactics.png" alt="Handmade prompt cards on a table, each with a short instruction and a small drawing" />
-                <figcaption>Prompt cards from a workshop</figcaption>
+                <figcaption>Prompt cards</figcaption>
               </figure>
             </div>
 
@@ -258,25 +258,20 @@
             <h3>If You Don't Like the Game, Change the Rules (2023)</h3>
             <p>
               A comic about worker co-operatives, unions and labour in the games industry, drawn from 88
-              interviews and survey responses, with research support from Michael Iantorno. It became the
-              seed for a workshop I toured to Mexico City, Berlin, Taipei, Tokyo, Kyoto, San Francisco,
-              Montreal, Halifax and elsewhere.
+              interviews and survey responses, with research support from Michael Iantorno &mdash;
+              <a href="../change-the-rules/comic-english.html" target="blank">read the comic</a>
+              &middot; <a href="../change-the-rules/comic-french.html" target="blank">lire la BD</a>. It
+              became the seed for a workshop I toured to Mexico City, Berlin, Taipei, Tokyo, Kyoto, San
+              Francisco, Montreal, Halifax and elsewhere.
             </p>
             <p>
               At every stop, participants with no zine-making experience left holding a zine they had
               written and drawn themselves, about their own relationship to work &mdash; prompts,
               materials, and everyone credited for what they made. It's the format I bring to every
-              workshop I run. The comic itself exists as an illustrated story and a research whitepaper,
-              in English and French.
+              workshop I run.
             </p>
 
             <div class="piece-grid">
-              <figure>
-                <a href="../change-the-rules/comic-english.html" target="blank">
-                  <img src="../change-the-rules/img/change-rules-cover-en.png" alt="Change the Rules comic cover" />
-                </a>
-                <figcaption>Change the Rules</figcaption>
-              </figure>
               <figure>
                 <img src="../img/blog-images/ctr-workshop.png" alt="Change the Rules zine workshop in progress" />
                 <figcaption>Zine workshop, Kyoto</figcaption>
@@ -294,10 +289,6 @@
                 <figcaption>Another participant's zine, unfolded</figcaption>
               </figure>
             </div>
-            <p>
-              <a href="../change-the-rules/comic-english.html" target="blank">[Read the comic]</a>
-              &middot; <a href="../change-the-rules/comic-french.html" target="blank">[Lire la BD]</a>
-            </p>
 
             <h3>Meshtastic</h3>
             <p>
@@ -328,14 +319,24 @@
               </div>
             </div>
 
+            <p>
+              Most of that hour is spent with Julia Evans at Wizard Zines, my longest-running
+              collaborator &mdash; her published zines on Git, DNS, debugging and how computers do math
+              are where a lot of that shared vocabulary comes from.
+            </p>
+
             <div class="piece-grid">
               <figure>
-                <img src="../img/blog-images/wz-paper.png" alt="Laying out cut zine pages on the floor" />
-                <figcaption>Laying out pages</figcaption>
+                <img src="../img/blog-images/wz-wizardzines.png" alt="Four Wizard Zines titles by Julia Evans standing up: How Git Works, How Integers and Floats Work, The Pocket Guide to Debugging, and How DNS Works" />
+                <figcaption>Wizard Zines, by Julia Evans</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/wz-julia.png" alt="Julia Evans sketching a zine page on a tablet" />
                 <figcaption>Working with Julia Evans</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/wz-paper.png" alt="Laying out cut zine pages on the floor" />
+                <figcaption>Laying out pages</figcaption>
               </figure>
             </div>
 
@@ -373,11 +374,6 @@
               </figure>
             </div>
             <p><a href="../emergency-exhibition-care">More on Emergency Exhibition Care</a></p>
-
-            <p>
-              <a href="../zines">All zines</a><br />
-              <a href="../wizard-zines">Work with Wizard Zines</a>
-            </p>
           </section>
         </div>
 

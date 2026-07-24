@@ -21,7 +21,7 @@
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Closer, Follow, Common, Do-ems, Grow Still, the string game, Sound games and Jeux des Lumi&egrave;res: collaborative and cooperative games where the material is the space between people."
+      content="The string game, Closer, Follow, Common, Do-ems, Grow Still, Sound games and Jeux des Lumi&egrave;res: collaborative and cooperative games where the material is the space between people."
     />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>Closer &amp; collaborative play</title>
@@ -57,13 +57,13 @@
       }
 
       .piece-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-        gap: 2rem;
+        columns: 3 15rem;
+        column-gap: 2rem;
         margin: 2rem 0 1rem;
       }
       .piece-grid figure {
-        margin: 0;
+        margin: 0 0 2rem;
+        break-inside: avoid;
       }
       .piece-grid img {
         width: 100%;
@@ -123,8 +123,35 @@
           <p>
             I make games where the material is the space between people. Sometimes that takes a
             13-metre dome, cameras and speakers; sometimes it takes a piece of string. Every one of
-            them needs another person to exist. It started with Closer.
+            them needs another person to exist.
           </p>
+
+          <section class="doc-section">
+            <h2>The string game</h2>
+            <div class="rule">
+              <p>This is a piece of string.</p>
+              <p>It has two ends.</p>
+              <p>We each take one end.</p>
+              <p>We can either let go.</p>
+              <p>Or not.</p>
+            </div>
+            <p>
+              That is the entire game. I have played it hundreds of times and never seen it played
+              the same way twice. The game emerges as we play. Anyone can rebuild it from the five
+              lines above.
+            </p>
+            <div class="piece-grid">
+              <figure>
+                <img src="../img/blog-images/st-inst.png" alt="Two hands each holding one end of a piece of string" />
+              </figure>
+              <figure>
+                <img src="../img/blog-images/st-play.png" alt="Two people playing the string game" />
+              </figure>
+              <figure>
+                <img src="../img/blog-images/st-play2.png" alt="Two people playing the string game" />
+              </figure>
+            </div>
+          </section>
 
           <section class="doc-section">
             <h2>Closer (2016)</h2>
@@ -244,33 +271,6 @@
               </figure>
             </div>
             <p><a href="../grow-still">More on Grow Still</a></p>
-          </section>
-
-          <section class="doc-section">
-            <h2>The string game</h2>
-            <div class="rule">
-              <p>This is a piece of string.</p>
-              <p>It has two ends.</p>
-              <p>We each take one end.</p>
-              <p>We can either let go.</p>
-              <p>Or not.</p>
-            </div>
-            <p>
-              That is the entire game. I have played it hundreds of times and never seen it played
-              the same way twice. The game emerges as we play. Anyone can rebuild it from the five
-              lines above.
-            </p>
-            <div class="piece-grid">
-              <figure>
-                <img src="../img/blog-images/st-inst.png" alt="Two hands each holding one end of a piece of string" />
-              </figure>
-              <figure>
-                <img src="../img/blog-images/st-play.png" alt="Two people playing the string game" />
-              </figure>
-              <figure>
-                <img src="../img/blog-images/st-play2.png" alt="Two people playing the string game" />
-              </figure>
-            </div>
           </section>
 
           <section class="doc-section">
