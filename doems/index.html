@@ -85,6 +85,33 @@
         border: 1px solid #c2a878;
       }
 
+      .click-to-play {
+        position: relative;
+        display: inline-block;
+      }
+      .click-to-play video {
+        display: block;
+      }
+      .click-to-play::after {
+        content: "\25b6 click to play";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: 600;
+        max-width: 90%;
+        text-align: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        pointer-events: none;
+      }
+      .click-to-play.is-playing::after {
+        display: none;
+      }
+
       .place-list {
         font-style: italic;
       }
@@ -214,7 +241,16 @@
                 <figcaption>Printing zines at OHS</figcaption>
               </figure>
               <figure>
-                <video src="../img/blog-images/ohs-riso.mp4" autoplay loop muted playsinline></video>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/ohs-riso.mp4"
+                    poster="../img/blog-images/ohs-riso-poster.jpg"
+                    preload="none"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
                 <figcaption>Fresh off the risograph</figcaption>
               </figure>
             </div>

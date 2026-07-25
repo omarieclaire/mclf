@@ -76,15 +76,17 @@
         flex: 0 0 auto;
       }
       .piece-grid--same-height img,
-      .piece-grid--same-height video {
+      .piece-grid--same-height video,
+      .piece-grid--same-height .click-to-play video {
         width: auto;
         height: 16rem;
         max-width: 100%;
+        display: block;
       }
 
       .click-to-play {
         position: relative;
-        display: block;
+        display: inline-block;
       }
       .click-to-play video {
         display: block;
@@ -92,13 +94,17 @@
       .click-to-play::after {
         content: "\25b6 click to play";
         position: absolute;
-        bottom: 0.5rem;
-        left: 0.5rem;
-        background: rgba(0, 0, 0, 0.6);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
         color: #fff;
-        font-size: 0.75rem;
-        padding: 0.2rem 0.5rem;
-        border-radius: 0.25rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+        max-width: 90%;
+        text-align: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
         pointer-events: none;
       }
       .click-to-play.is-playing::after {
@@ -177,10 +183,12 @@
                 <img src="../img/blog-images/st-play2.png" alt="Two people playing the string game" />
                 <figcaption>Knotting</figcaption>
               </figure>
-              <figure>
+              <!-- <figure>
                 <img src="../img/blog-images/st-play1.png" alt="A tangle of string wrapped around a laughing player's face and glasses, another player looking on" />
                 <figcaption>Tangled</figcaption>
-              </figure>
+              </figure> -->
+            </div>
+            <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/st-play3.png" alt="Three people playing the string game together in a crowd, one holding up the rules card" />
                 <figcaption>Playing in a crowd</figcaption>
@@ -254,6 +262,7 @@
                   <video
                     src="../img/blog-images/co-common.mp4"
                     poster="../img/blog-images/co-common-poster.jpg"
+                    preload="none"
                     loop
                     muted
                     playsinline
@@ -301,12 +310,60 @@
                   alt="Fisheye view of the Satosphère dome lit up with a do-em, players standing on the floor below" />
               </figure>
               <figure>
-                <video src="../img/blog-images/doems-fisheye.mp4" autoplay loop muted playsinline></video>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/doems-fisheye.mp4"
+                    poster="../img/blog-images/doems-fisheye-poster.jpg"
+                    data-aspect="1.7778"
+                    preload="none"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
                 <figcaption>The dome, live</figcaption>
               </figure>
               <figure>
-                <video src="../img/blog-images/doems-circle.mp4" autoplay loop muted playsinline></video>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/doems-circle.mp4"
+                    poster="../img/blog-images/doems-circle-poster.jpg"
+                    data-aspect="0.5620"
+                    preload="none"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
                 <figcaption>Playing a do-em without a dome</figcaption>
+              </figure>
+              <figure>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/doems-manu.mp4"
+                    poster="../img/blog-images/doems-manu-poster.jpg"
+                    data-aspect="0.5620"
+                    preload="none"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
+                <figcaption>Inside the dome</figcaption>
+              </figure>
+              <figure>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/doems-outer.mp4"
+                    poster="../img/blog-images/doems-outer-poster.jpg"
+                    data-aspect="1.1881"
+                    preload="none"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
+                <figcaption>Behind the scenes: tracking players</figcaption>
               </figure>
             </div>
           </section>
@@ -414,5 +471,68 @@
         </footer>
       </div>
     </div>
+
+    <script>
+      function justifyGrid(container) {
+        var targetHeight = 256; // 16rem at 16px root
+        var gap = parseFloat(getComputedStyle(container).gap) || 32;
+        var containerWidth = container.clientWidth;
+        var items = Array.prototype.map.call(container.children, function (fig) {
+          var media = fig.querySelector("img, video");
+          if (!media) return null;
+          if (media.dataset && media.dataset.aspect) {
+            return { media: media, aspect: parseFloat(media.dataset.aspect) };
+          }
+          var w = media.naturalWidth || media.videoWidth;
+          var h = media.naturalHeight || media.videoHeight;
+          if (!w || !h) return null;
+          return { media: media, aspect: w / h };
+        }).filter(Boolean);
+        if (!items.length) return;
+
+        var row = [];
+        var rowWidth = 0;
+
+        function widthAt(item, height) {
+          return item.aspect * height;
+        }
+
+        function flushRow(stretch) {
+          if (!row.length) return;
+          var totalAspect = row.reduce(function (s, i) { return s + i.aspect; }, 0);
+          var availableWidth = containerWidth - gap * (row.length - 1);
+          var height = stretch ? availableWidth / totalAspect : targetHeight;
+          row.forEach(function (i) {
+            i.media.style.height = height + "px";
+            i.media.style.width = i.aspect * height + "px";
+          });
+          row = [];
+          rowWidth = 0;
+        }
+
+        items.forEach(function (item) {
+          var w = widthAt(item, targetHeight);
+          if (row.length && rowWidth + gap + w > containerWidth) {
+            flushRow(true);
+          }
+          row.push(item);
+          rowWidth += (row.length > 1 ? gap : 0) + w;
+        });
+        flushRow(false);
+      }
+
+      function justifyAllGrids() {
+        document.querySelectorAll(".piece-grid--same-height").forEach(justifyGrid);
+      }
+
+      window.addEventListener("load", justifyAllGrids);
+      window.addEventListener("resize", function () {
+        clearTimeout(window._justifyTimer);
+        window._justifyTimer = setTimeout(justifyAllGrids, 150);
+      });
+      document.querySelectorAll(".piece-grid--same-height video").forEach(function (v) {
+        v.addEventListener("loadedmetadata", justifyAllGrids);
+      });
+    </script>
   </body>
 </html>
