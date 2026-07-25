@@ -303,12 +303,14 @@
               &rarr; <strong>Share:</strong> Control a large sphere together, growing or shrinking.<br />
               &rarr; <strong>Stars:</strong> Match the constellations.
             </p>
-            <div class="piece-grid piece-grid--same-height">
+            <div class="piece-grid">
               <figure>
                 <img
                   src="../img/blog-images/d-doems.png"
                   alt="Fisheye view of the Satosphère dome lit up with a do-em, players standing on the floor below" />
               </figure>
+            </div>
+            <div class="piece-grid">
               <figure>
                 <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
                   <video
@@ -323,6 +325,8 @@
                 </div>
                 <figcaption>The dome, live</figcaption>
               </figure>
+            </div>
+            <div class="piece-grid piece-grid--same-height piece-grid--fill-row">
               <figure>
                 <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
                   <video
@@ -378,6 +382,13 @@
               Kelley, developer Targy Feng and technical artist Abhijeet Singh Malhi, and visual artist
               Ellie. Shown at LIKELIKE, with a companion zine documenting the piece's masks and rituals.
             </p>
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/HlmXDGnm-go?showinfo=0&amp;loop=1"
+                title="Grow Still"
+                allow="fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+            </div>
             <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/gs-players.jpeg" alt="Two masked players standing still in Grow Still" />
@@ -475,6 +486,7 @@
     <script>
       function justifyGrid(container) {
         var targetHeight = 256; // 16rem at 16px root
+        var singleRow = container.classList.contains("piece-grid--fill-row");
         var gap = parseFloat(getComputedStyle(container).gap) || 32;
         var containerWidth = container.clientWidth;
         var items = Array.prototype.map.call(container.children, function (fig) {
@@ -489,6 +501,17 @@
           return { media: media, aspect: w / h };
         }).filter(Boolean);
         if (!items.length) return;
+
+        if (singleRow) {
+          var totalAspect = items.reduce(function (s, i) { return s + i.aspect; }, 0);
+          var availableWidth = containerWidth - gap * (items.length - 1);
+          var height = availableWidth / totalAspect;
+          items.forEach(function (i) {
+            i.media.style.height = height + "px";
+            i.media.style.width = i.aspect * height + "px";
+          });
+          return;
+        }
 
         var row = [];
         var rowWidth = 0;
