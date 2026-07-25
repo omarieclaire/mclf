@@ -1,11 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"
-    ></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -21,8 +18,7 @@
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="The string game, Closer, Follow, Common, Do-ems, Grow Still, Sound games and Jeux des Lumi&egrave;res: collaborative and cooperative games where the material is the space between people."
-    />
+      content="The string game, Closer, Follow, Common, Do-ems, Grow Still, Sound games and Jeux des Lumi&egrave;res: collaborative and cooperative games where the material is the space between people." />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>Closer &amp; collaborative play</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
@@ -30,8 +26,7 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
-      crossorigin="anonymous"
-    />
+      crossorigin="anonymous" />
 
     <style>
       .doc-section {
@@ -57,15 +52,17 @@
       }
 
       .piece-grid {
-        columns: 3 15rem;
-        column-gap: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
         margin: 2rem 0 1rem;
       }
       .piece-grid figure {
-        margin: 0 0 2rem;
-        break-inside: avoid;
+        flex: 1 1 15rem;
+        margin: 0;
       }
-      .piece-grid img {
+      .piece-grid img,
+      .piece-grid video {
         width: 100%;
         height: auto;
         display: block;
@@ -73,6 +70,39 @@
       .piece-grid figcaption {
         font-style: italic;
         margin-top: 0.5rem;
+      }
+
+      .piece-grid--same-height figure {
+        flex: 0 0 auto;
+      }
+      .piece-grid--same-height img,
+      .piece-grid--same-height video {
+        width: auto;
+        height: 16rem;
+        max-width: 100%;
+      }
+
+      .click-to-play {
+        position: relative;
+        display: block;
+      }
+      .click-to-play video {
+        display: block;
+      }
+      .click-to-play::after {
+        content: "\25b6 click to play";
+        position: absolute;
+        bottom: 0.5rem;
+        left: 0.5rem;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        pointer-events: none;
+      }
+      .click-to-play.is-playing::after {
+        display: none;
       }
 
       .rule {
@@ -95,12 +125,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <a href="../index.html"
-          ><img
-            src="../img/circle-logo.png"
-            alt="circle logo"
-            class="circle-logo"
-        /></a>
+        <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
         <input type="checkbox" id="nav-toggle" class="nav-toggle" />
         <p id="welcome-name">Marie LeBlanc Flanagan</p>
         <nav>
@@ -118,16 +143,20 @@
 
       <div class="container">
         <div class="page-content">
-          <h1>Closer<br /><span class="subtitle">Collaborative and cooperative play</span></h1>
+          <h1>Collaborative and cooperative play</h1>
 
           <p>
-            I make games where the material is the space between people. Sometimes that takes a
-            13-metre dome, cameras and speakers; sometimes it takes a piece of string. Every one of
-            them needs another person to exist.
+            I make games where the material is the space between people. Sometimes that takes a 13-metre dome, cameras and speakers; sometimes it
+            takes a piece of string. Most of them need other people to play; these are collaborative games, made to be played together.
           </p>
 
           <section class="doc-section">
             <h2>The string game</h2>
+            <p>
+              The string game is just a set of instructions and a piece of string. I have played it hundreds of times and never seen it played the
+              same way twice. The game emerges as we play. Anyone can rebuild it from the five lines above.
+            </p>
+
             <div class="rule">
               <p>This is a piece of string.</p>
               <p>It has two ends.</p>
@@ -135,20 +164,26 @@
               <p>We can either let go.</p>
               <p>Or not.</p>
             </div>
-            <p>
-              That is the entire game. I have played it hundreds of times and never seen it played
-              the same way twice. The game emerges as we play. Anyone can rebuild it from the five
-              lines above.
-            </p>
             <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/st-inst.png" alt="Two hands each holding one end of a piece of string" />
+                <figcaption>String game at Ludodrome</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/st-play.png" alt="Two people playing the string game" />
+                <figcaption>Tension</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/st-play2.png" alt="Two people playing the string game" />
+                <figcaption>Knotting</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/st-play1.png" alt="A tangle of string wrapped around a laughing player's face and glasses, another player looking on" />
+                <figcaption>Tangled</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/st-play3.png" alt="Three people playing the string game together in a crowd, one holding up the rules card" />
+                <figcaption>Playing in a crowd</figcaption>
               </figure>
             </div>
           </section>
@@ -156,11 +191,9 @@
           <section class="doc-section">
             <h2>Closer (2016)</h2>
             <p>
-              A cooperative installation for two people. To start it you must stand close together,
-              and to play it you must work together. A camera tracks both players and creates a
-              single shared sphere in the space between them, growing and shrinking with your
-              proximity. Shown at A MAZE. Johannesburg, Chaos Communication Congress, Beta Public
-              London, PLAY Hamburg, CodeMotion Berlin, and elsewhere.
+              Closer is a cooperative game for two people. To start it you must stand close together, and to play it you must work together. A
+              camera tracks both players and creates a single shared sphere in the space between them, growing and shrinking with your proximity.
+              Shown at A MAZE. Johannesburg, Chaos Communication Congress, Beta Public London, PLAY Hamburg, CodeMotion Berlin, and elsewhere.
             </p>
             <div class="video-embed">
               <iframe
@@ -169,13 +202,27 @@
                 allow="fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
             </div>
+            <div class="piece-grid">
+              <figure>
+                <img
+                  src="../img/blog-images/cl-closer.png"
+                  alt="Two players facing a projected screen showing their shared sphere, lit blue in a vaulted stone room" />
+                <figcaption>Playing Closer in Dundee</figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="../img/port-closer.jpg"
+                  alt="Three people from behind, watching a projected screen showing the shared sphere and a score of 701" />
+                <figcaption>Closer</figcaption>
+              </figure>
+            </div>
           </section>
 
           <section class="doc-section">
             <h2>Follow (2019)</h2>
             <p>
-              A two-person cooperative installation about shared control and the intimacy of
-              opposition, made at the NYU Game Center for the No Quarter exhibition.
+              <a href="../follow">Follow</a> is a two-person cooperative game about shared control and the intimacy of opposition. I made it at the
+              NYU Game Center for the No Quarter exhibition.
             </p>
             <div class="video-embed">
               <iframe
@@ -187,23 +234,32 @@
             <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/fo-players2.png" alt="Two players at the Follow controllers" />
+                                <figcaption>Follow</figcaption>
+
               </figure>
             </div>
-            <p><a href="../follow">More on Follow</a></p>
           </section>
 
           <section class="doc-section">
             <h2>Common (2018)</h2>
             <p>
-              A city-wide play experience for CAFKA, exploring networks of care, decentralized
-              resource management and community trust across a whole city rather than a single room.
+              <a href="../common">Common</a> is a city-wide game for CAFKA (Contemporary Art Forum, Kitchener + Area) exploring networks of care,
+              decentralized resources and community trust across a whole city. To join the game, new players had to find an active player. So for one
+              month, I visited different locations every day in Kitchener, Waterloo, and Cambridge. My hosts included the Perimeter Institute for
+              theoretical physics, the Institute for Quantum Computing, Public Libraries, cafés, and public parks.
             </p>
-            <div class="video-embed">
-              <iframe
-                src="https://player.vimeo.com/video/666646813?h=c30bb06eb4&amp;title=0&amp;byline=0&amp;portrait=0"
-                title="Common"
-                allow="fullscreen; picture-in-picture"
-                allowfullscreen></iframe>
+            <div class="piece-grid">
+              <figure>
+                <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
+                  <video
+                    src="../img/blog-images/co-common.mp4"
+                    poster="../img/blog-images/co-common-poster.jpg"
+                    loop
+                    muted
+                    playsinline
+                    style="cursor: pointer"></video>
+                </div>
+              </figure>
             </div>
             <div class="piece-grid">
               <figure>
@@ -214,25 +270,19 @@
                 <img src="../img/blog-images/co-connecting.png" alt="Two players connecting on a shared screen in Common" />
                 <figcaption>Connecting two players</figcaption>
               </figure>
-              <figure>
-                <img src="../img/port-common.jpg" alt="Common projected across a building at night" />
-                <figcaption>City-wide, CAFKA</figcaption>
-              </figure>
+
               <figure>
                 <img src="../img/blog-images/c-common.png" alt="Embroidered lettering and doodles, a detail from Common" />
-                <figcaption>Detail from Common</figcaption>
+                <figcaption>Common research</figcaption>
               </figure>
             </div>
-            <p><a href="../common">More on Common</a></p>
           </section>
 
           <section class="doc-section">
             <h2>Do-ems (2024)</h2>
             <p>
-              Ten tiny collaborative game-poems for the Satosph&egrave;re, a 13-metre dome with 8
-              projectors and 93 speakers that holds 350 people. A camera mounted 13 metres up tracks
-              where people are, so you play by moving your body. No controllers, and nothing to read
-              before you start. Nobody can finish one of these alone.
+              <a href="../do-ems">DO-EMS</a> are ten tiny collaborative game-poems for the Satosph&egrave;re, a 13-metre dome with 8 projectors and 93
+              speakers that holds 350 people. A camera mounted 13 metres up tracks where people are, so you play by moving your body.
             </p>
             <p>
               &rarr; <strong>Kali:</strong> Draw together on the dome, kaleidoscope style.<br />
@@ -244,100 +294,121 @@
               &rarr; <strong>Share:</strong> Control a large sphere together, growing or shrinking.<br />
               &rarr; <strong>Stars:</strong> Match the constellations.
             </p>
-            <div class="piece-grid">
+            <div class="piece-grid piece-grid--same-height">
               <figure>
-                <img src="../img/blog-images/d-doems.png" alt="Fisheye view of the Satosphère dome lit up with a do-em, players standing on the floor below" />
+                <img
+                  src="../img/blog-images/d-doems.png"
+                  alt="Fisheye view of the Satosphère dome lit up with a do-em, players standing on the floor below" />
+              </figure>
+              <figure>
+                <video src="../img/blog-images/doems-fisheye.mp4" autoplay loop muted playsinline></video>
+                <figcaption>The dome, live</figcaption>
+              </figure>
+              <figure>
+                <video src="../img/blog-images/doems-circle.mp4" autoplay loop muted playsinline></video>
+                <figcaption>Playing a do-em without a dome</figcaption>
               </figure>
             </div>
-            <p><a href="../do-ems">Technical notes on how the do-ems were built</a></p>
           </section>
 
           <section class="doc-section">
             <h2>Grow Still (2023)</h2>
             <p>
-              A collaborative game-poem made with Heather Kelley, developer Targy Feng and technical
-              artist Abhijeet Singh Malhi, during a residency at Carnegie Mellon's Entertainment
-              Technology Center. Stand still and a tree grows from you; keep standing and its roots
-              reach toward the other players nearby, trading light between you as you grow. Shown at
-              LIKELIKE, with a companion zine documenting the piece's masks and rituals, made by Ellie.
+              <a href="../grow-still">Grow Still</a> is a game where stillness is the mechanic: you
+              stand still together, and a tree grows from each of you; keep standing and the roots
+              reach toward each other, trading light between you as you grow. Move, and it stops.</p>
+              <p>A collaborative game-poem made during a residency at Carnegie Mellon with Heather
+              Kelley, developer Targy Feng and technical artist Abhijeet Singh Malhi, and visual artist
+              Ellie. Shown at LIKELIKE, with a companion zine documenting the piece's masks and rituals.
             </p>
             <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/gs-players.jpeg" alt="Two masked players standing still in Grow Still" />
-              </figure>
-              <figure>
-                <img src="../img/blog-images/gs-zine.png" alt="Stack of Grow Still zines, &quot;a ritual guide&quot;, lying in grass" />
-                <figcaption>The companion zine</figcaption>
+                <figcaption>Grow Still</figcaption>
               </figure>
             </div>
-            <p><a href="../grow-still">More on Grow Still</a></p>
+            <div class="piece-grid">
+              <figure>
+                <img src="../img/blog-images/gs-cards.jpeg" alt="Four ritual cards lying in grass, each reading &quot;I offer to the season&quot; with a hand-drawn root or seed illustration" />
+                <figcaption>Ritual cards</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/gs-zine.png" alt='Stack of Grow Still zines, "a ritual guide", lying in grass' />
+                <figcaption>The companion zine</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/gs-players2.jpeg" alt="Two masked players lit green, close up, one with a glowing branch-like projection beside them" />
+                <figcaption>Grow Still</figcaption>
+              </figure>
+            </div>
           </section>
 
           <section class="doc-section">
             <h2>Sound games</h2>
             <p>
-              Tiny games that people bring to life with their ears, made for Drone Day, the annual
-              celebration of drone and ambient sound I founded and run every year.
+              Tiny games that people bring to life with their ears, made for Drone Day, the annual celebration of drone and ambient sound I founded
+              and run every year.
             </p>
             <div class="piece-grid">
               <figure>
                 <img style="border: 1px solid black" src="../img/port-soundGames.png" alt="Sound Games poster" />
               </figure>
             </div>
-            <div class="video-embed">
+            <!-- <div class="video-embed">
               <iframe
                 src="https://www.youtube.com/embed/n39xawzWh_M"
                 title="Sound Games"
                 allow="fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
-            </div>
+            </div> -->
             <p><a target="_blank" href="https://droneday.org/play/dronegames/">Play Sound Games</a></p>
           </section>
 
           <section class="doc-section">
             <h2>Jeux des Lumi&egrave;res (2026, in progress)</h2>
             <p>
-              An outdoor game built from four spotlights, two cameras and no screen, developed during
-              a residency at the Soci&eacute;t&eacute; des arts technologiques (SAT) in Montr&eacute;al.
-              The site is a small public park shared by neighbours who live in the area, and I'm
-              developing the game together with them, including unhoused neighbours working as paid
-              consultants.
+              <a href="../light-games/light-games.html">Jeux des Lumières</a> is a outdoor game I am making with four spotlights, two cameras and no
+              screen, developed during a residency at the Soci&eacute;t&eacute; des arts technologiques (SAT) in Montr&eacute;al. It is a project of
+              cocreation with a number of community members. The site is a small public park shared by neighbours who live in the area, and I'm
+              developing the game together with them, including unhoused neighbours working as paid consultants.
             </p>
-            <p><a href="../light-games/light-games.html">Notes from the design process</a></p>
+            <div class="piece-grid">
+              <figure>
+                <img src="../img/blog-images/jdl-1.jpg" alt="A playtester lying on the ground, laughing, lit by a green spotlight" />
+                <figcaption>Playtesting under the spotlights</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/jdl-2.jpg" alt="A playtester's hand and foot reaching into a green spotlight on the ground" />
+                <figcaption>Reaching into the light</figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="../img/blog-images/jdl-play_testers1.gif"
+                  alt="A TouchDesigner project tracking three players' positions from multiple cameras during a playtest" />
+                <figcaption>Tracking players in TouchDesigner</figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="../img/blog-images/jdl-teaser.gif"
+                  alt="Several players standing on a colourful projected light grid on the floor" />
+                <figcaption>Testing with light</figcaption>
+              </figure>
+            </div>
           </section>
         </div>
 
         <footer>
           <div>
-            <a href="mailto:%20marieflanagan@gmail.com" target="blank"
-              ><img
-                src="../img/social-icons/mail.svg"
-                alt="email"
-                class="feather"
-            /></a>
+            <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
             <a href="https://linkedin.com/in/marieflanagan/" target="blank"
-              ><img
-                src="../img/social-icons/linked-in.svg"
-                alt="LinkedIn"
-                class="feather"
+              ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
             /></a>
-            <a href="https://twitter.com/omarieclaire/" target="blank"
-              ><img
-                src="../img/social-icons/twitter.svg"
-                alt="twitter"
-                class="feather"
-            /></a>
+            <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
             <a href="https://www.facebook.com/0marieclaire/" target="blank"
-              ><img
-                src="../img/social-icons/facebook.svg"
-                alt="facebook"
-                class="feather"
+              ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
             /></a>
             <a href="https://www.instagram.com/omarieclaire/" target="blank"
-              ><img
-                src="../img/social-icons/instagram.svg"
-                alt="instagram"
-                class="feather"
+              ><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather"
             /></a>
           </div>
         </footer>

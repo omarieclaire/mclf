@@ -44,15 +44,17 @@
       }
 
       .piece-grid {
-        columns: 3 15rem;
-        column-gap: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
         margin: 2rem 0 1rem;
       }
       .piece-grid figure {
-        margin: 0 0 2rem;
-        break-inside: avoid;
+        flex: 1 1 15rem;
+        margin: 0;
       }
-      .piece-grid img {
+      .piece-grid img,
+      .piece-grid video {
         width: 100%;
         height: auto;
         display: block;
@@ -62,91 +64,29 @@
         margin-top: 0.5rem;
       }
 
+      .piece-grid--same-height figure {
+        flex: 0 0 auto;
+      }
+      .piece-grid--same-height img {
+        width: auto;
+        height: 14rem;
+        max-width: 100%;
+      }
+
+      .piece-grid--small figure {
+        flex: 1 1 12rem;
+      }
+
+      .page-content h3 {
+        margin-top: 3rem;
+      }
+
+      .cover-border {
+        border: 1px solid #c2a878;
+      }
+
       .place-list {
         font-style: italic;
-      }
-
-      /* --- zine cards, same styles as the meshtastic and change-the-rules pages --- */
-      .zine-showcase {
-        margin: 40px 0;
-      }
-
-      .zine-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 32px;
-        margin: 32px 0;
-      }
-
-      .zine-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        border: 2px solid rgba(250, 128, 114, 0.3);
-      }
-
-      .zine-cover {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin-bottom: 16px;
-      }
-
-      .zine-title {
-        font-size: 1.4em;
-        font-weight: 600;
-        margin: 12px 0 8px 0;
-        color: rgba(250, 128, 114, 0.9);
-      }
-
-      .read-button {
-        display: inline-block;
-        background: rgba(82, 44, 252, 0.8);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: opacity 0.2s ease;
-        margin-top: 8px;
-        margin-right: 8px;
-      }
-
-      .read-button:hover {
-        opacity: 0.8;
-        text-decoration: none;
-        background: rgba(82, 44, 252, 0.8);
-        color: purple;
-      }
-
-      .featured-zine {
-        grid-column: 1 / -1;
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-        align-items: center;
-        padding: 32px;
-      }
-
-      .featured-zine .zine-cover {
-        max-width: 400px;
-        margin: 0 auto;
-      }
-
-      .button-group {
-        margin: 16px 0;
-      }
-
-      @media (max-width: 768px) {
-        .featured-zine {
-          grid-template-columns: 1fr;
-        }
-        .zine-grid {
-          grid-template-columns: 1fr;
-        }
-        .read-button {
-          display: block;
-          margin-bottom: 8px;
-        }
       }
 
       @media (max-width: 40rem) {
@@ -181,21 +121,17 @@
           <h1>Workshops and zines</h1>
 
           <p>
-            Work where the people who show up are co-authors rather than audience. For the past decade
-            I've run hands-on workshops and turned what comes out of them into zines other people can
+            I like running participatory sessions where the people who show up are co-authors rather than my audience. For the past decade
+            I've run hands-on workshops and turned what comes out of them info tiny experimental games and/or zines people can
             keep.
           </p>
 
           <section class="doc-section">
-            <h2>Workshops</h2>
 
             <h3>A Kind of Play</h3>
             <p>
-              A game-making workshop I have been running for about a decade. The format is prompts, hands,
-              materials, and a room of people making things at the same time. No prior experience, no
-              coding, nothing to install. Participants build small experimental games out of whatever is
-              on the table and write up the rules, so what they made can be played again by somebody who
-              wasn't there.
+              A Kind of Play is an experimental game-making workshop I have been running for about a decade. The format is prompts, hands,
+              materials, and a room of people making things at the same time. People don't need any prior experience or experience coding. Participants design small experimental games by exploring their own memories of play and experimenting with everyday objects.
             </p>
             <p class="place-list">
               Berlin (2017), Johannesburg (2017), Dundee (2018), Krak&oacute;w (2019), Arles (2022),
@@ -203,53 +139,85 @@
             </p>
             <div class="piece-grid">
               <figure>
+                <img src="../img/blog-images/akop-brazil.png" alt="A large group of workshop participants posing together, smiling and waving" />
+                <figcaption>A Kind of Play, Brazil</figcaption>
+              </figure>
+            </div>
+            <div class="piece-grid">
+              <figure>
                 <img src="../img/blog-images/akop-zine.png" alt="Blank A Kind of Play zine covers with coloured gel pens" />
-                <figcaption>The zine every participant leaves with</figcaption>
+                <figcaption>The zine every participant fills in with drawings and writing</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/er-tactics.png" alt="Handmade prompt cards on a table, each with a short instruction and a small drawing" />
                 <figcaption>Prompt cards</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/akop-diversitfiers.png" alt="A list of design diversifiers used as workshop prompts, such as &quot;core game controller uses a sense other than sight&quot; and &quot;the narrator is unreliable&quot;" />
+                <figcaption>Design diversifiers, used as prompts</figcaption>
               </figure>
             </div>
 
             <h3>Personal Games, School of Machines, Making &amp; Make-Believe</h3>
             <p>
               I taught a hands-on guide to making personal games with Bahiyya Khan and Lorenzo Pilia,
-              twice, in the spring and fall terms of 2020. Everyone who took it made a game.
+              twice, in the spring and fall terms of 2020. Students made personal games from their own lived experience.
             </p>
+            <div class="piece-grid">
+              <figure>
+                <img src="../img/blog-images/SOMA-personal.png" alt="Title card for &quot;Getting Personal: A Hands-on Guide to Making Personal Games&quot;" />
+                <figcaption>Getting Personal, School of Machines</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/soma-student-game-by-Alex%20Puttick.png" alt="A top-down pixel-art game room, Game-Boy style, with a bed, a locked chest and a small creature" />
+                <figcaption>A student game, by Alex Puttick</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/soma-student-game-by-Oliver.png" alt="A handmade paper fortune-teller game, folded and held in two hands, with hand-drawn illustrations" />
+                <figcaption>A student game, by Oliver</figcaption>
+              </figure>
+              <!-- <figure>
+                <img src="../img/blog-images/soma-student-game-by-Tara%20Pattenden.png" alt="A purple and yellow pixel-art maze pattern, a student game screenshot" />
+                <figcaption>A student game, by Tara Pattenden</figcaption>
+              </figure> -->
+            </div>
 
             <h3>Making things with your hands</h3>
             <p>
-              An alt-controller workshop in 2025, building game controllers out of physical materials
-              rather than buying them. I've also co-hosted shorter, one-off sessions when a smaller
-              format is the better fit &mdash; a tiny zine-making workshop with cyberlove at the Open
-              Hardware Summit (2024), for instance, where everyone left with a handmade zine in under
-              an hour.
+              I hosted an alt-controller workshop at Dinacon in 2025 in Indonesia, building game controllers out of elecrontics, found materials, trash, and the things that surround us.
             </p>
             <div class="piece-grid">
+              <figure>
+                <img src="../img/blog-images/dc-alt-control.png" alt="Two participants sorting through wires, sensors and a small screen while building an alt-controller" />
+                <figcaption>Sorting parts, alt-controller workshop</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/dc-alt-control2.png" alt="Handwritten brainstorm notes on coloured paper, listing sensors and controller ideas: breath control, heart rate, conductance in humans, light, temperature" />
+                <figcaption>Brainstorming sensors and inputs</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/dc-alt-control3.png" alt="A participant wearing a handmade fabric controller, a soft blue harness crossed over the chest" />
+                <figcaption>A finished wearable controller, made from material that washed up on the beach and electronics</figcaption>
+              </figure>
+            </div>
+
+            <h3>Quick mini zines</h3>
+            <p>
+
+          I've also co-hosted shorter, one-off sessions when a smaller
+              format is the better fit. A tiny zine-making workshop with cyberlove at the Open
+              Hardware Summit (2024), for instance, where everyone made a handmade zine.            </p>
+            <div class="piece-grid">
+              
               <figure>
                 <img src="../img/blog-images/ohs-zines.png" alt="Printing zines at the Open Hardware Summit" />
                 <figcaption>Printing zines at OHS</figcaption>
               </figure>
-            </div>
-
-            <!-- PLACEHOLDER: 3-4 workshop photos. Hands and tables beat posed group shots.
-                 Drop files in img/doems/ then uncomment.
-            <div class="piece-grid">
               <figure>
-                <img src="../img/doems/workshop-1.jpg" alt="A Kind of Play workshop in progress" />
-                <figcaption>A Kind of Play, Barcelona</figcaption>
-              </figure>
-              <figure>
-                <img src="../img/doems/workshop-2.jpg" alt="Participants building games from materials on a table" />
-                <figcaption>Materials on the table</figcaption>
-              </figure>
-              <figure>
-                <img src="../img/doems/workshop-3.jpg" alt="Alt-controller workshop" />
-                <figcaption>Alt-controller workshop, 2025</figcaption>
+                <video src="../img/blog-images/ohs-riso.mp4" autoplay loop muted playsinline></video>
+                <figcaption>Fresh off the risograph</figcaption>
               </figure>
             </div>
-            -->
           </section>
 
           <section class="doc-section">
@@ -257,18 +225,17 @@
 
             <h3>If You Don't Like the Game, Change the Rules (2023)</h3>
             <p>
-              A comic about worker co-operatives, unions and labour in the games industry, drawn from 88
-              interviews and survey responses, with research support from Michael Iantorno &mdash;
-              <a href="../change-the-rules/comic-english.html" target="blank">read the comic</a>
-              &middot; <a href="../change-the-rules/comic-french.html" target="blank">lire la BD</a>. It
-              became the seed for a workshop I toured to Mexico City, Berlin, Taipei, Tokyo, Kyoto, San
-              Francisco, Montreal, Halifax and elsewhere.
+              I made a comic about worker co-operatives, unions and labour in the games industry, drawn
+              from 88 interviews and survey responses, with research support from Michael Iantorno
+     
+              <a href="../change-the-rules/comic-english.html" target="blank">(read the comic</a>
+              &middot; <a href="../change-the-rules/comic-french.html" target="blank">lire la BD)</a>. It
+              became the seed for a workshop I toured to Mexico City, Berlin, Taipei, Tokyo, Kyoto,
+              Barcelona, San Francisco, Montreal, Halifax and elsewhere.
             </p>
             <p>
               At every stop, participants with no zine-making experience left holding a zine they had
-              written and drawn themselves, about their own relationship to work &mdash; prompts,
-              materials, and everyone credited for what they made. It's the format I bring to every
-              workshop I run.
+              written and drawn themselves, about their own relationship to work.
             </p>
 
             <div class="piece-grid">
@@ -277,8 +244,30 @@
                 <figcaption>Zine workshop, Kyoto</figcaption>
               </figure>
               <figure>
+                <img src="../img/blog-images/ctr-barcelona.jpeg" alt="A long table of participants making zines together at a Change the Rules workshop" />
+                <figcaption>Zine workshop, Barcelona</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/ctr-taipei.png" alt="Participants seated in a bookshop, drawing their zines at a Change the Rules workshop" />
+                <figcaption>Zine workshop, Taipei</figcaption>
+              </figure>
+              <figure>
+                <a href="../change-the-rules/comic-english.html" target="blank">
+                  <img src="../change-the-rules/img/change-rules-cover-en.png" alt="Change the Rules comic cover" />
+                </a>
+                <figcaption>Change the Rules</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/ctr-taipei2.png" alt="A participant in Taipei smiling and holding up her finished zine pages" />
+                <figcaption>A participant's zine, Taipei</figcaption>
+              </figure>
+              <!-- <figure>
                 <img src="../img/blog-images/ctr-zine.png" alt="A participant's handmade zine reading &quot;Work doesn't need to hurt&quot;" />
-                <figcaption>A participant's zine, from the workshop</figcaption>
+                <figcaption>A zine on work</figcaption>
+              </figure> -->
+                  <figure>
+                <img src="../img/blog-images/ctr-zine4.png" alt="A participant with pink hair drawing on the cover of their zine, with the Change the Rules zine visible on the table" />
+                <figcaption>Drawing a zine cover</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/ctr-zine1.png" alt="An unfolded one-page zine, illustrated by a participant named Petra" />
@@ -286,53 +275,53 @@
               </figure>
               <figure>
                 <img src="../img/blog-images/ctr-zine2.png" alt="An unfolded one-page zine, illustrated by another participant" />
+                <figcaption>Nomi's zine, unfolded</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/ctr-zine3.png" alt="An unfolded zine on yellow paper, satirizing rules for exploiting workers, titled &quot;Change the Rules&quot;" />
                 <figcaption>Another participant's zine, unfolded</figcaption>
               </figure>
+          
             </div>
 
             <h3>Meshtastic</h3>
             <p>
-              Alongside these, I spend an hour of most days on how machines talk to each other, and turn
-              it into zines: DNS, the terminal, Git, and how one computer finds another.
+              I made a zine about Meshtastic, a technology that lets us text friends on a decentralized network we build together, sending
+              messages over radio waves, with no wifi, no data plan and no company in the middle &mdash;
+              <a href="../meshtastic/meshtastic.html" target="blank">read the zine</a>
             </p>
 
-            <div class="zine-showcase">
-              <div class="zine-grid">
-                <div class="zine-card featured-zine">
-                  <div>
-                    <a href="../meshtastic/meshtastic.html" target="blank">
-                      <img src="../meshtastic/img/meshtasticcover.png" alt="Meshtastic zine cover" class="zine-cover" />
-                    </a>
-                  </div>
-                  <div>
-                    <h2 class="zine-title">Meshtastic</h2>
-                    <p>
-                      Text friends on a network we build together. Sending messages over radio waves,
-                      with no wifi, no data plan and no company in the middle.
-                    </p>
-                    <div class="button-group">
-                      <a href="../meshtastic/meshtastic.html" target="blank" class="read-button">Read the Zine &rarr;</a>
-                    </div>
-                    <p><a href="../meshtastic">PDFs and cut-and-assemble versions</a></p>
-                  </div>
-                </div>
-              </div>
+            <div class="piece-grid piece-grid--same-height">
+              <figure>
+                <img src="../meshtastic/img/meshtasticcover.png" alt="Meshtastic zine cover" />
+                <figcaption>Meshtastic</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/mz-mesh2.png" alt="Zine spread titled &quot;What's inside a device (node)?&quot;, explaining the brain, antenna, radio and power of a Meshtastic node" />
+                <figcaption>What's inside a node</figcaption>
+              </figure>
+              <figure>
+                <img src="../img/blog-images/mz-mesh1.png" alt="Zine spread titled &quot;What's the catch?&quot;, explaining Meshtastic's limits: short messages, local range, decentralized and encrypted" />
+                <figcaption>What's the catch</figcaption>
+              </figure>
             </div>
 
+            <h3><a href="https://wizardzines.com/" target="_blank">Wizard Zines</a>, with Julia Evans</h3>
             <p>
-              Most of that hour is spent with Julia Evans at Wizard Zines, my longest-running
-              collaborator &mdash; her published zines on Git, DNS, debugging and how computers do math
-              are where a lot of that shared vocabulary comes from.
+              I spend an hour of most days on how machines talk to each other with a longtime friend and collaborator, and we turn
+              it into zines: DNS, the terminal, Git, and how one computer finds another. 
             </p>
 
             <div class="piece-grid">
               <figure>
                 <img src="../img/blog-images/wz-wizardzines.png" alt="Four Wizard Zines titles by Julia Evans standing up: How Git Works, How Integers and Floats Work, The Pocket Guide to Debugging, and How DNS Works" />
-                <figcaption>Wizard Zines, by Julia Evans</figcaption>
+                <figcaption>Wizard Zines, with Julia Evans</figcaption>
               </figure>
+            </div>
+            <div class="piece-grid piece-grid--small">
               <figure>
                 <img src="../img/blog-images/wz-julia.png" alt="Julia Evans sketching a zine page on a tablet" />
-                <figcaption>Working with Julia Evans</figcaption>
+                <figcaption>Working with Julia</figcaption>
               </figure>
               <figure>
                 <img src="../img/blog-images/wz-paper.png" alt="Laying out cut zine pages on the floor" />
@@ -342,38 +331,36 @@
 
             <h3>Finding Our Way (2021&ndash;22)</h3>
             <p>
-              A zine that came out of Tech Tech Tech, a project I co-led with Ada X in Montr&eacute;al
-              exploring alternatives to the tech giants. It involved deep research, interviews, and a
-              four-part workshop with co-researchers looking for alternatives to corporate tools for
-              office work, social media, online gatherings, portfolios, performances and exhibitions.
-              What the co-researchers found is what the zine is made of. A second zine, Living in the
-              Time of Tech Giants, came out of the same project.
+              <a href="../tech-tech-tech/finding-our-way-en.html" target="blank">Finding Our Way</a> is
+              a collaborative zine I compiled and edited, from Tech Tech Tech, a project exploring
+              alternatives to the tech giants. It was made in collaboration with Sarah Choukah, Liane
+              D&eacute;cary-Chen, and Hannah Strauss, hosted and facilitated by Ada X in Montr&eacute;al.
+              It involved deep research, interviews, and a four-part workshop with a number of artists and
+              members of artist run centers looking for alternatives to corporate tools for office work,
+              social media, online gatherings, portfolios, performances and exhibitions. I also wrote a
+              second zine from the same project,
+              <a href="../tech-tech-tech/tech-giants.html" target="blank">Living in the Time of Tech Giants</a>.
             </p>
-            <!-- PLACEHOLDER: cover and a spread from Finding Our Way. Drop files in img/doems/ then uncomment.
             <div class="piece-grid">
               <figure>
-                <img src="../img/doems/finding-our-way-1.jpg" alt="Cover of the Finding Our Way zine" />
+                <a href="../tech-tech-tech/finding-our-way-en.html" target="blank">
+                  <img src="../tech-tech-tech/img/FOW.png" alt="Cover of the Finding Our Way zine" class="cover-border" />
+                </a>
                 <figcaption>Finding Our Way</figcaption>
               </figure>
               <figure>
-                <img src="../img/doems/finding-our-way-2.jpg" alt="Spread from the Finding Our Way zine" />
-                <figcaption>From the four-part workshop with co-researchers</figcaption>
+                <a href="../tech-tech-tech/tech-giants.html" target="blank">
+                  <img src="../tech-tech-tech/img/LIT.png" alt="Cover of the Living in the Time of Tech Giants zine" class="cover-border" />
+                </a>
+                <figcaption>Living in the Time of Tech Giants</figcaption>
               </figure>
             </div>
-            -->
-
-            <h3>Emergency Exhibition Care (2019)</h3>
-            <p>
-              Made during my residency at the NYU Game Center with students and faculty there. A zine
-              and care project where exhibiting student artists could access and choose from a menu of
-              care items.
-            </p>
             <div class="piece-grid">
               <figure>
-                <img src="../img/port-emergencyExhibitionCare.jpg" alt="Emergency Exhibition Care" />
+                <img src="../img/blog-images/FIL-spread.png" alt="A spread from a Living in the Time of Tech Giants, in French, about disconnecting from screens and tech burnout" class="cover-border" />
+                <figcaption>A spread from the zine made by one of the contributors</figcaption>
               </figure>
             </div>
-            <p><a href="../emergency-exhibition-care">More on Emergency Exhibition Care</a></p>
           </section>
         </div>
 
