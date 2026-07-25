@@ -72,18 +72,6 @@
         margin-top: 0.5rem;
       }
 
-      .piece-grid--same-height figure {
-        flex: 0 0 auto;
-      }
-      .piece-grid--same-height img,
-      .piece-grid--same-height video,
-      .piece-grid--same-height .click-to-play video {
-        width: auto;
-        height: 16rem;
-        max-width: 100%;
-        display: block;
-      }
-
       .click-to-play {
         position: relative;
         display: inline-block;
@@ -321,7 +309,6 @@
                   <video
                     src="../img/blog-images/doems-fisheye.mp4"
                     poster="../img/blog-images/doems-fisheye-poster.jpg"
-                    data-aspect="1.7778"
                     preload="none"
                     loop
                     muted
@@ -331,13 +318,12 @@
                 <figcaption>The dome, live</figcaption>
               </figure>
             </div>
-            <div class="piece-grid piece-grid--same-height piece-grid--fill-row">
+            <div class="piece-grid">
               <figure>
                 <div class="click-to-play" onclick="var v=this.querySelector('video'); if(v.paused){v.play();this.classList.add('is-playing');}else{v.pause();this.classList.remove('is-playing');}">
                   <video
                     src="../img/blog-images/doems-circle.mp4"
                     poster="../img/blog-images/doems-circle-poster.jpg"
-                    data-aspect="0.5620"
                     preload="none"
                     loop
                     muted
@@ -351,7 +337,6 @@
                   <video
                     src="../img/blog-images/doems-manu.mp4"
                     poster="../img/blog-images/doems-manu-poster.jpg"
-                    data-aspect="0.5620"
                     preload="none"
                     loop
                     muted
@@ -365,7 +350,6 @@
                   <video
                     src="../img/blog-images/doems-outer.mp4"
                     poster="../img/blog-images/doems-outer-poster.jpg"
-                    data-aspect="1.1881"
                     preload="none"
                     loop
                     muted
@@ -489,80 +473,5 @@
         </footer>
       </div>
     </div>
-
-    <script>
-      function justifyGrid(container) {
-        var targetHeight = 256; // 16rem at 16px root
-        var singleRow = container.classList.contains("piece-grid--fill-row");
-        var gap = parseFloat(getComputedStyle(container).gap) || 32;
-        var containerWidth = container.clientWidth;
-        var items = Array.prototype.map.call(container.children, function (fig) {
-          var media = fig.querySelector("img, video");
-          if (!media) return null;
-          if (media.dataset && media.dataset.aspect) {
-            return { media: media, aspect: parseFloat(media.dataset.aspect) };
-          }
-          var w = media.naturalWidth || media.videoWidth;
-          var h = media.naturalHeight || media.videoHeight;
-          if (!w || !h) return null;
-          return { media: media, aspect: w / h };
-        }).filter(Boolean);
-        if (!items.length) return;
-
-        if (singleRow) {
-          var totalAspect = items.reduce(function (s, i) { return s + i.aspect; }, 0);
-          var availableWidth = containerWidth - gap * (items.length - 1);
-          var height = availableWidth / totalAspect;
-          items.forEach(function (i) {
-            i.media.style.height = height + "px";
-            i.media.style.width = i.aspect * height + "px";
-          });
-          return;
-        }
-
-        var row = [];
-        var rowWidth = 0;
-
-        function widthAt(item, height) {
-          return item.aspect * height;
-        }
-
-        function flushRow(stretch) {
-          if (!row.length) return;
-          var totalAspect = row.reduce(function (s, i) { return s + i.aspect; }, 0);
-          var availableWidth = containerWidth - gap * (row.length - 1);
-          var height = stretch ? availableWidth / totalAspect : targetHeight;
-          row.forEach(function (i) {
-            i.media.style.height = height + "px";
-            i.media.style.width = i.aspect * height + "px";
-          });
-          row = [];
-          rowWidth = 0;
-        }
-
-        items.forEach(function (item) {
-          var w = widthAt(item, targetHeight);
-          if (row.length && rowWidth + gap + w > containerWidth) {
-            flushRow(true);
-          }
-          row.push(item);
-          rowWidth += (row.length > 1 ? gap : 0) + w;
-        });
-        flushRow(false);
-      }
-
-      function justifyAllGrids() {
-        document.querySelectorAll(".piece-grid--same-height").forEach(justifyGrid);
-      }
-
-      window.addEventListener("load", justifyAllGrids);
-      window.addEventListener("resize", function () {
-        clearTimeout(window._justifyTimer);
-        window._justifyTimer = setTimeout(justifyAllGrids, 150);
-      });
-      document.querySelectorAll(".piece-grid--same-height video").forEach(function (v) {
-        v.addEventListener("loadedmetadata", justifyAllGrids);
-      });
-    </script>
   </body>
 </html>
