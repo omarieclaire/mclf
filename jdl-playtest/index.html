@@ -183,7 +183,7 @@
             <div class="form-group">
               <label for="notes">Notes (optional)</label>
               <div class="input-wrapper">
-                <textarea id="notes" name="notes" rows="3" placeholder="Anything you want to say or ask"></textarea>
+                <textarea id="notes" name="notes" rows="3" placeholder="Anything you want to say or ask (and the names of your guests if you're bringing any)"></textarea>
               </div>
             </div>
 
@@ -215,10 +215,11 @@
     <script>
       var API_BASE = "https://mclf.vercel.app";
 
-      var DATES = ["Aug 15, 2026", "Aug 17, 2026", "Aug 18, 2026", "Aug 19, 2026"];
-      // 20 minutes to play plus a 10 minute buffer between groups, so the
-      // last slot still wraps up by the 11:30pm close.
-      var TIMES = ["8:30pm", "9:00pm", "9:30pm", "10:00pm", "10:30pm", "11:00pm"];
+      var DATES = ["Aug 17, 2026", "Aug 18, 2026", "Aug 19, 2026"];
+      // 20 minutes to play plus a 10 minute buffer between groups.
+      var TIMES = ["8:30pm", "9:00pm", "9:30pm", "10:00pm"];
+      // 20 minute slot length, shown as the official end time next to each start time.
+      var TIME_ENDS = { "8:30pm": "8:50pm", "9:00pm": "9:20pm", "9:30pm": "9:50pm", "10:00pm": "10:20pm" };
       var CAPACITY = 4;
       // Flexible signups aren't tied to one date/time, so they don't count
       // against any slot's cap - there's no limit on "I don't know yet."
@@ -264,6 +265,9 @@
         unsureOption.value = UNSURE;
         unsureOption.textContent = "I don't know yet";
         dateSelect.appendChild(unsureOption);
+
+        // Default to the first date instead of the blank placeholder.
+        dateSelect.value = DATES[0];
       }
 
       function renderTimeOptions(d) {
@@ -285,14 +289,31 @@
         timeSelect.innerHTML = '<option value="">-- Select a time --</option>';
 
         TIMES.forEach(function (t) {
-          var spotsLeft = CAPACITY - (times[t] || 0);
+          var booked = times[t] || 0;
+          var label = t + "-" + TIME_ENDS[t];
 
           var option = document.createElement("option");
           option.value = t;
-          option.disabled = spotsLeft <= 0;
-          option.textContent = t + (spotsLeft <= 0 ? " - FULL" : " - " + spotsLeft + " spot" + (spotsLeft === 1 ? "" : "s") + " left");
+          option.disabled = booked >= CAPACITY;
+          option.textContent = label + (booked >= CAPACITY ? " (FULL)" : " (" + booked + "/" + CAPACITY + " booked)");
           timeSelect.appendChild(option);
         });
+
+        // Nudge by default selection, not by reordering: pre-select whichever
+        // open time is closest to full, if any already has people booked.
+        var bestTime = null;
+        var bestSpotsLeft = Infinity;
+        TIMES.forEach(function (t) {
+          var booked = times[t] || 0;
+          var spotsLeft = CAPACITY - booked;
+          if (booked > 0 && spotsLeft > 0 && spotsLeft < bestSpotsLeft) {
+            bestSpotsLeft = spotsLeft;
+            bestTime = t;
+          }
+        });
+        if (bestTime) {
+          timeSelect.value = bestTime;
+        }
 
         var unsureOption = document.createElement("option");
         unsureOption.value = UNSURE;

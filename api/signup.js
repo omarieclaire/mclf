@@ -24,7 +24,7 @@ const sendConfirmationEmail = async (email, name, date, time) => {
 };
 
 const CAPACITY = 4;
-const VALID_TIMES = ['8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm'];
+const VALID_TIMES = ['8:30pm', '9:00pm', '9:30pm', '10:00pm'];
 // Flexible signups ("I don't know yet") aren't tied to one date/time, so
 // they never count against a slot's cap - there's no limit on these.
 const UNSURE = 'unsure';

@@ -12,15 +12,13 @@ const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = 'Signups';
 
 const dates = [
-  'Aug 15, 2026',
   'Aug 17, 2026',
   'Aug 18, 2026',
   'Aug 19, 2026',
 ];
 
-// 20 minutes to play plus a 10 minute buffer between groups, so slots run
-// every half hour and the last one still wraps up by the 11:30pm close.
-const times = ['8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm'];
+// 20 minutes to play plus a 10 minute buffer between groups.
+const times = ['8:30pm', '9:00pm', '9:30pm', '10:00pm'];
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
