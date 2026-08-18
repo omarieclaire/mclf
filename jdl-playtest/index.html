@@ -248,10 +248,24 @@
         });
       }
 
+      function isPastDate(d) {
+        var parsed = new Date(d);
+        if (isNaN(parsed.getTime())) return false;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        parsed.setHours(0, 0, 0, 0);
+        return parsed < today;
+      }
+
       function renderDateOptions() {
         dateSelect.innerHTML = '<option value="">-- Select a date --</option>';
 
-        DATES.forEach(function (d) {
+        // Hide dates once they're over instead of leaving stale ones to prune by hand.
+        var upcomingDates = DATES.filter(function (d) {
+          return !isPastDate(d);
+        });
+
+        upcomingDates.forEach(function (d) {
           var isFull = !dateHasOpenSlot(d);
 
           var option = document.createElement("option");
@@ -266,8 +280,10 @@
         unsureOption.textContent = "I don't know yet";
         dateSelect.appendChild(unsureOption);
 
-        // Default to the first date instead of the blank placeholder.
-        dateSelect.value = DATES[0];
+        // Default to the first upcoming date instead of the blank placeholder.
+        if (upcomingDates.length) {
+          dateSelect.value = upcomingDates[0];
+        }
       }
 
       function renderTimeOptions(d) {
