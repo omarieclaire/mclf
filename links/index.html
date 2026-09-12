@@ -50,61 +50,181 @@
       </header>
 
       <style>
-        .link-button {
-          /* margin: 10px 0; */
+        .linktree {
+          max-width: 480px;
+          margin: 0 auto;
         }
 
-        .link-button a {
-          transition: background-color 0.3s;
-          max-width: 600px;
+        .linktree-avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin: 0 auto 1rem;
+          display: block;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         }
 
+        .linktree-name {
+          margin-bottom: 0.25rem;
+        }
+
+        .linktree-label {
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          font-size: 0.85rem;
+          color: #fa8172;
+          margin: 2rem 0 0.75rem;
+          text-align: center;
+        }
 
         .link-button {
           max-width: inherit;
           display: flex;
           align-items: center;
-          justify-content: start;
+          justify-content: center;
           background-color: #ffddd9; /* Soft pink */
           color: black;
-          padding: 10px 20px;
-          margin: 12px 0; /* Adds a little space between buttons */
-          border-radius: 10px;
-          transition: background-color 0.3s;
+          padding: 14px 20px;
+          margin: 10px 0; /* Adds a little space between buttons */
+          border-radius: 999px;
+          transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
           outline: 1px solid #fa8172;
+          font-weight: 600;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
 
         .link-button:hover {
           background-color: #fa8172; /* Slightly darker pink */
           color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .icon {
-          margin-right: 20px;
-          width: 24px;
-          height: 24px;
+          margin-right: 12px;
+          width: 22px;
+          height: 22px;
           color: white;
+        }
+
+        #newsletterForm {
+          margin-top: 1rem;
+          text-align: left;
+        }
+        .form-group {
+          margin-bottom: 14px;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+          font-size: 0.9rem;
+        }
+        #newsletterForm input,
+        #newsletterForm textarea {
+          width: 100%;
+          padding: 10px 14px;
+          margin-bottom: 4px;
+          border: 1px solid #ddd;
+          border-radius: 14px;
+          box-sizing: border-box;
+          font: inherit;
+        }
+        #newsletterForm textarea {
+          height: 90px;
+          resize: vertical;
+          border-radius: 14px;
+        }
+        #newsletterForm button {
+          display: block;
+          width: 100%;
+          background-color: #673ab7;
+          color: white;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 999px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 1rem;
+          margin-top: 8px;
+        }
+        #newsletterForm button:hover {
+          background-color: #5e35b1;
+        }
+        .success-message {
+          display: none;
+          background-color: #4caf50;
+          color: white;
+          padding: 20px;
+          border-radius: 14px;
+          margin-top: 20px;
+          text-align: center;
+        }
+        .error-message {
+          display: none;
+          background-color: #f44336;
+          color: white;
+          padding: 20px;
+          border-radius: 14px;
+          margin-top: 20px;
+          text-align: center;
         }
       </style>
 
       <div class="container">
         <div class="page-content">
-          <h1 class="h1">Links</h1>
+          <div class="linktree">
+          <img src="../img/marie.jpg" alt="Marie smiling in front of red leaves." class="linktree-avatar" />
+          <h1 class="h1 linktree-name">Marie LeBlanc Flanagan</h1>
+
+          <h2 class="linktree-label">Newsletter</h2>
+
+          <form id="newsletterForm">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <div class="input-wrapper">
+                <input type="text" id="name" name="entry.1031751655" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <div class="input-wrapper">
+                <input type="email" id="email" name="entry.381147356" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="interests">What do you want to hear about?</label>
+              <div class="input-wrapper">
+                <textarea id="interests" name="entry.685584672" required></textarea>
+              </div>
+            </div>
+
+            <button type="submit">Sign Up</button>
+          </form>
+
+          <div id="successMessage" class="success-message">Thanks for subscribing! We'll be in touch soon.</div>
+          <div id="errorMessage" class="error-message">Oops! Something went wrong. Please try again.</div>
 
           <div class="link-container">
 
 
-            <a href="mailto:marieflanagan@gmail.com" class="link-button"> <img src="../img/social-icons/mailw.svg" alt="" class="icon" />Email Me </a>
 			<!-- <a href="../img/MarieLeBlancFlanagan.vcf" download="MarieLeBlancFlanagan.vcf" class="link-button">
 				<img src="../img/social-icons/vcardw.svg" alt="" class="icon" />Contact Card
 			  </a> -->
-			<h2>Socials</h2>
+			<h2 class="linktree-label">Socials</h2>
 
+            <a href="mailto:marieflanagan@gmail.com" class="link-button"> <img src="../img/social-icons/mailw.svg" alt="" class="icon" />Email Me </a>
 			<a href="https://linkedin.com/in/marieflanagan/" target="_blank" class="link-button">
               <img src="../img/social-icons/linked-inw.svg" alt="" class="icon" />LinkedIn
             </a>
-            <a href="https://twitter.com/omarieclaire/" target="_blank" class="link-button">
-              <img src="../img/social-icons/twitterw.svg" alt="" class="icon" />Twitter
+            <a href="https://mastodon.social/@omarieclaire" target="_blank" class="link-button">
+              <img src="../img/social-icons/mastodonw.svg" alt="" class="icon" />Mastodon
+            </a>
+            <a href="https://bsky.app/profile/omarieclaire.bsky.social" target="_blank" class="link-button">
+              <img src="../img/social-icons/blueskyw.svg" alt="" class="icon" />BlueSky
             </a>
             <a href="https://www.facebook.com/0marieclaire/" target="_blank" class="link-button">
               <img src="../img/social-icons/facebookw.svg" alt="" class="icon" />Facebook
@@ -113,7 +233,7 @@
               <img src="../img/social-icons/instagramw.svg" alt="" class="icon" />Instagram
             </a>
 
-			<h2>Projects</h2>
+			<h2 class="linktree-label">Projects</h2>
 
 			<a href="https://gameartsinternational.network/if-you-dont-like-the-game-change-the-rules/" target="_blank" class="link-button">
               <img src="../img/social-icons/ctrw.svg" alt="" class="icon" />If You Don't Like The Game, Change The Rules
@@ -136,6 +256,7 @@
 			  </a>
 
           </div>
+          </div>
         </div>
       </div>
 
@@ -145,7 +266,8 @@
           <a href="https://linkedin.com/in/marieflanagan/" target="blank"
             ><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather"
           /></a>
-          <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+          <a href="https://mastodon.social/@omarieclaire" target="blank"><img src="../img/social-icons/mastodon.svg" alt="mastodon" class="feather" /></a>
+          <a href="https://bsky.app/profile/omarieclaire.bsky.social" target="blank"><img src="../img/social-icons/bluesky.svg" alt="bluesky" class="feather" /></a>
           <a href="https://www.facebook.com/0marieclaire/" target="blank"
             ><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather"
           /></a>
@@ -155,5 +277,28 @@
         </div>
       </footer>
     </div>
+
+    <script>
+      document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const form = this;
+          const formData = new FormData(form);
+
+          fetch('https://docs.google.com/forms/d/e/1FAIpQLSfPMpLeIrd85Tz4OYhsnemLjbsSr-H-qpI1RS47JsJn37tWng/formResponse', {
+              method: 'POST',
+              body: formData,
+              mode: 'no-cors'
+          })
+          .then(() => {
+              form.style.display = 'none';
+              document.getElementById('successMessage').style.display = 'block';
+          })
+          .catch(error => {
+              document.getElementById('errorMessage').style.display = 'block';
+              console.error('Error:', error);
+          });
+      });
+    </script>
   </body>
 </html>
