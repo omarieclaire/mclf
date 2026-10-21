@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="fr">
 
 <head>
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -23,6 +23,11 @@
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>MCLF</title>
   <link href="../styles.css" rel="stylesheet" type="text/css">
+  <style>
+    .lang-toggle{margin-bottom:1.75rem;}
+    .lang-toggle button{background:none;border:1px solid rgba(82,44,252,0.4);color:rgba(54,41,122,0.95);padding:6px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.95rem;margin-right:6px;}
+    .lang-toggle button[aria-pressed="true"]{background:rgba(82,44,252,0.85);color:white;border-color:rgba(82,44,252,0.85);}
+  </style>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
@@ -51,6 +56,321 @@
 
     <div class="container">
       <div class="page-content">
+        <div class="lang-toggle">
+          <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
+          <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+        </div>
+
+        <div lang="fr" id="lang-fr">
+          <h1 class="h1">Common </h1>
+          <p class="quote"><strong>Qu'est-ce que ça veut dire, bâtir la confiance dans le jeu?</strong></p>
+
+          <p>J'ai créé Common pour le <a target="_blank" href="https://www.cafka.org/page/about">CAFKA – Contemporary Art
+              Forum Kitchener and Area</a>, et des centaines de personnes y ont joué dans les villes de Kitchener,
+            Waterloo et Cambridge pendant tout un mois, en 2018.</p>
+
+          <p>Common est un jeu vidéo expérimental conçu pour les communautés. C'est une exploration des réseaux
+            décentralisés de soin et de la confiance communautaire.</p>
+          <img src="../img/blog-images/co-layers.png" alt="les couches de Common" class="wide-image image">
+
+          <h2>Comment fonctionne Common</h2>
+          <p>Common commence avec une seule personne qui brille dans un vaste néant. Sa force vitale diminue, et iel
+            s'érode peu à peu.</p>
+          <p>Un·e joueur·euse génère de la force vitale en créant et en renforçant des liens avec les autres. La force
+            s'accumule, circule, et fait grandir à la fois la force vitale de chaque personne et celle du réseau dans
+            son ensemble.</p>
+
+          <div class="vidContent">
+            <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/666646813?h=c30bb06eb4&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+          </div>
+          <br>
+          <p>Une force entropique détériore sans cesse la force vitale et les liens de tout le monde. De grands réseaux
+            peuvent se scinder en sous-réseaux si les joueur·euse·s ne renforcent pas leurs connexions. Et une personne
+            sans aucun lien finit par dériver seule dans le vide.</p>
+
+          <p>La seule façon de se joindre à Common, c'est de rencontrer en personne quelqu'un qui joue déjà. Les deux
+            personnes doivent maintenir le bouton de connexion enfoncé en même temps, jusqu'à ce qu'un lien se forme.</p>
+
+          <img src="../img/blog-images/co-connecting.png" alt="des gens qui se connectent" class="wide-image image">
+
+          <p>Pendant tout un mois, je me suis installé·e dans différents espaces publics pour que toute personne curieuse
+            de se joindre puisse venir me trouver et commencer à jouer.</p>
+
+          <img src="../img/blog-images/co-waiting.png" alt="prêt·e à jouer avec les gens" class="wide-image image">
+
+          <p>Le jeu au complet est façonné par les décisions collectives et individuelles des joueur·euse·s.</p>
+
+          <img src="../img/blog-images/co-play.png" alt="écran de jeu" class="wide-image image">
+
+          <h2>Concept</h2>
+          <p>Common explore:</p>
+          <ul>
+            <li>l'expérience partagée comme geste politique</li>
+            <li>la confiance communautaire comme quelque chose qui se bâtit par l'attention, le soin et l'intendance</li>
+            <li>les communautés comme des entités vivantes, qui demandent un investissement continu</li>
+            <li>les angoisses actuelles autour de la confiance, telles qu'elles s'expriment à travers les technologies de
+              chaîne de blocs et la décentralisation</li>
+            <li>les liens entre individualisme, transparence, surveillance, collaboration et confiance</li>
+            <li>l'attention et le soin comme un travail qui a une valeur intrinsèque</li>
+          </ul>
+
+          <img src="../img/blog-images/co-kids.png" alt="des enfants qui jouent à Common" class="wide-image image">
+          <h2>Questions</h2>
+          <p>Je pense que ce qu'il y a de plus intéressant à partager dans cette documentation, c'est ma longue liste de
+            questions de recherche.</p>
+          <ul>
+            <li>qu'est-ce que la confiance?</li>
+            <li>qu'est-ce qu'une communauté?</li>
+            <li>qu'est-ce que la confiance dans le contexte d'une communauté?</li>
+            <li>peut-on créer un réseau décentralisé de soin?</li>
+            <li>qui est responsable de notre environnement commun?</li>
+            <li>une communauté peut-elle cogérer des ressources? Ou la tragédie des communs est-elle inévitable?</li>
+            <li>La confiance est-elle un choix? Une action? Un état?</li>
+            <li>Quelles différences y a-t-il entre se faire confiance à soi-même et faire confiance à quelqu'un
+              d'autre?</li>
+            <li>Qu'est-ce que l'acte ou l'état de demander la confiance?</li>
+            <li>Qu'est-ce que l'acte ou l'état de faire confiance?</li>
+            <li>Que se passe-t-il en nous (dans notre corps) quand on fait confiance? Quand on nous fait confiance? Quand
+              on trahit une confiance? Quand on trahit la nôtre?</li>
+            <li>Qu'est-ce que la vulnérabilité?</li>
+            <li>Quel est le lien entre la vulnérabilité et la confiance?</li>
+            <li>Quel est le lien entre la vulnérabilité et le changement? Et la croissance?</li>
+            <li>Pourquoi se sent-on si peu en sécurité? Le sommes-nous vraiment? Qu'est-ce qu'être en sécurité?</li>
+            <li>Qu'est-ce que la trahison? Est-elle liée à la confiance?</li>
+            <li>Peut-on protéger quelqu'un de la trahison? Qu'est-ce que ça impliquerait?</li>
+            <li>Qu'est-ce que la confiance a à voir avec l'idée de propriété privée?</li>
+            <li>Qu'est-ce que ça change pour la confiance si on n'a pas de propriété privée?</li>
+            <li>Et la confiance par rapport à la propriété de notre propre corps?</li>
+            <li>À qui appartiennent les plateformes qui sous-tendent nos réalités?</li>
+            <li>Qui est responsable de ces plateformes sous-jacentes? Qui en prend soin?</li>
+            <li>Et la tyrannie du grand nombre? Et la tyrannie de quelques-un·e·s? Pourrait-on exister dans des poches qui
+              s'entrecroisent?</li>
+            <li>Quel est le lien entre la confiance et l'idée traditionnelle du soi?</li>
+            <li>Qu'est-ce que la foi?</li>
+            <li>La tragédie des communs se produit-elle vraiment? Est-elle inévitable?</li>
+            <li>Quel est le lien entre la méfiance et « l'acteur individuel »?</li>
+            <li>Quel est le lien entre le soi moderne et la confiance? La fragmentation ou la multiplicité de l'identité
+              influence-t-elle la confiance?</li>
+            <li>D'où vient ce désir d'anonymat?</li>
+            <li>L'anonymat a-t-il à voir avec la honte? Avec la liberté? Avec la peur? Avec un rejet du soi? Avec une
+              célébration des sois multiples?</li>
+            <li>Quel est le lien entre l'anonymat et l'identité (ou les identités)? Entre l'anonymat et la confiance?</li>
+            <li>Où la décentralisation place-t-elle le pouvoir?</li>
+            <li>Peut-on « placer » le pouvoir quelque part?</li>
+            <li>Quelle est la différence entre des transactions de confiance individuelles et des réseaux de confiance
+              communautaires?</li>
+            <li>Comment la confiance fonctionne-t-elle dans un système?</li>
+            <li>Pourquoi la plupart des théories des jeux semblent-elles escamoter les aspects les plus intéressants de la
+              confiance (ce qu'elle est globalement, comment on la cultive) au profit du moins intéressant (qui agit, qui
+              « gagne »)?</li>
+            <li>Quelles sont les implications d'une transparence totale, d'un registre permanent et de la
+              surveillance?</li>
+            <li>Quel est le lien entre la transparence et la confiance? Est-ce encore de la confiance s'il y a
+              transparence totale?</li>
+            <li>Quelque chose peut-il être vraiment transparent?</li>
+            <li>Les modèles ou les filtres sont-ils nécessaires pour représenter ou pour voir? Les modèles
+              influencent-ils la transparence?</li>
+            <li>Quel est le lien entre individualisme, surveillance, collaboration et confiance?</li>
+            <li>La confiance est-elle toujours incarnée?</li>
+            <li>Et les corps mixtes ou cyborgs par rapport à la confiance?</li>
+            <li>La confiance peut-elle se partager? Est-elle contagieuse?</li>
+            <li>Chaque confiance est-elle une danse mutuelle ou un geste à sens unique?</li>
+            <li>La confiance ressemble-t-elle plus à un signal numérique ou analogique?</li>
+            <li>Quel est le lien entre la confiance et le contrôle?</li>
+            <li>Peut-on faire confiance sans céder une part de contrôle?</li>
+            <li>À quoi sert la confiance? Que fait-elle pour nous, comme individus et comme communautés?</li>
+            <li>« La capacité de fonctionner de façon décentralisée sans avoir à faire confiance à qui que ce soit »
+              (Quoi?)</li>
+            <li>Qu'est-ce que ça veut dire, centraliser le pouvoir?</li>
+            <li>Le pouvoir peut-il être décentralisé? Si oui, est-ce un état stable, ou le pouvoir cherche-t-il toujours à
+              se reconcentrer?</li>
+            <li>La décentralisation, est-ce décentraliser le pouvoir? Le savoir? L'existence? Comme le mycélium?</li>
+            <li>Le consensus est-il « neutre »? Quoi que ce soit est-il neutre?</li>
+            <li>Un système peut-il être neutre? La neutralité n'est-elle qu'un prolongement du pouvoir en place?</li>
+            <li>Comment les systèmes de prise de décision influencent-ils la confiance?</li>
+            <li>Qu'est-ce que le pair-à-pair?</li>
+            <li>Y a-t-il vraiment du pair-à-pair quand les pairs ne possèdent ni ne contrôlent techniquement les
+              conditions d'utilisation ou la plateforme?</li>
+            <li>Les technologies de chaîne de blocs prétendent « éliminer l'intermédiaire », mais n'est-ce pas ce que
+              prétend chaque nouvel intermédiaire?</li>
+            <li>Ethereum est « distribué ». Qu'est-ce que ça veut dire au juste? Qu'est-ce qui est distribué, par qui, à
+              qui, et comment?</li>
+            <li>Ethereum se dit « une plateforme à l'épreuve de la censure ». Est-ce seulement possible? Est-on jamais à
+              l'abri de la censure?</li>
+            <li>« Les applications bâties sur Ethereum n'ont pas besoin de faire confiance aux développeur·euse·s. »
+              Comment est-ce possible sans savoir lire le code? Est-ce même possible?</li>
+            <li>Qu'est-ce que ça veut dire de présumer que tout le monde ment (de ne faire confiance qu'au résultat de sa
+              propre vérification)?</li>
+            <li>La confiance, est-ce de la dépendance envers quelqu'un d'autre?</li>
+            <li>Comment être digne de confiance? (Responsabilité? Limites? Clarté? Compétence? Constance? Engagement?
+              Compassion? Contribution? Preuves qu'on tient à l'autre? Générosité? Honnêteté? Intégrité? Fiabilité?
+              Valeurs partagées? Absence de jugement?)</li>
+            <li>La confiance culturelle glisse-t-elle vers la droite?</li>
+            <li>Qu'est-ce que le soin?</li>
+            <li>Qu'est-ce que ça veut dire, prendre soin les un·e·s des autres?</li>
+            <li>Quel est le lien entre l'intendance et la confiance?</li>
+            <li>Qu'est-ce que la décentralisation? Qu'est-ce que ça veut dire?</li>
+            <li>Existe-t-il une théorie des jeux holistique, à l'échelle de l'écosystème?</li>
+            <li>Que se passe-t-il dans une combine à la Ponzi? Dans un système pyramidal?</li>
+            <li>L'expérience partagée est-elle un geste politique?</li>
+            <li>Qu'est-ce que ça veut dire, partager une expérience?</li>
+            <li>L'économie de l'attention?</li>
+            <li>Qu'est-ce que la collaboration?</li>
+            <li>L'attention comme travail, l'attention comme valeur, l'attention comme travail marchandisé?</li>
+            <li>Les communautés sont-elles vivantes?</li>
+            <li>Les communautés demandent-elles un investissement continu?</li>
+          </ul>
+
+          <h2>Inspirations / Lectures / Parties jouées</h2>
+          <p>Ma recherche passe toujours par l'exploration d'autres jeux, mais aussi d'une variété d'autres domaines et
+            projets.</p>
+          <p>Voici quelques-uns des jeux, projets artistiques, installations et idées qui ont inspiré Common.</p>
+          <p>Cette liste est une magnifique collection d'œuvres qui vaut vraiment la peine qu'on s'y attarde.</p>
+          <ul>
+
+            <li>Navigating &amp; sharing: <a target="_blank" href="https://omarieclaire.itch.io/closer">Closer</a>, <a
+                target="_blank" href="http://playbounden.com/">Bounden</a>, <a target="_blank"
+                href="https://www.youtube.com/watch?v=cuxBYL9MO6I">Colorena</a>, Friendstrap, To the sea, <a
+                href="http://www.wearemuesli.it/siheyu4n/">SIHEYU4N</a>, <a target="_blank"
+                href="http://frugame.com/">FRU</a>, <a target="_blank"
+                href="https://www.nintendo.com/games/detail/snipperclips-switch">Snipperclips</a>, <a
+                href="https://en.wikipedia.org/wiki/Fire_Truck_(video_game)">Fire Truck</a>,<a target="_blank"
+                href="https://www.youtube.com/watch?v=7lcYClbSdMk"> ibb
+                and obb</a>, <a target="_blank" href="https://www.youtube.com/watch?v=xwj0S6G2jbw">Zorya</a>, slam city
+              oracles,
+              <a target="_blank" href="http://store.steampowered.com/app/461040/PICO_PARK/">pico park</a>, <a
+                target="_blank" href="https://www.youtube.com/watch?v=aryIQfDgSP8">CLAPPER</a>
+            </li>
+            <li>Communication &amp; Pressure: <a target="_blank" href="https://www.youtube.com/watch?v=aBfHhfxLNPE">Space
+                Team</a>, <a target="_blank" href="http://www.keeptalkinggame.com/">Keep Talking and Nobody
+                Explodes</a>, <a target="_blank" href="http://www.loversinadangerousspacetime.com/">Lovers in a Dangerous
+                Spacetime</a>, <a target="_blank" href="http://www.spotov.co.uk/games.html#1">Dreadnought</a>,
+              Edison Escape Room, <a target="_blank" href="https://www.youtube.com/watch?v=5IJte841c4A">Marina
+                Abramović</a> (The Story Of Bow &amp; Arrow), !Move or Die,</li>
+            <li>Crowd Collaboration:<a target="_blank"
+                href="https://en.wikipedia.org/wiki/Twitch_Plays_Pok%C3%A9mon">Twitch plays Pok&eacute;mon</a>, Pong
+              played by a crowd, <a target="_blank" href="https://www.activityvillage.co.uk/catch-the-dragons-tail">Catch
+                the Dragon&rsquo;s
+                Tail</a>, <a target="_blank" href="https://rationalwiki.org/wiki/New_Games_movement">New games
+                movement</a>,
+              !<a target="_blank" href="http://store.steampowered.com/app/448510/Overcooked/">overcooked</a>, <a
+                target="_blank" href="https://boardgamegeek.com/boardgame/98778/hanabi">Hanabi</a>, <a target="_blank"
+                href="https://www.youtube.com/watch?time_continue=14&amp;v=eajjqotwsF4">Team
+                Pen</a> &amp; <a target="_blank"
+                href="http://physicaleducationandmore.blogspot.ca/2012/08/responsible-personal-and-social-behavior.html">so
+                on</a>, !Deathmatch games</li>
+            <li>Community inspiration: <a target="_blank"
+                href="https://redditblog.com/2017/04/18/place-part-two/">r/place</a>, <a target="_blank"
+                href="https://en.wikipedia.org/wiki/Masquerade_(book)">masquerade</a>, <a target="_blank"
+                href="https://nordiclarp.org/what-is-nordic-larp/">Nordic
+                Larp</a>, Immersive
+              theatre; Pervasive games, Street games !<a target="_blank"
+                href="https://www.facebook.com/FarmVille/">farmville</a>
+              (specifically invite), !<a target="_blank" href="https://en.wikipedia.org/wiki/Pyramid_scheme">pyramid
+                schemes</a> (inverted: the wealth to the community), !airbnb (trust with strangers), <a
+                href="https://github.com/innsmouthrain/StarColony2000X">StarColony2000X</a></li>
+
+            <li>Connection: <a target="_blank" href="http://the-end-of-us.com/">The end of us</a></li>
+            <li>Decentralized Play: <a target="_blank"
+                href="https://www.gamespot.com/articles/this-indie-horror-game-dies-when-its-players-do/1100-6428948/">The
+                Flock</a></li>
+            <li>Collabs: <a target="_blank" href="https://vimeo.com/3571124">Bicycle Built for Two Thousand</a>,<a
+                target="_blank" href="https://vimeo.com/89406118"> Do not touch</a> (esp stay in the green zone, like
+              Tyranny of the
+              rectangle), <a target="_blank" href="http://sjefvanbeers.nl/checkboxes/">Checkboxes</a></li>
+            <li>Blockchain inspirations: <a target="_blank" href="https://clickmine.click/">Clickmine</a>, <a
+                target="_blank" href="https://tetzelcoin.com/#/">TetzelCoin</a>, <a target="_blank"
+                href="http://www.radiolab.org/story/ceremony/">The
+                Ceremony</a></li>
+            <li>Small games for ease of interaction: dumb ways to die, known small games</li>
+            <li>Space/Place inspiration: <a target="_blank" href="http://animal-crossing.com/">Animal crossing</a>, <a
+                target="_blank" href="http://store.steampowered.com/app/404150/Lovely_Weather_Were_Having/">Lovely weather
+                we&rsquo;re having</a>, <a href="https://www.ingress.com/">Ingress</a>, <a target="_blank"
+                href="https://www.pokemongo.com/">Pok&eacute;mon Go</a>, Alternate reality games</li>
+            <li>Flipping games: Spy game, Escher</li>
+            <li>Other: <a target="_blank" href="https://en.wikipedia.org/wiki/Blockchain">Blockchains</a>, <a
+                target="_blank" href="http://www.ursulakleguin.com/">Leguin</a>, <a target="_blank"
+                href="https://en.wikipedia.org/wiki/Jude_Milhon">St.
+                Jude</a>, <a href="https://twitter.com/jfagone/status/912361182098542592">Elizebeth Smith Friedman</a>,
+              !Libertarian trips, Fungus, mushrooms, spores, <a target="_blank"
+                href="https://www.npr.org/templates/transcript/transcript.php?storyId=509350471">Suzanne
+                Simard</a>, &lsquo;Will you be a good neighbour&rsquo;?, Wild geese flight formation, <a target="_blank"
+                href="https://www.goodreads.com/book/show/752749.My_Teacher_Flunked_the_Planet">My teacher flunked the
+                planet</a>, <a href="https://www.scribd.com/document/374060196/Plasmodium-Symposium-Circular-1">Slime
+                Mould,</a> &ldquo;We are the guardians of this space once we enter&rdquo; [<a target="_blank"
+                href="https://www.noisebridge.net/">noisebridge</a>],
+              <a href="https://nordiclarp.org/2015/03/02/bleed-the-spillover-between-player-and-character">bleed</a>, <a
+                target="_blank"
+                href="http://leavingmundania.com/2017/06/17/template-player-organizer-contract">contract</a> &amp; opt out
+              ability), <a href="https://en.wikipedia.org/wiki/Design_pattern">Design Patterns</a>, immutability of
+              blockchain vs. trust, surveillance, tracking, and erasure,
+              Cypherpunks, Public and Private space, <a
+                href="https://www.nytimes.com/2017/06/12/well/live/having-friends-is-good-for-you.html?rref=collection%2Fbyline%2Fjane-e.-brody&amp;action=click&amp;contentCollection=undefined&amp;region=stream&amp;module=stream_unit&amp;version=latest&amp;contentPlacement=35&amp;pgtype=collection">Friendships</a>,
+              <a target="_blank" href="https://en.wikipedia.org/wiki/Third_place">third place</a>, <a target="_blank"
+                href="https://www.discogs.com/master/12068">fourth</a> world, <a target="_blank"
+                href="https://www.reddit.com/r/FifthWorldPics/">fifth</a> world, <a
+                href="https://www.sciencedirect.com/science/article/pii/S0378437106013501">Prisoner&rsquo;s Dilemma with
+                communities</a>,
+              !The Evolution of Trust, xenofeminism, <a target="_blank" href="http://www.lindsaydobbin.com/">Lindsay
+                Dobbin</a>, Speculative fabulation, !Tulip Bulbs in Holland, Art intervention, Tend &amp; befriend, <a
+                href="https://en.wikipedia.org/wiki/Rhizome_(philosophy)">Rhizome</a>, Borges, Slow Games, <a
+                target="_blank" href="http://www.jneurosci.org/content/35/21/8170">Brain trust</a>, doing/being/moving as
+              a way
+              of knowing, SF and fantasy, !<a target="_blank" href="https://tinder.com/">Tinder</a> (as a portal to
+              connection), hyperlinks, <a target="_blank"
+                href="http://www.sciencemag.org/news/2014/08/human-altruism-traces-back-origins-humanity">Sarah Blaffer
+                Hrdy</a> (trust),
+              Mind
+              of My Mind, <a target="_blank" href="https://www.youtube.com/watch?v=qf0gLjfd_RY">Richard Sennett</a>,
+              gifting &amp; gratitude, Nonviolent communication, <a target="_blank"
+                href="https://en.wikipedia.org/wiki/Hanabi_(card_game)">Hanabi</a>, Inside a Star-filled Sky
+              (looping)
+            </li>
+          </ul>
+
+          <h2>Outils:</h2>
+          <p>J'ai utilisé <a target="_blank" href="https://d3js.org/"> D3</a> pour la visualisation de données, <a
+              target="_blank" href="https://p5js.org/"> p5.js</a> pour l'écran de connexion, et <a target="_blank"
+              href="https://firebase.google.com/">Firebase</a> pour l'infrastructure multijoueur interactive en temps
+            réel, la base de données et l'hébergement web.</p>
+          <img src="../img/blog-images/co-wireframe.png" alt="maquette fil de fer des écrans" class="wide-image image">
+
+          <h2>Démarche:</h2>
+          <p>Common a demandé neuf mois merveilleux de conception, 90 jours angoissants de développement et 30 jours
+            magiques de jeu.</p>
+          <p>Au fil de ma recherche, j'ai exploré une foule de domaines: des interprétations historiques de la « foi »
+            jusqu'aux pratiques d'organisation décentralisée, en passant par la théorie des jeux. J'ai même participé à un
+            hackathon sur la chaîne de blocs au World Crypto Economic Forum.</p>
+          <p>Common est le projet le plus exigeant que j'aie réalisé, sur les plans conceptuel, créatif et technique.</p>
+
+          <h2>Dans les médias:</h2>
+          <p class="p5"><a target="_blank"
+              href="https://web.archive.org/web/20200917022702/https://www.therecord.com//news/waterloo-region/2018/05/23/a-game-of-trust-comes-to-cafka.html">Un
+              court article sur Common</a></p>
+
+          <img src="../img/blog-images/co-me.png" alt="moi en train de jouer à Common" class="wide-image image">
+
+          <h2>Communauté et collaboration</h2>
+          <p>Common est le premier jeu pour lequel je suis allé·e chercher activement des mentor·e·s. Merci à Tiffany
+            Conroy pour le mentorat en développement frontend, à Sarah Friend pour tout ce qui touche à la chaîne de
+            blocs Ethereum, et à Eir&iacute;kr &Aring;sheim et Aaron Levin pour le mentorat côté backend. Merci à Gordon
+            Hatt de m'avoir donné l'occasion de créer un jeu pour une ville entière. Le projet aurait été complètement
+            différent sans les contributions des personnes suivantes:</p>
+          <p>Aaartgames Berlin, Aaron Levin, Adam Streck, Aileen House, Albert Alexander, Amar Shah, Baris, Brie Code,
+            Claudio Sampaio, Colleen, Colin Fisher, Colin Parsons, Connor Bell, Christian Kokott, David H, Dorice Tepley,
+            Ed Ashton, Enric,
+            Eir&iacute;kr &Aring;sheim, Eric Rubin, Eric Thurston, Exile, Game devs at MADE, Gemma, Gordon Hatt, Holly,
+            Hugh D. A. Goldring, Ida Toft, Isabella Stefanescu, James Beardmore, Jan van der Lugt, Jasmin Woeller,
+            Jessica, Julian Hansen, Justine Lera,
+            Jury Rossetti, CAFKA, Kat Dornian, Kristina Taylor, Jay Taylor, Civic Tech WR, Linsey, Lorenzo, Lucas, MADE,
+            Mailis Rodrigues, Mariam Zakarian, Mike Daoust, Mike Mintz, Mitchell Chan, Muriel Thi, Niall Lavigne, Nomi,
+            Norna Ross, Owen
+            Pallett, Rachel, Rahul Jethwani, S Friend, Seungji Ha, School of Machines, Making &amp; Make-Believe, Shayna,
+            Six, Steven Taschuk, Steven Tu, Sulyn Cedar, TAG, Taeyoon Choi, Tengig, Tiffany Conroy, Troy, Yaxi Zhao,
+            Yoshi, scribblegrl</p>
+        </div>
+
+        <div lang="en" id="lang-en" style="display: none">
         <h1 class="h1">Common </h1>
         <p class="quote"><strong>What does it mean to build trust in
             play?</strong></p>
@@ -372,6 +692,7 @@
           Six, Steven Taschuk, Steven Tu, Sulyn Cedar, TAG, Taeyoon Choi, Tengig, Tiffany Conroy, Troy, Yaxi Zhao,
           Yoshi, scribblegrl</p>
 
+        </div>
       </div>
     </div>
 
@@ -394,6 +715,16 @@
   </div>
 
   <script src="../js/showAndHide.js"></script>
+
+  <script>
+    function setLang(l) {
+      document.getElementById('lang-fr').style.display = l === 'fr' ? '' : 'none';
+      document.getElementById('lang-en').style.display = l === 'en' ? '' : 'none';
+      document.getElementById('btn-fr').setAttribute('aria-pressed', l === 'fr');
+      document.getElementById('btn-en').setAttribute('aria-pressed', l === 'en');
+      document.documentElement.lang = l;
+    }
+  </script>
 
 </body>
 

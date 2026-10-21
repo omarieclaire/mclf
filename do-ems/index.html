@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77465632-1"></script>
@@ -37,6 +37,12 @@
     <meta name="twitter:description" content="Collaborative play in the dome" />
     <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/gs-tree.jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <style>
+      .lang-toggle{margin-bottom:1.75rem;}
+      .lang-toggle button{background:none;border:1px solid rgba(82,44,252,0.4);color:rgba(54,41,122,0.95);padding:6px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.95rem;margin-right:6px;}
+      .lang-toggle button[aria-pressed="true"]{background:rgba(82,44,252,0.85);color:white;border-color:rgba(82,44,252,0.85);}
+    </style>
   </head>
 
   <body>
@@ -63,6 +69,105 @@
 
       <div class="container">
         <div class="page-content">
+          <div class="lang-toggle">
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+          </div>
+
+          <div lang="fr" id="lang-fr">
+            <h1>Do-ems!<br /><span class="subtitle">10 petites expériences collaboratives et ludiques!</span></h1>
+
+            <p>
+              Venez nous rejoindre dans le dôme pour quelques petits jeux-poèmes! On explore le contrôle partagé et le jeu
+              coopératif. C’est une recherche en cours.
+            </p>
+
+            <p>
+              => <strong>Kali :</strong> Dessiner ensemble sur le dôme, façon kaléidoscope. <br />
+              => <strong>With Me :</strong> Manger des points pour grossir, puis entrer en collision pour faire renaître le monde. <br />
+              => <strong>Stick Together :</strong> Rester ensemble à l’intérieur d’une sphère en mouvement. <br />
+              => <strong>Hug (Knus) :</strong> Associer les visages pour créer un lien. <br />
+              => <strong>Flock :</strong> Rassembler et guider vos petit·es compagnon·nes. <br />
+              => <strong>Steer :</strong> Diriger le dôme tous·tes ensemble. <br />
+              => <strong>Share :</strong> Contrôler une grande sphère ensemble, en la faisant grandir ou rétrécir. <br />
+              => <strong>Stars :</strong> Reproduire les constellations. <br />
+            </p>
+
+            <h2>Présentation du projet</h2>
+            <p>
+              J’ai créé 10 petits jeux-poèmes collaboratifs pour la Satosphère (SAT), un immense dôme de 13 mètres de diamètre,
+              équipé de 8 projecteurs et de 93 haut-parleurs, qui peut accueillir 350 personnes. Cela dit, je vais
+              probablement limiter les jeux à 10 personnes à la fois (au maximum) pour l’instant!
+            </p>
+
+            <p>
+              On rend les 10 jeux-poèmes interactifs en suivant les mouvements des gens à l’aide d’une caméra. Comme ça, tu
+              peux faire arriver des choses juste en bougeant ton corps. On grimpe dans les échafaudages et on retire le haut
+              du dôme pour installer la caméra (MQ042RG-CM) à 13 mètres dans les airs. Évidemment, une caméra ne nous donne pas
+              vraiment la position des gens sous forme de chiffres (c’est juste une image, pas des données), alors on utilise
+              LivePose, une bibliothèque de vision par ordinateur à code source libre, avec du suivi de taches (blob tracking)
+              à l’ancienne pour déterminer où sont les gens et où iels se déplacent.
+            </p>
+
+            <p>LivePose envoie continuellement des messages sur la position des gens au moyen du protocole Open Sound Control (OSC) vers Unity 2022.3.29f1.</p>
+
+            <p>
+              Dans Unity, on crée un avatar pour chaque personne (chaque identifiant, ou ID) qu’on reçoit. Ça permet à chaque
+              personne de contrôler un personnage dans les jeux! Le système est un peu instable, car la caméra perd souvent la
+              trace des joueur·euses ou mélange leurs identifiants. On rêve d’avoir du LIDAR.
+            </p>
+
+            <p>
+              Comme suivre les gens par caméra est difficile, je fabrique des bandeaux munis de DEL infrarouges (longueur
+              d’onde de 940 nm, 1,35 V, 20 mA), alimentées par des piles bouton CR2032 de 3 V avec des résistances de 82 ohms.
+              On espère que ça aidera la caméra à mieux détecter les joueur·euses. C’est difficile de jouer à quoi que ce soit
+              quand ta manette n’arrête pas d’apparaître et de disparaître!
+            </p>
+
+            <p>
+              Dans Unity, je suis toujours à l’écoute des messages OSC provenant de LivePose. Quand on reçoit un message,
+              celui-ci contient un identifiant de joueur·euse ainsi qu’une position X et Y. Dans Unity, on convertit ces
+              coordonnées 2D (XY) dans un espace courbe (en calculant une dimension Z réaliste, c’est-à-dire la hauteur) afin de
+              placer les choses au bon endroit dans le monde 3D de Unity. On ajuste aussi un peu ces coordonnées pour éviter les
+              douleurs au cou. Traditionnellement, les spectacles de dôme se regardent allongé·es dans des poufs. Alors on
+              écrase tout plus près de l’horizon, pour ne pas avoir à regarder droit vers le haut.
+            </p>
+
+            <p>
+              C’est aussi dans Unity qu’on gère toute la logique des jeux. Chaque jeu se trouve dans sa propre scène. On
+              réutilise une bonne partie du code pour la gestion de l’OSC et la création des avatars des joueur·euses, grâce à
+              un script C# appelé « MainController » commun à toutes les scènes.
+            </p>
+
+            <p>
+              Pour le rendu, on utilise FullDomeForUnity, qui simule l’objectif fisheye nécessaire pour projeter notre monde
+              Unity sur le dôme. Au début, je pensais que projeter un monde 3D sur un dôme serait simple — j’avais tort.
+            </p>
+
+            <p>
+              Chaque fois qu’un son est déclenché dans Unity, ou qu’un élément qui produit un son doit se déplacer dans l’espace
+              (93 haut-parleurs!), on envoie un message OSC vers TouchDesigner à l’aide de extOSC. On utilise Ableton pour jouer
+              les sons et SpatGRIS pour les spatialiser dans le dôme.
+            </p>
+
+            <p>
+              SpatGRIS déplace les sons à travers les 93 haut-parleurs grâce à des messages OSC contenant l’azimut, l’élévation
+              et le rayon. Ableton joue les sons, tandis que TouchDesigner fait le pont entre Unity et Ableton.
+            </p>
+
+            <h2>Remerciements</h2>
+
+            <p>
+              Un merci tout spécial aux personnes merveilleuses qui ont aidé à donner vie à ce projet : Isaac (beauté), Pen
+              (amour), Manu, Jules, ainsi que nos consultant·es Pierre, Céline, Julia et Alexis. Un grand merci à l’équipe
+              incroyable de la SAT : Marek, Kristophe, Bruno, Mourad, Hugo, Zack et l’autre Zack, Pablo, OSSIA et Jean-Michaël.
+              Toute notre gratitude à nos testeur·euses de jeu : Julia, Lee, Tricia, Don, Libby, Kousu, Isa et Emma, pour leur
+              temps et leurs commentaires. Merci à Fili pour la musique et les sons, ainsi qu’à Kristian North, Jónsi et Alex
+              Somers pour la musique.
+            </p>
+          </div>
+
+          <div lang="en" id="lang-en" style="display: none">
           <h1>Do-ems!<br /><span class="subtitle">10 tiny playful collaborative experiments!</span></h1>
 
           <p>
@@ -146,6 +251,7 @@
 
           <!-- <img src="../img/blog-images/gs-likelike.jpeg" alt="the likelike gallery" class="wide-image image" /> -->
           <!-- <img src="../img/blog-images/gs-mask.jpeg" alt="one the masks on grass" class="wide-image image" /> -->
+          </div>
         </div>
 
         <footer>
@@ -165,5 +271,14 @@
         </footer>
       </div>
     </div>
+    <script>
+      function setLang(l) {
+        document.getElementById('lang-fr').style.display = l === 'fr' ? '' : 'none';
+        document.getElementById('lang-en').style.display = l === 'en' ? '' : 'none';
+        document.getElementById('btn-fr').setAttribute('aria-pressed', l === 'fr');
+        document.getElementById('btn-en').setAttribute('aria-pressed', l === 'en');
+        document.documentElement.lang = l;
+      }
+    </script>
   </body>
 </html>
