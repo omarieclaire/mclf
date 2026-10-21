@@ -1,80 +1,151 @@
-<!-- https://miro.com/app/board/o9J_lZ2ecUg=/ -->
 <!DOCTYPE html>
-<html lang="">
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Marie Claire LeBlanc Flanagan" />
+    <meta
+      name="description"
+      content="Monahan — une promenade sonore méditative inspirée des milieux humides de Monahan, lauréate du Prix d'art public du Creative City Network of Canada (2024)." />
+    <title>Monahan | MCLF</title>
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="styles.css" rel="stylesheet" type="text/css" />
-  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet" />
-  <title>Monahan</title>
+    <meta property="og:title" content="Monahan" />
+    <meta property="og:description" content="Une promenade sonore pour oreilles curieuses." />
+    <meta property="og:image" content="https://marieflanagan.com/monahan/images/mon1.png" />
+    <meta property="og:url" content="https://marieflanagan.com/monahan/" />
+    <meta property="og:type" content="website" />
 
-  <meta name="author" content="Marie Claire LeBlanc Flanagan" />
-  <meta name="description" content="A sound walk for curious ears" />
+    <style>
+      .lang-toggle {
+        margin-bottom: 1.75rem;
+      }
+      .lang-toggle button {
+        background: none;
+        border: 1px solid rgba(82, 44, 252, 0.4);
+        color: rgba(54, 41, 122, 0.95);
+        padding: 6px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        margin-right: 6px;
+      }
+      .lang-toggle button[aria-pressed="true"] {
+        background: rgba(82, 44, 252, 0.85);
+        color: white;
+        border-color: rgba(82, 44, 252, 0.85);
+      }
+      .begin-btn {
+        display: inline-block;
+        background: rgba(82, 44, 252, 0.85);
+        color: white;
+        padding: 10px 22px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
 
-  <meta property="og:title" content="Monahan" />
-  <meta property="og:description" content="Wander and listen" />
-  <meta property="og:image" content="images/mon1.png" />
-  <meta property="og:url" content="https://monahanwalks.ca/index.html" />
-  <meta property="og:type" content="game" />
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="../index.html"><img src="../img/circle-logo.png" alt="circle logo" class="circle-logo" /></a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <p id="welcome-name"><a href="../index.html">Marie LeBlanc Flanagan</a></p>
+        <nav>
+          <ul>
+            <li><a href="../about">About</a></li>
+            <li><a href="../blog">Blog</a></li>
+            <li><a href="../contact">Contact</a></li>
+            <li><a href="../cv/">CV</a></li>
+          </ul>
+        </nav>
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+      </header>
 
-  <meta name="twitter:title" content="Monahan" />
-  <meta name="twitter:description" content="Wander and listen" />
-  <meta name="twitter:image" content="https://monahanwalks.ca/images/mon1.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+      <div class="container">
+        <div class="page-content">
+          <div class="lang-toggle">
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+          </div>
 
-  <script>
-    window.addEventListener("load", (event) => {
-      document.body.classList.remove("preload");
-    });
-  </script>
-</head>
+          <div lang="fr" id="lang-fr">
+            <h1 class="h1">Monahan</h1>
+            <p><em>Promenade sonore · milieux humides de Monahan · 2024</em></p>
 
-<body class="preload">
-  <header>
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-    <label for="nav-toggle" class="nav-toggle-label">
-      <span></span>
-    </label>
-    <div id="nameAndLogo">
-      <a href="index.html"><img src="images/icons/frog.png" alt="describe" class="frog-logo" /></a>
-      <a href="index.html">
-        <p id="siteName">Monahan</p>
-      </a>
-    </div>
-    <nav>
-      <ul>
-        <!-- <li><a href="#">Home</a></li> -->
-        <li><a href="about.html" id="aboutNav">About</a></li>
-        <li><a href="accessiblity.html" id="accessiblityNav">Accessibility</a></li>
-      </ul>
-    </nav>
-    <button type="button" class="btn" id="langToggle">FR</button>
-  </header>
+            <p>
+              <strong>Monahan</strong> est une promenade sonore méditative et une expérience narrative inspirée des milieux
+              humides de Monahan. On marche, on tend l'oreille, et le paysage se raconte — un audioguide sur mesure, porté par les
+              sons mêmes des marais.
+            </p>
 
-  <main class="container">
-    <div class="row">
-      <img id="landingImg" src="images/mon1.png" alt="describe it here" class="imageSide" />
-      <div class="textSide">
-        <h1 id="homeH1">A sound walk for curious ears</h1>
-        <p id="homeTxt">
-          Join us for a custom audio walk with the sounds of the Monahan
-          wetlands
-        </p>
-        <a href="monahan.html" id="beginBtn" class="btn">Begin</a>
+            <p>
+              J'ai assuré le développement et la création technologique de cette œuvre collaborative, qui a reçu le
+              <strong>Prix d'art public du Creative City Network of Canada en 2024</strong>.
+            </p>
+
+            <p><a href="monahan.html" class="begin-btn">Commencer la promenade →</a></p>
+
+            <p>
+              En savoir plus :
+              <a href="https://monahanwalks.ca" target="_blank" rel="noopener">monahanwalks.ca</a>
+            </p>
+
+            <p><a href="../about">Plus sur mon travail →</a></p>
+          </div>
+
+          <div lang="en" id="lang-en" style="display: none">
+            <h1 class="h1">Monahan</h1>
+            <p><em>A sound walk · the Monahan wetlands · 2024</em></p>
+
+            <p>
+              <strong>Monahan</strong> is a meditative sound walk and narrative experience inspired by the Monahan wetlands. You
+              wander, you listen, and the landscape tells its story — a custom audio walk carried by the sounds of the marsh
+              itself.
+            </p>
+
+            <p>
+              I led the development and technical creation of this collaborative work, which received the
+              <strong>Creative City Network of Canada Public Art Award in 2024</strong>.
+            </p>
+
+            <p><a href="monahan.html" class="begin-btn">Begin the walk →</a></p>
+
+            <p>
+              Learn more:
+              <a href="https://monahanwalks.ca" target="_blank" rel="noopener">monahanwalks.ca</a>
+            </p>
+
+            <p><a href="../about">More about my work →</a></p>
+          </div>
+        </div>
       </div>
+
+      <footer>
+        <div>
+          <a href="mailto:%20marieflanagan@gmail.com" target="blank"><img src="../img/social-icons/mail.svg" alt="email" class="feather" /></a>
+          <a href="https://linkedin.com/in/marieflanagan/" target="blank"><img src="../img/social-icons/linked-in.svg" alt="LinkedIn" class="feather" /></a>
+          <a href="https://twitter.com/omarieclaire/" target="blank"><img src="../img/social-icons/twitter.svg" alt="twitter" class="feather" /></a>
+          <a href="https://www.facebook.com/0marieclaire/" target="blank"><img src="../img/social-icons/facebook.svg" alt="facebook" class="feather" /></a>
+          <a href="https://www.instagram.com/omarieclaire/" target="blank"><img src="../img/social-icons/instagram.svg" alt="instagram" class="feather" /></a>
+        </div>
+      </footer>
     </div>
 
-
-  </main>
-
-  <!-- <audio id="player1" controls preload>
-    <source id='audioSource' src='' type="audio/mpeg">
-  </audio> -->
-
-  <script src="play.js"></script>
-  <script src="translate.js"></script>
-
-</body>
-
+    <script>
+      function setLang(l) {
+        document.getElementById("lang-fr").style.display = l === "fr" ? "" : "none";
+        document.getElementById("lang-en").style.display = l === "en" ? "" : "none";
+        document.getElementById("btn-fr").setAttribute("aria-pressed", l === "fr");
+        document.getElementById("btn-en").setAttribute("aria-pressed", l === "en");
+        document.documentElement.lang = l;
+      }
+    </script>
+  </body>
 </html>
