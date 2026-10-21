@@ -1,21 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Orb — a ritual-game designed and facilitated outdoors at Parc Frédéric-Back, Montréal, for the first Montreal Games Week." />
+      content="Orb — un jeu-rituel conçu et animé en plein air au parc Frédéric-Back, à Montréal, pour la première Montreal Games Week." />
     <title>Orb | MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
 
     <meta property="og:title" content="Orb" />
     <meta
       property="og:description"
-      content="A ritual-game played outdoors at Parc Frédéric-Back for the first Montreal Games Week." />
+      content="Un jeu-rituel joué en plein air au parc Frédéric-Back pour la première Montreal Games Week." />
     <meta property="og:url" content="https://marieflanagan.com/orb/" />
     <meta property="og:type" content="website" />
+
+    <style>
+      .lang-toggle {
+        margin-bottom: 1.75rem;
+      }
+      .lang-toggle button {
+        background: none;
+        border: 1px solid rgba(82, 44, 252, 0.4);
+        color: rgba(54, 41, 122, 0.95);
+        padding: 6px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        margin-right: 6px;
+      }
+      .lang-toggle button[aria-pressed="true"] {
+        background: rgba(82, 44, 252, 0.85);
+        color: white;
+        border-color: rgba(82, 44, 252, 0.85);
+      }
+    </style>
   </head>
 
   <body>
@@ -39,23 +61,50 @@
 
       <div class="container">
         <div class="page-content">
-          <h1 class="h1">Orb</h1>
-          <p><em>A ritual-game · Parc Frédéric-Back, Montréal · 2025</em></p>
+          <div class="lang-toggle">
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+          </div>
 
-          <p>
-            <strong>Orb</strong> is a ritual-game I designed and facilitated outdoors at Parc Frédéric-Back for the first
-            edition of
-            <a href="https://torontogamesweek.com" target="_blank" rel="noopener">Montreal Games Week</a>.
-          </p>
+          <div lang="fr" id="lang-fr">
+            <h1 class="h1">Orb</h1>
+            <p><em>Un jeu-rituel · Parc Frédéric-Back, Montréal · 2025</em></p>
 
-          <p>
-            It gathers a group of strangers around a shared object and a few simple rules, and gives them permission to be a
-            little strange together — the small social opening that appears when people do something in the same place at the
-            same time. Like most of my work, it's cooperative, played on foot and free, and made for the moment a crowd
-            realizes it is a crowd.
-          </p>
+            <p>
+              <strong>Orb</strong> est un jeu-rituel que j'ai conçu et animé en plein air au parc Frédéric-Back, pour la première
+              édition de la
+              <a href="https://torontogamesweek.com" target="_blank" rel="noopener">Montreal Games Week</a>.
+            </p>
 
-          <p><a href="../about">More about my work →</a></p>
+            <p>
+              Il rassemble un groupe d'inconnu·e·s autour d'un objet partagé et de quelques règles simples, et leur donne la
+              permission d'être un brin loufoques ensemble — cette petite ouverture sociale qui apparaît quand des gens font
+              quelque chose au même endroit, en même temps. Comme la plupart de mes œuvres, c'est coopératif, ça se joue à pied et
+              gratuitement, et c'est fait pour ce moment où une foule se rend compte qu'elle est une foule.
+            </p>
+
+            <p><a href="../about">Plus sur mon travail →</a></p>
+          </div>
+
+          <div lang="en" id="lang-en" style="display: none">
+            <h1 class="h1">Orb</h1>
+            <p><em>A ritual-game · Parc Frédéric-Back, Montréal · 2025</em></p>
+
+            <p>
+              <strong>Orb</strong> is a ritual-game I designed and facilitated outdoors at Parc Frédéric-Back for the first
+              edition of
+              <a href="https://torontogamesweek.com" target="_blank" rel="noopener">Montreal Games Week</a>.
+            </p>
+
+            <p>
+              It gathers a group of strangers around a shared object and a few simple rules, and gives them permission to be a
+              little strange together — the small social opening that appears when people do something in the same place at the
+              same time. Like most of my work, it's cooperative, played on foot and free, and made for the moment a crowd
+              realizes it is a crowd.
+            </p>
+
+            <p><a href="../about">More about my work →</a></p>
+          </div>
         </div>
       </div>
 
@@ -69,5 +118,15 @@
         </div>
       </footer>
     </div>
+
+    <script>
+      function setLang(l) {
+        document.getElementById("lang-fr").style.display = l === "fr" ? "" : "none";
+        document.getElementById("lang-en").style.display = l === "en" ? "" : "none";
+        document.getElementById("btn-fr").setAttribute("aria-pressed", l === "fr");
+        document.getElementById("btn-en").setAttribute("aria-pressed", l === "en");
+        document.documentElement.lang = l;
+      }
+    </script>
   </body>
 </html>

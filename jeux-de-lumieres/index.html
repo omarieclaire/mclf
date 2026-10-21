@@ -1,21 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Jeu(x) de lumières — an interactive outdoor light installation at Place de la Paix, Montréal, made with the neighbourhood for MUTEK's Village Numérique, with the Société des arts technologiques (SAT)." />
+      content="Jeu(x) de lumières — une installation lumineuse interactive à la place de la Paix, à Montréal, faite avec le quartier pour le Village Numérique de MUTEK, avec la Société des arts technologiques (SAT)." />
     <title>Jeu(x) de lumières | MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
 
     <meta property="og:title" content="Jeu(x) de lumières" />
     <meta
       property="og:description"
-      content="An interactive outdoor light installation at Place de la Paix, Montréal, made with the neighbourhood for MUTEK's Village Numérique." />
+      content="Une installation lumineuse interactive à la place de la Paix, à Montréal, faite avec le quartier pour le Village Numérique de MUTEK." />
     <meta property="og:url" content="https://marieflanagan.com/jeux-de-lumieres/" />
     <meta property="og:type" content="website" />
+
+    <style>
+      .lang-toggle {
+        margin-bottom: 1.75rem;
+      }
+      .lang-toggle button {
+        background: none;
+        border: 1px solid rgba(82, 44, 252, 0.4);
+        color: rgba(54, 41, 122, 0.95);
+        padding: 6px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        margin-right: 6px;
+      }
+      .lang-toggle button[aria-pressed="true"] {
+        background: rgba(82, 44, 252, 0.85);
+        color: white;
+        border-color: rgba(82, 44, 252, 0.85);
+      }
+    </style>
   </head>
 
   <body>
@@ -39,50 +61,107 @@
 
       <div class="container">
         <div class="page-content">
-          <h1 class="h1">Jeu(x) de lumières</h1>
-          <p><em>Interactive public light installation · Place de la Paix, Montréal · 2026</em></p>
+          <div class="lang-toggle">
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+          </div>
 
-          <p>
-            <strong>Jeu(x) de lumières</strong> is an interactive outdoor light installation at Place de la Paix,
-            on Boulevard Saint-Laurent in Montréal, made for MUTEK's
-            <a href="https://village-numerique.mutek.org/en" target="_blank" rel="noopener">Village Numérique</a>
-            in partnership with the
-            <a href="https://sat.qc.ca/en/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>.
-          </p>
+          <div lang="fr" id="lang-fr">
+            <h1 class="h1">Jeu(x) de lumières</h1>
+            <p><em>Installation lumineuse interactive publique · Place de la Paix, Montréal · 2026</em></p>
 
-          <p>
-            After dark, the park comes alive to the people moving through it. Computer vision senses where people are and
-            how they move, and light and sound respond in real time — approach, and the space lights up with you; gather
-            with friends, and more of it wakes at once. It is built to be walked into and played with, not watched from a
-            distance. Up to four people play at a time.
-          </p>
+            <p>
+              <strong>Jeu(x) de lumières</strong> est une installation lumineuse interactive présentée en plein air à la place
+              de la Paix, sur le boulevard Saint-Laurent à Montréal, créée pour le
+              <a href="https://village-numerique.mutek.org/fr" target="_blank" rel="noopener">Village Numérique</a>
+              de MUTEK, en partenariat avec la
+              <a href="https://sat.qc.ca/fr/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>.
+            </p>
 
-          <p>
-            The work was made <em>with</em> the neighbourhood, not for it: co-design and recording sessions with local
-            organizations, including groups working with unhoused residents around Place de la Paix. I directed the piece —
-            immersive scenography, sound and light design, and the design of the interaction itself. Manuel Bolduc (SAT) built
-            the computer-vision system that turns people's movement into the work; Zachary L'Heureux (SAT) handled multimedia
-            systems integration and on-site installation; CR34TE (Marc-Olivier Bisson) was our lighting partner.
-          </p>
+            <p>
+              Une fois la nuit tombée, le parc s'anime au gré des gens qui le traversent. Un système de vision par ordinateur
+              repère où se trouvent les personnes et comment elles bougent, et la lumière et le son répondent en temps réel :
+              approchez-vous, et l'espace s'allume avec vous; rassemblez-vous entre ami·e·s, et une plus grande partie s'éveille
+              d'un coup. L'œuvre est faite pour qu'on y entre et qu'on y joue, pas pour qu'on la regarde de loin. Jusqu'à quatre
+              personnes jouent à la fois.
+            </p>
 
-          <h2>Learn more</h2>
-          <ul>
-            <li>
-              <a href="https://sat.qc.ca/fr/evenements/jeux-de-lumieres" target="_blank" rel="noopener"
-                >Jeu(x) de lumières at the SAT</a
-              >
-            </li>
-            <li>
-              <a
-                href="https://village-numerique.mutek.org/fr/parcours/jeux-de-lumiere-par-marie-leblanc-flanagan-et-societe-des-arts-technologiques"
-                target="_blank"
-                rel="noopener"
-                >Jeu(x) de lumières in MUTEK's Village Numérique</a
-              >
-            </li>
-          </ul>
+            <p>
+              L'œuvre a été conçue <em>avec</em> le quartier, et non pour lui : séances de cocréation et d'enregistrement avec
+              des organismes du milieu, dont des groupes qui travaillent auprès des personnes en situation d'itinérance autour de
+              la place de la Paix. J'en ai assuré la direction artistique — scénographie immersive, conception sonore et
+              lumineuse, et conception de l'interaction elle-même. Manuel Bolduc (SAT) a bâti le système de vision par ordinateur
+              qui transforme les déplacements des gens en œuvre; Zachary L'Heureux (SAT) s'est occupé de l'intégration des
+              systèmes multimédias et de l'installation sur place; CR34TE (Marc-Olivier Bisson) était notre partenaire en
+              éclairage.
+            </p>
 
-          <p><a href="../about">More about my work →</a></p>
+            <h2>Pour en savoir plus</h2>
+            <ul>
+              <li>
+                <a href="https://sat.qc.ca/fr/evenements/jeux-de-lumieres" target="_blank" rel="noopener"
+                  >Jeu(x) de lumières à la SAT</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://village-numerique.mutek.org/fr/parcours/jeux-de-lumiere-par-marie-leblanc-flanagan-et-societe-des-arts-technologiques"
+                  target="_blank"
+                  rel="noopener"
+                  >Jeu(x) de lumières dans le Village Numérique de MUTEK</a
+                >
+              </li>
+            </ul>
+
+            <p><a href="../about">Plus sur mon travail →</a></p>
+          </div>
+
+          <div lang="en" id="lang-en" style="display: none">
+            <h1 class="h1">Jeu(x) de lumières</h1>
+            <p><em>Interactive public light installation · Place de la Paix, Montréal · 2026</em></p>
+
+            <p>
+              <strong>Jeu(x) de lumières</strong> is an interactive outdoor light installation at Place de la Paix, on Boulevard
+              Saint-Laurent in Montréal, made for MUTEK's
+              <a href="https://village-numerique.mutek.org/en" target="_blank" rel="noopener">Village Numérique</a>
+              in partnership with the
+              <a href="https://sat.qc.ca/en/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>.
+            </p>
+
+            <p>
+              After dark, the park comes alive to the people moving through it. Computer vision senses where people are and how
+              they move, and light and sound respond in real time — approach, and the space lights up with you; gather with
+              friends, and more of it wakes at once. It is built to be walked into and played with, not watched from a distance.
+              Up to four people play at a time.
+            </p>
+
+            <p>
+              The work was made <em>with</em> the neighbourhood, not for it: co-design and recording sessions with local
+              organizations, including groups working with unhoused residents around Place de la Paix. I directed the piece —
+              immersive scenography, sound and light design, and the design of the interaction itself. Manuel Bolduc (SAT) built
+              the computer-vision system that turns people's movement into the work; Zachary L'Heureux (SAT) handled multimedia
+              systems integration and on-site installation; CR34TE (Marc-Olivier Bisson) was our lighting partner.
+            </p>
+
+            <h2>Learn more</h2>
+            <ul>
+              <li>
+                <a href="https://sat.qc.ca/fr/evenements/jeux-de-lumieres" target="_blank" rel="noopener"
+                  >Jeu(x) de lumières at the SAT</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://village-numerique.mutek.org/fr/parcours/jeux-de-lumiere-par-marie-leblanc-flanagan-et-societe-des-arts-technologiques"
+                  target="_blank"
+                  rel="noopener"
+                  >Jeu(x) de lumières in MUTEK's Village Numérique</a
+                >
+              </li>
+            </ul>
+
+            <p><a href="../about">More about my work →</a></p>
+          </div>
         </div>
       </div>
 
@@ -96,5 +175,15 @@
         </div>
       </footer>
     </div>
+
+    <script>
+      function setLang(l) {
+        document.getElementById("lang-fr").style.display = l === "fr" ? "" : "none";
+        document.getElementById("lang-en").style.display = l === "en" ? "" : "none";
+        document.getElementById("btn-fr").setAttribute("aria-pressed", l === "fr");
+        document.getElementById("btn-en").setAttribute("aria-pressed", l === "en");
+        document.documentElement.lang = l;
+      }
+    </script>
   </body>
 </html>
