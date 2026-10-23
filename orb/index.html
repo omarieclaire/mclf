@@ -6,36 +6,53 @@
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Orb — un jeu-rituel conçu et animé en plein air au parc Frédéric-Back, à Montréal, pour la première Montreal Games Week." />
+      content="Orb, un jeu-rituel créé au parc Frédéric-Back, à Montréal, pour la première Semaine du jeu vidéo de Montréal." />
     <title>Orb | MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
 
     <meta property="og:title" content="Orb" />
     <meta
       property="og:description"
-      content="Un jeu-rituel joué en plein air au parc Frédéric-Back pour la première Montreal Games Week." />
+      content="Un jeu-rituel joué en plein air au parc Frédéric-Back, à Montréal, pour la première Semaine du jeu vidéo de Montréal." />
+    <meta property="og:image" content="https://marieflanagan.com/img/blog-images/orb-hero.jpg" />
     <meta property="og:url" content="https://marieflanagan.com/orb/" />
     <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/orb-hero.jpg" />
 
     <style>
-      .lang-toggle {
-        margin-bottom: 1.75rem;
+      /* full-width media that still behaves on small screens */
+      .orb-media {
+        display: block;
+        width: 40rem;
+        max-width: 100%;
+        margin: 3rem auto 0.4rem;
+        border-radius: 2px;
       }
-      .lang-toggle button {
-        background: none;
-        border: 1px solid rgba(82, 44, 252, 0.4);
-        color: rgba(54, 41, 122, 0.95);
-        padding: 6px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.95rem;
-        margin-right: 6px;
+      .orb-media.tight {
+        margin-top: 2rem;
       }
-      .lang-toggle button[aria-pressed="true"] {
-        background: rgba(82, 44, 252, 0.85);
-        color: white;
-        border-color: rgba(82, 44, 252, 0.85);
+      figure.orb-fig {
+        margin: 0 auto;
+      }
+      /* captionless figures need their own bottom spacing;
+         captioned ones get it from the figcaption instead */
+      figure.orb-fig:not(:has(figcaption)) {
+        margin-bottom: 3rem;
+      }
+      figure.orb-fig figcaption {
+        max-width: 40rem;
+        margin: 0 auto 3rem;
+        text-align: right;
+        font-style: italic;
+        font-size: 0.85rem;
+        opacity: 0.75;
+      }
+      figure.orb-fig figcaption .desc {
+        float: left;
+        text-align: left;
+        font-style: normal;
+        max-width: 70%;
       }
     </style>
   </head>
@@ -51,7 +68,6 @@
             <li><a href="../about">About</a></li>
             <li><a href="../blog">Blog</a></li>
             <li><a href="../contact">Contact</a></li>
-            <li><a href="../cv/">CV</a></li>
           </ul>
         </nav>
         <label for="nav-toggle" class="nav-toggle-label">
@@ -62,45 +78,216 @@
       <div class="container">
         <div class="page-content">
           <div class="lang-toggle">
-            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
-            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">FR</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">EN</button>
           </div>
 
+          <!-- ======================= FRANÇAIS ======================= -->
           <div lang="fr" id="lang-fr">
             <h1 class="h1">Orb</h1>
-            <p><em>Un jeu-rituel · Parc Frédéric-Back, Montréal · 2025</em></p>
+
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-header.png" alt="Illustration : des orbes vertes et lumineuses parsèment des collines vallonnées sous un coucher de soleil orangé, avec une petite silhouette qui lève une lampe." class="orb-media tight" />
+            </figure>
 
             <p>
-              <strong>Orb</strong> est un jeu-rituel que j'ai conçu et animé en plein air au parc Frédéric-Back, pour la première
-              édition de la
-              <a href="https://torontogamesweek.com" target="_blank" rel="noopener">Montreal Games Week</a>.
+              <strong>Orb</strong>, c'est du jeu expérimental au crépuscule, pour explorer les déchets, le territoire et la
+              transformation. Un jeu-rituel que j'ai créé au parc Frédéric-Back, à Montréal, pour la
+              première édition de la
+              <a href="https://www.semainedujeuvideodemontreal.com/" target="_blank" rel="noopener">Semaine du jeu vidéo de Montréal</a>.
+            </p>
+            <p>
+              Un soir de novembre, une quarantaine de personnes se sont donné rendez-vous à l'entrée du parc. Je les ai
+              guidé·e·s dans un parcours à travers le parc, d'une orbe à l'autre. On a commencé par un rituel méditatif au
+              coucher du soleil, à explorer ensemble ce qu'on jette, ce qu'on perd, ce qu'on laisse aller, et à peindre sur les
+              orbes avec de la lumière. Puis, à la tombée de la nuit, le jeu est devenu plus rapide.
             </p>
 
+            <h2>Le lieu</h2>
             <p>
-              Il rassemble un groupe d'inconnu·e·s autour d'un objet partagé et de quelques règles simples, et leur donne la
-              permission d'être un brin loufoques ensemble — cette petite ouverture sociale qui apparaît quand des gens font
-              quelque chose au même endroit, en même temps. Comme la plupart de mes œuvres, c'est coopératif, ça se joue à pied et
-              gratuitement, et c'est fait pour ce moment où une foule se rend compte qu'elle est une foule.
+              Le parc Frédéric-Back n'est pas un parc comme les autres. Avant, c'était une carrière de calcaire, puis un
+              immense dépotoir municipal, fermé en 2009 et rouvert en parc en 2017. Sous nos pieds, il y a environ
+              40 millions de tonnes de déchets. La terre, là-dessous, est encore en train de digérer tout ça.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-aerial.jpg" alt="Vue aérienne du parc Frédéric-Back l'été : de grandes collines vertes, d'anciennes zones d'enfouissement, une carrière et le quartier tout autour." class="orb-media" />
+              <figcaption><span class="desc">Le parc vu d'avion. Les orbes ponctuent les collines de l'ancien dépotoir.</span></figcaption>
+            </figure>
+            <p>
+              Les orbes ne sont pas des sculptures. Il y en a environ 250, dispersées sur les collines, mystérieuses au premier
+              abord : des évents pour un processus actif qui se déroule sous nos pieds. Elles sont posées sur les puits qui
+              captent le biogaz produit par la décomposition, un gaz récupéré et transformé en énergie. Les orbes, c'est la
+              partie visible de quelque chose qui continue, jour et nuit, sous le gazon. Ce jeu ne peut se jouer qu'ici.
+            </p>
+
+            <h2>La marche au coucher du soleil</h2>
+            <p>
+              On a commencé à l'heure bleue, au bord du parc. Je me suis présentée, et on est parti·e·s ensemble, lentement,
+              sur un parcours que j'avais tracé à travers le parc, en s'arrêtant à des orbes précises.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-welcome.jpg" alt="Une personne en long manteau rouge parle à un petit groupe rassemblé sur un sentier enneigé, au crépuscule." class="orb-media" />
+            </figure>
+            <p>
+              À chaque arrêt, on faisait un pas de plus dans le rituel, et on en apprenait ensemble davantage sur la terre sous
+              nos pieds. Le reste, je le garde pour les personnes qui étaient là. Orbe après orbe, les marques s'accumulaient
+              pendant que la lumière baissait.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-procession.jpg" alt="Un groupe marche à la file sur un sentier enneigé, la nuit, éclairé par des lampes de poche à lumière violette." class="orb-media" />
+            </figure>
+
+            <h2>Peindre avec de la lumière</h2>
+            <p>
+              Les orbes sont recouvertes d'une surface phosphorescente. On braque une lumière dessus, surtout une lumière UV,
+              et la lueur reste. On peut donc dessiner avec de la lumière : les traits tiennent un moment, puis s'effacent tout
+              doucement.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-painting.jpg" alt="Une personne dessine sur une orbe lumineuse avec une lampe UV, laissant une traînée de lumière verte sur sa surface, au coucher du soleil." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-site.jpg" alt="Une orbe vert pâle avec un dessin de feuille tracé en lumière, à l'heure bleue, avec une autre orbe et des bâtiments éclairés au loin." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <video class="orb-media" autoplay muted loop playsinline preload="metadata"
+                poster="../img/blog-images/orb-clip-poster.jpg"
+                aria-label="Un groupe entoure une orbe qui brille en vert dans le noir, couverte de dessins de lumière, avec les lumières de la ville au loin.">
+                <source src="../img/blog-images/orb-clip.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <p>
+              Au fil de la soirée, les orbes se sont couvertes de marques : des mots, des yeux, des visages, des fleurs, des
+              gribouillis. Chaque orbe est devenue une archive de ce que le groupe avait dit tout haut, puis a lentement
+              disparu dans le noir.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-marks.jpg" alt="Gros plan sur les dessins de lumière verte d'une orbe : un personnage qui tient un œil, un soleil, des points." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-group.jpg" alt="Des silhouettes entourent une orbe qui brille en vert vif, couverte de gribouillis lumineux ; une main la touche." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-hero.jpg" alt="Une grande orbe verte qui brille dans la neige, au crépuscule, entièrement couverte de dessins de lumière tracés à la main." class="orb-media" />
+            </figure>
+
+            <h2>Repartir avec une bille</h2>
+            <p>
+              À la fin, chaque personne est repartie avec une bille qui brille dans le noir. Une toute petite orbe, chargée de
+              lumière pendant la soirée, qui continue de briller une fois rendue à la maison.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-marble.jpg" alt="Une bille qui brille en bleu-vert, tenue dans une main gantée, avec le mot « YES » lumineux à l'arrière-plan." class="orb-media" />
+            </figure>
+
+            <h2>Crédits</h2>
+            <p>
+              Conception et animation : Marie LeBlanc Flanagan. Présenté dans le cadre de la première édition de la Semaine du
+              jeu vidéo de Montréal, au parc Frédéric-Back. Merci à toutes les personnes venues jouer ce soir-là. Photos : des
+              personnes présentes.
             </p>
 
             <p><a href="../about">Plus sur mon travail →</a></p>
           </div>
 
+          <!-- ======================= ENGLISH ======================= -->
           <div lang="en" id="lang-en" style="display: none">
             <h1 class="h1">Orb</h1>
-            <p><em>A ritual-game · Parc Frédéric-Back, Montréal · 2025</em></p>
+
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-header.png" alt="Illustration: glowing green orbs scattered across rolling hills at orange sunset, with a small figure holding up a light." class="orb-media tight" />
+            </figure>
 
             <p>
-              <strong>Orb</strong> is a ritual-game I designed and facilitated outdoors at Parc Frédéric-Back for the first
-              edition of
-              <a href="https://torontogamesweek.com" target="_blank" rel="noopener">Montreal Games Week</a>.
+              <strong>Orb</strong> is experimental play at dusk, exploring trash, territory, and transformation. It's a
+              ritual-game I created at Parc Frédéric-Back in Montréal, for the first edition of
+              <a href="https://www.semainedujeuvideodemontreal.com/" target="_blank" rel="noopener">Montreal Games Week</a>.
+            </p>
+            <p>
+              On a November evening, about forty people met at the edge of the park. I guided them on a journey through the
+              park, orb to orb. We began with a meditative ritual as the sun set, exploring together what we throw away, what we
+              lose, what we let go of, and painting on the orbs with light. Then, in the late dusk, we shifted into
+              faster-paced play.
             </p>
 
+            <h2>The place</h2>
             <p>
-              It gathers a group of strangers around a shared object and a few simple rules, and gives them permission to be a
-              little strange together — the small social opening that appears when people do something in the same place at the
-              same time. Like most of my work, it's cooperative, played on foot and free, and made for the moment a crowd
-              realizes it is a crowd.
+              Parc Frédéric-Back is not an ordinary park. It was a limestone quarry, then a huge municipal landfill, closed in
+              2009 and reopened as a park in 2017. Under our feet there are about 40 million tonnes of buried waste. The ground
+              down there is still digesting all of it.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-aerial.jpg" alt="Aerial view of Parc Frédéric-Back in summer: large green hills, old landfill zones, a quarry, and the surrounding neighbourhood." class="orb-media" />
+              <figcaption><span class="desc">The park from a plane. The orbs dot the hills of the old landfill.</span></figcaption>
+            </figure>
+            <p>
+              The orbs are not sculptures. There are around 250 of them scattered across the hills, mysterious at first:
+              venting ports for an active process happening beneath our feet. They sit over the wells that capture the biogas
+              from all that decomposition, which is collected and turned into energy. The orbs are the visible part of
+              something that keeps going, day and night, under the grass. This game can only be played here.
+            </p>
+
+            <h2>The walk at sunset</h2>
+            <p>
+              We began at blue hour, at the edge of the park. I introduced myself, and we set off together, slowly, along a
+              route I'd mapped through the park, stopping at particular orbs.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-welcome.jpg" alt="A person in a long red coat talks to a small group gathered on a snowy path at dusk." class="orb-media" />
+            </figure>
+            <p>
+              At each stop we took another step into the ritual, and learned together more about the land we were standing on.
+              The rest I'll keep for the people who were there. Orb by orb, the marks built up as the light dropped.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-procession.jpg" alt="A group walks single file along a snowy path at night, lit by purple ultraviolet flashlights." class="orb-media" />
+            </figure>
+
+            <h2>Painting with light</h2>
+            <p>
+              The orbs are coated in a phosphorescent surface. Shine a light on them, especially a UV light, and the glow stays
+              behind. So you can draw with light: the marks hold for a while, then slowly fade.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-painting.jpg" alt="A person draws on a glowing orb with a UV light, trailing green light across its surface, at sunset." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-site.jpg" alt="A pale green orb with a leaf drawn on it in light, at blue hour, with another orb and lit buildings in the distance." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <video class="orb-media" autoplay muted loop playsinline preload="metadata"
+                poster="../img/blog-images/orb-clip-poster.jpg"
+                aria-label="A group surrounds an orb glowing green in the dark, covered in drawings of light, with city lights in the distance.">
+                <source src="../img/blog-images/orb-clip.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <p>
+              Over the evening, the orbs filled with marks: words, eyes, faces, flowers, scribbles. Each orb became an archive
+              of what the group had said out loud, and then slowly disappeared into the dark.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-marks.jpg" alt="Close view of an orb's green light drawings: a figure holding up an eye, a sun, scattered dots." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-group.jpg" alt="Silhouettes gather around an orb glowing bright green, covered in glowing scribbles; a hand reaches out to touch it." class="orb-media" />
+            </figure>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-hero.jpg" alt="A large green orb glowing in the snow at dusk, covered all over in hand-drawn marks of light." class="orb-media" />
+            </figure>
+
+            <h2>Leaving with a marble</h2>
+            <p>
+              At the end, everyone left with a marble that glows in the dark. A tiny orb, charged with light over the evening,
+              that keeps glowing once you get it home.
+            </p>
+            <figure class="orb-fig">
+              <img src="../img/blog-images/orb-marble.jpg" alt="A marble glowing blue-green, held in a gloved hand, with the word 'YES' glowing in the background." class="orb-media" />
+            </figure>
+
+            <h2>Credits</h2>
+            <p>
+              Design and facilitation: Marie LeBlanc Flanagan. Presented as part of the first edition of Montreal Games Week,
+              at Parc Frédéric-Back. Thanks to everyone who came out to play that night. Photos: people who were there.
             </p>
 
             <p><a href="../about">More about my work →</a></p>

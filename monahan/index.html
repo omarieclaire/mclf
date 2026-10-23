@@ -6,45 +6,109 @@
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Monahan — une promenade sonore méditative inspirée des milieux humides de Monahan, lauréate du Prix d'art public du Creative City Network of Canada (2024)." />
-    <title>Monahan | MCLF</title>
+      content="MONAHAN, une œuvre sonore publique générative conçue par Laura Taler pour les milieux humides de Monahan à Ottawa. Technologie créative : Marie LeBlanc Flanagan. Deux fois primée (2024)." />
+    <title>MONAHAN | MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
 
-    <meta property="og:title" content="Monahan" />
-    <meta property="og:description" content="Une promenade sonore pour oreilles curieuses." />
-    <meta property="og:image" content="https://marieflanagan.com/monahan/images/mon1.png" />
+    <meta property="og:title" content="MONAHAN" />
+    <meta property="og:description" content="Une pièce sonore pour oreilles curieuses. Œuvre sonore publique générative, aux milieux humides de Monahan." />
     <meta property="og:url" content="https://marieflanagan.com/monahan/" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://marieflanagan.com/img/blog-images/mon-hero.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/mon-hero.jpg" />
 
     <style>
-      .lang-toggle {
-        margin-bottom: 1.75rem;
+      .mon-cta-wrap {
+        text-align: center;
+        margin: 2.75rem 0;
       }
-      .lang-toggle button {
-        background: none;
-        border: 1px solid rgba(82, 44, 252, 0.4);
-        color: rgba(54, 41, 122, 0.95);
-        padding: 6px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.95rem;
-        margin-right: 6px;
-      }
-      .lang-toggle button[aria-pressed="true"] {
-        background: rgba(82, 44, 252, 0.85);
-        color: white;
-        border-color: rgba(82, 44, 252, 0.85);
-      }
-      .begin-btn {
-        display: inline-block;
-        background: rgba(82, 44, 252, 0.85);
-        color: white;
-        padding: 10px 22px;
-        border-radius: 4px;
+      .mon-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #2d5a4a;
+        color: #fff;
+        padding: 14px 28px 14px 18px;
+        border-radius: 999px;
         text-decoration: none;
         font-weight: 600;
-        margin: 10px 0;
+        font-size: 1.1rem;
+        line-height: 1.2;
+        box-shadow: 0 4px 14px rgba(45, 90, 74, 0.3);
+        transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .mon-cta:hover,
+      .mon-cta:focus {
+        background: #22463a;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(45, 90, 74, 0.4);
+      }
+      .mon-cta .play {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.1rem;
+        height: 2.1rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 0.8rem;
+        padding-left: 3px;
+        flex: none;
+      }
+      /* awards */
+      .mon-awards {
+        list-style: none;
+        margin: 1.5rem 0;
+        padding: 1.1rem 1.3rem;
+        border: 1px solid rgba(82, 44, 252, 0.25);
+        border-radius: 6px;
+      }
+      .mon-awards li {
+        margin: 0.35rem 0;
+      }
+      .mon-awards .yr {
+        font-weight: 700;
+      }
+      /* audio excerpts */
+      figure.mon-fig {
+        margin: 2.4rem auto 2.6rem;
+        max-width: 34rem;
+      }
+      .mon-audio {
+        display: block;
+        width: 100%;
+      }
+      figure.mon-fig figcaption {
+        margin-top: 0.5rem;
+        font-style: italic;
+        font-size: 0.85rem;
+        opacity: 0.75;
+      }
+      /* photos */
+      figure.mon-photo {
+        margin: 3rem auto;
+        max-width: 40rem;
+      }
+      figure.mon-photo img {
+        display: block;
+        width: 100%;
+        border-radius: 2px;
+      }
+      figure.mon-photo figcaption {
+        margin-top: 0.5rem;
+        text-align: right;
+        font-style: italic;
+        font-size: 0.85rem;
+        opacity: 0.75;
+      }
+      /* MONAHAN wordmark as the page title */
+      h1.h1 .mon-wordmark {
+        display: block;
+        width: 320px;
+        max-width: 78%;
+        height: auto;
+        margin: 0 auto 1.25rem;
       }
     </style>
   </head>
@@ -60,7 +124,6 @@
             <li><a href="../about">About</a></li>
             <li><a href="../blog">Blog</a></li>
             <li><a href="../contact">Contact</a></li>
-            <li><a href="../cv/">CV</a></li>
           </ul>
         </nav>
         <label for="nav-toggle" class="nav-toggle-label">
@@ -71,55 +134,280 @@
       <div class="container">
         <div class="page-content">
           <div class="lang-toggle">
-            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
-            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">FR</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">EN</button>
           </div>
 
+          <!-- ======================= FRANÇAIS ======================= -->
           <div lang="fr" id="lang-fr">
-            <h1 class="h1">Monahan</h1>
-            <p><em>Promenade sonore · milieux humides de Monahan · 2024</em></p>
+            <h1 class="h1"><img src="../img/blog-images/monahan-wordmark.svg" alt="MONAHAN" class="mon-wordmark" /></h1>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-hero.jpg" alt="Des herbes et des akènes du marais à contre-jour, scintillant dans une lumière douce." />
+            </figure>
 
             <p>
-              <strong>Monahan</strong> est une promenade sonore méditative et une expérience narrative inspirée des milieux
-              humides de Monahan. On marche, on tend l'oreille, et le paysage se raconte — un audioguide sur mesure, porté par les
-              sons mêmes des marais.
+              <strong>MONAHAN</strong> est une pièce sonore pour oreilles curieuses. Commandée par la Ville d'Ottawa pour
+              les milieux humides de Monahan, sur le territoire traditionnel non cédé de la Nation algonquine anishinaabe,
+              elle s'écoute en scannant un code QR installé sur des panneaux disposés le long des sentiers. Conçue par
+              l'artiste Laura Taler, avec plus de 30&nbsp;collaborateur·rice·s, c'est une œuvre sonore publique générative
+              que l'on écoute sur son téléphone, en marchant.
             </p>
 
             <p>
-              J'ai assuré le développement et la création technologique de cette œuvre collaborative, qui a reçu le
-              <strong>Prix d'art public du Creative City Network of Canada en 2024</strong>.
+              J'en étais la technologue créative&nbsp;: j'ai conçu et programmé le système génératif. À chaque écoute,
+              l'algorithme de MONAHAN compose une pièce unique d'environ 20&nbsp;minutes à partir de 173&nbsp;chapitres
+              sonores. On peut y revenir sans cesse&nbsp;: on entend parfois un chapitre déjà connu, mais cette fois à
+              côté d'un autre, nouveau.
             </p>
 
-            <p><a href="monahan.html" class="begin-btn">Commencer la promenade →</a></p>
-
             <p>
-              En savoir plus :
-              <a href="https://monahanwalks.ca" target="_blank" rel="noopener">monahanwalks.ca</a>
+              MONAHAN a reçu deux prix. En 2024, le
+              <a href="https://www.creativecity.ca/awards/public-art-award" target="_blank" rel="noopener">Prix Legacy d'art public</a>
+              du Creative City Network of Canada. Puis, au Third Coast International Audio Festival (2024-2025), elle a
+              remporté la catégorie
+              <a href="https://www.thirdcoastfestival.org/collection/audio-unbound" target="_blank" rel="noopener">Audio Unbound</a>,
+              choisie parmi 462&nbsp;œuvres de plus de 50&nbsp;pays et 30&nbsp;langues.
+            </p>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-hero.jpg" alt="Le mot-symbole MONAHAN, la reconnaissance territoriale et le motif d'arbre, tirés du site monahanpublicart.ca." />
+            </figure>
+
+            <h2>Ce que vous entendez</h2>
+            <p>
+              Les 173&nbsp;chapitres viennent d'une trentaine de personnes. On y entend des chansons en turc, en
+              macédonien, en anglais, en arabe, en grec, en français et en algonquin. Des poèmes sur la contestation, la
+              traduction, la migration, le monde naturel et la sagesse. Des histoires de batailles de rap entre chenilles,
+              de conversations avec les arbres, d'écoute profonde, de la danse frétillante des abeilles et des oreilles
+              des papillons. Des oiseaux qui chantent, des insectes qui appellent, des loutres qui plongent, des chiens
+              qui jappent. Des herbes qui bruissent, de la neige glacée qui craque, de l'eau qui clapote, des branches
+              qui grincent.
+            </p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-poem.mp3"></audio>
+              <figcaption>Un poème. Un chapitre de MONAHAN.</figcaption>
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-about.jpg" alt="La section « À propos de MONAHAN » du site, sur fond vert orné du motif d'arbres." />
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-dandelion.jpg" alt="Un pissenlit monté en graines, en gros plan, devant la verdure du marais." />
+              <figcaption>Détail du marais. Photo&nbsp;: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-pinecones.jpg" alt="De petites pommes de pin sur une branche, en gros plan." />
+              <figcaption>Détail du marais. Photo&nbsp;: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-interview.jpg" alt="Une personne en chapeau de paille, micro à la main, en entrevue au bord du marais." />
+              <figcaption>Louella Tobias, en entrevue au marais. Photo&nbsp;: Laura Taler</figcaption>
+            </figure>
+
+            <h2>Écoutez</h2>
+            <p>
+              MONAHAN se décrit mal. Elle s'écoute. Voici un fragment du marais, tel qu'on l'entend sur le sentier.
+            </p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-birds.mp3"></audio>
+              <figcaption>Oiseaux du marais. Un chapitre de MONAHAN.</figcaption>
+            </figure>
+
+            <h2>Comment ça fonctionne</h2>
+            <p>
+              On arrive au parc, on scanne un code QR sur un panneau, et une pièce sonore personnelle se met à se composer
+              pour nous, en direct, pendant qu'on marche. L'œuvre a été pensée pour ce lieu précis, mais on peut l'écouter
+              n'importe où, idéalement dehors. Voici un peu de la musique qu'on y croise.
+            </p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-music.mp3"></audio>
+              <figcaption>De la musique, jouée par Demetri. Un chapitre de MONAHAN.</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-signpost.jpg" alt="Un panneau vert « MONAHAN » portant un code QR, planté dans l'herbe au bord du marais." />
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-sign-path.jpg" alt="Le panneau MONAHAN au bord du sentier, avec l'eau du marais et les arbres derrière." />
+              <figcaption>Photo&nbsp;: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-qr-bench.jpg" alt="Une petite plaque à code QR fixée sur le dossier d'un banc, le long du sentier." />
+              <figcaption>Les codes QR se trouvent aussi sur des bancs. Photo&nbsp;: Laura Taler</figcaption>
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-howitworks.jpg" alt="La section « Comment ça fonctionne » du site, sur fond vert orné du motif d'arbres." />
+            </figure>
+
+
+            <h2>Faire chanter l'algorithme</h2>
+            <p>
+              Composer une pièce de 20&nbsp;minutes à la volée, qui tienne debout musicalement et émotionnellement à
+              chaque fois, demande plus qu'un bouton « aléatoire ». J'ai écrit un système de règles qui choisit les
+              chapitres, les enchaîne et les fait respirer&nbsp;: ce qui peut suivre quoi, quand laisser le silence,
+              comment passer d'un poème à des grenouilles sans que ça accroche. Jordy, ingénieur du son chez Affinity, a
+              passé plus de 60&nbsp;heures à mixer les 173&nbsp;chapitres pour que tout se fonde.
+            </p>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-map.jpg" alt="La carte du milieu humide de Monahan et les renseignements sur l'accessibilité, tirés du site." />
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-trail.jpg" alt="Une personne, sur le sentier au bord de l'eau, montre du doigt le panneau MONAHAN sous un ciel bleu." />
+              <figcaption>Laura Taler, au panneau principal. Photo&nbsp;: Mike Surowiec</figcaption>
+            </figure>
+
+            <div class="mon-cta-wrap">
+              <a href="https://monahanpublicart.ca" target="_blank" rel="noopener" class="mon-cta">
+                <span class="play" aria-hidden="true">▶</span>
+                Écoutez la pièce au complet
+              </a>
+            </div>
+
+            <h2>Crédits</h2>
+            <p>
+              Conception et réalisation&nbsp;: Laura Taler. Technologie créative et système génératif&nbsp;: Marie LeBlanc
+              Flanagan. Mixage&nbsp;: Jordy (Affinity). Avec plus de 30&nbsp;collaborateur·rice·s. Commande de la Ville
+              d'Ottawa pour les milieux humides de Monahan, sur le territoire traditionnel non cédé de la Nation
+              algonquine anishinaabe. La liste complète des contributions et de l'équipe se trouve sur
+              <a href="https://monahanpublicart.ca" target="_blank" rel="noopener">monahanpublicart.ca</a>.
             </p>
 
             <p><a href="../about">Plus sur mon travail →</a></p>
           </div>
 
+          <!-- ======================= ENGLISH ======================= -->
           <div lang="en" id="lang-en" style="display: none">
-            <h1 class="h1">Monahan</h1>
-            <p><em>A sound walk · the Monahan wetlands · 2024</em></p>
+            <h1 class="h1"><img src="../img/blog-images/monahan-wordmark.svg" alt="MONAHAN" class="mon-wordmark" /></h1>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-hero.jpg" alt="Backlit marsh grasses and seed heads glinting in soft light." />
+            </figure>
 
             <p>
-              <strong>Monahan</strong> is a meditative sound walk and narrative experience inspired by the Monahan wetlands. You
-              wander, you listen, and the landscape tells its story — a custom audio walk carried by the sounds of the marsh
-              itself.
+              <strong>MONAHAN</strong> is a sound piece for curious ears. Commissioned by the City of Ottawa for the
+              Monahan wetlands, on the traditional unceded territory of the Anishinaabe Algonquin Nation, it is heard by
+              scanning a QR code on signposts placed along the pathways. Conceived of by the artist Laura Taler, with more
+              than 30&nbsp;contributors, it is a generative public sound artwork you listen to on your phone as you walk.
             </p>
 
             <p>
-              I led the development and technical creation of this collaborative work, which received the
-              <strong>Creative City Network of Canada Public Art Award in 2024</strong>.
+              I was the creative technologist: I designed and programmed the generative system. Each time you listen,
+              MONAHAN's algorithm composes a unique piece, about 20&nbsp;minutes long, from 173&nbsp;sound chapters. You
+              can return again and again. You might hear a chapter you've heard before, but this time next to something
+              new.
             </p>
 
-            <p><a href="monahan.html" class="begin-btn">Begin the walk →</a></p>
-
             <p>
-              Learn more:
-              <a href="https://monahanwalks.ca" target="_blank" rel="noopener">monahanwalks.ca</a>
+              MONAHAN has won two awards. In 2024, the
+              <a href="https://www.creativecity.ca/awards/public-art-award" target="_blank" rel="noopener">Public Art Legacy Award</a>
+              from the Creative City Network of Canada. And at the Third Coast International Audio Festival (2024-2025), it
+              won the
+              <a href="https://www.thirdcoastfestival.org/collection/audio-unbound" target="_blank" rel="noopener">Audio Unbound</a>
+              category, chosen from 462&nbsp;entries across more than 50&nbsp;countries and 30&nbsp;languages.
+            </p>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-hero.jpg" alt="The MONAHAN wordmark, land acknowledgment, and tree motif, from monahanpublicart.ca." />
+            </figure>
+
+            <h2>What you hear</h2>
+            <p>
+              The 173&nbsp;chapters come from more than thirty people. There are songs in Turkish, Macedonian, English,
+              Arabic, Greek, French, and Algonquin. Poems about protest, translation, migration, the natural world, and
+              wisdom. Stories about caterpillar rap battles, talking with trees, deep listening, the bee's waggle dance,
+              and butterfly ears. Birds singing, insects calling, otters splashing, dogs barking. Grasses swooshing, icy
+              snow crunching, water swishing, branches creaking.
+            </p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-poem.mp3"></audio>
+              <figcaption>A poem. A chapter from MONAHAN.</figcaption>
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-about.jpg" alt="The 'About MONAHAN' section of the site, on a green tree-patterned background." />
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-dandelion.jpg" alt="A dandelion seed head in close-up against the green of the wetland." />
+              <figcaption>A wetland detail. Photo: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-pinecones.jpg" alt="Small pine cones on a branch, in close-up." />
+              <figcaption>A wetland detail. Photo: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-interview.jpg" alt="A person in a straw hat, holding a microphone, being interviewed at the edge of the marsh." />
+              <figcaption>Louella Tobias, interviewed at the wetlands. Photo: Laura Taler</figcaption>
+            </figure>
+
+            <h2>Listen</h2>
+            <p>MONAHAN is hard to describe. It is easy to hear. Here is a fragment of the marsh, as you hear it on the path.</p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-birds.mp3"></audio>
+              <figcaption>Marsh birds. A chapter from MONAHAN.</figcaption>
+            </figure>
+
+            <h2>How it works</h2>
+            <p>
+              You arrive at the park, scan a QR code on a signpost, and a personal sound piece begins composing itself for
+              you, live, as you walk. The work was made for this specific site, but you can listen anywhere, ideally
+              outside. Here is some of the music you'll come across in it.
+            </p>
+            <figure class="mon-fig">
+              <audio class="mon-audio" controls preload="none" src="audio/monahan-music.mp3"></audio>
+              <figcaption>Music, played by Demetri. A chapter from MONAHAN.</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-signpost.jpg" alt="A green MONAHAN signpost with a QR code, standing in the grass at the edge of the marsh." />
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-sign-path.jpg" alt="The MONAHAN sign beside the trail, with the marsh water and trees behind it." />
+              <figcaption>Photo: Laura Taler</figcaption>
+            </figure>
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-qr-bench.jpg" alt="A small QR-code plaque fixed to the backrest of a bench along the trail." />
+              <figcaption>QR codes are also on benches along the path. Photo: Laura Taler</figcaption>
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-howitworks.jpg" alt="The 'How it works' section of the site, on a green tree-patterned background." />
+            </figure>
+
+
+            <h2>Making the algorithm sing</h2>
+            <p>
+              Composing a 20&nbsp;minute piece on the fly, one that holds together musically and emotionally every time,
+              takes more than a shuffle button. I wrote a system of rules that chooses the chapters, sequences them, and
+              lets them breathe: what can follow what, when to leave silence, how to move from a poem to frogs without a
+              jolt. Jordy, Affinity's audio engineer, spent more than 60&nbsp;hours mixing the 173&nbsp;chapters so it all
+              blends.
+            </p>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-brand-map.jpg" alt="The Monahan wetland map and accessibility details, from the site." />
+            </figure>
+
+            <figure class="mon-photo">
+              <img src="../img/blog-images/mon-trail.jpg" alt="A person on the waterside trail points to the MONAHAN signpost under a blue sky." />
+              <figcaption>Laura Taler at the main sign. Photo: Mike Surowiec</figcaption>
+            </figure>
+
+            <div class="mon-cta-wrap">
+              <a href="https://monahanpublicart.ca" target="_blank" rel="noopener" class="mon-cta">
+                <span class="play" aria-hidden="true">▶</span>
+                Listen to the full piece
+              </a>
+            </div>
+
+            <h2>Credits</h2>
+            <p>
+              Conceived and realized by Laura Taler. Creative technology and generative system: Marie LeBlanc Flanagan.
+              Mixing: Jordy (Affinity). With more than 30&nbsp;contributors. Commissioned by the City of Ottawa for the
+              Monahan wetlands, on the traditional unceded territory of the Anishinaabe Algonquin Nation. The full list of
+              contributors and the production team is at
+              <a href="https://monahanpublicart.ca" target="_blank" rel="noopener">monahanpublicart.ca</a>.
             </p>
 
             <p><a href="../about">More about my work →</a></p>

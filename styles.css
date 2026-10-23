@@ -1261,6 +1261,8 @@ footer {
 }
 
 #showAndHide {display: none;}
+#moreQuestionsFr {display: none;}
+#moreInspoFr, #moreInspoEn {display: none;}
 
 
 /* IMAGES */
@@ -1365,5 +1367,39 @@ img {
   margin-bottom: 3rem;
 }
 .img-cv:hover {
-  border: 1px dashed salmon; 
+  border: 1px dashed salmon;
+}
+
+/* ==========================================================
+   Language toggle (FR / EN) — shared across project pages
+   ========================================================== */
+.lang-toggle {
+  text-align: right;
+  margin: 2rem 0 2.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.lang-toggle button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  color: rgba(35, 35, 35, 0.45);
+}
+.lang-toggle button:hover {
+  color: rgba(35, 35, 35, 0.85);
+}
+.lang-toggle button[aria-pressed="true"] {
+  color: rgba(82, 44, 252, 0.95);
+  font-weight: 700;
+}
+.lang-toggle button + button::before {
+  content: "/";
+  margin: 0 0.45rem;
+  color: rgba(35, 35, 35, 0.3);
+  font-weight: 400;
 }
