@@ -6,36 +6,62 @@
     <meta name="author" content="Marie Claire LeBlanc Flanagan" />
     <meta
       name="description"
-      content="Jeu(x) de lumières — une installation lumineuse interactive à la place de la Paix, à Montréal, faite avec le quartier pour le Village Numérique de MUTEK, avec la Société des arts technologiques (SAT)." />
+      content="Jeu(x) de lumières, une série de petits jeux coopératifs qui se jouent avec de la lumière, dehors, la nuit, à la place de la Paix à Montréal, avec la Société des arts technologiques (SAT)." />
     <title>Jeu(x) de lumières | MCLF</title>
     <link href="../styles.css" rel="stylesheet" type="text/css" />
 
     <meta property="og:title" content="Jeu(x) de lumières" />
     <meta
       property="og:description"
-      content="Une installation lumineuse interactive à la place de la Paix, à Montréal, faite avec le quartier pour le Village Numérique de MUTEK." />
+      content="Une série de petits jeux coopératifs qui se jouent avec de la lumière, dehors, la nuit, à la place de la Paix à Montréal." />
+    <meta property="og:image" content="https://marieflanagan.com/img/blog-images/jdl-hero.jpg" />
     <meta property="og:url" content="https://marieflanagan.com/jeux-de-lumieres/" />
     <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://marieflanagan.com/img/blog-images/jdl-hero.jpg" />
 
     <style>
-      .lang-toggle {
-        margin-bottom: 1.75rem;
+      /* lead line under the title */
+      .jdl-kicker {
+        font-style: italic;
+        margin-bottom: 1.5rem;
       }
-      .lang-toggle button {
-        background: none;
-        border: 1px solid rgba(82, 44, 252, 0.4);
-        color: rgba(54, 41, 122, 0.95);
-        padding: 6px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.95rem;
-        margin-right: 6px;
+      /* full-width media that still behaves on small screens */
+      .jdl-media {
+        display: block;
+        width: 40rem;
+        max-width: 100%;
+        margin: 3rem auto 0.4rem;
+        border-radius: 2px;
       }
-      .lang-toggle button[aria-pressed="true"] {
-        background: rgba(82, 44, 252, 0.85);
-        color: white;
-        border-color: rgba(82, 44, 252, 0.85);
+      .jdl-media.tight {
+        margin-top: 2rem;
+      }
+      figure.jdl-fig {
+        margin: 0 auto;
+      }
+      figure.jdl-fig figcaption {
+        max-width: 40rem;
+        margin: 0 auto 3rem;
+        text-align: right;
+        font-style: italic;
+        font-size: 0.85rem;
+        opacity: 0.75;
+      }
+      figure.jdl-fig figcaption .desc {
+        float: left;
+        text-align: left;
+        font-style: normal;
+        max-width: 70%;
+      }
+      .jdl-games {
+        margin: 1.4rem 0 0;
+      }
+      .jdl-game-name {
+        font-weight: 700;
+      }
+      .jdl-play-list li {
+        margin-bottom: 0.3rem;
       }
     </style>
   </head>
@@ -51,7 +77,6 @@
             <li><a href="../about">About</a></li>
             <li><a href="../blog">Blog</a></li>
             <li><a href="../contact">Contact</a></li>
-            <li><a href="../cv/">CV</a></li>
           </ul>
         </nav>
         <label for="nav-toggle" class="nav-toggle-label">
@@ -62,38 +87,184 @@
       <div class="container">
         <div class="page-content">
           <div class="lang-toggle">
-            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
-            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+            <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">FR</button>
+            <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">EN</button>
           </div>
 
+          <!-- ======================= FRANÇAIS ======================= -->
           <div lang="fr" id="lang-fr">
             <h1 class="h1">Jeu(x) de lumières</h1>
-            <p><em>Installation lumineuse interactive publique · Place de la Paix, Montréal · 2026</em></p>
+
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-hero.jpg" alt="Deux personnes dansent ensemble dans des flaques de lumière violette et jaune, le soir, dans un parc." class="jdl-media tight" />
+              <figcaption>Photo&nbsp;: Luz Montero</figcaption>
+            </figure>
 
             <p>
-              <strong>Jeu(x) de lumières</strong> est une installation lumineuse interactive présentée en plein air à la place
-              de la Paix, sur le boulevard Saint-Laurent à Montréal, créée pour le
+              <strong>Jeu(x) de lumières</strong>, c'est une série de petits jeux coopératifs. Un prétexte pour que les
+              gens se trouvent&nbsp;; pour être créatif·ve·s, joueur·se·s et sérieux·ses ensemble.
+              Une occasion pour que des voisin·e·s jouent ensemble&nbsp;: avec ou sans logis, jeunes et moins jeunes. Un
+              endroit où amener ses ami·e·s, ou s'en faire de nouveaux.
+            </p>
+            <p>
+              Présenté en première mondiale en août 2026 à la place de la Paix, à Montréal, dans le
               <a href="https://village-numerique.mutek.org/fr" target="_blank" rel="noopener">Village Numérique</a>
-              de MUTEK, en partenariat avec la
-              <a href="https://sat.qc.ca/fr/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>.
+              de MUTEK, avec la
+              <a href="https://sat.qc.ca/fr/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>
+              dans le cadre de ses 30&nbsp;ans.
             </p>
 
+            <h2>Le terrain de jeu</h2>
             <p>
-              Une fois la nuit tombée, le parc s'anime au gré des gens qui le traversent. Un système de vision par ordinateur
-              repère où se trouvent les personnes et comment elles bougent, et la lumière et le son répondent en temps réel :
-              approchez-vous, et l'espace s'allume avec vous; rassemblez-vous entre ami·e·s, et une plus grande partie s'éveille
-              d'un coup. L'œuvre est faite pour qu'on y entre et qu'on y joue, pas pour qu'on la regarde de loin. Jusqu'à quatre
-              personnes jouent à la fois.
+              Jeu(x) de lumières, c'est une poignée de petits jeux qu'on joue ensemble la nuit dans le parc, sur une
+              grille de dalles de béton de 12&nbsp;mètres sur 18. Pour tout dispositif&nbsp;: quatre
+              projecteurs, comme ceux d'une scène, quelques caméras spéciales (LiDAR) qui repèrent où sont les gens, et
+              des haut-parleurs. Approchez-vous, et une lumière s'allume avec vous. On entre dedans et on y joue. On ne la
+              regarde pas de loin.
+            </p>
+            <p>
+              La place de la Paix est un espace public où plusieurs communautés et plusieurs réalités cohabitent&nbsp;:
+              des gens qui passent, des fidèles de la mosquée voisine, des planchistes, des résident·e·s, des personnes
+              en situation d'itinérance, le personnel de la SAT, des touristes. On ne voulait pas déposer une installation
+              dans ce lieu, mais faire une œuvre capable d'y cohabiter.
             </p>
 
+            <h2>Quatre jeux (et quelques secrets)</h2>
             <p>
-              L'œuvre a été conçue <em>avec</em> le quartier, et non pour lui : séances de cocréation et d'enregistrement avec
-              des organismes du milieu, dont des groupes qui travaillent auprès des personnes en situation d'itinérance autour de
-              la place de la Paix. J'en ai assuré la direction artistique — scénographie immersive, conception sonore et
-              lumineuse, et conception de l'interaction elle-même. Manuel Bolduc (SAT) a bâti le système de vision par ordinateur
-              qui transforme les déplacements des gens en œuvre; Zachary L'Heureux (SAT) s'est occupé de l'intégration des
-              systèmes multimédias et de l'installation sur place; CR34TE (Marc-Olivier Bisson) était notre partenaire en
-              éclairage.
+              On a imaginé une vingtaine de jeux, puis on a gardé les meilleurs. Quatre se jouent dans le parc, et
+              quelques jeux secrets s'y cachent encore.
+            </p>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Ami.</span> On danse avec ses ami·e·s et avec la lumière. Une lumière suit
+              chaque personne, comme un animal tout doux. Plus on se rapproche des autres, plus les lumières et les sons
+              changent et grandissent.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-friend.jpg" alt="Deux flaques de lumière, l'une bleue, l'autre jaune, abritent chacune une personne sur les dalles du parc." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Serpent.</span> Il faut rester sur une dalle allumée pendant qu'elle se déplace,
+              d'abord seul·e, puis avec les autres. Quand on monte sur sa dalle, elle vire au vert et se met à chanter.
+              Doucement, elle nous mène vers les autres. Une à une, les dalles se rejoignent et avancent ensemble comme un
+              serpent, qu'on suit à plusieurs.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-chase.jpg" alt="Des pieds, de près, posés sur des dalles éclairées de jaune et de violet." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Traque.</span> On court et on saute sur les dalles allumées, à l'unisson, avec
+              ses ami·e·s. Le jeu accélère petit à petit, jusqu'à ressembler à un jeu de la taupe.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-hunt.jpg" alt="Un groupe de personnes joue avec énergie dans une lumière jaune vif, le soir." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Peinture.</span> On peint avec de la musique et de la lumière. Chacun·e reçoit
+              une couleur et peint les dalles avec ses pas&nbsp;; ensuite, les dalles rejouent le parcours, et on entend
+              ce qu'on a créé.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-paint.jpg" alt="Des gens traversent un damier de lumières arc-en-ciel projetées sur les dalles du parc." class="jdl-media" />
+            </figure>
+
+            <figure class="jdl-fig">
+              <video class="jdl-media" autoplay muted loop playsinline preload="metadata"
+                poster="../img/blog-images/jdl-clip-poster.jpg"
+                aria-label="Des pieds suivent une dalle de lumière bleue qui se déplace sur le sol du parc, le soir.">
+                <source src="../img/blog-images/jdl-clip.mp4" type="video/mp4" />
+              </video>
+            </figure>
+
+            <h2>À l'intérieur de la machine</h2>
+            <p>
+              Il se passe beaucoup de choses sous le capot&nbsp;: du code de jeu sur mesure, un suivi des corps en temps
+              réel, et une lumière et un son qui réagissent à quatre personnes à la fois. Le tout repose sur Carto, un
+              outil libre développé à la SAT pour ce genre d'œuvre interactive et collective.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-console.jpg" alt="Des mains sur une console d'éclairage et un ordinateur portable, le soir, au bord du parc éclairé." class="jdl-media" />
+            </figure>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-lidar.jpg" alt="Nuage de points bleu généré par le LiDAR, montrant les corps et le sol captés en trois dimensions." class="jdl-media" />
+              <figcaption><span class="desc">Ce que « voit » le système&nbsp;: les LiDAR fondus en données 3D.</span></figcaption>
+            </figure>
+
+            <h2>Conçu par le jeu</h2>
+            <p>
+              Dans ma pratique de conception de jeux, je commence toujours par jouer, tout de suite. Qu'est-ce qu'il y a ici? Est-ce que c'est le fun?
+              Qu'est-ce que ça me donne envie de faire? Donnez-moi une simple lumière au sol, et je vais&nbsp;:
+            </p>
+            <ul class="jdl-play-list">
+              <li>courir et bondir dessus</li>
+              <li>la pourchasser</li>
+              <li>essayer de l'écraser</li>
+              <li>faire des ombres chinoises</li>
+              <li>essayer de l'empêcher d'atteindre le sol</li>
+              <li>imaginer qu'elle me poursuit, et me sauver</li>
+              <li>imaginer qu'elle me poursuit, sortir du jeu, puis y resauter vite pour attraper des choses sans me faire prendre</li>
+              <li>imaginer que la lumière est mon animal, un·e ami·e tout·e douce qui me suit</li>
+            </ul>
+            <p>Chacun de ces gestes est le germe d'un jeu.</p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-playtest.jpg" alt="Une personne saute sur des dalles de lumière lors d'un test de jeu, à l'intérieur." class="jdl-media" />
+            </figure>
+            <p>
+              Quand il n'y a personne, on joue avec des mannequins posés sur des chaises de bureau. Le test de jeu, c'est
+              le cœur battant de la conception&nbsp;: une part d'enquête, une part d'intuition, une part de pure magie. On
+              rejoue, encore et encore, jusqu'à ce que ce soit juste.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-mannequins.jpg" alt="Des mannequins posés sur des chaises de bureau, éclairés par la lumière projetée, en atelier." class="jdl-media" />
+            </figure>
+            <p>
+              On a aussi fait en sorte que l'information essentielle passe à la fois par le son et par la lumière, pour
+              qu'on puisse jouer avec l'un, l'autre, ou les deux.
+            </p>
+
+            <h2>Fait avec le quartier</h2>
+            <p>
+              L'œuvre a été conçue <em>avec</em> le quartier, pas <em>pour</em> lui. On a travaillé avec l'Agence
+              Dragon-Fly, qui fait déjà du terrain auprès des personnes en situation d'itinérance à la place de la Paix,
+              et on les a impliquées comme expertes de l'espace public. À travers des résidences, des ateliers, des tests
+              avec le public et un laboratoire ouvert de dix jours sur place, on a écouté, recueilli des commentaires et
+              ajusté l'installation aux réalités du lieu.
+            </p>
+            <p>
+              Pour l'agence, l'installation est devenue un espace où poursuivre son travail et partager ses propres
+              réalités avec le public. Ces personnes ont été nos gardien·ne·s et nos ami·e·s, chaque soir.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-together.jpg" alt="Un groupe de personnes se tient tout près, baigné de lumière bleue, sur les dalles du parc." class="jdl-media" />
+            </figure>
+
+            <h2>Et ensuite</h2>
+            <p>
+              C'était notre première expérience du genre, et on veut continuer&nbsp;: rejoindre plus de gens, travailler
+              avec plus de communautés, explorer ce que la technologie, le jeu et la co-création rendent possible dans
+              l'espace public.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-joy.jpg" alt="Une personne allongée sur le sol, baignée d'une lumière verte, sourit." class="jdl-media" />
+              <figcaption>Photo&nbsp;: SAT</figcaption>
+            </figure>
+
+            <h2>Crédits</h2>
+            <p>
+              Direction artistique, conception des jeux, du son et de la lumière&nbsp;: Marie LeBlanc Flanagan. Vision par
+              ordinateur&nbsp;: Manuel Bolduc (SAT). Responsable du Living Lab (SAT)&nbsp;: Alexandra Marin. Intégration des systèmes
+              multimédias et installation sur place&nbsp;: Zachary L'Heureux (SAT). Partenaire en éclairage&nbsp;: CR34TE
+              (Marc-Olivier Bisson).
+            </p>
+            <p>
+              Présenté en première mondiale avec la Société des arts technologiques (SAT), dans le cadre de ses
+              30&nbsp;ans, et montré dans le Village Numérique de MUTEK. Co-présenté avec le Partenariat du Quartier des
+              spectacles (PQDS). Avec le soutien de l'arrondissement de Ville-Marie et de la Ville de Montréal, de
+              l'Agence Dragon-Fly, de la Table de concertation du faubourg Saint-Laurent, de CR34TE et de GM Location.
+              Merci à toutes les personnes qui ont pris part à la co-création. Photos&nbsp;: Luz Montero et SAT.
             </p>
 
             <h2>Pour en savoir plus</h2>
@@ -116,31 +287,171 @@
             <p><a href="../about">Plus sur mon travail →</a></p>
           </div>
 
+          <!-- ======================= ENGLISH ======================= -->
           <div lang="en" id="lang-en" style="display: none">
             <h1 class="h1">Jeu(x) de lumières</h1>
-            <p><em>Interactive public light installation · Place de la Paix, Montréal · 2026</em></p>
+
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-hero.jpg" alt="Two people dance together in pools of purple and yellow light at night in a park." class="jdl-media tight" />
+              <figcaption>Photo: Luz Montero</figcaption>
+            </figure>
 
             <p>
-              <strong>Jeu(x) de lumières</strong> is an interactive outdoor light installation at Place de la Paix, on Boulevard
-              Saint-Laurent in Montréal, made for MUTEK's
-              <a href="https://village-numerique.mutek.org/en" target="_blank" rel="noopener">Village Numérique</a>
-              in partnership with the
-              <a href="https://sat.qc.ca/en/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>.
+              <strong>Jeu(x) de lumières</strong> is a set of tiny cooperative games. It's an excuse for people to find
+              each other, to be creative and playful and serious together. It's a chance for neighbours to play together:
+              housed and unhoused, young and old. It's a place to bring your friends, or make new ones.
+            </p>
+            <p>
+              It premiered in August 2026 at Place de la Paix in Montréal, in MUTEK's
+              <a href="https://village-numerique.mutek.org/en" target="_blank" rel="noopener">Village Numérique</a>,
+              with the
+              <a href="https://sat.qc.ca/en/" target="_blank" rel="noopener">Société des arts technologiques (SAT)</a>
+              as part of its 30th anniversary.
             </p>
 
+            <h2>The playground</h2>
             <p>
-              After dark, the park comes alive to the people moving through it. Computer vision senses where people are and how
-              they move, and light and sound respond in real time — approach, and the space lights up with you; gather with
-              friends, and more of it wakes at once. It is built to be walked into and played with, not watched from a distance.
-              Up to four people play at a time.
+              Jeu(x) de lumières is a handful of small games you play together, outdoors at night, on a grid of brick tiles 40 by 60 feet in the park. The whole setup is just four spotlights (the kind you see on a stage), a few
+              special cameras (LiDAR) that sense where people are, and audio speakers. Approach, and a light comes on with
+              you. You walk into it and play. You don't watch it from a distance.
+            </p>
+            <p>
+              Place de la Paix is a public space where many communities and realities co-exist: commuters, people from
+              the nearby mosque, skaters, residents, unhoused people, SAT staff, tourists. We didn't want to drop an
+              installation into the space. We wanted to make a work that could co-exist with it.
             </p>
 
+            <h2>Four games (and a few secrets)</h2>
             <p>
-              The work was made <em>with</em> the neighbourhood, not for it: co-design and recording sessions with local
-              organizations, including groups working with unhoused residents around Place de la Paix. I directed the piece —
-              immersive scenography, sound and light design, and the design of the interaction itself. Manuel Bolduc (SAT) built
-              the computer-vision system that turns people's movement into the work; Zachary L'Heureux (SAT) handled multimedia
-              systems integration and on-site installation; CR34TE (Marc-Olivier Bisson) was our lighting partner.
+              We dreamed up about twenty games, then kept the best ones. Four are played in the park, and a few secret
+              games are still hiding out there.
+            </p>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Friend.</span> You dance with your friends and the light. A light follows each
+              person, like a gentle pet. The closer you get to other people, the more the lights and sounds change and grow.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-friend.jpg" alt="Two pools of light, one blue and one yellow, each holding a person on the park tiles." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Snake.</span> You stay on a lit tile as it moves, first on your own, then with
+              others. Step onto your tile and it turns green and begins to sing. Slowly it leads you to the others. One by
+              one the tiles join up and travel together as a snake, and you ride it together.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-chase.jpg" alt="A close view of feet standing on tiles lit in yellow and purple." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Hunt.</span> You run and jump on lit tiles with your friends, in unison. It
+              speeds up over time, until it's almost whack-a-mole.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-hunt.jpg" alt="A group of people play energetically in bright yellow light at night." class="jdl-media" />
+            </figure>
+
+            <p class="jdl-games">
+              <span class="jdl-game-name">Paint.</span> You paint with music and light. Each person gets a colour and
+              paints the tiles with their steps; then the tiles play your path back, and you hear what you made.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-paint.jpg" alt="People cross a checkerboard of rainbow light projected on the park tiles." class="jdl-media" />
+            </figure>
+
+            <figure class="jdl-fig">
+              <video class="jdl-media" autoplay muted loop playsinline preload="metadata"
+                poster="../img/blog-images/jdl-clip-poster.jpg"
+                aria-label="Feet follow a moving tile of blue light across the park floor at night.">
+                <source src="../img/blog-images/jdl-clip.mp4" type="video/mp4" />
+              </video>
+            </figure>
+
+            <h2>Inside the machine</h2>
+            <p>
+              There's a lot going on under the hood: custom game code, real-time body tracking, and light and sound that
+              respond to four people at once. It all runs on Carto, an open-source tool developed at the SAT for exactly
+              this kind of collective, interactive work.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-console.jpg" alt="Hands on a lighting console and a laptop at night, at the edge of the lit park." class="jdl-media" />
+            </figure>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-lidar.jpg" alt="A blue LiDAR point cloud showing bodies and ground captured in three dimensions." class="jdl-media" />
+              <figcaption><span class="desc">What the system "sees": the LiDAR fused into 3D data.</span></figcaption>
+            </figure>
+
+            <h2>Designed by playing</h2>
+            <p>
+              In my practice as a game designer, I always start by playing, right away. What's here? Is it fun? What does it make me want to do? Give me a
+              single light on the ground, and I'll:
+            </p>
+            <ul class="jdl-play-list">
+              <li>run and pounce on it</li>
+              <li>chase it</li>
+              <li>try to squash it</li>
+              <li>make shadow puppets</li>
+              <li>try to block it from reaching the ground</li>
+              <li>imagine it's chasing me, and run away</li>
+              <li>imagine it's chasing me, run out of bounds, then jump back in to grab things without getting caught</li>
+              <li>imagine the light is my pet, a gentle friend following me</li>
+            </ul>
+            <p>Each of those is the seed of a game.</p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-playtest.jpg" alt="A person jumps across tiles of light during an indoor playtest." class="jdl-media" />
+            </figure>
+            <p>
+              When there's no one around, we play with mannequins propped on office chairs. Playtesting is the beating
+              heart of game design: one part investigation, one part intuition, one part pure magic. We play it again and
+              again, until it's right.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-mannequins.jpg" alt="Mannequins propped on office chairs, lit by projected light in a studio." class="jdl-media" />
+            </figure>
+            <p>
+              We also made sure the essential information comes through both sound and light, so you can play with one,
+              the other, or both.
+            </p>
+
+            <h2>Made with the neighbourhood</h2>
+            <p>
+              The work was made <em>with</em> the neighbourhood, not <em>for</em> it. We worked with Agence Dragon-Fly,
+              who already do fieldwork with unhoused people at Place de la Paix, and involved them as experts of the
+              public space. Through residencies, workshops, user tests, and a ten-day on-site open lab, we listened,
+              gathered feedback, and adapted the installation to the realities of the place.
+            </p>
+            <p>
+              For the agency, the installation became a space to continue their work and share their own realities with
+              the public. They were our guardians and our friends every night.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-together.jpg" alt="A group of people stand close together, bathed in blue light, on the park tiles." class="jdl-media" />
+            </figure>
+
+            <h2>What's next</h2>
+            <p>
+              This was our first experience doing something like this, and we want to do more: reach more people, work
+              with more communities, keep exploring what technology, play, and co-creation can make possible in public
+              space.
+            </p>
+            <figure class="jdl-fig">
+              <img src="../img/blog-images/jdl-joy.jpg" alt="A person lies on the ground, bathed in green light, smiling." class="jdl-media" />
+              <figcaption>Photo: SAT</figcaption>
+            </figure>
+
+            <h2>Credits</h2>
+            <p>
+              Artistic direction, game, sound, and light design: Marie LeBlanc Flanagan. Computer vision: Manuel Bolduc
+              (SAT). Living Lab Manager (SAT): Alexandra Marin. Multimedia systems integration and on-site installation: Zachary
+              L'Heureux (SAT). Lighting partner: CR34TE (Marc-Olivier Bisson).
+            </p>
+            <p>
+              Premiered with the Société des arts technologiques (SAT) as part of its 30th anniversary, and shown in
+              MUTEK's Village Numérique. Co-presented with the Partenariat du Quartier des spectacles (PQDS). With the
+              support of the Ville-Marie borough and the City of Montréal, Agence Dragon-Fly, the Table de concertation du
+              faubourg Saint-Laurent, CR34TE, and GM Location. Thanks to everyone who took part in the co-creation.
+              Photos: Luz Montero and SAT.
             </p>
 
             <h2>Learn more</h2>

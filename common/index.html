@@ -23,11 +23,6 @@
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>MCLF</title>
   <link href="../styles.css" rel="stylesheet" type="text/css">
-  <style>
-    .lang-toggle{margin-bottom:1.75rem;}
-    .lang-toggle button{background:none;border:1px solid rgba(82,44,252,0.4);color:rgba(54,41,122,0.95);padding:6px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.95rem;margin-right:6px;}
-    .lang-toggle button[aria-pressed="true"]{background:rgba(82,44,252,0.85);color:white;border-color:rgba(82,44,252,0.85);}
-  </style>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
@@ -46,7 +41,6 @@
 					<!-- <li><a href="../consulting">Consulting</a></li> -->
 					<li><a href="../blog">Blog</a></li>
 					<li><a href="../contact">Contact</a></li>
-					<!-- <li><a href="#">CV</a></li> -->
         </ul>
       </nav>
       <label for="nav-toggle" class="nav-toggle-label">
@@ -57,12 +51,12 @@
     <div class="container">
       <div class="page-content">
         <div class="lang-toggle">
-          <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">Français</button>
-          <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">English</button>
+          <button type="button" id="btn-fr" aria-pressed="true" onclick="setLang('fr')">FR</button>
+          <button type="button" id="btn-en" aria-pressed="false" onclick="setLang('en')">EN</button>
         </div>
 
         <div lang="fr" id="lang-fr">
-          <h1 class="h1">Common </h1>
+          <h1 class="h1">Common</h1>
           <p class="quote"><strong>Qu'est-ce que ça veut dire, bâtir la confiance dans le jeu?</strong></p>
 
           <p>J'ai créé Common pour le <a target="_blank" href="https://www.cafka.org/page/about">CAFKA – Contemporary Art
@@ -125,6 +119,9 @@
             <li>peut-on créer un réseau décentralisé de soin?</li>
             <li>qui est responsable de notre environnement commun?</li>
             <li>une communauté peut-elle cogérer des ressources? Ou la tragédie des communs est-elle inévitable?</li>
+          </ul>
+          <div id="moreQuestionsFr">
+          <ul>
             <li>La confiance est-elle un choix? Une action? Un état?</li>
             <li>Quelles différences y a-t-il entre se faire confiance à soi-même et faire confiance à quelqu'un
               d'autre?</li>
@@ -220,6 +217,8 @@
             <li>Les communautés sont-elles vivantes?</li>
             <li>Les communautés demandent-elles un investissement continu?</li>
           </ul>
+          </div>
+          <button onclick="toggleQuestionsFr()" id="moreQuestionsFrBtn">Lire plus de questions</button>
 
           <h2>Inspirations / Lectures / Parties jouées</h2>
           <p>Ma recherche passe toujours par l'exploration d'autres jeux, mais aussi d'une variété d'autres domaines et
@@ -247,6 +246,9 @@
                 Spacetime</a>, <a target="_blank" href="http://www.spotov.co.uk/games.html#1">Dreadnought</a>,
               Edison Escape Room, <a target="_blank" href="https://www.youtube.com/watch?v=5IJte841c4A">Marina
                 Abramović</a> (The Story Of Bow &amp; Arrow), !Move or Die,</li>
+          </ul>
+          <div id="moreInspoFr">
+          <ul>
             <li>Crowd Collaboration:<a target="_blank"
                 href="https://en.wikipedia.org/wiki/Twitch_Plays_Pok%C3%A9mon">Twitch plays Pok&eacute;mon</a>, Pong
               played by a crowd, <a target="_blank" href="https://www.activityvillage.co.uk/catch-the-dragons-tail">Catch
@@ -327,6 +329,8 @@
               (looping)
             </li>
           </ul>
+          </div>
+          <button onclick="toggleMore('moreInspoFr','moreInspoFrBtn','Voir la liste complète','Voir moins')" id="moreInspoFrBtn">Voir la liste complète</button>
 
           <h2>Outils:</h2>
           <p>J'ai utilisé <a target="_blank" href="https://d3js.org/"> D3</a> pour la visualisation de données, <a
@@ -371,7 +375,7 @@
         </div>
 
         <div lang="en" id="lang-en" style="display: none">
-        <h1 class="h1">Common </h1>
+        <h1 class="h1">Common</h1>
         <p class="quote"><strong>What does it mean to build trust in
             play?</strong></p>
 
@@ -566,6 +570,9 @@
               Spacetime</a>, <a target="_blank" href="http://www.spotov.co.uk/games.html#1">Dreadnought</a>,
             Edison Escape Room, <a target="_blank" href="https://www.youtube.com/watch?v=5IJte841c4A">Marina
               Abramović</a> (The Story Of Bow &amp; Arrow), !Move or Die,</li>
+        </ul>
+        <div id="moreInspoEn">
+        <ul>
           <li>Crowd Collaboration:<a target="_blank"
               href="https://en.wikipedia.org/wiki/Twitch_Plays_Pok%C3%A9mon">Twitch plays Pok&eacute;mon</a>, Pong
             played by a crowd, <a target="_blank" href="https://www.activityvillage.co.uk/catch-the-dragons-tail">Catch
@@ -646,6 +653,8 @@
             (looping)
           </li>
         </ul>
+        </div>
+        <button onclick="toggleMore('moreInspoEn','moreInspoEnBtn','See the full list','See less')" id="moreInspoEnBtn">See the full list</button>
 
 
         <!-- <img src="../img/blog-images/co-burn.png" alt="exhaustion" class="wide-image image"> -->
@@ -717,6 +726,28 @@
   <script src="../js/showAndHide.js"></script>
 
   <script>
+    function toggleMore(moreId, btnId, moreLabel, lessLabel) {
+      var more = document.getElementById(moreId);
+      var btn = document.getElementById(btnId);
+      if (more.style.display === 'block') {
+        more.style.display = 'none';
+        btn.innerHTML = moreLabel;
+      } else {
+        more.style.display = 'block';
+        btn.innerHTML = lessLabel;
+      }
+    }
+    function toggleQuestionsFr() {
+      var more = document.getElementById('moreQuestionsFr');
+      var btn = document.getElementById('moreQuestionsFrBtn');
+      if (more.style.display === 'block') {
+        more.style.display = 'none';
+        btn.innerHTML = 'Lire plus de questions';
+      } else {
+        more.style.display = 'block';
+        btn.innerHTML = 'Lire moins de questions';
+      }
+    }
     function setLang(l) {
       document.getElementById('lang-fr').style.display = l === 'fr' ? '' : 'none';
       document.getElementById('lang-en').style.display = l === 'en' ? '' : 'none';
